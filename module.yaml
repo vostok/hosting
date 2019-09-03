@@ -7,6 +7,7 @@ notests *default:
 
   install:
     - Vostok.Hosting/bin/Release/netstandard2.0/Vostok.Hosting.dll
+    - module vostok.hosting.abstractions
 
   deps:
     - vostok.hosting.abstractions@vostok-application
@@ -19,6 +20,8 @@ notests *default:
     - vostok.metrics
     - vostok.context
     - vostok.devtools
+    - vostok.commons.helpers/src
+    - vostok.commons.time/src
 
 full-build > notests:
   build:
