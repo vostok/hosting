@@ -12,7 +12,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.Hosting</Title>
-    <Description>The implementation of VostokApplication - the entry point to create Vostok-compatible services.</Description>
+    <Description>The entry point to create Vostok-compatible services.</Description>
   </PropertyGroup>
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/vostok/hosting</PackageProjectUrl>
