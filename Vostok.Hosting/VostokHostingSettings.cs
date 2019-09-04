@@ -21,8 +21,5 @@ namespace Vostok.Hosting
         public VostokHostingEnvironment Environment { get; }
 
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
-
-        [CanBeNull]
-        public Action<Exception> OnError { get; set; }
     }
 }
