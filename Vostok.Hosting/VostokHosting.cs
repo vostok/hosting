@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Environment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting
@@ -12,9 +13,9 @@ namespace Vostok.Hosting
     public class VostokHosting
     {
         private readonly VostokHostingSettings settings;
+        private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private IVostokApplication application;
         private VostokHostingEnvironment environment;
-        private readonly CachingObservable<ApplicationState> onApplicationStateChanged;
         private ILog log;
 
         public VostokHosting([NotNull] VostokHostingSettings settings)
@@ -22,13 +23,15 @@ namespace Vostok.Hosting
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             application = settings.Application;
-            onApplicationStateChanged = new CachingObservable<ApplicationState>(ApplicationState.NotInitialized);
+            environment = EnvironmentBuilder.Build(settings.EnvironmentSetup);
+
+            onApplicationStateChanged = new CachingObservable<VostokApplicationState>(VostokApplicationState.NotInitialized);
         }
+
+        public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         public async Task RunAsync()
         {
-            // TODO(kungurtsev): build environment.
-            environment = settings.Environment;
             log = environment.Log.ForContext<VostokHosting>();
 
             LogApplicationIdentity(environment.ApplicationIdentity);
@@ -39,19 +42,17 @@ namespace Vostok.Hosting
             environment.Dispose();
         }
 
-        public IObservable<ApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
-
         private async Task<bool> InitializeApplicationAsync()
         {
             log.Info("Initializing application.");
-            onApplicationStateChanged.Next(ApplicationState.Initializing);
+            onApplicationStateChanged.Next(VostokApplicationState.Initializing);
 
             try
             {
                 await application.InitializeAsync(environment);
 
                 log.Info("Initializing application completed successfully.");
-                onApplicationStateChanged.Next(ApplicationState.Initialized);
+                onApplicationStateChanged.Next(VostokApplicationState.Initialized);
 
                 return true;
             }
@@ -67,7 +68,7 @@ namespace Vostok.Hosting
         private async Task RunApplicationAsync()
         {
             log.Info("Running application.");
-            onApplicationStateChanged.Next(ApplicationState.Running);
+            onApplicationStateChanged.Next(VostokApplicationState.Running);
 
             try
             {
@@ -87,7 +88,7 @@ namespace Vostok.Hosting
                     if (shutdownToken.IsCancellationRequested)
                     {
                         log.Info("Cancellation requested, waiting for application to complete with {Timeout} timeout.", settings.ShutdownTimeout);
-                        onApplicationStateChanged.Next(ApplicationState.Stopping);
+                        onApplicationStateChanged.Next(VostokApplicationState.Stopping);
 
                         if (!await applicationTask.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
                         {
@@ -95,12 +96,12 @@ namespace Vostok.Hosting
                         }
 
                         log.Info("Application successfully stopped.");
-                        onApplicationStateChanged.Next(ApplicationState.Stopped);
+                        onApplicationStateChanged.Next(VostokApplicationState.Stopped);
                     }
                     else
                     {
                         log.Info("Application exited.");
-                        onApplicationStateChanged.Next(ApplicationState.Exited);
+                        onApplicationStateChanged.Next(VostokApplicationState.Exited);
                     }
                 }
             }

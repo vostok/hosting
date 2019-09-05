@@ -3,7 +3,7 @@
 namespace Vostok.Hosting
 {
     [PublicAPI]
-    public enum ApplicationState
+    public enum VostokApplicationState
     {
         NotInitialized,
         Initializing,

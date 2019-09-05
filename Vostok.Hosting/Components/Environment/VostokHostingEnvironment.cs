@@ -9,10 +9,9 @@ using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
 
-namespace Vostok.Hosting
+namespace Vostok.Hosting.Components.Environment
 {
-    // TODO(kungurtsev): make internal.
-    public class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
+    internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
         public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
