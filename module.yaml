@@ -22,6 +22,7 @@ notests *default:
     - vostok.devtools
     - vostok.commons.helpers/src
     - vostok.commons.time/src
+    - vostok.commons.environment/src
 
 full-build > notests:
   build:

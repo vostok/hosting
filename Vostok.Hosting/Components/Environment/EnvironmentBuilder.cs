@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Vostok.Hosting.Components.ApplicationIdentity;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Setup;
 // ReSharper disable ParameterHidesMember
 
@@ -34,7 +35,8 @@ namespace Vostok.Hosting.Components.Environment
             return new VostokHostingEnvironment
             {
                 ApplicationIdentity = applicationIdentity,
-                Log = log
+                Log = log,
+                ServiceBeacon = new DevNullServiceBeacon()
             };
         }
 

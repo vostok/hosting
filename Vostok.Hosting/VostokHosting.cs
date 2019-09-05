@@ -10,13 +10,12 @@ using Vostok.Logging.Abstractions;
 namespace Vostok.Hosting
 {
     [PublicAPI]
-    public class VostokHosting
+    public class VostokHosting : IVostokHosting
     {
         private readonly VostokHostingSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private IVostokApplication application;
         private VostokHostingEnvironment environment;
-        private ILog log;
 
         public VostokHosting([NotNull] VostokHostingSettings settings)
         {
@@ -25,15 +24,17 @@ namespace Vostok.Hosting
             application = settings.Application;
             environment = EnvironmentBuilder.Build(settings.EnvironmentSetup);
 
+            Log = environment.Log.ForContext<VostokHosting>();
+
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>(VostokApplicationState.NotInitialized);
         }
+
+        public ILog Log { get; private set; }
 
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         public async Task RunAsync()
         {
-            log = environment.Log.ForContext<VostokHosting>();
-
             LogApplicationIdentity(environment.ApplicationIdentity);
 
             if (await InitializeApplicationAsync().ConfigureAwait(false))
@@ -44,21 +45,21 @@ namespace Vostok.Hosting
 
         private async Task<bool> InitializeApplicationAsync()
         {
-            log.Info("Initializing application.");
+            Log.Info("Initializing application.");
             onApplicationStateChanged.Next(VostokApplicationState.Initializing);
 
             try
             {
                 await application.InitializeAsync(environment);
 
-                log.Info("Initializing application completed successfully.");
+                Log.Info("Initializing application completed successfully.");
                 onApplicationStateChanged.Next(VostokApplicationState.Initialized);
 
                 return true;
             }
             catch (Exception error)
             {
-                log.Error(error, "Unhandled exception has occurred while initializing application.");
+                Log.Error(error, "Unhandled exception has occurred while initializing application.");
                 onApplicationStateChanged.Error(error);
 
                 return false;
@@ -67,7 +68,7 @@ namespace Vostok.Hosting
 
         private async Task RunApplicationAsync()
         {
-            log.Info("Running application.");
+            Log.Info("Running application.");
             onApplicationStateChanged.Next(VostokApplicationState.Running);
 
             try
@@ -87,7 +88,7 @@ namespace Vostok.Hosting
 
                     if (shutdownToken.IsCancellationRequested)
                     {
-                        log.Info("Cancellation requested, waiting for application to complete with {Timeout} timeout.", settings.ShutdownTimeout);
+                        Log.Info("Cancellation requested, waiting for application to complete with {Timeout} timeout.", settings.ShutdownTimeout);
                         onApplicationStateChanged.Next(VostokApplicationState.Stopping);
 
                         if (!await applicationTask.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
@@ -95,26 +96,26 @@ namespace Vostok.Hosting
                             throw new OperationCanceledException($"Cancellation requested, but application has not exited within {settings.ShutdownTimeout} timeout.");
                         }
 
-                        log.Info("Application successfully stopped.");
+                        Log.Info("Application successfully stopped.");
                         onApplicationStateChanged.Next(VostokApplicationState.Stopped);
                     }
                     else
                     {
-                        log.Info("Application exited.");
+                        Log.Info("Application exited.");
                         onApplicationStateChanged.Next(VostokApplicationState.Exited);
                     }
                 }
             }
             catch (Exception error)
             {
-                log.Error(error, "Unhandled exception has occurred while running application.");
+                Log.Error(error, "Unhandled exception has occurred while running application.");
                 onApplicationStateChanged.Error(error);
             }
         }
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
-            log.Info(
+            Log.Info(
                 "Application identity: project: {Project}, environment: {Enrironment}, application: {Application}, instance: {Instance}.",
                 applicationIdentity.Project,
                 applicationIdentity.Environment,

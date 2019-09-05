@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Commons.Environment;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ApplicationIdentity
@@ -9,7 +10,13 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
 
         public ApplicationIdentityBuilder()
         {
-            applicationIdentity = new VostokApplicationIdentity();
+            applicationIdentity = new VostokApplicationIdentity
+            {
+                Project = "unknown",
+                Environment = "dev",
+                Application = EnvironmentInfo.Application,
+                Instance = EnvironmentInfo.Host
+            };
         }
 
         public VostokApplicationIdentity Build() =>
