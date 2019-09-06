@@ -7,9 +7,9 @@ using Vostok.Hosting.Setup;
 namespace Vostok.Hosting
 {
     [PublicAPI]
-    public class VostokHostingSettings
+    public class VostokHostSettings
     {
-        public VostokHostingSettings([NotNull] IVostokApplication application, [CanBeNull] EnvironmentSetup environmentSetup = null)
+        public VostokHostSettings([NotNull] IVostokApplication application, [CanBeNull] EnvironmentSetup environmentSetup = null)
         {
             Application = application ?? throw new ArgumentNullException(nameof(application));
             EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
