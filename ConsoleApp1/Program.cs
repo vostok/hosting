@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Hosting;
 using Vostok.Hosting.Abstractions;
@@ -16,25 +15,22 @@ namespace ConsoleApp1
             var application = new Application();
             var log = new SynchronousConsoleLog();
 
-            var cts = new CancellationTokenSource();
-
-            Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = true;
-                cts.Cancel();
-            };
-
             EnvironmentSetup environmentSetup = setup =>
             {
                 setup
                     .SetupApplicationIdentity(
                         applicationIdentitySetup => applicationIdentitySetup
                             .SetProject("vostok"))
-                    .SetupLog(logSetup => logSetup.AddLog(log))
-                    .SetShutdownToken(cts.Token);
+                    .SetupLog(logSetup => logSetup.AddLog(log));
             };
 
             var runner = new VostokHost(new VostokHostSettings(application, environmentSetup));
+
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                e.Cancel = true;
+                runner.ShutdownTokenSource.Cancel();
+            };
 
             var result = runner.RunAsync().GetAwaiter().GetResult();
 

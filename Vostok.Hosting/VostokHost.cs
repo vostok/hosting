@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
@@ -12,7 +13,9 @@ namespace Vostok.Hosting
     [PublicAPI]
     public class VostokHost
     {
-        public VostokApplicationState ApplicationState;
+        public readonly CancellationTokenSource ShutdownTokenSource;
+        public volatile VostokApplicationState ApplicationState;
+
         private readonly VostokHostSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly IVostokApplication application;
@@ -25,6 +28,9 @@ namespace Vostok.Hosting
 
             application = settings.Application;
             environment = EnvironmentBuilder.Build(settings.EnvironmentSetup);
+
+            ShutdownTokenSource = new CancellationTokenSource();
+            environment.ShutdownToken = ShutdownTokenSource.Token;
 
             log = environment.Log.ForContext<VostokHost>();
 
