@@ -20,7 +20,10 @@ namespace ConsoleApp1
                 setup
                     .SetupApplicationIdentity(
                         applicationIdentitySetup => applicationIdentitySetup
-                            .SetProject("vostok"))
+                            .SetProject("vostok")
+                            .SetEnvironment("dev")
+                            .SetApplication("hosting-test")
+                            .SetInstance("1"))
                     .SetupLog(logSetup => logSetup.AddLog(log));
             };
 

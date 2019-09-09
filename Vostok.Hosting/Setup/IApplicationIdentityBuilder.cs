@@ -7,6 +7,8 @@ namespace Vostok.Hosting.Setup
     {
         IApplicationIdentityBuilder SetProject([NotNull] string project);
 
+        IApplicationIdentityBuilder SetSubproject([CanBeNull] string subproject);
+
         IApplicationIdentityBuilder SetEnvironment([NotNull] string environment);
 
         IApplicationIdentityBuilder SetApplication([NotNull] string application);

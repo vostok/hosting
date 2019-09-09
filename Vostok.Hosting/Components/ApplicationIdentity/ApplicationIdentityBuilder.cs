@@ -1,48 +1,47 @@
 ﻿using System;
-using Vostok.Commons.Environment;
 using Vostok.Hosting.Setup;
+// ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.ApplicationIdentity
 {
     internal class ApplicationIdentityBuilder : IApplicationIdentityBuilder
     {
-        private readonly VostokApplicationIdentity applicationIdentity;
-
-        public ApplicationIdentityBuilder()
-        {
-            applicationIdentity = new VostokApplicationIdentity
-            {
-                Project = "unknown",
-                Environment = "dev",
-                Application = EnvironmentInfo.Application,
-                Instance = EnvironmentInfo.Host
-            };
-        }
-
+        private string project;
+        private string subproject;
+        private string environment;
+        private string application;
+        private string instance;
+        
         public VostokApplicationIdentity Build() =>
-            applicationIdentity;
+            new VostokApplicationIdentity(project, subproject, environment, application, instance);
 
         public IApplicationIdentityBuilder SetProject(string project)
         {
-            applicationIdentity.Project = project ?? throw new ArgumentNullException(nameof(project));
+            this.project = project ?? throw new ArgumentNullException(nameof(project));
+            return this;
+        }
+
+        public IApplicationIdentityBuilder SetSubproject(string subproject)
+        {
+            this.subproject = subproject;
             return this;
         }
 
         public IApplicationIdentityBuilder SetEnvironment(string environment)
         {
-            applicationIdentity.Environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
             return this;
         }
 
         public IApplicationIdentityBuilder SetApplication(string application)
         {
-            applicationIdentity.Application = application ?? throw new ArgumentNullException(nameof(application));
+            this.application = application ?? throw new ArgumentNullException(nameof(application));
             return this;
         }
 
         public IApplicationIdentityBuilder SetInstance(string instance)
         {
-            applicationIdentity.Instance = instance ?? throw new ArgumentNullException(nameof(instance));
+            this.instance = instance ?? throw new ArgumentNullException(nameof(instance));
             return this;
         }
     }
