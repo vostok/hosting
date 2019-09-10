@@ -30,7 +30,7 @@ namespace Vostok.Hosting.Components.Environment
         public VostokHostingEnvironment Build()
         {
             var applicationIdentity = applicationIdentityBuilder.Build();
-            var log = logBuilder.Build();
+            var log = logBuilder.Build(applicationIdentity);
 
             return new VostokHostingEnvironment
             {
