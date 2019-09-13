@@ -10,6 +10,6 @@ namespace Vostok.Hosting.Setup
 
         //ICompositeLogBuilder AddFileLog([CanBeNull] EnvironmentSetup<> fileLogSettings = null);
 
-        ICompositeLogBuilder AddHerculesLog([NotNull] EnvironmentSetup<IHerculesLogBuilder> herculesLogSetup);
+        ICompositeLogBuilder SetupHerculesLog([NotNull] EnvironmentSetup<IHerculesLogBuilder> herculesLogSetup);
     }
 }
