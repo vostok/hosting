@@ -1,61 +1,67 @@
-﻿using System.Threading;
+﻿using System;
 using Vostok.Hosting.Components.ApplicationIdentity;
+using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Environment
 {
-    internal class EnvironmentBuilder : IEnvironmentBuilder
+    internal class EnvironmentBuilder : IEnvironmentBuilder, IDisposable
     {
-        private CancellationToken shutdownToken;
         private readonly ApplicationIdentityBuilder applicationIdentityBuilder;
-        private readonly LogBuilder logBuilder;
+        private readonly CompositeLogBuilder compositeLogBuilder;
+        private readonly HerculesSinkBuilder herculesSinkBuilder;
 
         public EnvironmentBuilder()
         {
-            shutdownToken = CancellationToken.None;
             applicationIdentityBuilder = new ApplicationIdentityBuilder();
-            logBuilder = new LogBuilder();
-        }
-
-        public static VostokHostingEnvironment Build(EnvironmentSetup environmentSetup)
-        {
-            var builder = new EnvironmentBuilder();
-            environmentSetup?.Invoke(builder);
-            return builder.Build();
+            compositeLogBuilder = new CompositeLogBuilder();
+            herculesSinkBuilder = new HerculesSinkBuilder();
         }
 
         public VostokHostingEnvironment Build()
         {
-            var applicationIdentity = applicationIdentityBuilder.Build();
-            var log = logBuilder.Build(applicationIdentity);
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var context = new Context();
+
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            context.Log = compositeLogBuilder.Build(context);
+
+            context.HerculesSink = herculesSinkBuilder.Build(context);
+            context.Log = compositeLogBuilder.Build(context);
 
             return new VostokHostingEnvironment
             {
-                ApplicationIdentity = applicationIdentity,
-                Log = log,
-                ServiceBeacon = new DevNullServiceBeacon()
+                ApplicationIdentity = context.ApplicationIdentity,
+                Log = compositeLogBuilder.Build(context), //without context SubstitutableLog
+                ServiceBeacon = new DevNullServiceBeacon(),
+                HerculesSink = context.HerculesSink
             };
         }
 
-        public IEnvironmentBuilder SetShutdownToken(CancellationToken shutdownToken)
+        public IEnvironmentBuilder SetupLog(EnvironmentSetup<ICompositeLogBuilder> compositeLogSetup)
         {
-            this.shutdownToken = shutdownToken;
+            compositeLogSetup(compositeLogBuilder);
             return this;
         }
-
-        public IEnvironmentBuilder SetupLog(LogSetup logSetup)
-        {
-            logSetup(logBuilder);
-            return this;
-        }
-
-        public IEnvironmentBuilder SetupApplicationIdentity(ApplicationIdentitySetup applicationIdentitySetup)
+        
+        public IEnvironmentBuilder SetupApplicationIdentity(EnvironmentSetup<IApplicationIdentityBuilder> applicationIdentitySetup)
         {
             applicationIdentitySetup(applicationIdentityBuilder);
             return this;
+        }
+
+        public IEnvironmentBuilder SetupHerculesSink(EnvironmentSetup<IHerculesSinkBuilder> sinkSetup)
+        {
+            sinkSetup(herculesSinkBuilder);
+            return this;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

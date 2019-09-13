@@ -8,26 +8,51 @@ using Vostok.Logging.Console;
 
 namespace ConsoleApp1
 {
-    internal class Program
+    internal static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             var application = new Application();
             var log = new SynchronousConsoleLog();
 
-            EnvironmentSetup environmentSetup = setup =>
+            EnvironmentSetup<IEnvironmentBuilder> innerSetup = setup =>
             {
                 setup
                     .SetupApplicationIdentity(
                         applicationIdentitySetup => applicationIdentitySetup
-                            .SetProject("vostok")
+                            .SetProject("Infrastructure")
+                            //.SetSubproject("vostok")
                             .SetEnvironment("dev")
-                            .SetApplication("hosting-test")
+                            .SetApplication("vostok-hosting-test")
                             .SetInstance("1"))
-                    .SetupLog(logSetup => logSetup.AddLog(log));
+                    .SetupHerculesSink(
+                        herculesSinkSetup => herculesSinkSetup
+                            .SetApiKeyProvider(() => "vostoklibs_telemetry_write_key_cloud_df237b91706e4626a299653c8a30e140")
+                            .SetClusterConfigClusterProvider("topology/hercules/gate.prod"))
+                    .SetupLog(
+                        logSetup => logSetup
+                            .AddLog(log)
+                            .AddHerculesLog(
+                                herculesLogSetup => herculesLogSetup
+                                    .SetStream("logs_vostoklibs_cloud")
+                                    .WithAdditionalLogTransformation(
+                                        l => l
+                                            .WithMinimumLevel(LogLevel.Info))));
             };
 
-            var runner = new VostokHost(new VostokHostSettings(application, environmentSetup));
+            EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>
+            {
+                innerSetup(setup);
+                setup
+                    .SetupLog(
+                        logSetup => logSetup
+                            .AddHerculesLog(
+                                herculesLogSetup => herculesLogSetup
+                                    .WithAdditionalLogTransformation(
+                                        l => l.WithProperty("outer", "value"))));
+            };
+
+            var runner = new VostokHost(new VostokHostSettings(application, outerSetup));
 
             Console.CancelKeyPress += (sender, e) =>
             {

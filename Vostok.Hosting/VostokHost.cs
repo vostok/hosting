@@ -20,6 +20,7 @@ namespace Vostok.Hosting
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly IVostokApplication application;
         private readonly VostokHostingEnvironment environment;
+        private readonly EnvironmentBuilder environmentBuilder;
         private readonly ILog log;
 
         public VostokHost([NotNull] VostokHostSettings settings)
@@ -27,7 +28,10 @@ namespace Vostok.Hosting
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             application = settings.Application;
-            environment = EnvironmentBuilder.Build(settings.EnvironmentSetup);
+
+            environmentBuilder = new EnvironmentBuilder();
+            settings.EnvironmentSetup(environmentBuilder);
+            environment = environmentBuilder.Build();
 
             ShutdownTokenSource = new CancellationTokenSource();
             environment.ShutdownToken = ShutdownTokenSource.Token;
@@ -47,7 +51,7 @@ namespace Vostok.Hosting
             var result = await InitializeApplicationAsync().ConfigureAwait(false)
                          ?? await RunApplicationAsync().ConfigureAwait(false);
 
-            environment.Dispose();
+            environmentBuilder.Dispose();
 
             return result;
         }

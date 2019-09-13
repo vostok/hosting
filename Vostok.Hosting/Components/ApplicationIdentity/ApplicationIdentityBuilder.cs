@@ -5,7 +5,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ApplicationIdentity
 {
-    internal class ApplicationIdentityBuilder : IApplicationIdentityBuilder
+    internal class ApplicationIdentityBuilder : IApplicationIdentityBuilder, IBuilder<VostokApplicationIdentity>
     {
         private string project;
         private string subproject;
@@ -14,7 +14,7 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
         private string instance;
 
         [NotNull]
-        public VostokApplicationIdentity Build() =>
+        public VostokApplicationIdentity Build(Context context) =>
             new VostokApplicationIdentity(project, subproject, environment, application, instance);
 
         public IApplicationIdentityBuilder SetProject(string project)

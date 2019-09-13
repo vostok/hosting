@@ -3,5 +3,7 @@
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public delegate void LogSetup([NotNull] IHostingLogBuilder builder);
+    public interface IClusterConfigClientBuilder
+    {
+    }
 }

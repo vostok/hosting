@@ -11,7 +11,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Environment
 {
-    internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
+    internal class VostokHostingEnvironment : IVostokHostingEnvironment
     {
         public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
@@ -28,10 +28,5 @@ namespace Vostok.Hosting.Components.Environment
         public IContextConfiguration ContextConfiguration { get; set; }
         public ClusterClientSetup ClusterClientSetup { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
-
-        public void Dispose()
-        {
-            ServiceBeacon.Stop();
-        }
     }
 }

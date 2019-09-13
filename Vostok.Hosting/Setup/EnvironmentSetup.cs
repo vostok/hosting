@@ -3,5 +3,5 @@
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public delegate void EnvironmentSetup([NotNull] IEnvironmentBuilder builder);
+    public delegate void EnvironmentSetup<in T>([NotNull] T builder);
 }
