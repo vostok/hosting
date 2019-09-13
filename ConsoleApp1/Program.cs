@@ -35,7 +35,7 @@ namespace ConsoleApp1
                             .SetupHerculesLog(
                                 herculesLogSetup => herculesLogSetup
                                     .SetStream("logs_vostoklibs_cloud")
-                                    .WithAdditionalLogTransformation(
+                                    .AddAdditionalLogTransformation(
                                         l => l
                                             .WithMinimumLevel(LogLevel.Info))));
             };
@@ -48,7 +48,7 @@ namespace ConsoleApp1
                         logSetup => logSetup
                             .SetupHerculesLog(
                                 herculesLogSetup => herculesLogSetup
-                                    .WithAdditionalLogTransformation(
+                                    .AddAdditionalLogTransformation(
                                         l => l.WithProperty("outer", "value"))));
             };
 

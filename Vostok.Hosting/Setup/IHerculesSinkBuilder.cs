@@ -8,11 +8,10 @@ namespace Vostok.Hosting.Setup
     public interface IHerculesSinkBuilder
     {
         IHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
-
-        IHerculesSinkBuilder SetClusterConfigClusterProvider([NotNull] string path);
-
-        IHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);
+        IHerculesSinkBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
         IHerculesSinkBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
+        IHerculesSinkBuilder SetClusterConfigClusterProvider([NotNull] string path);
+        IHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);
     }
 }

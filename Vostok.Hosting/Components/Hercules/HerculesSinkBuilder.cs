@@ -12,16 +12,17 @@ namespace Vostok.Hosting.Components.Hercules
 {
     internal class HerculesSinkBuilder : IHerculesSinkBuilder, IBuilder<IHerculesSink>
     {
-        private Func<string> apiKeyProvider;
         private IBuilder<IClusterProvider> clusterProviderBuilder;
+        private IBuilder<Func<string>> apiKeyProviderBuilder;
 
         [NotNull]
         public IHerculesSink Build(Context context)
         {
+            var apiKeyProvider = apiKeyProviderBuilder?.Build(context);
             if (apiKeyProvider == null)
                 return new DevNullHerculesSink();
 
-            var cluster = clusterProviderBuilder.Build(context);
+            var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
                 return new DevNullHerculesSink();
 
@@ -30,7 +31,13 @@ namespace Vostok.Hosting.Components.Hercules
         
         public IHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            this.apiKeyProvider = apiKeyProvider;
+            apiKeyProviderBuilder = new CustomApiKeyProviderBuilder(apiKeyProvider);
+            return this;
+        }
+
+        public IHerculesSinkBuilder SetClusterConfigApiKeyProvider(string path)
+        {
+            apiKeyProviderBuilder = new ClusterConfigApiKeyProvider(path);
             return this;
         }
 
