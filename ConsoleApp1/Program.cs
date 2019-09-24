@@ -27,7 +27,7 @@ namespace ConsoleApp1
                             .SetInstance("1"))
                     .SetupHerculesSink(
                         herculesSinkSetup => herculesSinkSetup
-                            .SetApiKeyProvider(() => "vostoklibs_telemetry_write_key_cloud_df237b91706e4626a299653c8a30e140")
+                            .SetClusterConfigApiKeyProvider("app/apiKey")
                             .SetClusterConfigClusterProvider("topology/hercules/gate.prod"))
                     .SetupLog(
                         logSetup => logSetup
@@ -62,7 +62,7 @@ namespace ConsoleApp1
 
             var result = runner.RunAsync().GetAwaiter().GetResult();
 
-            log.Info($"Result: {result.Status} {result.Error}");
+            log.Info($"RunResult: {result.Status} {result.Error}");
         }
     }
 

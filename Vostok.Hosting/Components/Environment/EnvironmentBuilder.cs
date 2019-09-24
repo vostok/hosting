@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Hosting.Components.ApplicationIdentity;
+using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.ServiceBeacon;
@@ -14,12 +15,14 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ApplicationIdentityBuilder applicationIdentityBuilder;
         private readonly CompositeLogBuilder compositeLogBuilder;
         private readonly HerculesSinkBuilder herculesSinkBuilder;
+        private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
 
         public EnvironmentBuilder()
         {
             applicationIdentityBuilder = new ApplicationIdentityBuilder();
             compositeLogBuilder = new CompositeLogBuilder();
             herculesSinkBuilder = new HerculesSinkBuilder();
+            clusterConfigClientBuilder = new ClusterConfigClientBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -29,6 +32,8 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.Log = compositeLogBuilder.Build(context);
+
+            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
             context.Log = compositeLogBuilder.Build(context);
@@ -47,7 +52,13 @@ namespace Vostok.Hosting.Components.Environment
             compositeLogSetup(compositeLogBuilder);
             return this;
         }
-        
+
+        public IEnvironmentBuilder SetupClusterConfigClient(EnvironmentSetup<IClusterConfigClientBuilder> clusterConfigClientSetup)
+        {
+            clusterConfigClientSetup(clusterConfigClientBuilder);
+            return this;
+        }
+
         public IEnvironmentBuilder SetupApplicationIdentity(EnvironmentSetup<IApplicationIdentityBuilder> applicationIdentitySetup)
         {
             applicationIdentitySetup(applicationIdentityBuilder);

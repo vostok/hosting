@@ -1,11 +1,8 @@
-﻿using System;
-using Vostok.Clusterclient.Core;
-using Vostok.ClusterConfig.Client.Abstractions;
+﻿using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Wrappers;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting.Components
