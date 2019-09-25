@@ -2,12 +2,14 @@
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.Tracing;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components
 {
-    internal class Context
+    internal class BuildContext
     {
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
@@ -20,11 +22,20 @@ namespace Vostok.Hosting.Components
             set => substitutableLog.SubstituteWith(value);
         }
 
+        public ITracer Tracer
+        {
+            get => substitutableTracer;
+            set => substitutableTracer.SubstituteWith(value);
+        }
+
         private readonly SubstitutableLog substitutableLog;
+
+        private readonly SubstitutableTracer substitutableTracer;
         
-        public Context()
+        public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
+            substitutableTracer = new SubstitutableTracer();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Topology.SD;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ClusterProvider
 {
@@ -14,7 +15,7 @@ namespace Vostok.Hosting.Components.ClusterProvider
             this.application = application;
         }
 
-        public IClusterProvider Build(Context context)
+        public IClusterProvider Build(BuildContext context)
         {
             return context.ServiceLocator == null
                 ? null

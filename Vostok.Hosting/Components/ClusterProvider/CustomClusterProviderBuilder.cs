@@ -1,4 +1,5 @@
 ﻿using Vostok.Clusterclient.Core.Topology;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ClusterProvider
 {
@@ -11,6 +12,6 @@ namespace Vostok.Hosting.Components.ClusterProvider
             this.clusterProvider = clusterProvider;
         }
 
-        public IClusterProvider Build(Context context) => clusterProvider;
+        public IClusterProvider Build(BuildContext context) => clusterProvider;
     }
 }

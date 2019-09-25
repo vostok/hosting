@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Hercules
 {
@@ -11,7 +12,7 @@ namespace Vostok.Hosting.Components.Hercules
             this.path = path;
         }
 
-        public Func<string> Build(Context context)
+        public Func<string> Build(BuildContext context)
         {
             return context.ClusterConfigClient == null
                 ? (Func<string>)null

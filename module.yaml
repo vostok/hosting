@@ -10,6 +10,8 @@ notests *default:
     - module vostok.hosting.abstractions
 
   deps:
+    - vostok.tracing.hercules
+    - vostok.tracing
     - vostok.clusterclient.topology.sd
     - vostok.clusterclient.topology.cc
     - vostok.clusterconfig.client
@@ -32,6 +34,7 @@ notests *default:
 
 full-build > notests:
   deps:
+    - vostok.tracing.kontur
     - vostok.logging.console
     
   build:

@@ -1,5 +1,6 @@
 ﻿using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Topology.CC;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ClusterProvider
 {
@@ -12,7 +13,7 @@ namespace Vostok.Hosting.Components.ClusterProvider
             this.path = path;
         }
 
-        public IClusterProvider Build(Context context)
+        public IClusterProvider Build(BuildContext context)
         {
             return context.ClusterConfigClient == null 
                 ? null 

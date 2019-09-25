@@ -5,6 +5,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Tracing.Kontur;
 
 namespace ConsoleApp1
 {
@@ -37,7 +38,10 @@ namespace ConsoleApp1
                                     .SetStream("logs_vostoklibs_cloud")
                                     .AddAdditionalLogTransformation(
                                         l => l
-                                            .WithMinimumLevel(LogLevel.Info))));
+                                            .WithMinimumLevel(LogLevel.Info))))
+                    .SetupTracer(
+                        tracerSetup => tracerSetup
+                            .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog)));
             };
 
             EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>

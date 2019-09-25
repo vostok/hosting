@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using JetBrains.Annotations;
-using Vostok.Hosting.Components.Log;
+﻿using JetBrains.Annotations;
 
 namespace Vostok.Hosting.Setup
 {
@@ -14,5 +12,7 @@ namespace Vostok.Hosting.Setup
         IEnvironmentBuilder SetupClusterConfigClient([NotNull] EnvironmentSetup<IClusterConfigClientBuilder> clusterConfigClientSetup);
 
         IEnvironmentBuilder SetupApplicationIdentity([NotNull] EnvironmentSetup<IApplicationIdentityBuilder> applicationIdentitySetup);
+
+        IEnvironmentBuilder SetupTracer([NotNull] EnvironmentSetup<ITracerBuilder> tracerSetup);
     }
 }

@@ -10,6 +10,7 @@ namespace Vostok.Hosting.Setup
         IHerculesLogBuilder SetStream([NotNull] string stream);
 
         IHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
+        IHerculesLogBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
         IHerculesLogBuilder AddAdditionalLogTransformation([NotNull] Func<ILog, ILog> additionalTransformation);
     }

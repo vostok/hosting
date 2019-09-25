@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Components.Configuration
     internal class ClusterConfigClientBuilder : IClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
     {
         [NotNull]
-        public IClusterConfigClient Build(Context context)
+        public IClusterConfigClient Build(BuildContext context)
         {
             return new ClusterConfigClient(new ClusterConfigClientSettings
             {

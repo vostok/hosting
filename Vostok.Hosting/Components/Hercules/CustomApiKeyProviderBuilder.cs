@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Hercules
 {
@@ -11,6 +12,6 @@ namespace Vostok.Hosting.Components.Hercules
             this.apiKeyProvider = apiKeyProvider;
         }
 
-        public Func<string> Build(Context context) => apiKeyProvider;
+        public Func<string> Build(BuildContext context) => apiKeyProvider;
     }
 }

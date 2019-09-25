@@ -91,6 +91,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.topology.sd\Vostok.ClusterClient.Topology.SD\bin\Release\netstandard2.0\Vostok.ClusterClient.Topology.SD.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing\Vostok.Tracing\bin\Release\netstandard2.0\Vostok.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Hercules">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.hercules\Vostok.Tracing.Hercules\bin\Release\netstandard2.0\Vostok.Tracing.Hercules.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

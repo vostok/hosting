@@ -16,7 +16,7 @@ namespace Vostok.Hosting.Components.Hercules
         private IBuilder<Func<string>> apiKeyProviderBuilder;
 
         [NotNull]
-        public IHerculesSink Build(Context context)
+        public IHerculesSink Build(BuildContext context)
         {
             var apiKeyProvider = apiKeyProviderBuilder?.Build(context);
             if (apiKeyProvider == null)
