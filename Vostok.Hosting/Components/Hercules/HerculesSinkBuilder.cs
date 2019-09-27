@@ -4,6 +4,7 @@ using Vostok.Clusterclient.Core.Topology;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ClusterProvider;
+using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -12,8 +13,8 @@ namespace Vostok.Hosting.Components.Hercules
 {
     internal class HerculesSinkBuilder : IHerculesSinkBuilder, IBuilder<IHerculesSink>
     {
-        private IBuilder<IClusterProvider> clusterProviderBuilder;
-        private IBuilder<Func<string>> apiKeyProviderBuilder;
+        private ClusterProviderBuilder clusterProviderBuilder;
+        private StringProviderBuilder apiKeyProviderBuilder;
 
         [NotNull]
         public IHerculesSink Build(BuildContext context)
@@ -31,31 +32,31 @@ namespace Vostok.Hosting.Components.Hercules
         
         public IHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            apiKeyProviderBuilder = new CustomApiKeyProviderBuilder(apiKeyProvider);
+            apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
             return this;
         }
 
         public IHerculesSinkBuilder SetClusterConfigApiKeyProvider(string path)
         {
-            apiKeyProviderBuilder = new ClusterConfigApiKeyProvider(path);
+            apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
         public IHerculesSinkBuilder SetClusterConfigClusterProvider(string path)
         {
-            clusterProviderBuilder = new ClusterConfigClusterProviderBuilder(path);
+            clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
         public IHerculesSinkBuilder SetServiceDiscoveryClusterProvider(string environment, string application)
         {
-            clusterProviderBuilder = new ServiceDiscoveryClusterProviderBuilder(environment, application);
+            clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(environment, application);
             return this;
         }
 
         public IHerculesSinkBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
-            clusterProviderBuilder = new CustomClusterProviderBuilder(clusterProvider);
+            clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
             return this;
         }
     }

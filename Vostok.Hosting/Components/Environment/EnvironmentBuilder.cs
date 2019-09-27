@@ -38,9 +38,17 @@ namespace Vostok.Hosting.Components.Environment
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
-            context.ApplicationIdentity = Build(context, applicationIdentityBuilder);
-            context.ClusterConfigClient = Build(context, clusterConfigClientBuilder);
-            context.HerculesSink = Build(context, herculesSinkBuilder);
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            Substitute(context);
+
+            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
+            Substitute(context);
+            
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            Substitute(context);
+            
+            context.HerculesSink = herculesSinkBuilder.Build(context);
+            Substitute(context);
 
             var finalLog = compositeLogBuilder.Build(context);
             LogProvider.Configure(finalLog, true);
@@ -90,15 +98,13 @@ namespace Vostok.Hosting.Components.Environment
         public void Dispose()
         {
         }
-
-        private T Build<T>(BuildContext context, IBuilder<T> builder)
+        
+        private void Substitute(BuildContext context)
         {
-            var result = builder.Build(context);
-
+            // Note(kungurtsev): requires hercules, not disposable and lightweight.
+            // Note(kungurtsev): get returns same instance (with substitutable base), so can be executed in any order.
             context.Log = compositeLogBuilder.Build(context);
             context.Tracer = tracerBuilder.Build(context);
-
-            return result;
         }
     }
 }

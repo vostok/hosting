@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Hercules.Client.Abstractions.Models;
 using Vostok.Hosting.Components.Hercules;
+using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Setup;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Hercules;
@@ -11,30 +12,37 @@ namespace Vostok.Hosting.Components.Tracing
 {
     internal class HerculesSpanSenderBuilder : IHerculesSpanSenderBuilder, IBuilder<ISpanSender>
     {
-        private IBuilder<Func<string>> apiKeyProviderBuilder;
-        private string stream;
+        private StringProviderBuilder apiKeyProviderBuilder;
+        private StringProviderBuilder streamProviderBuilder;
 
         public IHerculesSpanSenderBuilder SetStream(string stream)
         {
-            this.stream = stream;
+            streamProviderBuilder = StringProviderBuilder.FromValue(stream);
+            return this;
+        }
+
+        public IHerculesSpanSenderBuilder SetStreamFromClusterConfig(string path)
+        {
+            apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
         public IHerculesSpanSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            apiKeyProviderBuilder = new CustomApiKeyProviderBuilder(apiKeyProvider);
+            apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
             return this;
         }
 
         public IHerculesSpanSenderBuilder SetClusterConfigApiKeyProvider(string path)
         {
-            apiKeyProviderBuilder = new ClusterConfigApiKeyProvider(path);
+            apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
         
         public ISpanSender Build(BuildContext context)
         {
             var herculesSink = context.HerculesSink;
+            var stream = streamProviderBuilder?.Build(context)?.Invoke();
 
             if (herculesSink == null || stream == null)
                 return new DevNullSpanSender();

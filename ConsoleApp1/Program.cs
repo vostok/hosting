@@ -14,7 +14,7 @@ namespace ConsoleApp1
         private static void Main()
         {
             var application = new Application();
-            var log = new SynchronousConsoleLog();
+            var log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
 
             EnvironmentSetup<IEnvironmentBuilder> innerSetup = setup =>
             {
@@ -23,7 +23,7 @@ namespace ConsoleApp1
                         applicationIdentitySetup => applicationIdentitySetup
                             .SetProject("Infrastructure")
                             //.SetSubproject("vostok")
-                            .SetEnvironment("dev")
+                            .SetEnvironmentFromClusterConfig("app/environment")
                             .SetApplication("vostok-hosting-test")
                             .SetInstance("1"))
                     .SetupHerculesSink(
@@ -79,6 +79,11 @@ namespace ConsoleApp1
 
         public Task RunAsync(IVostokHostingEnvironment environment)
         {
+            environment.Log.Debug("Debug log.");
+            environment.Log.Info("Info log.");
+            environment.Log.Warn("Warn log.");
+            environment.Log.Error("Error log.");
+
             return Task.Delay(TimeSpan.FromSeconds(6));
         }
     }
