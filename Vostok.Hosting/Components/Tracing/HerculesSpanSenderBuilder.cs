@@ -44,7 +44,7 @@ namespace Vostok.Hosting.Components.Tracing
             var stream = streamProviderBuilder?.Build(context)?.Invoke();
 
             if (herculesSink == null || stream == null)
-                return new DevNullSpanSender();
+                return null;
 
             var apiKeyProvider = apiKeyProviderBuilder?.Build(context);
             if (apiKeyProvider != null)

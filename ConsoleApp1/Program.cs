@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
@@ -10,6 +11,7 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 using Vostok.Telemetry.Kontur;
+using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
 
 namespace ConsoleApp1
@@ -30,11 +32,13 @@ namespace ConsoleApp1
                             //.SetSubproject("vostok")
                             .SetEnvironmentFromClusterConfig("app/environment")
                             .SetApplication("vostok-hosting-test")
-                            .SetInstance("1"))
+                            .SetInstance("1")
+                    )
                     .SetupHerculesSink(
                         herculesSinkSetup => herculesSinkSetup
                             .SetClusterConfigApiKeyProvider("app/apiKey")
-                            .SetClusterConfigClusterProvider("topology/hercules/gate.prod"))
+                            .SetClusterConfigClusterProvider("topology/hercules/gate.prod")
+                    )
                     .SetupLog(
                         logSetup => logSetup
                             .AddLog(log)
@@ -43,18 +47,19 @@ namespace ConsoleApp1
                                     .SetStream("logs_vostoklibs_cloud")
                                     .AddAdditionalLogTransformation(
                                         l => l
-                                            .WithMinimumLevel(LogLevel.Info))))
+                                            .WithMinimumLevel(LogLevel.Info)))
+                    )
                     .SetupTracer(
                         tracerSetup => tracerSetup
                             .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog))
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
-                                    .SetStreamFromClusterConfig("vostok/tracing/StreamName")))
+                                    .SetStreamFromClusterConfig("vostok/tracing/StreamName"))
+                        //.AddSpanSender(new LogSpanSender(log))
+                    )
                     .SetupClusterClient(
-                        clusterClientSetup =>
-                        {
-                            clusterClientSetup.SetupDistributedKonturTracing();
-                        });
+                        clusterClientSetup => { clusterClientSetup.SetupDistributedKonturTracing(); }
+                    );
             };
 
             EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>
@@ -111,6 +116,28 @@ namespace ConsoleApp1
             var responce = client.Send(Request.Get(""));
 
             return Task.Delay(TimeSpan.FromSeconds(15));
+        }
+    }
+
+    internal class LogSpanSender : ISpanSender
+    {
+        private readonly ILog log;
+
+        public LogSpanSender(ILog log)
+        {
+            this.log = log.ForContext<LogSpanSender>();
+        }
+
+        public void Send(ISpan span)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"TraceId: {span.TraceId}. ");
+
+            if (span.Annotations.ContainsKey(WellKnownAnnotations.Http.Request.TargetService))
+                sb.Append($"TargetService: {span.Annotations[WellKnownAnnotations.Http.Request.TargetService]}. ");
+
+            log.Info(sb.ToString());
         }
     }
 }

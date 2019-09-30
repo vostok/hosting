@@ -12,5 +12,7 @@ namespace Vostok.Hosting.Setup
         ITracerBuilder SetTracerProvider(Func<TracerSettings, ILog, ITracer> tracerProvider);
 
         ITracerBuilder SetupHerculesSpanSender([NotNull] EnvironmentSetup<IHerculesSpanSenderBuilder> herculesSpanSenderSetup);
+
+        ITracerBuilder AddSpanSender([NotNull] ISpanSender spanSender);
     }
 }
