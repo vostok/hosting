@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
@@ -8,6 +7,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
+// ReSharper disable NotNullMemberIsNotInitialized
 
 namespace Vostok.Hosting.Components.Environment
 {

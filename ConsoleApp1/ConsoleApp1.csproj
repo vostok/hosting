@@ -89,6 +89,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.tracing\Vostok.Tracing\bin\Release\netstandard2.0\Vostok.Tracing.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Telemetry.Kontur">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.telemetry.kontur\Vostok.Telemetry.Kontur\bin\Release\netstandard2.0\Vostok.Telemetry.Kontur.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.tracing\Vostok.Logging.Tracing\bin\Release\netstandard2.0\Vostok.Logging.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterClient.Transport">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.transport\Vostok.ClusterClient.Transport\bin\Release\netstandard2.0\Vostok.ClusterClient.Transport.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

@@ -1,6 +1,4 @@
-﻿using Vostok.Hosting.Setup;
-
-namespace Vostok.Hosting.Components
+﻿namespace Vostok.Hosting.Components
 {
     internal interface IBuilder<out T>
     {

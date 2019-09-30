@@ -1,5 +1,7 @@
 ﻿using System;
+using Vostok.Clusterclient.Core;
 using Vostok.Hosting.Components.ApplicationIdentity;
+using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
@@ -20,6 +22,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly HerculesSinkBuilder herculesSinkBuilder;
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
         private readonly TracerBuilder tracerBuilder;
+        private readonly ClusterClientSetupBuilder clusterClientSetupBuilder;
 
         public EnvironmentBuilder()
         {
@@ -28,6 +31,7 @@ namespace Vostok.Hosting.Components.Environment
             herculesSinkBuilder = new HerculesSinkBuilder();
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
             tracerBuilder = new TracerBuilder();
+            clusterClientSetupBuilder = new ClusterClientSetupBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -38,6 +42,8 @@ namespace Vostok.Hosting.Components.Environment
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
+            context.ClusterClientSetup = clusterClientSetupBuilder.Build(context);
+            
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             Substitute(context);
 
@@ -61,7 +67,8 @@ namespace Vostok.Hosting.Components.Environment
                 Log = finalLog,
                 Tracer = finalTracer,
                 ServiceBeacon = new DevNullServiceBeacon(),
-                HerculesSink = context.HerculesSink
+                HerculesSink = context.HerculesSink,
+                ClusterClientSetup = context.ClusterClientSetup
             };
         }
 
@@ -86,6 +93,12 @@ namespace Vostok.Hosting.Components.Environment
         public IEnvironmentBuilder SetupTracer(EnvironmentSetup<ITracerBuilder> tracerSetup)
         {
             tracerSetup(tracerBuilder);
+            return this;
+        }
+
+        public IEnvironmentBuilder SetupClusterClient(ClusterClientSetup clusterClientSetup)
+        {
+            clusterClientSetupBuilder.Setup(clusterClientSetup);
             return this;
         }
 

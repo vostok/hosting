@@ -1,6 +1,5 @@
 ﻿using System;
 using Vostok.Hercules.Client.Abstractions.Models;
-using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Setup;
 using Vostok.Tracing.Abstractions;
@@ -23,7 +22,7 @@ namespace Vostok.Hosting.Components.Tracing
 
         public IHerculesSpanSenderBuilder SetStreamFromClusterConfig(string path)
         {
-            apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
+            streamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 

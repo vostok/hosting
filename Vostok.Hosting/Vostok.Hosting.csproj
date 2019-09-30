@@ -99,6 +99,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.tracing.hercules\Vostok.Tracing.Hercules\bin\Release\netstandard2.0\Vostok.Tracing.Hercules.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Logging.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.tracing\Vostok.Logging.Tracing\bin\Release\netstandard2.0\Vostok.Logging.Tracing.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Context">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.context\Vostok.Logging.Context\bin\Release\netstandard2.0\Vostok.Logging.Context.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterClient.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.tracing\Vostok.ClusterClient.Tracing\bin\Release\netstandard2.0\Vostok.ClusterClient.Tracing.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Vostok.Clusterclient.Core;
+using Vostok.Clusterclient.Core.Model;
+using Vostok.Clusterclient.Core.Topology;
+using Vostok.Clusterclient.Transport;
 using Vostok.Hosting;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Telemetry.Kontur;
 using Vostok.Tracing.Kontur;
 
 namespace ConsoleApp1
@@ -41,7 +46,15 @@ namespace ConsoleApp1
                                             .WithMinimumLevel(LogLevel.Info))))
                     .SetupTracer(
                         tracerSetup => tracerSetup
-                            .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog)));
+                            .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog))
+                            .SetupHerculesSpanSender(
+                                spanSenderSetup => spanSenderSetup
+                                    .SetStreamFromClusterConfig("vostok/tracing/StreamName")))
+                    .SetupClusterClient(
+                        clusterClientSetup =>
+                        {
+                            clusterClientSetup.SetupDistributedKonturTracing();
+                        });
             };
 
             EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>
@@ -79,12 +92,25 @@ namespace ConsoleApp1
 
         public Task RunAsync(IVostokHostingEnvironment environment)
         {
-            environment.Log.Debug("Debug log.");
-            environment.Log.Info("Info log.");
-            environment.Log.Warn("Warn log.");
-            environment.Log.Error("Error log.");
+            var log = environment.Log.ForContext<Application>();
 
-            return Task.Delay(TimeSpan.FromSeconds(6));
+            log.Debug("Debug log.");
+            log.Info("Info log.");
+            log.Warn("Warn log.");
+            log.Error("Error log.");
+
+            var client = new ClusterClient(
+                log,
+                setup =>
+                {
+                    setup.SetupUniversalTransport();
+                    setup.ClusterProvider = new FixedClusterProvider("https://google.com");
+                    environment.ClusterClientSetup(setup);
+                });
+
+            var responce = client.Send(Request.Get(""));
+
+            return Task.Delay(TimeSpan.FromSeconds(15));
         }
     }
 }

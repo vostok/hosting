@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Clusterclient.Tracing;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ClusterProvider;
@@ -27,7 +28,10 @@ namespace Vostok.Hosting.Components.Hercules
             if (cluster == null)
                 return new DevNullHerculesSink();
 
-            return new HerculesSink(new HerculesSinkSettings(cluster, apiKeyProvider), context.Log);
+            return new HerculesSink(new HerculesSinkSettings(cluster, apiKeyProvider)
+            {
+                AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
+            }, context.Log);
         }
         
         public IHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)

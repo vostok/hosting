@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Clusterclient.Core;
 
 namespace Vostok.Hosting.Setup
 {
@@ -14,5 +15,7 @@ namespace Vostok.Hosting.Setup
         IEnvironmentBuilder SetupApplicationIdentity([NotNull] EnvironmentSetup<IApplicationIdentityBuilder> applicationIdentitySetup);
 
         IEnvironmentBuilder SetupTracer([NotNull] EnvironmentSetup<ITracerBuilder> tracerSetup);
+
+        IEnvironmentBuilder SetupClusterClient([NotNull] ClusterClientSetup clusterClientSetup);
     }
 }

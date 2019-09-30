@@ -1,7 +1,6 @@
 ﻿using System;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Wrappers;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 

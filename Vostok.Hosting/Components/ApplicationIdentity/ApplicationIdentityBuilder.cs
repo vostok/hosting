@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Setup;
 // ReSharper disable ParameterHidesMember
