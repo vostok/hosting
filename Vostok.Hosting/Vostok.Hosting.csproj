@@ -111,6 +111,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.tracing\Vostok.ClusterClient.Tracing\bin\Release\netstandard2.0\Vostok.ClusterClient.Tracing.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Metrics.Hercules">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.metrics.hercules\Vostok.Metrics.Hercules\bin\Release\netstandard2.0\Vostok.Metrics.Hercules.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

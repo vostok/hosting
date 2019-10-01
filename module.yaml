@@ -10,6 +10,7 @@ notests *default:
     - module vostok.hosting.abstractions
 
   deps:
+    - vostok.metrics.hercules
     - vostok.clusterclient.tracing
     - vostok.logging.context
     - vostok.logging.tracing

@@ -5,6 +5,7 @@ using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Setup;
@@ -23,6 +24,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
         private readonly TracerBuilder tracerBuilder;
         private readonly ClusterClientSetupBuilder clusterClientSetupBuilder;
+        private readonly MetricsBuilder metricsBuilder;
 
         public EnvironmentBuilder()
         {
@@ -32,6 +34,7 @@ namespace Vostok.Hosting.Components.Environment
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
             tracerBuilder = new TracerBuilder();
             clusterClientSetupBuilder = new ClusterClientSetupBuilder();
+            metricsBuilder = new MetricsBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -41,8 +44,6 @@ namespace Vostok.Hosting.Components.Environment
 
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
-
-            context.ClusterClientSetup = clusterClientSetupBuilder.Build(context);
             
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             Substitute(context);
@@ -56,19 +57,17 @@ namespace Vostok.Hosting.Components.Environment
             context.HerculesSink = herculesSinkBuilder.Build(context);
             Substitute(context);
 
-            var finalLog = compositeLogBuilder.Build(context);
-            LogProvider.Configure(finalLog, true);
-            var finalTracer = tracerBuilder.Build(context);
-            TracerProvider.Configure(finalTracer, true);
+            context.Metrics = metricsBuilder.Build(context);
 
             return new VostokHostingEnvironment
             {
-                ApplicationIdentity = context.ApplicationIdentity,
-                Log = finalLog,
-                Tracer = finalTracer,
+                Log = context.Log,
+                Tracer = context.Tracer,
                 ServiceBeacon = new DevNullServiceBeacon(),
+                ApplicationIdentity = context.ApplicationIdentity,
                 HerculesSink = context.HerculesSink,
-                ClusterClientSetup = context.ClusterClientSetup
+                Metrics = context.Metrics,
+                ClusterClientSetup = clusterClientSetupBuilder.Build(context)
             };
         }
 
@@ -93,6 +92,12 @@ namespace Vostok.Hosting.Components.Environment
         public IEnvironmentBuilder SetupTracer(EnvironmentSetup<ITracerBuilder> tracerSetup)
         {
             tracerSetup(tracerBuilder);
+            return this;
+        }
+
+        public IEnvironmentBuilder SetupMetrics(EnvironmentSetup<IMetricsBuilder> metricsSetup)
+        {
+            metricsSetup(metricsBuilder);
             return this;
         }
 

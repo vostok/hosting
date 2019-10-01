@@ -10,6 +10,8 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Metrics;
+using Vostok.Metrics.Models;
 using Vostok.Telemetry.Kontur;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
@@ -55,7 +57,11 @@ namespace ConsoleApp1
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
                                     .SetStreamFromClusterConfig("vostok/tracing/StreamName"))
-                        //.AddSpanSender(new LogSpanSender(log))
+                        .AddSpanSender(new LogSpanSender(log))
+                    )
+                    .SetupMetrics(
+                        metricsSetup => metricsSetup
+                            .AddMetricEventSenderSender(new LogMetricEventSender(log))
                     )
                     .SetupClusterClient(
                         clusterClientSetup => { clusterClientSetup.SetupDistributedKonturTracing(); }
@@ -104,6 +110,8 @@ namespace ConsoleApp1
             log.Warn("Warn log.");
             log.Error("Error log.");
 
+            environment.Metrics.Instance.Send(new MetricDataPoint(42, "point"));
+
             var client = new ClusterClient(
                 log,
                 setup =>
@@ -138,6 +146,21 @@ namespace ConsoleApp1
                 sb.Append($"TargetService: {span.Annotations[WellKnownAnnotations.Http.Request.TargetService]}. ");
 
             log.Info(sb.ToString());
+        }
+    }
+
+    internal class LogMetricEventSender : IMetricEventSender
+    {
+        private readonly ILog log;
+
+        public LogMetricEventSender(ILog log)
+        {
+            this.log = log.ForContext<LogMetricEventSender>();
+        }
+
+        public void Send(MetricEvent @event)
+        {
+            log.Info($"{@event.Value} {@event.Tags}");
         }
     }
 }
