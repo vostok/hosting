@@ -40,6 +40,7 @@ namespace ConsoleApp1
                         herculesSinkSetup => herculesSinkSetup
                             .SetClusterConfigApiKeyProvider("app/apiKey")
                             .SetClusterConfigClusterProvider("topology/hercules/gate.prod")
+                            .SuppressVerboseLogging()
                     )
                     .SetupLog(
                         logSetup => logSetup
@@ -145,7 +146,7 @@ namespace ConsoleApp1
             if (span.Annotations.ContainsKey(WellKnownAnnotations.Http.Request.TargetService))
                 sb.Append($"TargetService: {span.Annotations[WellKnownAnnotations.Http.Request.TargetService]}. ");
 
-            log.Info(sb.ToString());
+            //log.Info(sb.ToString());
         }
     }
 
@@ -160,7 +161,7 @@ namespace ConsoleApp1
 
         public void Send(MetricEvent @event)
         {
-            log.Info($"{@event.Value} {@event.Tags}");
+            //log.Info($"{@event.Value} {@event.Tags}");
         }
     }
 }

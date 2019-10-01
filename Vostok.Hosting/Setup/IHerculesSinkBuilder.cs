@@ -13,5 +13,7 @@ namespace Vostok.Hosting.Setup
         IHerculesSinkBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
         IHerculesSinkBuilder SetClusterConfigClusterProvider([NotNull] string path);
         IHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);
+
+        IHerculesSinkBuilder SuppressVerboseLogging();
     }
 }
