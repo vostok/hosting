@@ -6,6 +6,7 @@ using Vostok.Hosting.Components.Tracing;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Components
 {
@@ -16,6 +17,7 @@ namespace Vostok.Hosting.Components
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
+        public IZooKeeperClient ZooKeeperClient { get; set; }
 
         public ILog Log
         {

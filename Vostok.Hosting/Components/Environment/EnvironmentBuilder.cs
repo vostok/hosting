@@ -9,6 +9,7 @@ using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Components.Tracing;
+using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
@@ -26,6 +27,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly TracerBuilder tracerBuilder;
         private readonly ClusterClientSetupBuilder clusterClientSetupBuilder;
         private readonly MetricsBuilder metricsBuilder;
+        private readonly ZooKeeperClientBuilder zooKeeperClientBuilder;
 
         public EnvironmentBuilder()
         {
@@ -36,6 +38,7 @@ namespace Vostok.Hosting.Components.Environment
             tracerBuilder = new TracerBuilder();
             clusterClientSetupBuilder = new ClusterClientSetupBuilder();
             metricsBuilder = new MetricsBuilder();
+            zooKeeperClientBuilder = new ZooKeeperClientBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -54,7 +57,9 @@ namespace Vostok.Hosting.Components.Environment
             
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             Substitute(context);
-            
+
+            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+
             context.HerculesSink = herculesSinkBuilder.Build(context);
             HerculesSinkProvider.Configure(context.HerculesSink, true);
             Substitute(context);
@@ -106,6 +111,12 @@ namespace Vostok.Hosting.Components.Environment
         public IEnvironmentBuilder SetupClusterClientSetup(ClusterClientSetup clusterClientSetup)
         {
             clusterClientSetupBuilder.Setup(clusterClientSetup);
+            return this;
+        }
+
+        public IEnvironmentBuilder SetupZooKeeperClient(EnvironmentSetup<IZooKeeperClientBuilder> zooKeeperClientSetup)
+        {
+            zooKeeperClientSetup(zooKeeperClientBuilder);
             return this;
         }
 

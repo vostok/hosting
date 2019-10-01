@@ -66,7 +66,12 @@ namespace ConsoleApp1
                     )
                     .SetupClusterClientSetup(
                         clusterClientSetup => { clusterClientSetup.SetupDistributedKonturTracing(); }
-                    );
+                    )
+                    .SetupZooKeeperClient(
+                        zooKeeperClientSetup => zooKeeperClientSetup
+                            .SetClusterConfigClusterProvider("topology/zookeeper-global")
+                    )
+                    ;
             };
 
             EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>
