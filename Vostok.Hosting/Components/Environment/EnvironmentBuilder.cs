@@ -8,6 +8,7 @@ using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceBeacon;
+using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
@@ -28,6 +29,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ClusterClientSetupBuilder clusterClientSetupBuilder;
         private readonly MetricsBuilder metricsBuilder;
         private readonly ZooKeeperClientBuilder zooKeeperClientBuilder;
+        private readonly ServiceBeaconBuilder serviceBeaconBuilder;
 
         public EnvironmentBuilder()
         {
@@ -39,6 +41,7 @@ namespace Vostok.Hosting.Components.Environment
             clusterClientSetupBuilder = new ClusterClientSetupBuilder();
             metricsBuilder = new MetricsBuilder();
             zooKeeperClientBuilder = new ZooKeeperClientBuilder();
+            serviceBeaconBuilder = new ServiceBeaconBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -60,6 +63,8 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
+
+
             context.HerculesSink = herculesSinkBuilder.Build(context);
             HerculesSinkProvider.Configure(context.HerculesSink, true);
             Substitute(context);
@@ -70,10 +75,11 @@ namespace Vostok.Hosting.Components.Environment
             {
                 Log = context.Log,
                 Tracer = context.Tracer,
-                ServiceBeacon = new DevNullServiceBeacon(),
                 ApplicationIdentity = context.ApplicationIdentity,
                 HerculesSink = context.HerculesSink,
                 Metrics = context.Metrics,
+
+                ServiceBeacon = serviceBeaconBuilder.Build(context),
                 ClusterClientSetup = clusterClientSetupBuilder.Build(context)
             };
         }
@@ -123,6 +129,12 @@ namespace Vostok.Hosting.Components.Environment
         public IEnvironmentBuilder SetupHerculesSink(EnvironmentSetup<IHerculesSinkBuilder> sinkSetup)
         {
             sinkSetup(herculesSinkBuilder);
+            return this;
+        }
+
+        public IEnvironmentBuilder SetupServiceBeacon(EnvironmentSetup<IServiceBeaconBuilder> serviceBeaconSetup)
+        {
+            serviceBeaconSetup(serviceBeaconBuilder);
             return this;
         }
 

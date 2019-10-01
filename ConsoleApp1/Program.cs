@@ -58,7 +58,7 @@ namespace ConsoleApp1
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
                                     .SetStreamFromClusterConfig("vostok/tracing/StreamName"))
-                        .AddSpanSender(new LogSpanSender(log))
+                            .AddSpanSender(new LogSpanSender(log))
                     )
                     .SetupMetrics(
                         metricsSetup => metricsSetup
@@ -70,6 +70,13 @@ namespace ConsoleApp1
                     .SetupZooKeeperClient(
                         zooKeeperClientSetup => zooKeeperClientSetup
                             .SetClusterConfigClusterProvider("topology/zookeeper-global")
+                    )
+                    .SetupServiceBeacon(
+                        serviceBeaconSetup => serviceBeaconSetup
+                            .SetupReplicaInfo(
+                                replicaInfoSetup => replicaInfoSetup
+                                    .SetPort(42)
+                            )
                     )
                     ;
             };
