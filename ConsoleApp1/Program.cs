@@ -12,6 +12,7 @@ using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
+using Vostok.ServiceDiscovery.Kontur;
 using Vostok.Telemetry.Kontur;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
@@ -77,6 +78,11 @@ namespace ConsoleApp1
                                 replicaInfoSetup => replicaInfoSetup
                                     .SetPort(42)
                             )
+                            .SetZooKeeperPathEscaper(KonturZooKeeperPathEscaper.Instance)
+                    )
+                    .SetupServiceLocator(
+                        serviceLocatorSetup => serviceLocatorSetup
+                            .SetZooKeeperPathEscaper(KonturZooKeeperPathEscaper.Instance)
                     )
                     ;
             };
@@ -133,6 +139,8 @@ namespace ConsoleApp1
                     setup.ClusterProvider = new FixedClusterProvider("https://google.com");
                     environment.ClusterClientSetup(setup);
                 });
+
+            var spansearchapi =  environment.ServiceLocator.Locate("default", "vostok.spansearchapi");
 
             var responce = client.Send(Request.Get(""));
 

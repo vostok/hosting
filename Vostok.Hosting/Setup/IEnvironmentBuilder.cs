@@ -23,5 +23,7 @@ namespace Vostok.Hosting.Setup
         IEnvironmentBuilder SetupZooKeeperClient([NotNull] EnvironmentSetup<IZooKeeperClientBuilder> zooKeeperClientSetup);
 
         IEnvironmentBuilder SetupServiceBeacon([NotNull] EnvironmentSetup<IServiceBeaconBuilder> serviceBeaconSetup);
+
+        IEnvironmentBuilder SetupServiceLocator([NotNull] EnvironmentSetup<IServiceLocatorBuilder> serviceLocatorSetup);
     }
 }

@@ -7,7 +7,6 @@ using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
-using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
@@ -30,6 +29,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly MetricsBuilder metricsBuilder;
         private readonly ZooKeeperClientBuilder zooKeeperClientBuilder;
         private readonly ServiceBeaconBuilder serviceBeaconBuilder;
+        private readonly ServiceLocatorBuilder serviceLocatorBuilder;
 
         public EnvironmentBuilder()
         {
@@ -42,6 +42,7 @@ namespace Vostok.Hosting.Components.Environment
             metricsBuilder = new MetricsBuilder();
             zooKeeperClientBuilder = new ZooKeeperClientBuilder();
             serviceBeaconBuilder = new ServiceBeaconBuilder();
+            serviceLocatorBuilder = new ServiceLocatorBuilder();
         }
 
         public VostokHostingEnvironment Build()
@@ -63,7 +64,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
-
+            context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
             HerculesSinkProvider.Configure(context.HerculesSink, true);
@@ -78,6 +79,7 @@ namespace Vostok.Hosting.Components.Environment
                 ApplicationIdentity = context.ApplicationIdentity,
                 HerculesSink = context.HerculesSink,
                 Metrics = context.Metrics,
+                ServiceLocator = context.ServiceLocator,
 
                 ServiceBeacon = serviceBeaconBuilder.Build(context),
                 ClusterClientSetup = clusterClientSetupBuilder.Build(context)
@@ -135,6 +137,12 @@ namespace Vostok.Hosting.Components.Environment
         public IEnvironmentBuilder SetupServiceBeacon(EnvironmentSetup<IServiceBeaconBuilder> serviceBeaconSetup)
         {
             serviceBeaconSetup(serviceBeaconBuilder);
+            return this;
+        }
+
+        public IEnvironmentBuilder SetupServiceLocator(EnvironmentSetup<IServiceLocatorBuilder> serviceLocatorSetup)
+        {
+            serviceLocatorSetup(serviceLocatorBuilder);
             return this;
         }
 

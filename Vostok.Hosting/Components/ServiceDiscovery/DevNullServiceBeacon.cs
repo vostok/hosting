@@ -1,6 +1,6 @@
 ﻿using Vostok.ServiceDiscovery.Abstractions;
 
-namespace Vostok.Hosting.Components.ServiceBeacon
+namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class DevNullServiceBeacon : IServiceBeacon
     {

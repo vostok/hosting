@@ -105,6 +105,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Kontur">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.kontur\Vostok.ServiceDiscovery.Kontur\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.Kontur.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

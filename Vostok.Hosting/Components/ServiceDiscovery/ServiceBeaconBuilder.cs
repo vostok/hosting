@@ -1,5 +1,4 @@
 ﻿using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components.ServiceBeacon;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;

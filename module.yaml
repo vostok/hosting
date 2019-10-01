@@ -41,6 +41,7 @@ notests *default:
 
 full-build > notests:
   deps:
+    - vostok.servicediscovery.kontur
     - vostok.clusterclient.transport
     - vostok.telemetry.kontur
     - vostok.tracing.kontur
