@@ -18,6 +18,6 @@ namespace Vostok.Hosting.Setup
 
         IEnvironmentBuilder SetupMetrics([NotNull] EnvironmentSetup<IMetricsBuilder> metricsSetup);
 
-        IEnvironmentBuilder SetupClusterClient([NotNull] ClusterClientSetup clusterClientSetup);
+        IEnvironmentBuilder SetupClusterClientSetup([NotNull] ClusterClientSetup clusterClientSetup);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Clusterclient.Core;
+using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
 using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
@@ -55,6 +56,7 @@ namespace Vostok.Hosting.Components.Environment
             Substitute(context);
             
             context.HerculesSink = herculesSinkBuilder.Build(context);
+            HerculesSinkProvider.Configure(context.HerculesSink, true);
             Substitute(context);
 
             context.Metrics = metricsBuilder.Build(context);
@@ -101,7 +103,7 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IEnvironmentBuilder SetupClusterClient(ClusterClientSetup clusterClientSetup)
+        public IEnvironmentBuilder SetupClusterClientSetup(ClusterClientSetup clusterClientSetup)
         {
             clusterClientSetupBuilder.Setup(clusterClientSetup);
             return this;

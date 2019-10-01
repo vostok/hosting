@@ -63,7 +63,7 @@ namespace ConsoleApp1
                         metricsSetup => metricsSetup
                             .AddMetricEventSenderSender(new LogMetricEventSender(log))
                     )
-                    .SetupClusterClient(
+                    .SetupClusterClientSetup(
                         clusterClientSetup => { clusterClientSetup.SetupDistributedKonturTracing(); }
                     );
             };
