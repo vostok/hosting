@@ -20,11 +20,11 @@ namespace Vostok.Hosting.Components.String
         public static StringProviderBuilder FromValueProvider(Func<string> valueProvider) =>
             new StringProviderBuilder(context => valueProvider);
 
-        public static StringProviderBuilder FromClusterConfig(string path) =>
+        public static StringProviderBuilder FromClusterConfig(string path, string defaultValue = null) =>
             new StringProviderBuilder(
                 context =>
                     context.ClusterConfigClient == null
-                        ? (Func<string>)null
+                        ? (Func<string>)(() => defaultValue)
                         : () => context.ClusterConfigClient.Get(path)?.Value);
 
         [CanBeNull]

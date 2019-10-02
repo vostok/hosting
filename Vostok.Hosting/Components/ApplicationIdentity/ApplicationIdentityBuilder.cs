@@ -18,7 +18,8 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
             new VostokApplicationIdentity(
                 project,
                 subproject,
-                environmentBuilder?.Build(context)?.Invoke() ?? "unknown", 
+                // ReSharper disable once AssignNullToNotNullAttribute
+                environmentBuilder?.Build(context)?.Invoke(), 
                 application, 
                 instance);
 
@@ -42,7 +43,7 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
 
         public IApplicationIdentityBuilder SetEnvironmentFromClusterConfig(string path)
         {
-            environmentBuilder = StringProviderBuilder.FromClusterConfig(path);
+            environmentBuilder = StringProviderBuilder.FromClusterConfig(path, "unknown");
             return this;
         }
 

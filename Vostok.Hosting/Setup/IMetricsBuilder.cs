@@ -8,6 +8,6 @@ namespace Vostok.Hosting.Setup
     {
         IMetricsBuilder SetupHerculesMetricEventSender([NotNull] EnvironmentSetup<IHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup);
 
-        IMetricsBuilder AddMetricEventSenderSender([NotNull] IMetricEventSender metricEventSender);
+        IMetricsBuilder AddMetricEventSender([NotNull] IMetricEventSender metricEventSender);
     }
 }
