@@ -1,32 +1,36 @@
-﻿using Vostok.Clusterclient.Core;
+﻿using Vostok.Clusterclient.Context;
+using Vostok.Clusterclient.Core;
+using Vostok.Clusterclient.Tracing;
+using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.ClusterClient
 {
-    internal class ClusterClientSetupBuilder : IBuilder<ClusterClientSetup>
+    internal class ClusterClientSetupBuilder : IClusterClientSetupBuilder, IBuilder<ClusterClientSetup>
     {
-        private ClusterClientSetup setup;
+        private ClusterClientSetupTracingBuilder tracingBuilder;
 
         public ClusterClientSetupBuilder()
         {
-            setup = _ => {};
+            tracingBuilder = new ClusterClientSetupTracingBuilder();
         }
-
-        public void Setup(ClusterClientSetup newSetup)
-        {
-            var oldSetup = setup;
-
-            setup = c =>
-            {
-                oldSetup(c);
-                newSetup(c);
-            };
-        }
-
+        
         public ClusterClientSetup Build(BuildContext context)
         {
+            ClusterClientSetup setup = s =>
+            {
+                s.SetupDistributedContext();
+                s.SetupDistributedTracing(tracingBuilder.Build(context));
+            };
+
             return setup;
+        }
+
+        public IClusterClientSetupBuilder SetupTracing(EnvironmentSetup<IClusterClientSetupTracingBuilder> tracingSetup)
+        {
+            tracingSetup(tracingBuilder);
+            return this;
         }
     }
 }

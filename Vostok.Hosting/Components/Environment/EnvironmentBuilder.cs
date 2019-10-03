@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Vostok.Clusterclient.Core;
+﻿using System.Threading;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
@@ -125,9 +123,9 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IEnvironmentBuilder SetupClusterClientSetup(ClusterClientSetup clusterClientSetup)
+        public IEnvironmentBuilder SetupClusterClientSetup(EnvironmentSetup<IClusterClientSetupBuilder> clusterClientSetup)
         {
-            clusterClientSetupBuilder.Setup(clusterClientSetup);
+            clusterClientSetup(clusterClientSetupBuilder);
             return this;
         }
 

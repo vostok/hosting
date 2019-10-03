@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Vostok.Clusterclient.Core;
 
 namespace Vostok.Hosting.Setup
 {
@@ -18,7 +17,7 @@ namespace Vostok.Hosting.Setup
 
         IEnvironmentBuilder SetupMetrics([NotNull] EnvironmentSetup<IMetricsBuilder> metricsSetup);
 
-        IEnvironmentBuilder SetupClusterClientSetup([NotNull] ClusterClientSetup clusterClientSetup);
+        IEnvironmentBuilder SetupClusterClientSetup([NotNull] EnvironmentSetup<IClusterClientSetupBuilder> clusterClientSetup);
 
         IEnvironmentBuilder SetupZooKeeperClient([NotNull] EnvironmentSetup<IZooKeeperClientBuilder> zooKeeperClientSetup);
 

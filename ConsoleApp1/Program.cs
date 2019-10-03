@@ -13,7 +13,6 @@ using Vostok.Logging.Console;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
 using Vostok.ServiceDiscovery.Kontur;
-using Vostok.Telemetry.Kontur;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
 
@@ -66,7 +65,11 @@ namespace ConsoleApp1
                             .AddMetricEventSender(new LogMetricEventSender(log))
                     )
                     .SetupClusterClientSetup(
-                        clusterClientSetup => { clusterClientSetup.SetupDistributedKonturTracing(); }
+                        clusterClientSetup => clusterClientSetup
+                            .SetupTracing(
+                                tracingSetup => tracingSetup
+                                    .SetAdditionalRequestTransformation(
+                                        (request, context) => request.WithHeader("bla", context.TraceId)))
                     )
                     .SetupZooKeeperClient(
                         zooKeeperClientSetup => zooKeeperClientSetup
@@ -144,7 +147,7 @@ namespace ConsoleApp1
                     environment.ClusterClientSetup(setup);
                 });
 
-            var spansearchapi =  environment.ServiceLocator.Locate("default", "vostok.spansearchapi");
+            var spansearchapi = environment.ServiceLocator.Locate("default", "vostok.spansearchapi");
 
             var responce = client.Send(Request.Get(""));
 
