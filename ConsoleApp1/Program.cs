@@ -26,7 +26,7 @@ namespace ConsoleApp1
             var application = new Application();
             var log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
 
-            EnvironmentSetup<IEnvironmentBuilder> innerSetup = setup =>
+            VostokHostingEnvironmentSetup innerSetup = setup =>
             {
                 setup
                     .SetupApplicationIdentity(
@@ -87,7 +87,7 @@ namespace ConsoleApp1
                     ;
             };
 
-            EnvironmentSetup<IEnvironmentBuilder> outerSetup = setup =>
+            VostokHostingEnvironmentSetup outerSetup = setup =>
             {
                 innerSetup(setup);
                 setup
@@ -99,6 +99,7 @@ namespace ConsoleApp1
                                         l => l.WithProperty("outer", "value"))));
             };
 
+            // Way 1: use host.
             var runner = new VostokHost(new VostokHostSettings(application, outerSetup));
 
             Console.CancelKeyPress += (sender, e) =>
@@ -110,6 +111,9 @@ namespace ConsoleApp1
             var result = runner.RunAsync().GetAwaiter().GetResult();
 
             log.Info($"RunResult: {result.Status} {result.Error}");
+
+            // Way 2: build environment without host.
+            // var environment = VostokHostingEnvironmentBuilder.Build(outerSetup);
         }
     }
 

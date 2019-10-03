@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
@@ -18,7 +19,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Environment
 {
-    internal class EnvironmentBuilder : IEnvironmentBuilder, IDisposable
+    internal class EnvironmentBuilder : IEnvironmentBuilder
     {
         private readonly ApplicationIdentityBuilder applicationIdentityBuilder;
         private readonly CompositeLogBuilder compositeLogBuilder;
@@ -45,7 +46,7 @@ namespace Vostok.Hosting.Components.Environment
             serviceLocatorBuilder = new ServiceLocatorBuilder();
         }
 
-        public VostokHostingEnvironment Build()
+        public VostokHostingEnvironment Build(CancellationToken shutdownToken)
         {
             // ReSharper disable once UseObjectOrCollectionInitializer
             var context = new BuildContext();
@@ -72,18 +73,23 @@ namespace Vostok.Hosting.Components.Environment
 
             context.Metrics = metricsBuilder.Build(context);
 
-            return new VostokHostingEnvironment
-            {
-                Log = context.Log,
-                Tracer = context.Tracer,
-                ApplicationIdentity = context.ApplicationIdentity,
-                HerculesSink = context.HerculesSink,
-                Metrics = context.Metrics,
-                ServiceLocator = context.ServiceLocator,
-
-                ServiceBeacon = serviceBeaconBuilder.Build(context),
-                ClusterClientSetup = clusterClientSetupBuilder.Build(context)
-            };
+            return new VostokHostingEnvironment(
+                shutdownToken,
+                context.ApplicationIdentity,
+                context.Metrics,
+                context.Log,
+                context.Tracer,
+                context.HerculesSink,
+                null,
+                null,
+                serviceBeaconBuilder.Build(context),
+                context.ServiceLocator,
+                null,
+                null,
+                null,
+                clusterClientSetupBuilder.Build(context),
+                null,
+                DisposeEnvironment);
         }
 
         public IEnvironmentBuilder SetupLog(EnvironmentSetup<ICompositeLogBuilder> compositeLogSetup)
@@ -146,7 +152,7 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public void Dispose()
+        private void DisposeEnvironment()
         {
         }
         

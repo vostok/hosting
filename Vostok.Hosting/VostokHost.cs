@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components.Environment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting
@@ -20,7 +19,6 @@ namespace Vostok.Hosting
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly IVostokApplication application;
         private readonly VostokHostingEnvironment environment;
-        private readonly EnvironmentBuilder environmentBuilder;
         private readonly ILog log;
 
         public VostokHost([NotNull] VostokHostSettings settings)
@@ -29,12 +27,9 @@ namespace Vostok.Hosting
 
             application = settings.Application;
 
-            environmentBuilder = new EnvironmentBuilder();
-            settings.EnvironmentSetup(environmentBuilder);
-            environment = environmentBuilder.Build();
-
             ShutdownTokenSource = new CancellationTokenSource();
-            environment.ShutdownToken = ShutdownTokenSource.Token;
+            
+            environment = VostokHostingEnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
 
             log = environment.Log.ForContext<VostokHost>();
 
@@ -51,7 +46,7 @@ namespace Vostok.Hosting
             var result = await InitializeApplicationAsync().ConfigureAwait(false)
                          ?? await RunApplicationAsync().ConfigureAwait(false);
 
-            environmentBuilder.Dispose();
+            environment.Dispose();
 
             return result;
         }

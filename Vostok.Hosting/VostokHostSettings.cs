@@ -9,7 +9,7 @@ namespace Vostok.Hosting
     [PublicAPI]
     public class VostokHostSettings
     {
-        public VostokHostSettings([NotNull] IVostokApplication application, [CanBeNull] EnvironmentSetup<IEnvironmentBuilder> environmentSetup = null)
+        public VostokHostSettings([NotNull] IVostokApplication application, [CanBeNull] VostokHostingEnvironmentSetup environmentSetup = null)
         {
             Application = application ?? throw new ArgumentNullException(nameof(application));
             EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
@@ -19,7 +19,7 @@ namespace Vostok.Hosting
         public IVostokApplication Application { get; }
 
         [NotNull]
-        public EnvironmentSetup<IEnvironmentBuilder> EnvironmentSetup { get; }
+        public VostokHostingEnvironmentSetup EnvironmentSetup { get; }
 
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
     }
