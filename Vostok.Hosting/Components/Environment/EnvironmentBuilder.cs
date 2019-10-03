@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Vostok.Clusterclient.Core;
+using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
 using Vostok.Hosting.Components.ClusterClient;
@@ -73,6 +74,8 @@ namespace Vostok.Hosting.Components.Environment
 
             context.Metrics = metricsBuilder.Build(context);
 
+            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
+
             return new VostokHostingEnvironment(
                 shutdownToken,
                 context.ApplicationIdentity,
@@ -84,9 +87,9 @@ namespace Vostok.Hosting.Components.Environment
                 null,
                 serviceBeaconBuilder.Build(context),
                 context.ServiceLocator,
-                null,
-                null,
-                null,
+                FlowingContext.Globals,
+                FlowingContext.Properties,
+                FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
                 null,
                 DisposeEnvironment);
