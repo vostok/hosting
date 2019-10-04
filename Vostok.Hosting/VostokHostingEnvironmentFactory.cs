@@ -5,11 +5,10 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting
 {
-    // CR(iloktionov): Factory?
     [PublicAPI]
-    public static class VostokHostingEnvironmentBuilder
+    public static class VostokHostingEnvironmentFactory
     {
-        public static VostokHostingEnvironment Build([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
+        public static VostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
         {
             var builder = new EnvironmentBuilder();
             setup(builder);

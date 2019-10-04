@@ -116,7 +116,7 @@ namespace ConsoleApp1
             log.Info($"RunResult: {result.Status} {result.Error}");
 
             // Way 2: build environment without host.
-            // var environment = VostokHostingEnvironmentBuilder.Build(outerSetup);
+            // var environment = VostokHostingEnvironmentFactory.Build(outerSetup);
         }
     }
 

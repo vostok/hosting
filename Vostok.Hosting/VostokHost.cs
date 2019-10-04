@@ -29,7 +29,7 @@ namespace Vostok.Hosting
 
             ShutdownTokenSource = new CancellationTokenSource();
             
-            environment = VostokHostingEnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
+            environment = VostokHostingEnvironmentFactory.Create(settings.EnvironmentSetup, ShutdownTokenSource.Token);
 
             log = environment.Log.ForContext<VostokHost>();
 
