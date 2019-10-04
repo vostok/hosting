@@ -2,6 +2,7 @@
 
 namespace Vostok.Hosting.Setup
 {
+    // CR(iloktionov): Consistent naming
     [PublicAPI]
     public interface IEnvironmentBuilder
     {

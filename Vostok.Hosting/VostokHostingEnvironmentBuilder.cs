@@ -5,6 +5,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting
 {
+    // CR(iloktionov): Factory?
     [PublicAPI]
     public static class VostokHostingEnvironmentBuilder
     {

@@ -14,6 +14,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting
 {
+    // CR(iloktionov): Probably shouldn't be public.
     [PublicAPI]
     public class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {

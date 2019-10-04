@@ -8,6 +8,8 @@ namespace Vostok.Hosting.Setup
     public interface IHerculesSinkBuilder
     {
         IHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
+
+        // CR(iloktionov): Get rid of CC special case (globally). Use configuration abstractions instead.
         IHerculesSinkBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
         IHerculesSinkBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);

@@ -39,7 +39,8 @@ namespace Vostok.Hosting
 
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
-        public async Task<RunResult> RunAsync()
+        // CR(iloktionov): Protect against misuse (double or concurrent RunAsync calls).
+        public async Task<ApplicationRunResult> RunAsync()
         {
             LogApplicationIdentity(environment.ApplicationIdentity);
 
@@ -51,7 +52,7 @@ namespace Vostok.Hosting
             return result;
         }
 
-        private async Task<RunResult> InitializeApplicationAsync()
+        private async Task<ApplicationRunResult> InitializeApplicationAsync()
         {
             log.Info("Initializing application.");
             ChangeStateTo(VostokApplicationState.Initializing);
@@ -60,7 +61,7 @@ namespace Vostok.Hosting
             {
                 await application.InitializeAsync(environment);
 
-                log.Info("Initializing application completed successfully.");
+                log.Info("Application initialization completed successfully.");
                 ChangeStateTo(VostokApplicationState.Initialized);
 
                 return null;
@@ -70,11 +71,11 @@ namespace Vostok.Hosting
                 log.Error(error, "Unhandled exception has occurred while initializing application.");
                 ChangeStateTo(VostokApplicationState.Crashed, error);
 
-                return new RunResult(RunResultStatus.ApplicationCrashed, error);
+                return new ApplicationRunResult(ApplicationRunStatus.ApplicationCrashed, error);
             }
         }
 
-        private async Task<RunResult> RunApplicationAsync()
+        private async Task<ApplicationRunResult> RunApplicationAsync()
         {
             log.Info("Running application.");
             ChangeStateTo(VostokApplicationState.Running);
@@ -96,7 +97,7 @@ namespace Vostok.Hosting
 
                     if (shutdownToken.IsCancellationRequested)
                     {
-                        log.Info("Cancellation requested, waiting for application to complete with {Timeout} timeout.", settings.ShutdownTimeout);
+                        log.Info("Cancellation requested, waiting for application to complete with timeout = {Timeout}.", settings.ShutdownTimeout);
                         ChangeStateTo(VostokApplicationState.Stopping);
 
                         if (!await applicationTask.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
@@ -106,19 +107,19 @@ namespace Vostok.Hosting
 
                         log.Info("Application successfully stopped.");
                         ChangeStateTo(VostokApplicationState.Stopped);
-                        return new RunResult(RunResultStatus.ApplicationStopped);
+                        return new ApplicationRunResult(ApplicationRunStatus.ApplicationStopped);
                     }
 
                     log.Info("Application exited.");
                     ChangeStateTo(VostokApplicationState.Exited);
-                    return new RunResult(RunResultStatus.ApplicationExited);
+                    return new ApplicationRunResult(ApplicationRunStatus.ApplicationExited);
                 }
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while running application.");
                 ChangeStateTo(VostokApplicationState.Crashed, error);
-                return new RunResult(RunResultStatus.ApplicationCrashed, error);
+                return new ApplicationRunResult(ApplicationRunStatus.ApplicationCrashed, error);
             }
         }
 
@@ -132,8 +133,9 @@ namespace Vostok.Hosting
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
+            // CR(iloktionov): Log identity's subproject (if present)
             log.Info(
-                "Application identity: project: {Project}, environment: {Enrironment}, application: {Application}, instance: {Instance}.",
+                "Application identity: project: '{Project}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'.",
                 applicationIdentity.Project,
                 applicationIdentity.Environment,
                 applicationIdentity.Application,
