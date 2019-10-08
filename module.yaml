@@ -39,6 +39,7 @@ notests *default:
     - vostok.devtools
     - vostok.commons.helpers/src
     - vostok.commons.time/src
+    - vostok.commons.threading/src
 
 full-build > notests:
   deps:

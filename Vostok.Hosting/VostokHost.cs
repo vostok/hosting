@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
+using Vostok.Commons.Threading;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 
@@ -20,6 +21,7 @@ namespace Vostok.Hosting
         private readonly IVostokApplication application;
         private readonly VostokHostingEnvironment environment;
         private readonly ILog log;
+        private readonly AtomicBoolean launchedOnce = false;
 
         public VostokHost([NotNull] VostokHostSettings settings)
         {
@@ -39,10 +41,12 @@ namespace Vostok.Hosting
 
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
-        // CR(iloktionov): Protect against misuse (double or concurrent RunAsync calls).
         public async Task<VostokApplicationRunResult> RunAsync()
         {
             LogApplicationIdentity(environment.ApplicationIdentity);
+
+            if (!launchedOnce.TrySetTrue())
+                throw new InvalidOperationException("Application can't be launched multiple times.");
 
             var result = await InitializeApplicationAsync().ConfigureAwait(false)
                          ?? await RunApplicationAsync().ConfigureAwait(false);
