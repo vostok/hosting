@@ -40,7 +40,7 @@ namespace Vostok.Hosting
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         // CR(iloktionov): Protect against misuse (double or concurrent RunAsync calls).
-        public async Task<ApplicationRunResult> RunAsync()
+        public async Task<VostokApplicationRunResult> RunAsync()
         {
             LogApplicationIdentity(environment.ApplicationIdentity);
 
@@ -52,7 +52,7 @@ namespace Vostok.Hosting
             return result;
         }
 
-        private async Task<ApplicationRunResult> InitializeApplicationAsync()
+        private async Task<VostokApplicationRunResult> InitializeApplicationAsync()
         {
             log.Info("Initializing application.");
             ChangeStateTo(VostokApplicationState.Initializing);
@@ -71,11 +71,11 @@ namespace Vostok.Hosting
                 log.Error(error, "Unhandled exception has occurred while initializing application.");
                 ChangeStateTo(VostokApplicationState.Crashed, error);
 
-                return new ApplicationRunResult(ApplicationRunStatus.ApplicationCrashed, error);
+                return new VostokApplicationRunResult(VostokApplicationRunStatus.ApplicationCrashed, error);
             }
         }
 
-        private async Task<ApplicationRunResult> RunApplicationAsync()
+        private async Task<VostokApplicationRunResult> RunApplicationAsync()
         {
             log.Info("Running application.");
             ChangeStateTo(VostokApplicationState.Running);
@@ -107,19 +107,19 @@ namespace Vostok.Hosting
 
                         log.Info("Application successfully stopped.");
                         ChangeStateTo(VostokApplicationState.Stopped);
-                        return new ApplicationRunResult(ApplicationRunStatus.ApplicationStopped);
+                        return new VostokApplicationRunResult(VostokApplicationRunStatus.ApplicationStopped);
                     }
 
                     log.Info("Application exited.");
                     ChangeStateTo(VostokApplicationState.Exited);
-                    return new ApplicationRunResult(ApplicationRunStatus.ApplicationExited);
+                    return new VostokApplicationRunResult(VostokApplicationRunStatus.ApplicationExited);
                 }
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while running application.");
                 ChangeStateTo(VostokApplicationState.Crashed, error);
-                return new ApplicationRunResult(ApplicationRunStatus.ApplicationCrashed, error);
+                return new VostokApplicationRunResult(VostokApplicationRunStatus.ApplicationCrashed, error);
             }
         }
 

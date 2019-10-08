@@ -3,7 +3,7 @@
 namespace Vostok.Hosting
 {
     [PublicAPI]
-    public enum ApplicationRunStatus
+    public enum VostokApplicationRunStatus
     {
         ApplicationStopped,
         ApplicationExited,

@@ -1,7 +1,5 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
-using Vostok.ZooKeeper.Client;
 
 namespace Vostok.Hosting.Setup
 {
