@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
@@ -19,7 +20,7 @@ namespace Vostok.Hosting.Components.Metrics
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
         }
 
-        public IMetricsBuilder SetupHerculesMetricEventSender(EnvironmentSetup<IHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
+        public IMetricsBuilder SetupHerculesMetricEventSender(Action<IHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
         {
             herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder);
             return this;

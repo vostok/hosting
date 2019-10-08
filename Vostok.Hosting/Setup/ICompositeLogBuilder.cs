@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Setup
@@ -8,8 +9,8 @@ namespace Vostok.Hosting.Setup
     {
         ICompositeLogBuilder AddLog([NotNull] ILog log);
 
-        //ICompositeLogBuilder AddFileLog([CanBeNull] EnvironmentSetup<> fileLogSettings = null);
+        //ICompositeLogBuilder AddFileLog([CanBeNull] Action<> fileLogSettings = null);
 
-        ICompositeLogBuilder SetupHerculesLog([NotNull] EnvironmentSetup<IHerculesLogBuilder> herculesLogSetup);
+        ICompositeLogBuilder SetupHerculesLog([NotNull] Action<IHerculesLogBuilder> herculesLogSetup);
     }
 }

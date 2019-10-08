@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
@@ -93,61 +94,61 @@ namespace Vostok.Hosting.Components.Environment
                 DisposeEnvironment);
         }
 
-        public IEnvironmentBuilder SetupLog(EnvironmentSetup<ICompositeLogBuilder> compositeLogSetup)
+        public IEnvironmentBuilder SetupLog(Action<ICompositeLogBuilder> compositeLogSetup)
         {
             compositeLogSetup(compositeLogBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupClusterConfigClient(EnvironmentSetup<IClusterConfigClientBuilder> clusterConfigClientSetup)
+        public IEnvironmentBuilder SetupClusterConfigClient(Action<IClusterConfigClientBuilder> clusterConfigClientSetup)
         {
             clusterConfigClientSetup(clusterConfigClientBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupApplicationIdentity(EnvironmentSetup<IApplicationIdentityBuilder> applicationIdentitySetup)
+        public IEnvironmentBuilder SetupApplicationIdentity(Action<IApplicationIdentityBuilder> applicationIdentitySetup)
         {
             applicationIdentitySetup(applicationIdentityBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupTracer(EnvironmentSetup<ITracerBuilder> tracerSetup)
+        public IEnvironmentBuilder SetupTracer(Action<ITracerBuilder> tracerSetup)
         {
             tracerSetup(tracerBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupMetrics(EnvironmentSetup<IMetricsBuilder> metricsSetup)
+        public IEnvironmentBuilder SetupMetrics(Action<IMetricsBuilder> metricsSetup)
         {
             metricsSetup(metricsBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupClusterClientSetup(EnvironmentSetup<IClusterClientSetupBuilder> clusterClientSetup)
+        public IEnvironmentBuilder SetupClusterClientSetup(Action<IClusterClientSetupBuilder> clusterClientSetup)
         {
             clusterClientSetup(clusterClientSetupBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupZooKeeperClient(EnvironmentSetup<IZooKeeperClientBuilder> zooKeeperClientSetup)
+        public IEnvironmentBuilder SetupZooKeeperClient(Action<IZooKeeperClientBuilder> zooKeeperClientSetup)
         {
             zooKeeperClientSetup(zooKeeperClientBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupHerculesSink(EnvironmentSetup<IHerculesSinkBuilder> sinkSetup)
+        public IEnvironmentBuilder SetupHerculesSink(Action<IHerculesSinkBuilder> sinkSetup)
         {
             sinkSetup(herculesSinkBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupServiceBeacon(EnvironmentSetup<IServiceBeaconBuilder> serviceBeaconSetup)
+        public IEnvironmentBuilder SetupServiceBeacon(Action<IServiceBeaconBuilder> serviceBeaconSetup)
         {
             serviceBeaconSetup(serviceBeaconBuilder);
             return this;
         }
 
-        public IEnvironmentBuilder SetupServiceLocator(EnvironmentSetup<IServiceLocatorBuilder> serviceLocatorSetup)
+        public IEnvironmentBuilder SetupServiceLocator(Action<IServiceLocatorBuilder> serviceLocatorSetup)
         {
             serviceLocatorSetup(serviceLocatorBuilder);
             return this;

@@ -1,10 +1,11 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
     public interface IClusterClientSetupBuilder
     {
-        IClusterClientSetupBuilder SetupTracing([NotNull] EnvironmentSetup<IClusterClientSetupTracingBuilder> tracingSetup);
+        IClusterClientSetupBuilder SetupTracing([NotNull] Action<IClusterClientSetupTracingBuilder> tracingSetup);
     }
 }

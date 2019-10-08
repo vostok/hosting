@@ -30,7 +30,7 @@ namespace Vostok.Hosting.Components.Tracing
             return this;
         }
 
-        public ITracerBuilder SetupHerculesSpanSender(EnvironmentSetup<IHerculesSpanSenderBuilder> herculesSpanSenderSetup)
+        public ITracerBuilder SetupHerculesSpanSender(Action<IHerculesSpanSenderBuilder> herculesSpanSenderSetup)
         {
             herculesSpanSenderSetup(herculesSpanSenderBuilder);
             return this;

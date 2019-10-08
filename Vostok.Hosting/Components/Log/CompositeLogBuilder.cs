@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Vostok.Hosting.Helpers;
@@ -39,7 +40,7 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        public ICompositeLogBuilder SetupHerculesLog(EnvironmentSetup<IHerculesLogBuilder> herculesLogSetup)
+        public ICompositeLogBuilder SetupHerculesLog(Action<IHerculesLogBuilder> herculesLogSetup)
         {
             herculesLogSetup(herculesLogBuilder);
             return this;

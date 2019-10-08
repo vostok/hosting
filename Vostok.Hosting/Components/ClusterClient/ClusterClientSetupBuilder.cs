@@ -1,4 +1,5 @@
-﻿using Vostok.Clusterclient.Context;
+﻿using System;
+using Vostok.Clusterclient.Context;
 using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Hosting.Setup;
@@ -27,7 +28,7 @@ namespace Vostok.Hosting.Components.ClusterClient
             return setup;
         }
 
-        public IClusterClientSetupBuilder SetupTracing(EnvironmentSetup<IClusterClientSetupTracingBuilder> tracingSetup)
+        public IClusterClientSetupBuilder SetupTracing(Action<IClusterClientSetupTracingBuilder> tracingSetup)
         {
             tracingSetup(tracingBuilder);
             return this;
