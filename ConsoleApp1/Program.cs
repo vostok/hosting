@@ -32,7 +32,7 @@ namespace ConsoleApp1
                         applicationIdentitySetup => applicationIdentitySetup
                             .SetProject("Infrastructure")
                             //.SetSubproject("vostok")
-                            .SetEnvironment("dev")
+                            .SetEnvironmentFromClusterConfig("app/environment")
                             .SetApplication("vostok-hosting-test")
                             .SetInstance("1")
                     )

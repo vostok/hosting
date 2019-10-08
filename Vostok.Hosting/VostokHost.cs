@@ -137,13 +137,15 @@ namespace Vostok.Hosting
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
-            // CR(iloktionov): Log identity's subproject (if present)
-            log.Info(
-                "Application identity: project: '{Project}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'.",
-                applicationIdentity.Project,
-                applicationIdentity.Environment,
-                applicationIdentity.Application,
-                applicationIdentity.Instance);
+            var messageTemplate = applicationIdentity.Subproject == null
+                ? "Application identity: project: '{Project}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'."
+                : "Application identity: project: '{Project}', subproject: '{Subproject}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'.";
+
+            var messageParameters = applicationIdentity.Subproject == null
+                ? new object[] {applicationIdentity.Project, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance}
+                : new object[] {applicationIdentity.Project, applicationIdentity.Subproject, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance};
+
+            log.Info(messageTemplate, messageParameters);
         }
     }
 }
