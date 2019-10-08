@@ -6,7 +6,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Configuration
 {
-    internal class ClusterConfigClientBuilder : IClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
+    internal class ClusterConfigClientBuilder : IVostokClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
     {
         [NotNull]
         public IClusterConfigClient Build(BuildContext context)

@@ -9,30 +9,30 @@ using Vostok.Tracing.Hercules;
 
 namespace Vostok.Hosting.Components.Tracing
 {
-    internal class HerculesSpanSenderBuilder : IHerculesSpanSenderBuilder, IBuilder<ISpanSender>
+    internal class HerculesSpanSenderBuilder : IVostokHerculesSpanSenderBuilder, IBuilder<ISpanSender>
     {
         private StringProviderBuilder apiKeyProviderBuilder;
         private StringProviderBuilder streamProviderBuilder;
 
-        public IHerculesSpanSenderBuilder SetStream(string stream)
+        public IVostokHerculesSpanSenderBuilder SetStream(string stream)
         {
             streamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesSpanSenderBuilder SetStreamFromClusterConfig(string path)
+        public IVostokHerculesSpanSenderBuilder SetStreamFromClusterConfig(string path)
         {
             streamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesSpanSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
+        public IVostokHerculesSpanSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
             return this;
         }
 
-        public IHerculesSpanSenderBuilder SetClusterConfigApiKeyProvider(string path)
+        public IVostokHerculesSpanSenderBuilder SetClusterConfigApiKeyProvider(string path)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;

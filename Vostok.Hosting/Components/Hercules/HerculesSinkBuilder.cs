@@ -13,7 +13,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
     {
         private ClusterProviderBuilder clusterProviderBuilder;
         private StringProviderBuilder apiKeyProviderBuilder;
@@ -38,37 +38,37 @@ namespace Vostok.Hosting.Components.Hercules
             }, log);
         }
         
-        public IHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
+        public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
             return this;
         }
 
-        public IHerculesSinkBuilder SetClusterConfigApiKeyProvider(string path)
+        public IVostokHerculesSinkBuilder SetClusterConfigApiKeyProvider(string path)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesSinkBuilder SetClusterConfigClusterProvider(string path)
+        public IVostokHerculesSinkBuilder SetClusterConfigClusterProvider(string path)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesSinkBuilder SetServiceDiscoveryClusterProvider(string environment, string application)
+        public IVostokHerculesSinkBuilder SetServiceDiscoveryClusterProvider(string environment, string application)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(environment, application);
             return this;
         }
 
-        public IHerculesSinkBuilder SetClusterProvider(IClusterProvider clusterProvider)
+        public IVostokHerculesSinkBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
             return this;
         }
 
-        public IHerculesSinkBuilder SuppressVerboseLogging()
+        public IVostokHerculesSinkBuilder SuppressVerboseLogging()
         {
             suppressVerboseLogging = true;
             return this;

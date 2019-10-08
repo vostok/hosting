@@ -8,7 +8,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ClusterClient
 {
-    internal class ClusterClientSetupBuilder : IClusterClientSetupBuilder, IBuilder<ClusterClientSetup>
+    internal class ClusterClientSetupBuilder : IVostokClusterClientSetupBuilder, IBuilder<ClusterClientSetup>
     {
         private ClusterClientSetupTracingBuilder tracingBuilder;
 
@@ -28,7 +28,7 @@ namespace Vostok.Hosting.Components.ClusterClient
             return setup;
         }
 
-        public IClusterClientSetupBuilder SetupTracing(Action<IClusterClientSetupTracingBuilder> tracingSetup)
+        public IVostokClusterClientSetupBuilder SetupTracing(Action<IVostokClusterClientSetupTracingBuilder> tracingSetup)
         {
             tracingSetup(tracingBuilder);
             return this;

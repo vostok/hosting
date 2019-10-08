@@ -5,12 +5,12 @@ using Vostok.Logging.Abstractions;
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public interface ICompositeLogBuilder
+    public interface IVostokCompositeLogBuilder
     {
-        ICompositeLogBuilder AddLog([NotNull] ILog log);
+        IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
 
         //ICompositeLogBuilder AddFileLog([CanBeNull] Action<> fileLogSettings = null);
 
-        ICompositeLogBuilder SetupHerculesLog([NotNull] Action<IHerculesLogBuilder> herculesLogSetup);
+        IVostokCompositeLogBuilder SetupHerculesLog([NotNull] Action<IVostokHerculesLogBuilder> herculesLogSetup);
     }
 }

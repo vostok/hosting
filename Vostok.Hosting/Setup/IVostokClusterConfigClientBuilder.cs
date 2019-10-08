@@ -3,7 +3,7 @@
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public interface IClusterConfigClientBuilder
+    public interface IVostokClusterConfigClientBuilder
     {
 
     }

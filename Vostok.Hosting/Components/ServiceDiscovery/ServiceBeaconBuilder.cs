@@ -8,7 +8,7 @@ using Vostok.ServiceDiscovery.Helpers;
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
-    internal class ServiceBeaconBuilder : IServiceBeaconBuilder, IBuilder<IServiceBeacon>
+    internal class ServiceBeaconBuilder : IVostokServiceBeaconBuilder, IBuilder<IServiceBeacon>
     {
         private string application;
         private string environment;
@@ -53,7 +53,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 context.Log);
         }
 
-        public IServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup newSetup)
+        public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup newSetup)
         {
             var oldSetup = setup;
 
@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        public IServiceBeaconBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
+        public IVostokServiceBeaconBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
         {
             this.pathEscaper = pathEscaper;
             return this;

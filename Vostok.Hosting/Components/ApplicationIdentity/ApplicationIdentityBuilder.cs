@@ -5,7 +5,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.ApplicationIdentity
 {
-    internal class ApplicationIdentityBuilder : IApplicationIdentityBuilder, IBuilder<VostokApplicationIdentity>
+    internal class ApplicationIdentityBuilder : IVostokApplicationIdentityBuilder, IBuilder<VostokApplicationIdentity>
     {
         private string project;
         private string subproject;
@@ -23,37 +23,37 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
                 application, 
                 instance);
 
-        public IApplicationIdentityBuilder SetProject(string project)
+        public IVostokApplicationIdentityBuilder SetProject(string project)
         {
             this.project = project;
             return this;
         }
 
-        public IApplicationIdentityBuilder SetSubproject(string subproject)
+        public IVostokApplicationIdentityBuilder SetSubproject(string subproject)
         {
             this.subproject = subproject;
             return this;
         }
 
-        public IApplicationIdentityBuilder SetEnvironment(string environment)
+        public IVostokApplicationIdentityBuilder SetEnvironment(string environment)
         {
             environmentBuilder = StringProviderBuilder.FromValue(environment);
             return this;
         }
 
-        public IApplicationIdentityBuilder SetEnvironmentFromClusterConfig(string path)
+        public IVostokApplicationIdentityBuilder SetEnvironmentFromClusterConfig(string path)
         {
             environmentBuilder = StringProviderBuilder.FromClusterConfig(path, "unknown");
             return this;
         }
 
-        public IApplicationIdentityBuilder SetApplication(string application)
+        public IVostokApplicationIdentityBuilder SetApplication(string application)
         {
             this.application = application;
             return this;
         }
 
-        public IApplicationIdentityBuilder SetInstance(string instance)
+        public IVostokApplicationIdentityBuilder SetInstance(string instance)
         {
             this.instance = instance;
             return this;

@@ -12,7 +12,7 @@ using Vostok.Logging.Tracing;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class CompositeLogBuilder : ICompositeLogBuilder
+    internal class CompositeLogBuilder : IVostokCompositeLogBuilder
     {
         private readonly List<LogBuilderBase> logBuilders;
 
@@ -34,13 +34,13 @@ namespace Vostok.Hosting.Components.Log
                 .WithOperationContext();
         }
 
-        public ICompositeLogBuilder AddLog(ILog log)
+        public IVostokCompositeLogBuilder AddLog(ILog log)
         {
             logBuilders.Add(new CustomLogBuilder(log));
             return this;
         }
 
-        public ICompositeLogBuilder SetupHerculesLog(Action<IHerculesLogBuilder> herculesLogSetup)
+        public IVostokCompositeLogBuilder SetupHerculesLog(Action<IVostokHerculesLogBuilder> herculesLogSetup)
         {
             herculesLogSetup(herculesLogBuilder);
             return this;

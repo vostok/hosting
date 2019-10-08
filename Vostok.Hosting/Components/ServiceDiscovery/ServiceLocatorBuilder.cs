@@ -6,7 +6,7 @@ using Vostok.ServiceDiscovery.Helpers;
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
-    internal class ServiceLocatorBuilder : IServiceLocatorBuilder, IBuilder<IServiceLocator>
+    internal class ServiceLocatorBuilder : IVostokServiceLocatorBuilder, IBuilder<IServiceLocator>
     {
         private IZooKeeperPathEscaper pathEscaper;
 
@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return new ServiceLocator(zooKeeperClient, new ServiceLocatorSettings());
         }
 
-        public IServiceLocatorBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
+        public IVostokServiceLocatorBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
         {
             this.pathEscaper = pathEscaper;
             return this;

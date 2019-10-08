@@ -9,7 +9,7 @@ using Vostok.Metrics.Senders;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class MetricsBuilder : IMetricsBuilder, IBuilder<IVostokApplicationMetrics>
+    internal class MetricsBuilder : IVostokMetricsBuilder, IBuilder<IVostokApplicationMetrics>
     {
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
@@ -20,13 +20,13 @@ namespace Vostok.Hosting.Components.Metrics
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
         }
 
-        public IMetricsBuilder SetupHerculesMetricEventSender(Action<IHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
+        public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
         {
             herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder);
             return this;
         }
 
-        public IMetricsBuilder AddMetricEventSender(IMetricEventSender metricEventSender)
+        public IVostokMetricsBuilder AddMetricEventSender(IMetricEventSender metricEventSender)
         {
             metricEventSenderBuilders.Add(new CustomMetricEventSenderBuilder(metricEventSender));
             return this;

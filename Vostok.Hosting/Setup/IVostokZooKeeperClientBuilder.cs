@@ -4,11 +4,11 @@ using Vostok.Clusterclient.Core.Topology;
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public interface IZooKeeperClientBuilder
+    public interface IVostokZooKeeperClientBuilder
     {
-        IZooKeeperClientBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
-        IZooKeeperClientBuilder SetClusterConfigClusterProvider([NotNull] string path);
-        IZooKeeperClientBuilder SetConnectionString([NotNull] string connectionString);
+        IVostokZooKeeperClientBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
+        IVostokZooKeeperClientBuilder SetClusterConfigClusterProvider([NotNull] string path);
+        IVostokZooKeeperClientBuilder SetConnectionString([NotNull] string connectionString);
 
         // CR(iloktionov): Apply this approach to every implementation with its own non-trivial configuration.
         // CR(iloktionov): What if we'll have to use values from configuration?

@@ -7,26 +7,26 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class ZooKeeperClientBuilder : IZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
+    internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
     {
         private ClusterProviderBuilder clusterProviderBuilder;
         private string connectionString;
 
-        public IZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
+        public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
             connectionString = null;
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
             return this;
         }
 
-        public IZooKeeperClientBuilder SetClusterConfigClusterProvider(string path)
+        public IVostokZooKeeperClientBuilder SetClusterConfigClusterProvider(string path)
         {
             connectionString = null;
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IZooKeeperClientBuilder SetConnectionString(string connectionString)
+        public IVostokZooKeeperClientBuilder SetConnectionString(string connectionString)
         {
             clusterProviderBuilder = null;
             this.connectionString = connectionString;

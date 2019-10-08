@@ -9,7 +9,7 @@ using Vostok.Metrics.Hercules;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class HerculesMetricEventSenderBuilder : IHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
+    internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
     {
         private List<(string stream, StringProviderBuilder builder)> apiKeyProviderBuilders;
 
@@ -26,73 +26,73 @@ namespace Vostok.Hosting.Components.Metrics
 
         #region StreamsSettings
 
-        public IHerculesMetricEventSenderBuilder SetFallbackStream(string stream)
+        public IVostokHerculesMetricEventSenderBuilder SetFallbackStream(string stream)
         {
             fallbackStreamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetFallbackStreamFromClusterConfig(string path)
+        public IVostokHerculesMetricEventSenderBuilder SetFallbackStreamFromClusterConfig(string path)
         {
             fallbackStreamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetFinalStream(string stream)
+        public IVostokHerculesMetricEventSenderBuilder SetFinalStream(string stream)
         {
             finalStreamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetFinalStreamFromClusterConfig(string path)
+        public IVostokHerculesMetricEventSenderBuilder SetFinalStreamFromClusterConfig(string path)
         {
             finalStreamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetCountersStream(string stream)
+        public IVostokHerculesMetricEventSenderBuilder SetCountersStream(string stream)
         {
             countersStreamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetCountersStreamFromClusterConfig(string path)
+        public IVostokHerculesMetricEventSenderBuilder SetCountersStreamFromClusterConfig(string path)
         {
             countersStreamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetTimersStream(string stream)
+        public IVostokHerculesMetricEventSenderBuilder SetTimersStream(string stream)
         {
             timersStreamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetTimersStreamFromClusterConfig(string path)
+        public IVostokHerculesMetricEventSenderBuilder SetTimersStreamFromClusterConfig(string path)
         {
             timersStreamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetHistogramsStream(string stream)
+        public IVostokHerculesMetricEventSenderBuilder SetHistogramsStream(string stream)
         {
             histogramsStreamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetHistogramsStreamFromClusterConfig(string path)
+        public IVostokHerculesMetricEventSenderBuilder SetHistogramsStreamFromClusterConfig(string path)
         {
             histogramsStreamProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)
+        public IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)
         {
             apiKeyProviderBuilders.Add((stream, StringProviderBuilder.FromValueProvider(apiKeyProvider)));
             return this;
         }
 
-        public IHerculesMetricEventSenderBuilder SetClusterConfigApiKeyProvider(string path, string stream = null)
+        public IVostokHerculesMetricEventSenderBuilder SetClusterConfigApiKeyProvider(string path, string stream = null)
         {
             apiKeyProviderBuilders.Add((stream, StringProviderBuilder.FromClusterConfig(path)));
             return this;

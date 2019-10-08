@@ -10,7 +10,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Tracing
 {
-    internal class TracerBuilder : ITracerBuilder, IBuilder<ITracer>
+    internal class TracerBuilder : IVostokTracerBuilder, IBuilder<ITracer>
     {
         private Func<TracerSettings, ILog, ITracer> tracerProvider;
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
@@ -24,19 +24,19 @@ namespace Vostok.Hosting.Components.Tracing
             spanSenderBuilders = new List<IBuilder<ISpanSender>> {herculesSpanSenderBuilder};
         }
 
-        public ITracerBuilder SetTracerProvider(Func<TracerSettings, ILog, ITracer> tracerProvider)
+        public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ILog, ITracer> tracerProvider)
         {
             this.tracerProvider = tracerProvider;
             return this;
         }
 
-        public ITracerBuilder SetupHerculesSpanSender(Action<IHerculesSpanSenderBuilder> herculesSpanSenderSetup)
+        public IVostokTracerBuilder SetupHerculesSpanSender(Action<IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup)
         {
             herculesSpanSenderSetup(herculesSpanSenderBuilder);
             return this;
         }
 
-        public ITracerBuilder AddSpanSender(ISpanSender spanSender)
+        public IVostokTracerBuilder AddSpanSender(ISpanSender spanSender)
         {
             spanSenderBuilders.Add(new CustomSpanSenderBuilder(spanSender));
             return this;

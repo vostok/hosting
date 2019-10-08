@@ -10,36 +10,36 @@ using Vostok.Logging.Hercules.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class HerculesLogBuilder : LogBuilderBase, IHerculesLogBuilder
+    internal class HerculesLogBuilder : LogBuilderBase, IVostokHerculesLogBuilder
     {
         private StringProviderBuilder apiKeyProviderBuilder;
         private StringProviderBuilder streamProviderBuilder;
 
-        public IHerculesLogBuilder SetStream(string stream)
+        public IVostokHerculesLogBuilder SetStream(string stream)
         {
             streamProviderBuilder = StringProviderBuilder.FromValue(stream);
             return this;
         }
 
-        public IHerculesLogBuilder SetStreamFromClusterConfig(string path)
+        public IVostokHerculesLogBuilder SetStreamFromClusterConfig(string path)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesLogBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
+        public IVostokHerculesLogBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
             return this;
         }
 
-        public IHerculesLogBuilder SetClusterConfigApiKeyProvider(string path)
+        public IVostokHerculesLogBuilder SetClusterConfigApiKeyProvider(string path)
         {
             apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IHerculesLogBuilder AddAdditionalLogTransformation(Func<ILog, ILog> additionalTransformation)
+        public IVostokHerculesLogBuilder AddAdditionalLogTransformation(Func<ILog, ILog> additionalTransformation)
         {
             AdditionalTransformations.Add(additionalTransformation);
             return this;
