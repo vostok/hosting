@@ -32,7 +32,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ServiceBeaconBuilder serviceBeaconBuilder;
         private readonly ServiceLocatorBuilder serviceLocatorBuilder;
 
-        public EnvironmentBuilder()
+        private EnvironmentBuilder()
         {
             applicationIdentityBuilder = new ApplicationIdentityBuilder();
             compositeLogBuilder = new CompositeLogBuilder();
@@ -46,53 +46,14 @@ namespace Vostok.Hosting.Components.Environment
             serviceLocatorBuilder = new ServiceLocatorBuilder();
         }
 
-        public VostokHostingEnvironment Build(CancellationToken shutdownToken)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
         {
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            var context = new BuildContext();
-
-            LogProvider.Configure(context.Log, true);
-            TracerProvider.Configure(context.Tracer, true);
-            
-            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-            Substitute(context);
-
-            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
-            Substitute(context);
-            
-            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-            Substitute(context);
-
-            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
-
-            context.ServiceLocator = serviceLocatorBuilder.Build(context);
-
-            context.HerculesSink = herculesSinkBuilder.Build(context);
-            HerculesSinkProvider.Configure(context.HerculesSink, true);
-            Substitute(context);
-
-            context.Metrics = metricsBuilder.Build(context);
-
-            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
-
-            return new VostokHostingEnvironment(
-                shutdownToken,
-                context.ApplicationIdentity,
-                context.Metrics,
-                context.Log,
-                context.Tracer,
-                context.HerculesSink,
-                null,
-                null,
-                serviceBeaconBuilder.Build(context),
-                context.ServiceLocator,
-                FlowingContext.Globals,
-                FlowingContext.Properties,
-                FlowingContext.Configuration,
-                clusterClientSetupBuilder.Build(context),
-                null,
-                DisposeEnvironment);
+            var builder = new EnvironmentBuilder();
+            setup(builder);
+            return builder.Build(shutdownToken);
         }
+
+        #region SetupComponents
 
         public IVostokEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder> compositeLogSetup)
         {
@@ -154,10 +115,60 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
+        #endregion
+
+        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
+        {
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var context = new BuildContext();
+
+            LogProvider.Configure(context.Log, true);
+            TracerProvider.Configure(context.Tracer, true);
+
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            Substitute(context);
+
+            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
+            Substitute(context);
+
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            Substitute(context);
+
+            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+
+            context.ServiceLocator = serviceLocatorBuilder.Build(context);
+
+            context.HerculesSink = herculesSinkBuilder.Build(context);
+            HerculesSinkProvider.Configure(context.HerculesSink, true);
+            Substitute(context);
+
+            context.Metrics = metricsBuilder.Build(context);
+
+            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
+
+            return new VostokHostingEnvironment(
+                shutdownToken,
+                context.ApplicationIdentity,
+                context.Metrics,
+                context.Log,
+                context.Tracer,
+                context.HerculesSink,
+                null,
+                null,
+                serviceBeaconBuilder.Build(context),
+                context.ServiceLocator,
+                FlowingContext.Globals,
+                FlowingContext.Properties,
+                FlowingContext.Configuration,
+                clusterClientSetupBuilder.Build(context),
+                null,
+                DisposeEnvironment);
+        }
+
         private void DisposeEnvironment()
         {
         }
-        
+
         private void Substitute(BuildContext context)
         {
             // Note(kungurtsev): requires hercules, not disposable and lightweight.

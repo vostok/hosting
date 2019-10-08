@@ -6,6 +6,7 @@ using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Environment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting
@@ -30,8 +31,8 @@ namespace Vostok.Hosting
             application = settings.Application;
 
             ShutdownTokenSource = new CancellationTokenSource();
-            
-            environment = VostokHostingEnvironmentFactory.Create(settings.EnvironmentSetup, ShutdownTokenSource.Token);
+
+            environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
 
             log = environment.Log.ForContext<VostokHost>();
 
