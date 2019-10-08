@@ -12,6 +12,7 @@ namespace Vostok.Hosting
         Stopping,
         Stopped,
         Exited,
-        Crashed
+        CrashedDuringInitialization,
+        CrashedDuringRunning
     }
 }
