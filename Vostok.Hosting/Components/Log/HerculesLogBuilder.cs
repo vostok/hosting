@@ -46,9 +46,9 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        public IVostokHerculesLogBuilder CustomizeLog(Func<ILog, ILog> additionalTransformation)
+        public IVostokHerculesLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
-            LogCustomizations.Add(additionalTransformation);
+            LogCustomizations.Add(logCustomization);
             return this;
         }
 

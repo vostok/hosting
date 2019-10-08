@@ -14,7 +14,7 @@ namespace Vostok.Hosting.Setup
         IVostokHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
         IVostokHerculesLogBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
-        IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> additionalTransformation);
+        IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokHerculesLogBuilder CustomizeSettings([NotNull] Action<HerculesLogSettings> settingsCustomization);
     }
