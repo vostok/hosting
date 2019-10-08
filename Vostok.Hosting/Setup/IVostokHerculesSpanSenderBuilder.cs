@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Tracing.Hercules;
 
 namespace Vostok.Hosting.Setup
 {
@@ -11,5 +12,7 @@ namespace Vostok.Hosting.Setup
 
         IVostokHerculesSpanSenderBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
         IVostokHerculesSpanSenderBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
+
+        IVostokHerculesSpanSenderBuilder CustomizeSettings([NotNull] Action<HerculesSpanSenderSettings> settingsCustomization);
     }
 }

@@ -10,5 +10,7 @@ namespace Vostok.Hosting.Setup
         IVostokMetricsBuilder SetupHerculesMetricEventSender([NotNull] Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup);
 
         IVostokMetricsBuilder AddMetricEventSender([NotNull] IMetricEventSender metricEventSender);
+
+        IVostokMetricsBuilder CustomizeSettings([NotNull] Action<MetricContextConfig> settingsCustomization);
     }
 }

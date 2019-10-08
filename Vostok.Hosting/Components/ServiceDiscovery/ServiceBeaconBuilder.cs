@@ -1,8 +1,11 @@
-﻿using Vostok.Hosting.Abstractions;
+﻿using System;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ServiceDiscovery.Helpers;
+using Vostok.ZooKeeper.Client;
 
 // ReSharper disable ParameterHidesMember
 
@@ -12,15 +15,17 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
     {
         private string application;
         private string environment;
-
         private ReplicaInfoSetup setup;
-        private IZooKeeperPathEscaper pathEscaper;
+
+        private readonly SettingsCustomization<ServiceBeaconSettings> settingsCustomization;
 
         public ServiceBeaconBuilder()
         {
             setup = s => s
                 .SetEnvironment(environment)
                 .SetApplication(application);
+
+            settingsCustomization = new SettingsCustomization<ServiceBeaconSettings>();
         }
 
         public IServiceBeacon Build(BuildContext context)
@@ -34,10 +39,10 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             environment = context.ApplicationIdentity.Environment;
 
             var settings = new ServiceBeaconSettings();
-            if (pathEscaper != null)
-                settings.ZooKeeperNodesPathEscaper = pathEscaper;
 
-            return new Vostok.ServiceDiscovery.ServiceBeacon(
+            settingsCustomization.Customize(settings);
+
+            return new ServiceBeacon(
                 zooKeeperClient,
                 s =>
                 {
@@ -66,9 +71,9 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        public IVostokServiceBeaconBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
+        public IVostokServiceBeaconBuilder CustomizeSettings(Action<ServiceBeaconSettings> settingsCustomization)
         {
-            this.pathEscaper = pathEscaper;
+            this.settingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
     }

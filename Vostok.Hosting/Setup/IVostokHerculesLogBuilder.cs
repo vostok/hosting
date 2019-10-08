@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Hercules.Configuration;
 
 namespace Vostok.Hosting.Setup
 {
@@ -13,6 +14,8 @@ namespace Vostok.Hosting.Setup
         IVostokHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
         IVostokHerculesLogBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
-        IVostokHerculesLogBuilder AddAdditionalLogTransformation([NotNull] Func<ILog, ILog> additionalTransformation);
+        IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> additionalTransformation);
+
+        IVostokHerculesLogBuilder CustomizeSettings([NotNull] Action<HerculesLogSettings> settingsCustomization);
     }
 }

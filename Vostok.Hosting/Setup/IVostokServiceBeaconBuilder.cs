@@ -1,6 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Vostok.ServiceDiscovery;
-using Vostok.ServiceDiscovery.Helpers;
 
 namespace Vostok.Hosting.Setup
 {
@@ -9,6 +9,6 @@ namespace Vostok.Hosting.Setup
     {
         IVostokServiceBeaconBuilder SetupReplicaInfo([NotNull] ReplicaInfoSetup replicaInfoSetup);
 
-        IVostokServiceBeaconBuilder SetZooKeeperPathEscaper([NotNull] IZooKeeperPathEscaper pathEscaper);
+        IVostokServiceBeaconBuilder CustomizeSettings([NotNull] Action<ServiceBeaconSettings> settingsCustomization);
     }
 }

@@ -1,11 +1,12 @@
-﻿using JetBrains.Annotations;
-using Vostok.ServiceDiscovery.Helpers;
+﻿using System;
+using JetBrains.Annotations;
+using Vostok.ServiceDiscovery;
 
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
     public interface IVostokServiceLocatorBuilder
     {
-        IVostokServiceLocatorBuilder SetZooKeeperPathEscaper([NotNull] IZooKeeperPathEscaper pathEscaper);
+        IVostokServiceLocatorBuilder CustomizeSettings([NotNull] Action<ServiceLocatorSettings> settingsCustomization);
     }
 }

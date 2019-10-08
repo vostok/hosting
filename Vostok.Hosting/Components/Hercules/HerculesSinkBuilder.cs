@@ -6,6 +6,7 @@ using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ClusterProvider;
 using Vostok.Hosting.Components.String;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 
@@ -18,6 +19,12 @@ namespace Vostok.Hosting.Components.Hercules
         private ClusterProviderBuilder clusterProviderBuilder;
         private StringProviderBuilder apiKeyProviderBuilder;
         private bool suppressVerboseLogging;
+        private readonly SettingsCustomization<HerculesSinkSettings> settingsCustomization;
+
+        public HerculesSinkBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<HerculesSinkSettings>();
+        }
 
         [NotNull]
         public IHerculesSink Build(BuildContext context)
@@ -32,10 +39,14 @@ namespace Vostok.Hosting.Components.Hercules
             if (suppressVerboseLogging)
                 log = log.WithMinimumLevel(LogLevel.Warn);
 
-            return new HerculesSink(new HerculesSinkSettings(cluster, apiKeyProvider)
+            var settings = new HerculesSinkSettings(cluster, apiKeyProvider)
             {
                 AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
-            }, log);
+            };
+
+            settingsCustomization.Customize(settings);
+
+            return new HerculesSink(settings, log);
         }
         
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
@@ -71,6 +82,12 @@ namespace Vostok.Hosting.Components.Hercules
         public IVostokHerculesSinkBuilder SuppressVerboseLogging()
         {
             suppressVerboseLogging = true;
+            return this;
+        }
+
+        public IVostokHerculesSinkBuilder CustomizeSettings(Action<HerculesSinkSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
     }

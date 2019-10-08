@@ -40,7 +40,12 @@ namespace ConsoleApp1
                         herculesSinkSetup => herculesSinkSetup
                             .SetClusterConfigApiKeyProvider("app/apiKey")
                             .SetClusterConfigClusterProvider("topology/hercules/gate.prod")
-                            .SuppressVerboseLogging()
+                            //.SuppressVerboseLogging()
+                            .CustomizeSettings(
+                                customization =>
+                                {
+                                    //customization.SendPeriod = TimeSpan.FromSeconds(1);
+                                })
                     )
                     .SetupLog(
                         logSetup => logSetup
@@ -48,7 +53,7 @@ namespace ConsoleApp1
                             .SetupHerculesLog(
                                 herculesLogSetup => herculesLogSetup
                                     .SetStream("logs_vostoklibs_cloud")
-                                    .AddAdditionalLogTransformation(
+                                    .CustomizeLog(
                                         l => l
                                             .WithMinimumLevel(LogLevel.Info)))
                     )
@@ -63,17 +68,32 @@ namespace ConsoleApp1
                     .SetupMetrics(
                         metricsSetup => metricsSetup
                             .AddMetricEventSender(new LogMetricEventSender(log))
+                            .SetupHerculesMetricEventSender(
+                                herculesMetricEventSenderSetup => herculesMetricEventSenderSetup
+                                    .CustomizeSettings(
+                                        customization =>
+                                        {
+                                            //customization.FinalStream = "123";
+                                        }))
                     )
                     .SetupClusterClientSetup(
                         clusterClientSetup => clusterClientSetup
                             .SetupTracing(
                                 tracingSetup => tracingSetup
-                                    .SetAdditionalRequestTransformation(
-                                        (request, context) => request.WithHeader("bla", context.TraceId)))
+                                    .CustomizeSettings(
+                                        customization =>
+                                        {
+                                            customization.AdditionalRequestTransformation = (request, context) => request.WithHeader("bla", context.TraceId);
+                                        }))
                     )
                     .SetupZooKeeperClient(
                         zooKeeperClientSetup => zooKeeperClientSetup
                             .SetClusterConfigClusterProvider("topology/zookeeper-global")
+                            .CustomizeSettings(
+                                customization =>
+                                {
+                                    //customization.LoggingLevel = LogLevel.Debug;
+                                })
                     )
                     .SetupServiceBeacon(
                         serviceBeaconSetup => serviceBeaconSetup
@@ -81,12 +101,27 @@ namespace ConsoleApp1
                                 replicaInfoSetup => replicaInfoSetup
                                     .SetPort(42)
                             )
-                            .SetZooKeeperPathEscaper(KonturZooKeeperPathEscaper.Instance)
+                            .CustomizeSettings(
+                                customization =>
+                                {
+                                    customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance;
+                                })
                     )
                     .SetupServiceLocator(
                         serviceLocatorSetup => serviceLocatorSetup
-                            .SetZooKeeperPathEscaper(KonturZooKeeperPathEscaper.Instance)
+                            .CustomizeSettings(
+                                customization =>
+                                {
+                                    customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance;
+                                })
                     )
+                    .SetupClusterConfigClient(
+                        clusterConfigClientSetup => clusterConfigClientSetup
+                            .CustomizeSettings(
+                                settings =>
+                                {
+                                    //settings.Zone = "123";
+                                }))
                     ;
             };
 
@@ -98,7 +133,7 @@ namespace ConsoleApp1
                         logSetup => logSetup
                             .SetupHerculesLog(
                                 herculesLogSetup => herculesLogSetup
-                                    .AddAdditionalLogTransformation(
+                                    .CustomizeLog(
                                         l => l.WithProperty("outer", "value"))));
             };
 

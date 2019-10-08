@@ -1,13 +1,12 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Vostok.Clusterclient.Core.Model;
-using Vostok.Tracing.Abstractions;
+using Vostok.Clusterclient.Tracing;
 
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
     public interface IVostokClusterClientSetupTracingBuilder
     {
-        IVostokClusterClientSetupTracingBuilder SetAdditionalRequestTransformation([NotNull] Func<Request, TraceContext, Request> additionalRequestTransformation);
+        IVostokClusterClientSetupTracingBuilder CustomizeSettings([NotNull] Action<TracingConfiguration> settingsCustomization);
     }
 }

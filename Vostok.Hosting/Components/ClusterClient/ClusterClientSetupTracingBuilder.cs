@@ -1,29 +1,34 @@
 ﻿using System;
-using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Tracing;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
-using Vostok.Tracing.Abstractions;
+
+// ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.ClusterClient
 {
     internal class ClusterClientSetupTracingBuilder : IVostokClusterClientSetupTracingBuilder, IBuilder<TracingConfiguration>
     {
-        private Func<Request, TraceContext, Request> additionalRequestTransformation;
+        private readonly SettingsCustomization<TracingConfiguration> settingsCustomization;
 
-        public IVostokClusterClientSetupTracingBuilder SetAdditionalRequestTransformation(Func<Request, TraceContext, Request> additionalRequestTransformation)
+        public ClusterClientSetupTracingBuilder()
         {
-            this.additionalRequestTransformation = additionalRequestTransformation;
-            return this;
+            settingsCustomization = new SettingsCustomization<TracingConfiguration>();
         }
 
         public TracingConfiguration Build(BuildContext context)
         {
-            var result = new TracingConfiguration(context.Tracer);
+            var settings = new TracingConfiguration(context.Tracer);
 
-            if (additionalRequestTransformation != null)
-                result.AdditionalRequestTransformation = additionalRequestTransformation;
+            settingsCustomization.Customize(settings);
 
-            return result;
+            return settings;
+        }
+
+        public IVostokClusterClientSetupTracingBuilder CustomizeSettings(Action<TracingConfiguration> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
+            return this;
         }
     }
 }

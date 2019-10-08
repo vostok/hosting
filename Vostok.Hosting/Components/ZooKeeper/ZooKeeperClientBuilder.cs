@@ -1,5 +1,7 @@
-﻿using Vostok.Clusterclient.Core.Topology;
+﻿using System;
+using Vostok.Clusterclient.Core.Topology;
 using Vostok.Hosting.Components.ClusterProvider;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -11,6 +13,12 @@ namespace Vostok.Hosting.Components.ZooKeeper
     {
         private ClusterProviderBuilder clusterProviderBuilder;
         private string connectionString;
+        private readonly SettingsCustomization<ZooKeeperClientSettings> settingsCustomization;
+
+        public ZooKeeperClientBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<ZooKeeperClientSettings>();
+        }
 
         public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
@@ -33,13 +41,27 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
+        public IVostokZooKeeperClientBuilder CustomizeSettings(Action<ZooKeeperClientSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
+            return this;
+        }
+
         public IZooKeeperClient Build(BuildContext context)
         {
+            ZooKeeperClientSettings settings = null;
+
+            if (connectionString != null)
+                settings = new ZooKeeperClientSettings(connectionString);
+            
             var cluster = clusterProviderBuilder?.Build(context);
-            if (cluster == null)
+            if (cluster != null)
+                settings = new ZooKeeperClientSettings(() => cluster.GetCluster());
+
+            if (settings == null)
                 return null;
 
-            var settings = new ZooKeeperClientSettings(() => cluster.GetCluster());
+            settingsCustomization.Customize(settings);
 
             return new ZooKeeperClient(settings, context.Log);
         }

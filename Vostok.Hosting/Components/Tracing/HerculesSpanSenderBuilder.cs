@@ -1,9 +1,11 @@
 ﻿using System;
 using Vostok.Hercules.Client.Abstractions.Models;
 using Vostok.Hosting.Components.String;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Hercules;
+using Vostok.ZooKeeper.Client;
 
 // ReSharper disable ParameterHidesMember
 
@@ -13,6 +15,12 @@ namespace Vostok.Hosting.Components.Tracing
     {
         private StringProviderBuilder apiKeyProviderBuilder;
         private StringProviderBuilder streamProviderBuilder;
+        private readonly SettingsCustomization<HerculesSpanSenderSettings> settingsCustomization;
+
+        public HerculesSpanSenderBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<HerculesSpanSenderSettings>();
+        }
 
         public IVostokHerculesSpanSenderBuilder SetStream(string stream)
         {
@@ -37,7 +45,13 @@ namespace Vostok.Hosting.Components.Tracing
             apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
             return this;
         }
-        
+
+        public IVostokHerculesSpanSenderBuilder CustomizeSettings(Action<HerculesSpanSenderSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
+            return this;
+        }
+
         public ISpanSender Build(BuildContext context)
         {
             var herculesSink = context.HerculesSink;
@@ -51,6 +65,8 @@ namespace Vostok.Hosting.Components.Tracing
                 herculesSink.ConfigureStream(stream, new StreamSettings { ApiKeyProvider = apiKeyProvider });
 
             var settings = new HerculesSpanSenderSettings(herculesSink, stream);
+
+            settingsCustomization.Customize(settings);
 
             return new HerculesSpanSender(settings);
         }

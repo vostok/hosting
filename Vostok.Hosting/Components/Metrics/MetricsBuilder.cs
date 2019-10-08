@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Senders;
+// ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Metrics
 {
@@ -13,11 +15,13 @@ namespace Vostok.Hosting.Components.Metrics
     {
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
+        private readonly SettingsCustomization<MetricContextConfig> settingsCustomization;
 
         public MetricsBuilder()
         {
             herculesMetricEventSenderBuilder = new HerculesMetricEventSenderBuilder();
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
+            settingsCustomization = new SettingsCustomization<MetricContextConfig>();
         }
 
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
@@ -32,6 +36,12 @@ namespace Vostok.Hosting.Components.Metrics
             return this;
         }
 
+        public IVostokMetricsBuilder CustomizeSettings(Action<MetricContextConfig> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
+            return this;
+        }
+
         public IVostokApplicationMetrics Build(BuildContext context)
         {
             var sender = BuildCompositeMetricEventSender(context);
@@ -43,6 +53,8 @@ namespace Vostok.Hosting.Components.Metrics
             {
                 ErrorCallback = e => context.Log.Error(e, "Failed to send metrics.")
             };
+
+            settingsCustomization.Customize(settings);
 
             var root = new MetricContext(settings);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Hercules.Client;
 
 namespace Vostok.Hosting.Setup
 {
@@ -17,5 +18,7 @@ namespace Vostok.Hosting.Setup
         IVostokHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);
 
         IVostokHerculesSinkBuilder SuppressVerboseLogging();
+
+        IVostokHerculesSinkBuilder CustomizeSettings([NotNull] Action<HerculesSinkSettings> settingsCustomization);
     }
 }

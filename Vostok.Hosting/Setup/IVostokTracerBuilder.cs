@@ -14,5 +14,7 @@ namespace Vostok.Hosting.Setup
         IVostokTracerBuilder SetupHerculesSpanSender([NotNull] Action<IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup);
 
         IVostokTracerBuilder AddSpanSender([NotNull] ISpanSender spanSender);
+
+        IVostokTracerBuilder CustomizeSettings([NotNull] Action<TracerSettings> settingsCustomization);
     }
 }

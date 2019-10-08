@@ -1,14 +1,21 @@
-﻿using Vostok.Hosting.Setup;
+﻿using System;
+using Vostok.Hosting.Helpers;
+using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
-using Vostok.ServiceDiscovery.Helpers;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class ServiceLocatorBuilder : IVostokServiceLocatorBuilder, IBuilder<IServiceLocator>
     {
-        private IZooKeeperPathEscaper pathEscaper;
+        private readonly SettingsCustomization<ServiceLocatorSettings> settingsCustomization;
+
+        public ServiceLocatorBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<ServiceLocatorSettings>();
+        }
 
         public IServiceLocator Build(BuildContext context)
         {
@@ -20,9 +27,9 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return new ServiceLocator(zooKeeperClient, new ServiceLocatorSettings());
         }
 
-        public IVostokServiceLocatorBuilder SetZooKeeperPathEscaper(IZooKeeperPathEscaper pathEscaper)
+        public IVostokServiceLocatorBuilder CustomizeSettings(Action<ServiceLocatorSettings> settingsCustomization)
         {
-            this.pathEscaper = pathEscaper;
+            this.settingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
     }

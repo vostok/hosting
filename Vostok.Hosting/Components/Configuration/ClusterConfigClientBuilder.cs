@@ -1,21 +1,41 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+// ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Configuration
 {
     internal class ClusterConfigClientBuilder : IVostokClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
     {
+        private readonly SettingsCustomization<ClusterConfigClientSettings> settingsCustomization;
+
+        public ClusterConfigClientBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<ClusterConfigClientSettings>();
+        }
+
         [NotNull]
         public IClusterConfigClient Build(BuildContext context)
         {
-            return new ClusterConfigClient(new ClusterConfigClientSettings
+            var settings = new ClusterConfigClientSettings
             {
                 Log = context.Log,
                 AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
-            });
+            };
+
+            settingsCustomization.Customize(settings);
+
+            return new ClusterConfigClient(settings);
+        }
+
+        public IVostokClusterConfigClientBuilder CustomizeSettings(Action<ClusterConfigClientSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
+            return this;
         }
     }
 }

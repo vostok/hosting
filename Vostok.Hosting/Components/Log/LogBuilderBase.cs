@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Components.Log
 {
     internal abstract class LogBuilderBase : IBuilder<ILog>
     {
-        protected readonly List<Func<ILog, ILog>> AdditionalTransformations = new List<Func<ILog, ILog>>();
+        protected readonly List<Func<ILog, ILog>> LogCustomizations = new List<Func<ILog, ILog>>();
         
         [CanBeNull]
         public ILog Build(BuildContext context)
@@ -17,9 +17,9 @@ namespace Vostok.Hosting.Components.Log
             if (log == null)
                 return null;
 
-            foreach (var transformation in AdditionalTransformations)
+            foreach (var customization in LogCustomizations)
             {
-                log = transformation(log);
+                log = customization(log);
             }
 
             return log;

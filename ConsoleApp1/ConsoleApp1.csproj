@@ -109,6 +109,34 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery.kontur\Vostok.ServiceDiscovery.Kontur\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.Kontur.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.ZooKeeper.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.zookeeper.client\Vostok.ZooKeeper.Client\bin\Release\netstandard2.0\Vostok.ZooKeeper.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ZooKeeper.Client.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.zookeeper.client.abstractions\Vostok.ZooKeeper.Client.Abstractions\bin\Release\netstandard2.0\Vostok.ZooKeeper.Client.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterConfig.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterconfig.client\Vostok.ClusterConfig.Client\bin\Release\netstandard2.0\Vostok.ClusterConfig.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterConfig.Client.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterconfig.client.abstractions\Vostok.ClusterConfig.Client.Abstractions\bin\Release\netstandard2.0\Vostok.ClusterConfig.Client.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Hercules.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.hercules.client\Vostok.Hercules.Client\bin\Release\netstandard2.0\Vostok.Hercules.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Metrics.Hercules">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.metrics.hercules\Vostok.Metrics.Hercules\bin\Release\netstandard2.0\Vostok.Metrics.Hercules.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterClient.Tracing">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.tracing\Vostok.ClusterClient.Tracing\bin\Release\netstandard2.0\Vostok.ClusterClient.Tracing.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Hercules.Client.Abstractions.Models;
 using Vostok.Hosting.Components.String;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Hercules;
@@ -14,6 +15,12 @@ namespace Vostok.Hosting.Components.Log
     {
         private StringProviderBuilder apiKeyProviderBuilder;
         private StringProviderBuilder streamProviderBuilder;
+        private readonly SettingsCustomization<HerculesLogSettings> settingsCustomization;
+
+        public HerculesLogBuilder()
+        {
+            settingsCustomization = new SettingsCustomization<HerculesLogSettings>();
+        }
 
         public IVostokHerculesLogBuilder SetStream(string stream)
         {
@@ -39,9 +46,15 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        public IVostokHerculesLogBuilder AddAdditionalLogTransformation(Func<ILog, ILog> additionalTransformation)
+        public IVostokHerculesLogBuilder CustomizeLog(Func<ILog, ILog> additionalTransformation)
         {
-            AdditionalTransformations.Add(additionalTransformation);
+            LogCustomizations.Add(additionalTransformation);
+            return this;
+        }
+
+        public IVostokHerculesLogBuilder CustomizeSettings(Action<HerculesLogSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
 
@@ -59,6 +72,8 @@ namespace Vostok.Hosting.Components.Log
                 herculesSink.ConfigureStream(stream, new StreamSettings {ApiKeyProvider = apiKeyProvider});
 
             var settings = new HerculesLogSettings(herculesSink, stream);
+
+            settingsCustomization.Customize(settings);
 
             return new HerculesLog(settings);
         }
