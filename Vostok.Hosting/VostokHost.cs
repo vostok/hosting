@@ -64,7 +64,7 @@ namespace Vostok.Hosting
 
             try
             {
-                await application.InitializeAsync(environment);
+                await application.InitializeAsync(environment).ConfigureAwait(false);
 
                 log.Info("Application initialization completed successfully.");
                 ChangeStateTo(VostokApplicationState.Initialized);
