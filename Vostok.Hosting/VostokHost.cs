@@ -136,6 +136,8 @@ namespace Vostok.Hosting
                 onApplicationStateChanged.Error(error);
         }
 
+        #region Loging
+
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
             var messageTemplate = applicationIdentity.Subproject == null
@@ -148,5 +150,7 @@ namespace Vostok.Hosting
 
             log.Info(messageTemplate, messageParameters);
         }
+
+        #endregion
     }
 }
