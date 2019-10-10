@@ -10,7 +10,6 @@ namespace Vostok.Hosting.Setup
         IVostokApplicationIdentityBuilder SetSubproject([CanBeNull] string subproject);
 
         IVostokApplicationIdentityBuilder SetEnvironment([NotNull] string environment);
-        IVostokApplicationIdentityBuilder SetEnvironmentFromClusterConfig([NotNull] string path);
 
         IVostokApplicationIdentityBuilder SetApplication([NotNull] string application);
 

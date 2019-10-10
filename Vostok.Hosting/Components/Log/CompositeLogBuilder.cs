@@ -12,7 +12,7 @@ using Vostok.Logging.Tracing;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class CompositeLogBuilder : IVostokCompositeLogBuilder
+    internal class CompositeLogBuilder : IVostokCompositeLogBuilder, IBuilder<ILog>
     {
         private readonly List<LogBuilderBase> logBuilders;
 

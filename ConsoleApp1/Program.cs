@@ -16,6 +16,7 @@ using Vostok.Metrics.Models;
 using Vostok.ServiceDiscovery.Kontur;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace ConsoleApp1
 {
@@ -30,16 +31,16 @@ namespace ConsoleApp1
             {
                 setup
                     .SetupApplicationIdentity(
-                        applicationIdentitySetup => applicationIdentitySetup
+                        (applicationIdentitySetup, configurationContext) => applicationIdentitySetup
                             .SetProject("Infrastructure")
                             //.SetSubproject("vostok")
-                            .SetEnvironmentFromClusterConfig("app/environment")
+                            .SetEnvironment(configurationContext.ClusterConfigClient.Get("app/environment")?.Value)
                             .SetApplication("vostok-hosting-test")
                             .SetInstance("1")
                     )
                     .SetupHerculesSink(
-                        herculesSinkSetup => herculesSinkSetup
-                            .SetClusterConfigApiKeyProvider("app/apiKey")
+                        (herculesSinkSetup, configurationContext) => herculesSinkSetup
+                            .SetApiKeyProvider(() => configurationContext.ClusterConfigClient.Get("app/apiKey")?.Value)
                             .SetClusterConfigClusterProvider("topology/hercules/gate.prod")
                             //.SuppressVerboseLogging()
                             .CustomizeSettings(
@@ -59,12 +60,11 @@ namespace ConsoleApp1
                                             .WithMinimumLevel(LogLevel.Info)))
                     )
                     .SetupTracer(
-                        tracerSetup => tracerSetup
+                        (tracerSetup, configurationContext) => tracerSetup
                             .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog))
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
-                                    .SetStreamFromClusterConfig("vostok/tracing/StreamName"))
-                            .AddSpanSender(new LogSpanSender(log))
+                                    .SetStream(configurationContext.ClusterConfigClient.Get("vostok/tracing/StreamName")?.Value))
                     )
                     .SetupMetrics(
                         metricsSetup => metricsSetup

@@ -59,8 +59,8 @@ namespace Vostok.Hosting.Components.Tracing
 
             var settings = new TracerSettings(spanSender)
             {
-                Application = context.ApplicationIdentity.Application,
-                Environment = context.ApplicationIdentity.Environment
+                Application = context.ApplicationIdentity?.Application,
+                Environment = context.ApplicationIdentity?.Environment
             };
 
             settingsCustomization.Customize(settings);

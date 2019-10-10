@@ -8,11 +8,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHerculesSpanSenderBuilder
     {
         IVostokHerculesSpanSenderBuilder SetStream([NotNull] string stream);
-        IVostokHerculesSpanSenderBuilder SetStreamFromClusterConfig([NotNull] string path);
-
+        
         IVostokHerculesSpanSenderBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
-        IVostokHerculesSpanSenderBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
-
+        
         IVostokHerculesSpanSenderBuilder CustomizeSettings([NotNull] Action<HerculesSpanSenderSettings> settingsCustomization);
     }
 }

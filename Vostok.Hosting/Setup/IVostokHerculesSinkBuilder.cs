@@ -10,9 +10,6 @@ namespace Vostok.Hosting.Setup
     {
         IVostokHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
 
-        // CR(iloktionov): Get rid of CC special case (globally). Use configuration abstractions instead.
-        IVostokHerculesSinkBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
-
         IVostokHerculesSinkBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
         IVostokHerculesSinkBuilder SetClusterConfigClusterProvider([NotNull] string path);
         IVostokHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);

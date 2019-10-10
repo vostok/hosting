@@ -7,6 +7,9 @@ namespace Vostok.Hosting.Helpers
     {
         public static ILog WithApplicationIdentityProperties(this ILog log, IVostokApplicationIdentity applicationIdentity)
         {
+            if (applicationIdentity == null)
+                return log;
+
             log = log.WithProperty(WellKnownApplicationIdentityProperties.Project, applicationIdentity.Project);
             if (applicationIdentity.Subproject != null)
                 log = log.WithProperty(WellKnownApplicationIdentityProperties.Subproject, applicationIdentity.Subproject);

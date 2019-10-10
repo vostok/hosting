@@ -9,10 +9,8 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHerculesLogBuilder
     {
         IVostokHerculesLogBuilder SetStream([NotNull] string stream);
-        IVostokHerculesLogBuilder SetStreamFromClusterConfig([NotNull] string path);
 
         IVostokHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
-        IVostokHerculesLogBuilder SetClusterConfigApiKeyProvider([NotNull] string path);
 
         IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 

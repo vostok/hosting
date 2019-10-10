@@ -5,7 +5,6 @@ using Vostok.Clusterclient.Tracing;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ClusterProvider;
-using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
@@ -17,7 +16,7 @@ namespace Vostok.Hosting.Components.Hercules
     internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
     {
         private ClusterProviderBuilder clusterProviderBuilder;
-        private StringProviderBuilder apiKeyProviderBuilder;
+        private Func<string> apiKeyProvider;
         private bool suppressVerboseLogging;
         private readonly SettingsCustomization<HerculesSinkSettings> settingsCustomization;
 
@@ -32,14 +31,13 @@ namespace Vostok.Hosting.Components.Hercules
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
                 return new DevNullHerculesSink();
-
-            var apiKeyProvider = apiKeyProviderBuilder?.Build(context) ?? (() => null);
-
+            
             var log = context.Log;
             if (suppressVerboseLogging)
                 log = log.WithMinimumLevel(LogLevel.Warn);
 
-            var settings = new HerculesSinkSettings(cluster, apiKeyProvider)
+            // Note(kungurtsev): allow null api key provider, streams can be configured later.
+            var settings = new HerculesSinkSettings(cluster, apiKeyProvider ?? (() => null))
             {
                 AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
             };
@@ -51,13 +49,7 @@ namespace Vostok.Hosting.Components.Hercules
         
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            apiKeyProviderBuilder = StringProviderBuilder.FromValueProvider(apiKeyProvider);
-            return this;
-        }
-
-        public IVostokHerculesSinkBuilder SetClusterConfigApiKeyProvider(string path)
-        {
-            apiKeyProviderBuilder = StringProviderBuilder.FromClusterConfig(path);
+            this.apiKeyProvider = apiKeyProvider;
             return this;
         }
 

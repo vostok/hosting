@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Setup;
 // ReSharper disable ParameterHidesMember
 
@@ -9,7 +8,7 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
     {
         private string project;
         private string subproject;
-        private StringProviderBuilder environmentBuilder;
+        private string environment;
         private string application;
         private string instance;
         
@@ -18,8 +17,7 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
             new VostokApplicationIdentity(
                 project,
                 subproject,
-                // ReSharper disable once AssignNullToNotNullAttribute
-                environmentBuilder?.Build(context)?.Invoke(), 
+                environment,
                 application, 
                 instance);
 
@@ -37,16 +35,10 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
 
         public IVostokApplicationIdentityBuilder SetEnvironment(string environment)
         {
-            environmentBuilder = StringProviderBuilder.FromValue(environment);
+            this.environment = environment;
             return this;
         }
-
-        public IVostokApplicationIdentityBuilder SetEnvironmentFromClusterConfig(string path)
-        {
-            environmentBuilder = StringProviderBuilder.FromClusterConfig(path, "unknown");
-            return this;
-        }
-
+        
         public IVostokApplicationIdentityBuilder SetApplication(string application)
         {
             this.application = application;

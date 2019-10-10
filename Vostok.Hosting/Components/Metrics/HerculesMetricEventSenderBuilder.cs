@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hercules.Client.Abstractions.Models;
-using Vostok.Hosting.Components.String;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Metrics;
@@ -13,24 +12,18 @@ namespace Vostok.Hosting.Components.Metrics
 {
     internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
     {
-        private List<(string stream, StringProviderBuilder builder)> apiKeyProviderBuilders;
+        private List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
         private readonly SettingsCustomization<HerculesMetricSenderSettings> settingsCustomization;
 
         public HerculesMetricEventSenderBuilder()
         {
-            apiKeyProviderBuilders = new List<(string stream, StringProviderBuilder builder)>();
+            apiKeyProviderBuilders = new List<(string stream, Func<string> apiKeyProvider)>();
             settingsCustomization = new SettingsCustomization<HerculesMetricSenderSettings>();
         }
 
         public IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)
         {
-            apiKeyProviderBuilders.Add((stream, StringProviderBuilder.FromValueProvider(apiKeyProvider)));
-            return this;
-        }
-
-        public IVostokHerculesMetricEventSenderBuilder SetClusterConfigApiKeyProvider(string path, string stream = null)
-        {
-            apiKeyProviderBuilders.Add((stream, StringProviderBuilder.FromClusterConfig(path)));
+            apiKeyProviderBuilders.Add((stream, apiKeyProvider));
             return this;
         }
 
@@ -60,9 +53,8 @@ namespace Vostok.Hosting.Components.Metrics
         {
             var allStreams = new[] {settings.FallbackStream, settings.FinalStream, settings.CountersStream, settings.TimersStream, settings.HistogramsStream};
 
-            foreach (var (stream, builder) in apiKeyProviderBuilders)
+            foreach (var (stream, apiKeyProvider) in apiKeyProviderBuilders)
             {
-                var apiKeyProvider = builder?.Build(context);
                 if (apiKeyProvider == null)
                     continue;
 
