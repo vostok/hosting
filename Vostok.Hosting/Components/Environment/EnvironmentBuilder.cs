@@ -31,6 +31,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ZooKeeperClientBuilder zooKeeperClientBuilder;
         private readonly ServiceBeaconBuilder serviceBeaconBuilder;
         private readonly ServiceLocatorBuilder serviceLocatorBuilder;
+        private readonly ConfigurationBuilder configurationBuilder;
 
         private EnvironmentBuilder()
         {
@@ -44,6 +45,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new ZooKeeperClientBuilder();
             serviceBeaconBuilder = new ServiceBeaconBuilder();
             serviceLocatorBuilder = new ServiceLocatorBuilder();
+            configurationBuilder = new ConfigurationBuilder();
         }
 
         public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
@@ -115,6 +117,12 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
+        public IVostokEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> configurationSetup)
+        {
+            configurationSetup(configurationBuilder);
+            return this;
+        }
+
         #endregion
 
         private VostokHostingEnvironment Build(CancellationToken shutdownToken)
@@ -130,6 +138,8 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
             Substitute(context);
+
+            (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             Substitute(context);
@@ -153,8 +163,8 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log,
                 context.Tracer,
                 context.HerculesSink,
-                null,
-                null,
+                context.ConfigurationSource,
+                context.ConfigurationProvider,
                 serviceBeaconBuilder.Build(context),
                 context.ServiceLocator,
                 FlowingContext.Globals,

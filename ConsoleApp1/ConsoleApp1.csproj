@@ -137,6 +137,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.tracing\Vostok.ClusterClient.Tracing\bin\Release\netstandard2.0\Vostok.ClusterClient.Tracing.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Configuration.Sources">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\netstandard2.0\Vostok.Configuration.Sources.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

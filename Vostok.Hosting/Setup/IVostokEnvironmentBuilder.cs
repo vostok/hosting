@@ -25,5 +25,7 @@ namespace Vostok.Hosting.Setup
         IVostokEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder> serviceBeaconSetup);
 
         IVostokEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder> serviceLocatorSetup);
+
+        IVostokEnvironmentBuilder SetupConfiguration([NotNull] Action<IVostokConfigurationBuilder> configurationSetup);
     }
 }

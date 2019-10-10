@@ -5,6 +5,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Transport;
+using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
@@ -22,7 +23,7 @@ namespace ConsoleApp1
     {
         private static void Main()
         {
-            var application = new Application();
+            var application = new MyApplication();
             var log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
 
             VostokHostingEnvironmentSetup innerSetup = setup =>
@@ -122,6 +123,13 @@ namespace ConsoleApp1
                                 {
                                     //settings.Zone = "123";
                                 }))
+                    .SetupConfiguration(configurationSetup => configurationSetup
+                        .AddSource(new ObjectSource(new MySettings {Value = "my_value"}))
+                        .SetupConfigurationProvider(
+                            (source, provider) =>
+                            {
+                                provider.SetupSourceFor<MySettings>(source);
+                            }))
                     ;
             };
 
@@ -155,7 +163,7 @@ namespace ConsoleApp1
         }
     }
 
-    internal class Application : IVostokApplication
+    internal class MyApplication : IVostokApplication
     {
         public Task InitializeAsync(IVostokHostingEnvironment environment)
         {
@@ -164,12 +172,15 @@ namespace ConsoleApp1
 
         public Task RunAsync(IVostokHostingEnvironment environment)
         {
-            var log = environment.Log.ForContext<Application>();
+            var log = environment.Log.ForContext<MyApplication>();
 
             log.Debug("Debug log.");
             log.Info("Info log.");
             log.Warn("Warn log.");
             log.Error("Error log.");
+
+            var settings = environment.ConfigurationProvider.Get<MySettings>();
+            log.Info("Settings value: {Value}.", settings.Value);
 
             environment.Metrics.Instance.Send(new MetricDataPoint(42, "point"));
 
@@ -225,5 +236,10 @@ namespace ConsoleApp1
         {
             //log.Info($"{@event.Value} {@event.Tags}");
         }
+    }
+
+    internal class MySettings
+    {
+        public string Value;
     }
 }

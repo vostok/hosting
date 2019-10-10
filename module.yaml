@@ -10,6 +10,9 @@ notests *default:
     - module vostok.hosting.abstractions
 
   deps:
+    - vostok.configuration.sources
+    - vostok.configuration.logging
+    - vostok.configuration
     - vostok.clusterclient.context
     - vostok.servicediscovery
     - vostok.zookeeper.client

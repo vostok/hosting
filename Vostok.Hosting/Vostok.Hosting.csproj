@@ -132,6 +132,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.context\Vostok.ClusterClient.Context\bin\Release\netstandard2.0\Vostok.ClusterClient.Context.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Configuration">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration\Vostok.Configuration\bin\Release\netstandard2.0\Vostok.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Logging">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.logging\Vostok.Configuration.Logging\bin\Release\netstandard2.0\Vostok.Configuration.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\netstandard2.0\Vostok.Configuration.Sources.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

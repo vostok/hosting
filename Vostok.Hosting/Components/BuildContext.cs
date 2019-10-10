@@ -1,4 +1,5 @@
 ﻿using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Configuration.Abstractions;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
@@ -15,6 +16,8 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
+        public IConfigurationSource ConfigurationSource { get; set; }
+        public IConfigurationProvider ConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
