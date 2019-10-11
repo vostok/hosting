@@ -15,13 +15,13 @@ namespace Vostok.Hosting.Components.Metrics
     {
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
-        private readonly SettingsCustomization<MetricContextConfig> settingsCustomization;
+        private readonly Customization<MetricContextConfig> settingsCustomization;
 
         public MetricsBuilder()
         {
             herculesMetricEventSenderBuilder = new HerculesMetricEventSenderBuilder();
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
-            settingsCustomization = new SettingsCustomization<MetricContextConfig>();
+            settingsCustomization = new Customization<MetricContextConfig>();
         }
 
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)

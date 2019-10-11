@@ -2,7 +2,7 @@
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class CustomLogBuilder : LogBuilderBase
+    internal class CustomLogBuilder : IBuilder<ILog>
     {
         private readonly ILog log;
 
@@ -11,6 +11,6 @@ namespace Vostok.Hosting.Components.Log
             this.log = log;
         }
 
-        protected override ILog BuildInner(BuildContext context) => log;
+        public ILog Build(BuildContext context) => log;
     }
 }

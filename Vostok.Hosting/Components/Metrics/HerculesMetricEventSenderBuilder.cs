@@ -13,12 +13,12 @@ namespace Vostok.Hosting.Components.Metrics
     internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
     {
         private List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
-        private readonly SettingsCustomization<HerculesMetricSenderSettings> settingsCustomization;
+        private readonly Customization<HerculesMetricSenderSettings> settingsCustomization;
 
         public HerculesMetricEventSenderBuilder()
         {
             apiKeyProviderBuilders = new List<(string stream, Func<string> apiKeyProvider)>();
-            settingsCustomization = new SettingsCustomization<HerculesMetricSenderSettings>();
+            settingsCustomization = new Customization<HerculesMetricSenderSettings>();
         }
 
         public IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)

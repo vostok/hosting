@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Components.Tracing
         private Func<TracerSettings, ILog, ITracer> tracerProvider;
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
         private readonly List<IBuilder<ISpanSender>> spanSenderBuilders;
-        private readonly SettingsCustomization<TracerSettings> settingsCustomization;
+        private readonly Customization<TracerSettings> settingsCustomization;
 
         public TracerBuilder()
         {
@@ -26,7 +26,7 @@ namespace Vostok.Hosting.Components.Tracing
 
             spanSenderBuilders = new List<IBuilder<ISpanSender>> {herculesSpanSenderBuilder};
 
-            settingsCustomization = new SettingsCustomization<TracerSettings>();
+            settingsCustomization = new Customization<TracerSettings>();
         }
 
         public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ILog, ITracer> tracerProvider)

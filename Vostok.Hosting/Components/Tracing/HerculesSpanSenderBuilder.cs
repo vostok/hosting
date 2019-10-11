@@ -13,11 +13,11 @@ namespace Vostok.Hosting.Components.Tracing
     {
         private Func<string> apiKeyProvider;
         private string stream;
-        private readonly SettingsCustomization<HerculesSpanSenderSettings> settingsCustomization;
+        private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
 
         public HerculesSpanSenderBuilder()
         {
-            settingsCustomization = new SettingsCustomization<HerculesSpanSenderSettings>();
+            settingsCustomization = new Customization<HerculesSpanSenderSettings>();
         }
 
         public IVostokHerculesSpanSenderBuilder SetStream(string stream)

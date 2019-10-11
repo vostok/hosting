@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         private string environment;
         private ReplicaInfoSetup setup;
 
-        private readonly SettingsCustomization<ServiceBeaconSettings> settingsCustomization;
+        private readonly Customization<ServiceBeaconSettings> settingsCustomization;
 
         public ServiceBeaconBuilder()
         {
@@ -25,7 +25,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 .SetEnvironment(environment)
                 .SetApplication(application);
 
-            settingsCustomization = new SettingsCustomization<ServiceBeaconSettings>();
+            settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
 
         public IServiceBeacon Build(BuildContext context)

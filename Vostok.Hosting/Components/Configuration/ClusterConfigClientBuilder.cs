@@ -11,11 +11,11 @@ namespace Vostok.Hosting.Components.Configuration
 {
     internal class ClusterConfigClientBuilder : IVostokClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
     {
-        private readonly SettingsCustomization<ClusterConfigClientSettings> settingsCustomization;
+        private readonly Customization<ClusterConfigClientSettings> settingsCustomization;
 
         public ClusterConfigClientBuilder()
         {
-            settingsCustomization = new SettingsCustomization<ClusterConfigClientSettings>();
+            settingsCustomization = new Customization<ClusterConfigClientSettings>();
         }
 
         [NotNull]

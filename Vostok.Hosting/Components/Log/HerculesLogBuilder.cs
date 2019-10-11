@@ -10,15 +10,17 @@ using Vostok.Logging.Hercules.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class HerculesLogBuilder : LogBuilderBase, IVostokHerculesLogBuilder
+    internal class HerculesLogBuilder : IVostokHerculesLogBuilder, IBuilder<ILog>
     {
         private Func<string> apiKeyProvider;
         private string stream;
-        private readonly SettingsCustomization<HerculesLogSettings> settingsCustomization;
+        private readonly Customization<HerculesLogSettings> settingsCustomization;
+        private readonly Customization<ILog> logCustomization;
 
         public HerculesLogBuilder()
         {
-            settingsCustomization = new SettingsCustomization<HerculesLogSettings>();
+            settingsCustomization = new Customization<HerculesLogSettings>();
+            logCustomization = new Customization<ILog>();
         }
 
         public IVostokHerculesLogBuilder SetStream(string stream)
@@ -35,7 +37,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokHerculesLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
-            LogCustomizations.Add(logCustomization);
+            this.logCustomization.AddCustomization(logCustomization);
             return this;
         }
 
@@ -45,7 +47,7 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        protected override ILog BuildInner(BuildContext context)
+        public ILog Build(BuildContext context)
         {
             var herculesSink = context.HerculesSink;
             

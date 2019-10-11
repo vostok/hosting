@@ -10,11 +10,11 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class ServiceLocatorBuilder : IVostokServiceLocatorBuilder, IBuilder<IServiceLocator>
     {
-        private readonly SettingsCustomization<ServiceLocatorSettings> settingsCustomization;
+        private readonly Customization<ServiceLocatorSettings> settingsCustomization;
 
         public ServiceLocatorBuilder()
         {
-            settingsCustomization = new SettingsCustomization<ServiceLocatorSettings>();
+            settingsCustomization = new Customization<ServiceLocatorSettings>();
         }
 
         public IServiceLocator Build(BuildContext context)

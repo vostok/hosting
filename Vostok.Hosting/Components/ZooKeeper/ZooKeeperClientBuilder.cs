@@ -13,11 +13,11 @@ namespace Vostok.Hosting.Components.ZooKeeper
     {
         private ClusterProviderBuilder clusterProviderBuilder;
         private string connectionString;
-        private readonly SettingsCustomization<ZooKeeperClientSettings> settingsCustomization;
+        private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
 
         public ZooKeeperClientBuilder()
         {
-            settingsCustomization = new SettingsCustomization<ZooKeeperClientSettings>();
+            settingsCustomization = new Customization<ZooKeeperClientSettings>();
         }
 
         public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)

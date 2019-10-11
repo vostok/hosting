@@ -20,17 +20,17 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly List<IConfigurationSource> sources;
         private readonly List<Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient>> configurationProviderSetups;
 
-        private readonly SettingsCustomization<SettingsMergeOptions> mergeSettingsCustomization;
-        private readonly SettingsCustomization<ConfigurationProviderSettings> configurationSettingsCustomization;
-        private readonly SettingsCustomization<PrintSettings> printSettingsCustomization;
+        private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
+        private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
+        private readonly Customization<PrintSettings> printSettingsCustomization;
 
         public ConfigurationBuilder()
         {
             sources = new List<IConfigurationSource>();
             configurationProviderSetups = new List<Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient>>();
-            mergeSettingsCustomization = new SettingsCustomization<SettingsMergeOptions>();
-            configurationSettingsCustomization = new SettingsCustomization<ConfigurationProviderSettings>();
-            printSettingsCustomization = new SettingsCustomization<PrintSettings>();
+            mergeSettingsCustomization = new Customization<SettingsMergeOptions>();
+            configurationSettingsCustomization = new Customization<ConfigurationProviderSettings>();
+            printSettingsCustomization = new Customization<PrintSettings>();
         }
 
         public IVostokConfigurationBuilder AddSource(IConfigurationSource source)

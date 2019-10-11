@@ -31,14 +31,14 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ConfigurationBuilder configurationBuilder;
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
 
-        private readonly BuilderWithSetup<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
-        private readonly BuilderWithSetup<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
-        private readonly BuilderWithSetup<TracerBuilder, ITracer> tracerBuilder;
-        private readonly BuilderWithSetup<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
-        private readonly BuilderWithSetup<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
-        private readonly BuilderWithSetup<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
-        private readonly BuilderWithSetup<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
-        private readonly BuilderWithSetup<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
+        private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
+        private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
+        private readonly CustomizableBuilder<TracerBuilder, ITracer> tracerBuilder;
+        private readonly CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
+        private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
+        private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
+        private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
+        private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
 
         private EnvironmentBuilder()
         {
@@ -46,14 +46,14 @@ namespace Vostok.Hosting.Components.Environment
             configurationBuilder = new ConfigurationBuilder();
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
             
-            applicationIdentityBuilder = new BuilderWithSetup<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
-            herculesSinkBuilder = new BuilderWithSetup<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
-            tracerBuilder = new BuilderWithSetup<TracerBuilder, ITracer>(new TracerBuilder());
-            clusterClientSetupBuilder = new BuilderWithSetup<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
-            metricsBuilder = new BuilderWithSetup<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
-            zooKeeperClientBuilder = new BuilderWithSetup<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());;
-            serviceBeaconBuilder = new BuilderWithSetup<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
-            serviceLocatorBuilder = new BuilderWithSetup<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
+            applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
+            herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
+            tracerBuilder = new CustomizableBuilder<TracerBuilder, ITracer>(new TracerBuilder());
+            clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
+            metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
+            zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());;
+            serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
+            serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
         }
 
         public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
@@ -79,97 +79,97 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder> applicationIdentitySetup)
         {
-            applicationIdentityBuilder.Setup(applicationIdentitySetup);
+            applicationIdentityBuilder.AddCustomization(applicationIdentitySetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder, IVostokConfigurationContext> applicationIdentitySetup)
         {
-            applicationIdentityBuilder.Setup(applicationIdentitySetup);
+            applicationIdentityBuilder.AddCustomization(applicationIdentitySetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder> tracerSetup)
         {
-            tracerBuilder.Setup(tracerSetup);
+            tracerBuilder.AddCustomization(tracerSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder, IVostokConfigurationContext> tracerSetup)
         {
-            tracerBuilder.Setup(tracerSetup);
+            tracerBuilder.AddCustomization(tracerSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder> metricsSetup)
         {
-            metricsBuilder.Setup(metricsSetup);
+            metricsBuilder.AddCustomization(metricsSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder, IVostokConfigurationContext> metricsSetup)
         {
-            metricsBuilder.Setup(metricsSetup);
+            metricsBuilder.AddCustomization(metricsSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder> clusterClientSetup)
         {
-            clusterClientSetupBuilder.Setup(clusterClientSetup);
+            clusterClientSetupBuilder.AddCustomization(clusterClientSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder, IVostokConfigurationContext> clusterClientSetup)
         {
-            clusterClientSetupBuilder.Setup(clusterClientSetup);
+            clusterClientSetupBuilder.AddCustomization(clusterClientSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> zooKeeperClientSetup)
         {
-            zooKeeperClientBuilder.Setup(zooKeeperClientSetup);
+            zooKeeperClientBuilder.AddCustomization(zooKeeperClientSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokConfigurationContext> zooKeeperClientSetup)
         {
-            zooKeeperClientBuilder.Setup(zooKeeperClientSetup);
+            zooKeeperClientBuilder.AddCustomization(zooKeeperClientSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder> herculesSinkSetup)
         {
-            herculesSinkBuilder.Setup(herculesSinkSetup);
+            herculesSinkBuilder.AddCustomization(herculesSinkSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder, IVostokConfigurationContext> herculesSinkSetup)
         {
-            herculesSinkBuilder.Setup(herculesSinkSetup);
+            herculesSinkBuilder.AddCustomization(herculesSinkSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder> serviceBeaconSetup)
         {
-            serviceBeaconBuilder.Setup(serviceBeaconSetup);
+            serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder, IVostokConfigurationContext> serviceBeaconSetup)
         {
-            serviceBeaconBuilder.Setup(serviceBeaconSetup);
+            serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder> serviceLocatorSetup)
         {
-            serviceLocatorBuilder.Setup(serviceLocatorSetup);
+            serviceLocatorBuilder.AddCustomization(serviceLocatorSetup);
             return this;
         }
 
         public IVostokEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder, IVostokConfigurationContext> serviceLocatorSetup)
         {
-            serviceLocatorBuilder.Setup(serviceLocatorSetup);
+            serviceLocatorBuilder.AddCustomization(serviceLocatorSetup);
             return this;
         }
 

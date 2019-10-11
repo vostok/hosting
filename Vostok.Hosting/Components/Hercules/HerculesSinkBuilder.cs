@@ -18,11 +18,11 @@ namespace Vostok.Hosting.Components.Hercules
         private ClusterProviderBuilder clusterProviderBuilder;
         private Func<string> apiKeyProvider;
         private bool suppressVerboseLogging;
-        private readonly SettingsCustomization<HerculesSinkSettings> settingsCustomization;
+        private readonly Customization<HerculesSinkSettings> settingsCustomization;
 
         public HerculesSinkBuilder()
         {
-            settingsCustomization = new SettingsCustomization<HerculesSinkSettings>();
+            settingsCustomization = new Customization<HerculesSinkSettings>();
         }
 
         [NotNull]
