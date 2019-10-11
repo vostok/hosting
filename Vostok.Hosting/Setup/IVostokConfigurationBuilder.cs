@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
@@ -12,7 +13,7 @@ namespace Vostok.Hosting.Setup
     {
         IVostokConfigurationBuilder AddSource([NotNull] IConfigurationSource source);
 
-        IVostokConfigurationBuilder SetupConfigurationProvider([NotNull] Action<IConfigurationSource, IConfigurationProvider> providerSetup);
+        IVostokConfigurationBuilder SetupSources([NotNull] Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient> sourcesSetup);
 
         IVostokConfigurationBuilder CustomizeMergeSourcesSettings([NotNull] Action<SettingsMergeOptions> settingsCustomization);
 

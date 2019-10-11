@@ -5,6 +5,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Transport;
+using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting;
 using Vostok.Hosting.Abstractions;
@@ -124,11 +125,10 @@ namespace ConsoleApp1
                                     //settings.Zone = "123";
                                 }))
                     .SetupConfiguration(configurationSetup => configurationSetup
-                        .AddSource(new ObjectSource(new MySettings {Value = "my_value"}))
-                        .SetupConfigurationProvider(
-                            (source, provider) =>
+                        .SetupSources(
+                            (provider, source, clusterConfigClient) =>
                             {
-                                provider.SetupSourceFor<MySettings>(source);
+                                provider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings { Value = "my_value" }));
                             }))
                     ;
             };

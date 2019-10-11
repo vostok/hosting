@@ -186,12 +186,13 @@ namespace Vostok.Hosting.Components.Environment
             // ReSharper disable once UseObjectOrCollectionInitializer
             var context = new BuildContext();
 
+            Substitute(context);
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
-            
             (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
+            context.ConfigurationContext = new ConfigurationContext(context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             Substitute(context);

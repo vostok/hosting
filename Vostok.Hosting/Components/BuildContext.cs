@@ -2,7 +2,6 @@
 using Vostok.Configuration.Abstractions;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Setup;
@@ -24,12 +23,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
 
-        public IVostokConfigurationContext ConfigurationContext => new ConfigurationContext
-        {
-            ConfigurationProvider = ConfigurationProvider,
-            ConfigurationSource = ConfigurationSource,
-            ClusterConfigClient = ClusterConfigClient
-        };
+        public IVostokConfigurationContext ConfigurationContext { get; set; }
 
         public ILog Log
         {
