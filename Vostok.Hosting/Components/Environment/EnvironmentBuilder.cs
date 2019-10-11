@@ -27,10 +27,10 @@ namespace Vostok.Hosting.Components.Environment
 {
     internal class EnvironmentBuilder : IVostokEnvironmentBuilder
     {
-        private readonly CompositeLogBuilder compositeLogBuilder;
         private readonly ConfigurationBuilder configurationBuilder;
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
 
+        private readonly CustomizableBuilder<CompositeLogBuilder, ILog> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, ITracer> tracerBuilder;
@@ -42,10 +42,10 @@ namespace Vostok.Hosting.Components.Environment
 
         private EnvironmentBuilder()
         {
-            compositeLogBuilder = new CompositeLogBuilder();
             configurationBuilder = new ConfigurationBuilder();
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
-            
+
+            compositeLogBuilder = new CustomizableBuilder<CompositeLogBuilder, ILog>(new CompositeLogBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, ITracer>(new TracerBuilder());
@@ -67,7 +67,13 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder> compositeLogSetup)
         {
-            compositeLogSetup(compositeLogBuilder);
+            compositeLogBuilder.AddCustomization(compositeLogSetup);
+            return this;
+        }
+
+        public IVostokEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder, IVostokConfigurationContext> compositeLogSetup)
+        {
+            compositeLogBuilder.AddCustomization(compositeLogSetup);
             return this;
         }
 
@@ -185,8 +191,6 @@ namespace Vostok.Hosting.Components.Environment
         {
             // ReSharper disable once UseObjectOrCollectionInitializer
             var context = new BuildContext();
-
-            Substitute(context);
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
@@ -195,7 +199,6 @@ namespace Vostok.Hosting.Components.Environment
             context.ConfigurationContext = new ConfigurationContext(context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-            Substitute(context);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
@@ -203,7 +206,9 @@ namespace Vostok.Hosting.Components.Environment
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
             HerculesSinkProvider.Configure(context.HerculesSink, true);
-            Substitute(context);
+
+            context.Log = compositeLogBuilder.Build(context);
+            context.Tracer = tracerBuilder.Build(context);
 
             context.Metrics = metricsBuilder.Build(context);
 
@@ -230,14 +235,6 @@ namespace Vostok.Hosting.Components.Environment
 
         private void DisposeEnvironment()
         {
-        }
-
-        private void Substitute(BuildContext context)
-        {
-            // Note(kungurtsev): requires hercules, not disposable and lightweight.
-            // Note(kungurtsev): get returns same instance (with substitutable base), so can be executed in any order.
-            context.Log = compositeLogBuilder.Build(context);
-            context.Tracer = tracerBuilder.Build(context);
         }
     }
 }

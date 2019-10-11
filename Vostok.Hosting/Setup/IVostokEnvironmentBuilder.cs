@@ -6,11 +6,12 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokEnvironmentBuilder
     {
-        IVostokEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder> compositeLogSetup);
-
         IVostokEnvironmentBuilder SetupClusterConfigClient([NotNull] Action<IVostokClusterConfigClientBuilder> clusterConfigClientSetup);
 
         IVostokEnvironmentBuilder SetupConfiguration([NotNull] Action<IVostokConfigurationBuilder> configurationSetup);
+
+        IVostokEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder> compositeLogSetup);
+        IVostokEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder, IVostokConfigurationContext> compositeLogSetup);
 
         IVostokEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder> herculesSinkSetup);
         IVostokEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder, IVostokConfigurationContext> herculesSinkSetup);

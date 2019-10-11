@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Helpers
 
         public void AddCustomization(Func<T, T> customization)
         {
-            var previousCustomization = customization;
+            var previousCustomization = this.customization;
 
             this.customization =
                 settings =>
