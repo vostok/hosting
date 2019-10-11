@@ -125,10 +125,10 @@ namespace ConsoleApp1
                                     //settings.Zone = "123";
                                 }))
                     .SetupConfiguration(configurationSetup => configurationSetup
-                        .SetupSources(
-                            (provider, source, clusterConfigClient) =>
+                        .CustomizeConfigurationContext(
+                            configurationContext =>
                             {
-                                provider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings { Value = "my_value" }));
+                                configurationContext.ConfigurationProvider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings { Value = "my_value" }));
                             }))
                     ;
             };

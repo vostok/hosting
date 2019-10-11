@@ -13,7 +13,7 @@ namespace Vostok.Hosting.Setup
     {
         IVostokConfigurationBuilder AddSource([NotNull] IConfigurationSource source);
 
-        IVostokConfigurationBuilder SetupSources([NotNull] Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient> sourcesSetup);
+        IVostokConfigurationBuilder CustomizeConfigurationContext([NotNull] Action<IVostokConfigurationContext> configurationContextCustomization);
 
         IVostokConfigurationBuilder CustomizeMergeSourcesSettings([NotNull] Action<SettingsMergeOptions> settingsCustomization);
 

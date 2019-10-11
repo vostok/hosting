@@ -18,19 +18,19 @@ namespace Vostok.Hosting.Components.Configuration
     internal class ConfigurationBuilder : IVostokConfigurationBuilder, IBuilder<(IConfigurationSource, IConfigurationProvider)>
     {
         private readonly List<IConfigurationSource> sources;
-        private readonly List<Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient>> configurationProviderSetups;
 
         private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
         private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
+        private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
 
         public ConfigurationBuilder()
         {
             sources = new List<IConfigurationSource>();
-            configurationProviderSetups = new List<Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient>>();
             mergeSettingsCustomization = new Customization<SettingsMergeOptions>();
             configurationSettingsCustomization = new Customization<ConfigurationProviderSettings>();
             printSettingsCustomization = new Customization<PrintSettings>();
+            configurationContextCustomization = new Customization<IVostokConfigurationContext>();
         }
 
         public IVostokConfigurationBuilder AddSource(IConfigurationSource source)
@@ -56,10 +56,10 @@ namespace Vostok.Hosting.Components.Configuration
             printSettingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
-
-        public IVostokConfigurationBuilder SetupSources(Action<IConfigurationProvider, IConfigurationSource, IClusterConfigClient> sourcesSetup)
+        
+        public IVostokConfigurationBuilder CustomizeConfigurationContext(Action<IVostokConfigurationContext> configurationContextCustomization)
         {
-            configurationProviderSetups.Add(sourcesSetup);
+            this.configurationContextCustomization.AddCustomization(configurationContextCustomization);
             return this;
         }
 
@@ -83,8 +83,7 @@ namespace Vostok.Hosting.Components.Configuration
 
             var provider = new ConfigurationProvider(providerSettings);
 
-            foreach (var setup in configurationProviderSetups)
-                setup(provider, source, context.ClusterConfigClient);
+            configurationContextCustomization.Customize(new ConfigurationContext(source, provider, context.ClusterConfigClient));
 
             return (source, provider);
         }
