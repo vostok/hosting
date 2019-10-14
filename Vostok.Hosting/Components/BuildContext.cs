@@ -24,7 +24,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
 
-        public IVostokConfigurationContext ConfigurationContext { get; set; }
+        public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
         public ILog Log
         {

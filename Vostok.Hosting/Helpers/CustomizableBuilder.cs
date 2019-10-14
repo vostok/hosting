@@ -10,7 +10,7 @@ namespace Vostok.Hosting.Helpers
     {
         private readonly TBuilder builder;
         private readonly Customization<TBuilder> builderCustomization;
-        private IVostokConfigurationContext configurationContext;
+        private IVostokHostingEnvironmentSetupContext configurationContext;
 
         public CustomizableBuilder(TBuilder builder)
         {
@@ -23,14 +23,14 @@ namespace Vostok.Hosting.Helpers
             builderCustomization.AddCustomization(setup);
         }
 
-        public void AddCustomization(Action<TBuilder, IVostokConfigurationContext> setup)
+        public void AddCustomization(Action<TBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             builderCustomization.AddCustomization(b => setup(b, configurationContext));
         }
 
         public TResult Build(BuildContext context)
         {
-            configurationContext = context.ConfigurationContext;
+            configurationContext = context.SetupContext;
 
             builderCustomization.Customize(builder);
 

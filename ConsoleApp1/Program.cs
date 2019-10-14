@@ -32,16 +32,16 @@ namespace ConsoleApp1
             {
                 setup
                     .SetupApplicationIdentity(
-                        (applicationIdentitySetup, configurationContext) => applicationIdentitySetup
+                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup
                             .SetProject("Infrastructure")
                             //.SetSubproject("vostok")
-                            .SetEnvironment(configurationContext.ClusterConfigClient.Get("app/environment")?.Value)
+                            .SetEnvironment(setupContext.ClusterConfigClient.Get("app/environment")?.Value)
                             .SetApplication("vostok-hosting-test")
                             .SetInstance("1")
                     )
                     .SetupHerculesSink(
-                        (herculesSinkSetup, configurationContext) => herculesSinkSetup
-                            .SetApiKeyProvider(() => configurationContext.ClusterConfigClient.Get("app/apiKey")?.Value)
+                        (herculesSinkSetup, setupContext) => herculesSinkSetup
+                            .SetApiKeyProvider(() => setupContext.ClusterConfigClient.Get("app/apiKey")?.Value)
                             .SetClusterConfigClusterProvider("topology/hercules/gate.prod")
                             //.SuppressVerboseLogging()
                             .CustomizeSettings(
@@ -51,21 +51,25 @@ namespace ConsoleApp1
                                 })
                     )
                     .SetupLog(
-                        logSetup => logSetup
-                            .AddLog(log)
-                            .SetupHerculesLog(
-                                herculesLogSetup => herculesLogSetup
-                                    .SetStream("logs_vostoklibs_cloud")
-                                    .CustomizeLog(
-                                        l => l
-                                            .WithMinimumLevel(LogLevel.Info)))
-                    )
+                        (logSetup, setupContext) =>
+                        {
+                            setupContext.Log.Info("Here we can log someting, about log configuration!");
+
+                            logSetup
+                                .AddLog(log)
+                                .SetupHerculesLog(
+                                    herculesLogSetup => herculesLogSetup
+                                        .SetStream("logs_vostoklibs_cloud")
+                                        .CustomizeLog(
+                                            l => l
+                                                .WithMinimumLevel(LogLevel.Info)));
+                        })
                     .SetupTracer(
-                        (tracerSetup, configurationContext) => tracerSetup
+                        (tracerSetup, setupContext) => tracerSetup
                             .SetTracerProvider((tracerSettings, tracerLog) => new KonturTracer(tracerSettings, tracerLog))
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
-                                    .SetStream(configurationContext.ClusterConfigClient.Get("vostok/tracing/StreamName")?.Value))
+                                    .SetStream(setupContext.ClusterConfigClient.Get("vostok/tracing/StreamName")?.Value))
                             .AddSpanSender(new LogSpanSender(log))
                     )
                     .SetupMetrics(
@@ -120,7 +124,7 @@ namespace ConsoleApp1
                     .SetupConfiguration(
                         configurationSetup => configurationSetup
                             .CustomizeConfigurationContext(
-                                configurationContext => { configurationContext.ConfigurationProvider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings {Value = "my_value"})); })
+                                setupContext => { setupContext.ConfigurationProvider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings {Value = "my_value"})); })
                     )
                     ;
             };
