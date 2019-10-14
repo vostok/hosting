@@ -53,7 +53,7 @@ namespace ConsoleApp1
                     .SetupLog(
                         (logSetup, setupContext) =>
                         {
-                            setupContext.Log.Info("Here we can log someting, about log configuration!");
+                            setupContext.Log.Info("Here we can log something, about log configuration!");
 
                             logSetup
                                 .AddLog(log)
