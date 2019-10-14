@@ -9,7 +9,7 @@ namespace Vostok.Hosting.Setup
     {
         IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
 
-        //ICompositeLogBuilder AddFileLog([CanBeNull] Action<> fileLogSettings = null);
+        IVostokCompositeLogBuilder SetupFileLog([NotNull] Action<IVostokFileLogBuilder> fileLogSetup);
 
         IVostokCompositeLogBuilder SetupHerculesLog([NotNull] Action<IVostokHerculesLogBuilder> herculesLogSetup);
     }

@@ -62,7 +62,11 @@ namespace Vostok.Hosting.Components.Log
 
             settingsCustomization.Customize(settings);
 
-            return new HerculesLog(settings);
+            var log = new HerculesLog(settings);
+
+            logCustomization.Customize(log);
+
+            return log;
         }
     }
 }

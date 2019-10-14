@@ -141,6 +141,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\netstandard2.0\Vostok.Configuration.Sources.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Logging.File">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.file\Vostok.Logging.File\bin\Release\netstandard2.0\Vostok.Logging.File.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

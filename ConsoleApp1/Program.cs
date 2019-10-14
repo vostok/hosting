@@ -11,6 +11,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Logging.File.Configuration;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
 using Vostok.ServiceDiscovery.Kontur;
@@ -58,6 +59,16 @@ namespace ConsoleApp1
 
                             logSetup
                                 .AddLog(log)
+                                .SetupFileLog(
+                                    fileLogSetup => fileLogSetup
+                                        .CustomizeSettings(
+                                            customization =>
+                                            {
+                                                customization.RollingStrategy = new RollingStrategyOptions()
+                                                {
+                                                    Type = RollingStrategyType.ByTime
+                                                };
+                                            }))
                                 .SetupHerculesLog(
                                     herculesLogSetup => herculesLogSetup
                                         .SetStream("logs_vostoklibs_cloud")
