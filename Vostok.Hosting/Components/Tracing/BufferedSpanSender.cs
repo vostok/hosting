@@ -1,4 +1,6 @@
 ﻿using Vostok.Commons.Collections;
+using Vostok.Hosting.Abstractions;
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Tracing
@@ -13,12 +15,23 @@ namespace Vostok.Hosting.Components.Tracing
             queue = new ConcurrentBoundedQueue<ISpan>(Capacity);
         }
         
-        public void SendBufferedSpans(ISpanSender sender)
+        public void SendBufferedSpans(TracerSettings tracerSettings)
         {
             var buffer = new ISpan[Capacity];
             var count = queue.Drain(buffer, 0, Capacity);
             for (var i = 0; i < count; i++)
-                sender.Send(buffer[i]);
+            {
+                var span = new Span(buffer[i]);
+
+                if (tracerSettings.Host != null)
+                    span.SetAnnotation(WellKnownAnnotations.Common.Host, tracerSettings.Host);
+                if (tracerSettings.Application != null)
+                    span.SetAnnotation(WellKnownAnnotations.Common.Application, tracerSettings.Application);
+                if (tracerSettings.Environment != null)
+                    span.SetAnnotation(WellKnownAnnotations.Common.Environment, tracerSettings.Environment);
+
+                tracerSettings.Sender.Send(span);
+            }
         }
 
         public void Send(ISpan span)

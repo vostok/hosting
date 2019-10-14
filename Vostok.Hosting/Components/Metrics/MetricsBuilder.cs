@@ -32,7 +32,7 @@ namespace Vostok.Hosting.Components.Metrics
 
         public IVostokMetricsBuilder AddMetricEventSender(IMetricEventSender metricEventSender)
         {
-            metricEventSenderBuilders.Add(new CustomMetricEventSenderBuilder(metricEventSender));
+            metricEventSenderBuilders.Add(new CustomBuilder<IMetricEventSender>(metricEventSender));
             return this;
         }
 

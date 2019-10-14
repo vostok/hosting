@@ -18,6 +18,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
@@ -33,7 +34,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<CompositeLogBuilder, ILog> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
-        private readonly CustomizableBuilder<TracerBuilder, (ITracer, ISpanSender)> tracerBuilder;
+        private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
         private readonly CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
         private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
@@ -48,7 +49,7 @@ namespace Vostok.Hosting.Components.Environment
             compositeLogBuilder = new CustomizableBuilder<CompositeLogBuilder, ILog>(new CompositeLogBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
-            tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, ISpanSender)>(new TracerBuilder());
+            tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());;
@@ -208,7 +209,7 @@ namespace Vostok.Hosting.Components.Environment
             HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Log = compositeLogBuilder.Build(context);
-            (context.Tracer, context.SpanSender) = tracerBuilder.Build(context);
+            context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
 

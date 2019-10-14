@@ -36,7 +36,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokCompositeLogBuilder AddLog(ILog log)
         {
-            logBuilders.Add(new CustomLogBuilder(log));
+            logBuilders.Add(new CustomBuilder<ILog>(log));
             return this;
         }
 

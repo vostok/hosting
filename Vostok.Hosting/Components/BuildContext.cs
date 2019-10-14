@@ -35,28 +35,21 @@ namespace Vostok.Hosting.Components
         public ITracer Tracer
         {
             get => substitutableTracer;
-            set => substitutableTracer.SubstituteWith(value);
         }
 
-        public ISpanSender SpanSender
+        public void SubstituteTracer((ITracer tracer, TracerSettings tracerSettings) tracer)
         {
-            get => substitutableSpanSender;
-            set => substitutableSpanSender.SubstituteWith(value);
+            substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
         }
 
         private readonly SubstitutableLog substitutableLog;
 
         private readonly SubstitutableTracer substitutableTracer;
-
-        private readonly SubstitutableSpanSender substitutableSpanSender;
         
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
-            substitutableSpanSender = new SubstitutableSpanSender();
-
-            var tracer = new Tracer(new TracerSettings(SpanSender));
-            substitutableTracer = new SubstitutableTracer(tracer);
+            substitutableTracer = new SubstitutableTracer();
         }
     }
 }

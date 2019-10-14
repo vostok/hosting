@@ -1,4 +1,5 @@
-﻿using Vostok.Tracing.Abstractions;
+﻿using Vostok.Tracing;
+using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Tracing
 {
@@ -6,15 +7,15 @@ namespace Vostok.Hosting.Components.Tracing
     {
         private volatile ISpanSender baseSender = new BufferedSpanSender();
         
-        public void SubstituteWith(ISpanSender newSender)
+        public void SubstituteWith(TracerSettings tracerSettings)
         {
             var oldSender = baseSender;
 
-            baseSender = newSender;
+            baseSender = tracerSettings.Sender;
 
             if (oldSender is BufferedSpanSender bufferedSpanSender)
             {
-                bufferedSpanSender.SendBufferedSpans(newSender);
+                bufferedSpanSender.SendBufferedSpans(tracerSettings);
             }
         }
 
