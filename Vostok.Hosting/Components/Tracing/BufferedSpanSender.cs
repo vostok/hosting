@@ -1,5 +1,4 @@
 ﻿using Vostok.Commons.Collections;
-using Vostok.Hosting.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 

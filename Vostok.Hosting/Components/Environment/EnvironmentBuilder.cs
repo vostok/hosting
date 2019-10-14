@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Vostok.Clusterclient.Core;
-using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -17,6 +16,7 @@ using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -190,8 +190,25 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment Build(CancellationToken shutdownToken)
         {
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            var context = new BuildContext();
+            var context = new BuildContext {ShutdownToken = shutdownToken};
+
+            try
+            {
+                return BuildInner(context);
+            }
+            catch (Exception error)
+            {
+                context.Log.Error(error, "Failed to build vostok hosting environment.");
+
+                // Note(kungurtsev): if log hasn't created yet, sends all messages from buffer.
+                context.Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
+
+                throw;
+            }
+        }
+
+        private VostokHostingEnvironment BuildInner(BuildContext context)
+        {
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
@@ -216,7 +233,7 @@ namespace Vostok.Hosting.Components.Environment
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
 
             return new VostokHostingEnvironment(
-                shutdownToken,
+                context.ShutdownToken,
                 context.ApplicationIdentity,
                 context.Metrics,
                 context.Log,

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Vostok.Hosting.Components;
 using Vostok.Hosting.Setup;
 

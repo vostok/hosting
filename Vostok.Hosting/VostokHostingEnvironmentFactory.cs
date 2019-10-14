@@ -9,7 +9,9 @@ namespace Vostok.Hosting
     [PublicAPI]
     public static class VostokHostingEnvironmentFactory
     {
-        public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default) =>
-            EnvironmentBuilder.Build(setup, shutdownToken);
+        public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
+        {
+            return EnvironmentBuilder.Build(setup, shutdownToken);
+        }
     }
 }

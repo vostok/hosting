@@ -4,8 +4,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
-using Vostok.ServiceDiscovery.Helpers;
-using Vostok.ZooKeeper.Client;
 
 // ReSharper disable ParameterHidesMember
 

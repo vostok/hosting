@@ -10,6 +10,7 @@ notests *default:
     - module vostok.hosting.abstractions
 
   deps:
+    - vostok.logging.console
     - vostok.configuration.sources
     - vostok.configuration.logging
     - vostok.configuration
@@ -50,7 +51,6 @@ full-build > notests:
     - vostok.clusterclient.transport
     - vostok.telemetry.kontur
     - vostok.tracing.kontur
-    - vostok.logging.console
     
   build:
     target: Vostok.Hosting.sln

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;

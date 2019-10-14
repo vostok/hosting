@@ -1,4 +1,5 @@
-﻿using Vostok.ClusterConfig.Client.Abstractions;
+﻿using System.Threading;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -15,6 +16,7 @@ namespace Vostok.Hosting.Components
 {
     internal class BuildContext
     {
+        public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }

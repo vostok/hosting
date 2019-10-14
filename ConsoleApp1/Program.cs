@@ -54,6 +54,7 @@ namespace ConsoleApp1
                         (logSetup, setupContext) =>
                         {
                             setupContext.Log.Info("Here we can log something, about log configuration!");
+                            //throw new Exception("Test error.");
 
                             logSetup
                                 .AddLog(log)
