@@ -229,6 +229,7 @@ namespace Vostok.Hosting.Components.Environment
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
+            HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
 
