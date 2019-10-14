@@ -66,6 +66,7 @@ namespace ConsoleApp1
                             .SetupHerculesSpanSender(
                                 spanSenderSetup => spanSenderSetup
                                     .SetStream(configurationContext.ClusterConfigClient.Get("vostok/tracing/StreamName")?.Value))
+                            .AddSpanSender(new LogSpanSender(log))
                     )
                     .SetupMetrics(
                         metricsSetup => metricsSetup
@@ -207,8 +208,10 @@ namespace ConsoleApp1
 
             sb.Append($"TraceId: {span.TraceId}. ");
 
-            if (span.Annotations.ContainsKey(WellKnownAnnotations.Http.Request.TargetService))
-                sb.Append($"TargetService: {span.Annotations[WellKnownAnnotations.Http.Request.TargetService]}. ");
+            foreach (var annotation in span.Annotations)
+            {
+                sb.Append($"{annotation.Key}: {annotation.Value} ");
+            }
 
             //log.Info(sb.ToString());
         }

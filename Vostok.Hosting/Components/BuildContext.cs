@@ -7,6 +7,7 @@ using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
@@ -37,14 +38,25 @@ namespace Vostok.Hosting.Components
             set => substitutableTracer.SubstituteWith(value);
         }
 
+        public ISpanSender SpanSender
+        {
+            get => substitutableSpanSender;
+            set => substitutableSpanSender.SubstituteWith(value);
+        }
+
         private readonly SubstitutableLog substitutableLog;
 
         private readonly SubstitutableTracer substitutableTracer;
+
+        private readonly SubstitutableSpanSender substitutableSpanSender;
         
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
-            substitutableTracer = new SubstitutableTracer();
+            substitutableSpanSender = new SubstitutableSpanSender();
+
+            var tracer = new Tracer(new TracerSettings(SpanSender));
+            substitutableTracer = new SubstitutableTracer(tracer);
         }
     }
 }

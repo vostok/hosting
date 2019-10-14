@@ -11,7 +11,7 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Tracing
 {
-    internal class TracerBuilder : IVostokTracerBuilder, IBuilder<ITracer>
+    internal class TracerBuilder : IVostokTracerBuilder, IBuilder<(ITracer, ISpanSender)>
     {
         private Func<TracerSettings, ILog, ITracer> tracerProvider;
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
@@ -52,7 +52,7 @@ namespace Vostok.Hosting.Components.Tracing
             return this;
         }
 
-        public ITracer Build(BuildContext context)
+        public (ITracer, ISpanSender) Build(BuildContext context)
         {
             var spanSender = BuildCompositeSpanSender(context);
 
@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Components.Tracing
 
             var tracer = tracerProvider(settings, context.Log);
 
-            return tracer;
+            return (tracer, spanSender);
         }
 
         private ISpanSender BuildCompositeSpanSender(BuildContext context)
