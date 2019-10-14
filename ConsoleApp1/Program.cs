@@ -5,7 +5,6 @@ using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Transport;
-using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting;
 using Vostok.Hosting.Abstractions;
@@ -17,6 +16,7 @@ using Vostok.Metrics.Models;
 using Vostok.ServiceDiscovery.Kontur;
 using Vostok.Tracing.Abstractions;
 using Vostok.Tracing.Kontur;
+
 // ReSharper disable AssignNullToNotNullAttribute
 
 namespace ConsoleApp1
@@ -83,10 +83,7 @@ namespace ConsoleApp1
                             .SetupTracing(
                                 tracingSetup => tracingSetup
                                     .CustomizeSettings(
-                                        customization =>
-                                        {
-                                            customization.AdditionalRequestTransformation = (request, context) => request.WithHeader("bla", context.TraceId);
-                                        }))
+                                        customization => { customization.AdditionalRequestTransformation = (request, context) => request.WithHeader("bla", context.TraceId); }))
                     )
                     .SetupZooKeeperClient(
                         zooKeeperClientSetup => zooKeeperClientSetup
@@ -104,18 +101,12 @@ namespace ConsoleApp1
                                     .SetPort(42)
                             )
                             .CustomizeSettings(
-                                customization =>
-                                {
-                                    customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance;
-                                })
+                                customization => { customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance; })
                     )
                     .SetupServiceLocator(
                         serviceLocatorSetup => serviceLocatorSetup
                             .CustomizeSettings(
-                                customization =>
-                                {
-                                    customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance;
-                                })
+                                customization => { customization.ZooKeeperNodesPathEscaper = KonturZooKeeperPathEscaper.Instance; })
                     )
                     .SetupClusterConfigClient(
                         clusterConfigClientSetup => clusterConfigClientSetup
@@ -123,13 +114,13 @@ namespace ConsoleApp1
                                 settings =>
                                 {
                                     //settings.Zone = "123";
-                                }))
-                    .SetupConfiguration(configurationSetup => configurationSetup
-                        .CustomizeConfigurationContext(
-                            configurationContext =>
-                            {
-                                configurationContext.ConfigurationProvider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings { Value = "my_value" }));
-                            }))
+                                })
+                    )
+                    .SetupConfiguration(
+                        configurationSetup => configurationSetup
+                            .CustomizeConfigurationContext(
+                                configurationContext => { configurationContext.ConfigurationProvider.SetupSourceFor<MySettings>(new ObjectSource(new MySettings {Value = "my_value"})); })
+                    )
                     ;
             };
 

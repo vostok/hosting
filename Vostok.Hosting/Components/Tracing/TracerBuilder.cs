@@ -6,7 +6,6 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
-using Vostok.ZooKeeper.Client;
 
 // ReSharper disable ParameterHidesMember
 
@@ -59,8 +58,8 @@ namespace Vostok.Hosting.Components.Tracing
 
             var settings = new TracerSettings(spanSender)
             {
-                Application = context.ApplicationIdentity?.Application,
-                Environment = context.ApplicationIdentity?.Environment
+                Application = context.ApplicationIdentity.Application,
+                Environment = context.ApplicationIdentity.Environment
             };
 
             settingsCustomization.Customize(settings);
