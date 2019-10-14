@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Vostok.Clusterclient.Core;
+using Vostok.ClusterConfig.Client;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -212,7 +213,10 @@ namespace Vostok.Hosting.Components.Environment
             LogProvider.Configure(context.Log, true);
             TracerProvider.Configure(context.Tracer, true);
 
-            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
+            var clusterConfigClient = clusterConfigClientBuilder.Build(context);
+            context.ClusterConfigClient = clusterConfigClient;
+            ClusterConfigClient.OverwriteDefaultClient(clusterConfigClient);
+
             (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
             context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
