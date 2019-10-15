@@ -18,13 +18,15 @@ namespace Vostok.Hosting.Components.Log
 
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
+        private readonly ConsoleLogBuilder consoleLogBuilder;
 
         public CompositeLogBuilder()
         {
             herculesLogBuilder = new HerculesLogBuilder();
             fileLogBuilder = new FileLogBuilder();
+            consoleLogBuilder = new ConsoleLogBuilder();
 
-            logBuilders = new List<IBuilder<ILog>> {herculesLogBuilder, fileLogBuilder};
+            logBuilders = new List<IBuilder<ILog>> {herculesLogBuilder, fileLogBuilder, consoleLogBuilder};
         }
 
         [NotNull]
@@ -45,6 +47,12 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder SetupFileLog(Action<IVostokFileLogBuilder> fileLogSetup)
         {
             fileLogSetup(fileLogBuilder);
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder SetupConsoleLog(Action<IVostokConsoleLogBuilder> consoleLogSetup)
+        {
+            consoleLogSetup(consoleLogBuilder);
             return this;
         }
 

@@ -204,6 +204,8 @@ namespace Vostok.Hosting.Components.Environment
                 // Note(kungurtsev): if log hasn't created yet, sends all messages from buffer.
                 context.Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
 
+                DisposeEnvironment();
+
                 throw;
             }
         }

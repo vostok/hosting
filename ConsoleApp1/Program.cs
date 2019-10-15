@@ -58,7 +58,7 @@ namespace ConsoleApp1
                             //throw new Exception("Test error.");
 
                             logSetup
-                                .AddLog(log)
+                                //.AddLog(log)
                                 .SetupFileLog(
                                     fileLogSetup => fileLogSetup
                                         .CustomizeSettings(
@@ -74,7 +74,10 @@ namespace ConsoleApp1
                                         .SetStream("logs_vostoklibs_cloud")
                                         .CustomizeLog(
                                             l => l
-                                                .WithMinimumLevel(LogLevel.Info)));
+                                                .WithMinimumLevel(LogLevel.Info)))
+                                .SetupConsoleLog(
+                                    consoleLogSetup => consoleLogSetup
+                                        .Enable());
                         })
                     .SetupTracer(
                         (tracerSetup, setupContext) => tracerSetup
