@@ -12,10 +12,10 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class HerculesLogBuilder : IVostokHerculesLogBuilder, IBuilder<ILog>
     {
-        private Func<string> apiKeyProvider;
-        private string stream;
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
+        private Func<string> apiKeyProvider;
+        private string stream;
 
         public HerculesLogBuilder()
         {
@@ -56,6 +56,7 @@ namespace Vostok.Hosting.Components.Log
                 context.Log.LogDisabled("HerculesLog", "disabled HerculesSink");
                 return null;
             }
+
             if (stream == null)
             {
                 context.Log.LogDisabled("HerculesLog", "unconfigured stream");

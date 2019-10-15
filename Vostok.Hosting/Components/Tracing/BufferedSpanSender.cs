@@ -13,7 +13,7 @@ namespace Vostok.Hosting.Components.Tracing
         {
             queue = new ConcurrentBoundedQueue<ISpan>(Capacity);
         }
-        
+
         public void SendBufferedSpans(TracerSettings tracerSettings)
         {
             var buffer = new ISpan[Capacity];

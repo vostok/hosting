@@ -19,8 +19,6 @@ namespace Vostok.Hosting.Components.Log
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
 
-        private readonly Logs logs;
-
         public LogsBuilder()
         {
             userLogs = new List<ILog>();

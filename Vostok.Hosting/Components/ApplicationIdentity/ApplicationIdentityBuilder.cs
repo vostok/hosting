@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.ApplicationIdentity
@@ -11,14 +12,14 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
         private string environment;
         private string application;
         private string instance;
-        
+
         [NotNull]
         public ApplicationIdentity Build(BuildContext context) =>
             new ApplicationIdentity(
                 project,
                 subproject,
                 environment,
-                application, 
+                application,
                 instance);
 
         public IVostokApplicationIdentityBuilder SetProject(string project)
@@ -38,7 +39,7 @@ namespace Vostok.Hosting.Components.ApplicationIdentity
             this.environment = environment;
             return this;
         }
-        
+
         public IVostokApplicationIdentityBuilder SetApplication(string application)
         {
             this.application = application;

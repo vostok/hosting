@@ -4,6 +4,7 @@ using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Configuration

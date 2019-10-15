@@ -3,7 +3,6 @@ using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.Context;
-using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
@@ -19,7 +18,6 @@ using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -56,7 +54,8 @@ namespace Vostok.Hosting.Components.Environment
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
-            zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());;
+            zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
+            ;
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
             hostExtensionsBuilder = new CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions>(new HostExtensionsBuilder());
@@ -67,6 +66,85 @@ namespace Vostok.Hosting.Components.Environment
             var builder = new EnvironmentBuilder();
             setup(builder);
             return builder.Build(shutdownToken);
+        }
+
+        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
+        {
+            var context = new BuildContext {ShutdownToken = shutdownToken};
+
+            try
+            {
+                return BuildInner(context);
+            }
+            catch (Exception error)
+            {
+                context.Log.Error(error, "Failed to build vostok hosting environment.");
+                context.PrintBufferedLogs();
+
+                context.Dispose();
+
+                throw;
+            }
+        }
+
+        private VostokHostingEnvironment BuildInner(BuildContext context)
+        {
+            LogProvider.Configure(context.Log, true);
+            TracerProvider.Configure(context.Tracer, true);
+
+            var clusterConfigClient = clusterConfigClientBuilder.Build(context);
+            context.ClusterConfigClient = clusterConfigClient;
+            ClusterConfigClient.OverwriteDefaultClient(clusterConfigClient);
+
+            (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
+            context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
+
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+
+            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+
+            context.ServiceLocator = serviceLocatorBuilder.Build(context);
+
+            context.HerculesSink = herculesSinkBuilder.Build(context);
+            if (context.HerculesSink != null)
+                HerculesSinkProvider.Configure(context.HerculesSink, true);
+
+            context.Logs = compositeLogBuilder.Build(context);
+            if (context.Logs.Count() == 0)
+            {
+                context.Log.LogDisabled("All logs");
+                context.PrintBufferedLogs();
+            }
+
+            context.Log = context.Logs.BuildCompositeLog();
+
+            context.SubstituteTracer(tracerBuilder.Build(context));
+
+            context.Metrics = metricsBuilder.Build(context);
+            if (context.HerculesSink != null)
+                HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
+
+            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
+
+            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
+
+            return new VostokHostingEnvironment(
+                context.ShutdownToken,
+                context.ApplicationIdentity,
+                context.Metrics,
+                context.Log,
+                context.Tracer,
+                context.HerculesSink ?? new DevNullHerculesSink(),
+                context.ConfigurationSource,
+                context.ConfigurationProvider,
+                context.ServiceBeacon,
+                context.ServiceLocator,
+                FlowingContext.Globals,
+                FlowingContext.Properties,
+                FlowingContext.Configuration,
+                clusterClientSetupBuilder.Build(context),
+                hostExtensionsBuilder.Build(context),
+                context.Dispose);
         }
 
         #region SetupComponents
@@ -204,83 +282,5 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         #endregion
-
-        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
-        {
-            var context = new BuildContext {ShutdownToken = shutdownToken};
-
-            try
-            {
-                return BuildInner(context);
-            }
-            catch (Exception error)
-            {
-                context.Log.Error(error, "Failed to build vostok hosting environment.");
-                context.PrintBufferedLogs();
-
-                context.Dispose();
-
-                throw;
-            }
-        }
-
-        private VostokHostingEnvironment BuildInner(BuildContext context)
-        {
-            LogProvider.Configure(context.Log, true);
-            TracerProvider.Configure(context.Tracer, true);
-
-            var clusterConfigClient = clusterConfigClientBuilder.Build(context);
-            context.ClusterConfigClient = clusterConfigClient;
-            ClusterConfigClient.OverwriteDefaultClient(clusterConfigClient);
-
-            (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
-            context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
-
-            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-
-            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
-
-            context.ServiceLocator = serviceLocatorBuilder.Build(context);
-
-            context.HerculesSink = herculesSinkBuilder.Build(context);
-            if (context.HerculesSink != null)
-                HerculesSinkProvider.Configure(context.HerculesSink, true);
-
-            context.Logs = compositeLogBuilder.Build(context);
-            if (context.Logs.Count() == 0)
-            {
-                context.Log.LogDisabled("All logs");
-                context.PrintBufferedLogs();
-            }
-            context.Log = context.Logs.BuildCompositeLog();
-
-            context.SubstituteTracer(tracerBuilder.Build(context));
-
-            context.Metrics = metricsBuilder.Build(context);
-            if (context.HerculesSink != null)
-                HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
-
-            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
-
-            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
-
-            return new VostokHostingEnvironment(
-                context.ShutdownToken,
-                context.ApplicationIdentity,
-                context.Metrics,
-                context.Log,
-                context.Tracer,
-                context.HerculesSink ?? new DevNullHerculesSink(),
-                context.ConfigurationSource,
-                context.ConfigurationProvider,
-                context.ServiceBeacon,
-                context.ServiceLocator,
-                FlowingContext.Globals,
-                FlowingContext.Properties,
-                FlowingContext.Configuration,
-                clusterClientSetupBuilder.Build(context),
-                hostExtensionsBuilder.Build(context),
-                context.Dispose);
-        }
     }
 }

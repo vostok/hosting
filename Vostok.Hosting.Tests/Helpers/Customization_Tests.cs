@@ -14,10 +14,7 @@ namespace Vostok.Hosting.Tests.Helpers
             var customization = new Customization<List<int>>();
 
             customization.AddCustomization(
-                l =>
-                {
-                    l.Add(1);
-                });
+                l => { l.Add(1); });
 
             customization.AddCustomization(
                 l =>
@@ -27,15 +24,12 @@ namespace Vostok.Hosting.Tests.Helpers
                 });
 
             customization.AddCustomization(
-                l =>
-                {
-                    l.Add(3);
-                });
+                l => { l.Add(3); });
 
             customization.AddCustomization(
                 l =>
                 {
-                    var ll = new List<int>(l) { 4 };
+                    var ll = new List<int>(l) {4};
                     return ll;
                 });
 

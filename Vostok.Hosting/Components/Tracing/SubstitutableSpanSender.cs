@@ -6,7 +6,7 @@ namespace Vostok.Hosting.Components.Tracing
     internal class SubstitutableSpanSender : ISpanSender
     {
         private volatile ISpanSender baseSender = new BufferedSpanSender();
-        
+
         public void SubstituteWith(TracerSettings tracerSettings)
         {
             var oldSender = baseSender;

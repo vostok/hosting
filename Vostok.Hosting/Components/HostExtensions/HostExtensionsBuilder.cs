@@ -12,7 +12,6 @@ namespace Vostok.Hosting.Components.HostExtensions
             extensions = new HostExtensions();
         }
 
-
         public IVostokHostExtensions Build(BuildContext context)
         {
             if (context.ZooKeeperClient != null)

@@ -6,14 +6,15 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Metrics;
 using Vostok.Metrics.Hercules;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Metrics
 {
     internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
     {
-        private List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
         private readonly Customization<HerculesMetricSenderSettings> settingsCustomization;
+        private List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
 
         public HerculesMetricEventSenderBuilder()
         {

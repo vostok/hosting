@@ -64,7 +64,7 @@ namespace ConsoleApp1
                                         .CustomizeSettings(
                                             customization =>
                                             {
-                                                customization.RollingStrategy = new RollingStrategyOptions()
+                                                customization.RollingStrategy = new RollingStrategyOptions
                                                 {
                                                     Type = RollingStrategyType.ByTime
                                                 };

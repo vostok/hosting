@@ -5,13 +5,6 @@ namespace Vostok.Hosting.Components.Metrics
 {
     internal class VostokApplicationMetrics : IVostokApplicationMetrics
     {
-        public IMetricContext Root { get; }
-        public IMetricContext Project { get; }
-        public IMetricContext Subproject { get; }
-        public IMetricContext Environment { get; }
-        public IMetricContext Application { get; }
-        public IMetricContext Instance { get; }
-
         public VostokApplicationMetrics(IMetricContext root, IVostokApplicationIdentity identity)
         {
             Root = root;
@@ -23,5 +16,12 @@ namespace Vostok.Hosting.Components.Metrics
             Application = Environment.WithTag(WellKnownApplicationIdentityProperties.Application, identity.Application);
             Instance = Application.WithTag(WellKnownApplicationIdentityProperties.Instance, identity.Instance);
         }
+
+        public IMetricContext Root { get; }
+        public IMetricContext Project { get; }
+        public IMetricContext Subproject { get; }
+        public IMetricContext Environment { get; }
+        public IMetricContext Application { get; }
+        public IMetricContext Instance { get; }
     }
 }

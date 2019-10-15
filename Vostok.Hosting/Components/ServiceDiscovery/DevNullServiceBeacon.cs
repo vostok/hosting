@@ -4,6 +4,8 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class DevNullServiceBeacon : IServiceBeacon
     {
+        public IReplicaInfo ReplicaInfo { get; }
+
         public void Start()
         {
         }
@@ -11,7 +13,5 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public void Stop()
         {
         }
-
-        public IReplicaInfo ReplicaInfo { get; }
     }
 }

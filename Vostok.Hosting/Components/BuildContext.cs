@@ -9,7 +9,6 @@ using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
-using Vostok.Logging.File;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -19,6 +18,16 @@ namespace Vostok.Hosting.Components
 {
     internal class BuildContext : IDisposable
     {
+        private readonly SubstitutableLog substitutableLog;
+
+        private readonly SubstitutableTracer substitutableTracer;
+
+        public BuildContext()
+        {
+            substitutableLog = new SubstitutableLog();
+            substitutableTracer = new SubstitutableTracer();
+        }
+
         public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
@@ -33,7 +42,7 @@ namespace Vostok.Hosting.Components
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
         public Logs Logs { get; set; }
-        
+
         public ILog Log
         {
             get => substitutableLog;
@@ -53,17 +62,7 @@ namespace Vostok.Hosting.Components
         public void PrintBufferedLogs()
         {
             // Note(kungurtsev): if log hasn't created yet, send all messages from buffer.
-            Log = new SynchronousConsoleLog(new ConsoleLogSettings { ColorsEnabled = true });
-        }
-
-        private readonly SubstitutableLog substitutableLog;
-
-        private readonly SubstitutableTracer substitutableTracer;
-        
-        public BuildContext()
-        {
-            substitutableLog = new SubstitutableLog();
-            substitutableTracer = new SubstitutableTracer();
+            Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 
         public void Dispose()
@@ -82,7 +81,7 @@ namespace Vostok.Hosting.Components
                 (ZooKeeperClient as IDisposable)?.Dispose();
 
                 (ClusterConfigClient as IDisposable)?.Dispose();
-                
+
                 Log = new SilentLog();
 
                 Logs?.Dispose();

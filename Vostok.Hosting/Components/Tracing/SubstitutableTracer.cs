@@ -14,6 +14,12 @@ namespace Vostok.Hosting.Components.Tracing
             baseTracer = new Tracer(new TracerSettings(baseSender));
         }
 
+        public TraceContext CurrentContext
+        {
+            get => baseTracer.CurrentContext;
+            set => baseTracer.CurrentContext = value;
+        }
+
         public void SubstituteWith(ITracer newTracer, TracerSettings tracerSettings)
         {
             baseTracer = newTracer;
@@ -22,11 +28,5 @@ namespace Vostok.Hosting.Components.Tracing
 
         public ISpanBuilder BeginSpan() =>
             baseTracer.BeginSpan();
-
-        public TraceContext CurrentContext
-        {
-            get => baseTracer.CurrentContext;
-            set => baseTracer.CurrentContext = value;
-        }
     }
 }

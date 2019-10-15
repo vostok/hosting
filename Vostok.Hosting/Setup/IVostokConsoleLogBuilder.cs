@@ -9,7 +9,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokConsoleLogBuilder
     {
         IVostokConsoleLogBuilder Enable(bool synchronous = false);
-        
+
         IVostokConsoleLogBuilder Disable();
 
         IVostokConsoleLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);

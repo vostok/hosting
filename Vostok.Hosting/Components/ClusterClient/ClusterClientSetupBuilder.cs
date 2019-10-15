@@ -16,7 +16,7 @@ namespace Vostok.Hosting.Components.ClusterClient
         {
             tracingBuilder = new ClusterClientSetupTracingBuilder();
         }
-        
+
         public ClusterClientSetup Build(BuildContext context)
         {
             ClusterClientSetup setup = s =>

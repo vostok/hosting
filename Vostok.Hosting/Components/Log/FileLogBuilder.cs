@@ -4,6 +4,7 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.File;
 using Vostok.Logging.File.Configuration;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Log
@@ -59,7 +60,7 @@ namespace Vostok.Hosting.Components.Log
             var log = new FileLog(settings);
 
             logCustomization.Customize(log);
-            
+
             return log;
         }
     }

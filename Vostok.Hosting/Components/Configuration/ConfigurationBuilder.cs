@@ -10,6 +10,7 @@ using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Configuration
@@ -55,7 +56,7 @@ namespace Vostok.Hosting.Components.Configuration
             printSettingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
-        
+
         public IVostokConfigurationBuilder CustomizeConfigurationContext(Action<IVostokConfigurationContext> configurationContextCustomization)
         {
             this.configurationContextCustomization.AddCustomization(configurationContextCustomization);
@@ -74,7 +75,7 @@ namespace Vostok.Hosting.Components.Configuration
             var printSettings = new PrintSettings();
             printSettingsCustomization.Customize(printSettings);
 
-            var providerSettings = 
+            var providerSettings =
                 new ConfigurationProviderSettings()
                     .WithErrorLogging(context.Log)
                     .WithSettingsLogging(context.Log, printSettings);

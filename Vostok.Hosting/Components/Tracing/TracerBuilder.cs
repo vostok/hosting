@@ -13,10 +13,10 @@ namespace Vostok.Hosting.Components.Tracing
 {
     internal class TracerBuilder : IVostokTracerBuilder, IBuilder<(ITracer, TracerSettings)>
     {
-        private Func<TracerSettings, ILog, ITracer> tracerProvider;
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
         private readonly List<IBuilder<ISpanSender>> spanSenderBuilders;
         private readonly Customization<TracerSettings> settingsCustomization;
+        private Func<TracerSettings, ILog, ITracer> tracerProvider;
 
         public TracerBuilder()
         {

@@ -11,9 +11,9 @@ namespace Vostok.Hosting.Components.Tracing
 {
     internal class HerculesSpanSenderBuilder : IVostokHerculesSpanSenderBuilder, IBuilder<ISpanSender>
     {
+        private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
         private Func<string> apiKeyProvider;
         private string stream;
-        private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
 
         public HerculesSpanSenderBuilder()
         {
@@ -47,6 +47,7 @@ namespace Vostok.Hosting.Components.Tracing
                 context.Log.LogDisabled("HerculesSpanSender", "disabled HerculesSink");
                 return null;
             }
+
             if (stream == null)
             {
                 context.Log.LogDisabled("HerculesSpanSender", "unconfigured stream");
@@ -54,7 +55,7 @@ namespace Vostok.Hosting.Components.Tracing
             }
 
             if (apiKeyProvider != null)
-                herculesSink.ConfigureStream(stream, new StreamSettings { ApiKeyProvider = apiKeyProvider });
+                herculesSink.ConfigureStream(stream, new StreamSettings {ApiKeyProvider = apiKeyProvider});
 
             var settings = new HerculesSpanSenderSettings(herculesSink, stream);
 

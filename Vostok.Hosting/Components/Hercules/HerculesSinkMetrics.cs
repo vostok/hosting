@@ -62,13 +62,13 @@ namespace Vostok.Hosting.Components.Hercules
         private MetricEvent CreateMetricEvent(DateTimeOffset timestamp, string name, double value)
         {
             return new MetricEvent(
-                value, 
+                value,
                 tags
                     .Append("summarized", "total") //may be by stream
                     .Append(WellKnownTagKeys.Name, name),
-                timestamp, 
-                null, 
-                WellKnownAggregationTypes.Counter, 
+                timestamp,
+                null,
+                WellKnownAggregationTypes.Counter,
                 null);
         }
     }

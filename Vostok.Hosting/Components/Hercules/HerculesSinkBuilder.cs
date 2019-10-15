@@ -1,9 +1,7 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Hercules.Client;
-using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Components.ClusterProvider;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
@@ -15,10 +13,10 @@ namespace Vostok.Hosting.Components.Hercules
 {
     internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<HerculesSink>
     {
+        private readonly Customization<HerculesSinkSettings> settingsCustomization;
         private ClusterProviderBuilder clusterProviderBuilder;
         private Func<string> apiKeyProvider;
         private bool suppressVerboseLogging;
-        private readonly Customization<HerculesSinkSettings> settingsCustomization;
 
         public HerculesSinkBuilder()
         {
@@ -33,7 +31,7 @@ namespace Vostok.Hosting.Components.Hercules
                 context.Log.LogDisabled("HerculesSink", "unconfigured cluster provider");
                 return null;
             }
-            
+
             var log = context.Log;
             if (suppressVerboseLogging)
                 log = log.WithMinimumLevel(LogLevel.Warn);
@@ -48,7 +46,7 @@ namespace Vostok.Hosting.Components.Hercules
 
             return new HerculesSink(settings, log);
         }
-        
+
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             this.apiKeyProvider = apiKeyProvider;

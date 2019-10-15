@@ -11,11 +11,10 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class ServiceBeaconBuilder : IVostokServiceBeaconBuilder, IBuilder<IServiceBeacon>
     {
+        private readonly Customization<ServiceBeaconSettings> settingsCustomization;
         private string application;
         private string environment;
         private ReplicaInfoSetup setup;
-
-        private readonly Customization<ServiceBeaconSettings> settingsCustomization;
 
         public ServiceBeaconBuilder()
         {

@@ -7,13 +7,6 @@ namespace Vostok.Hosting.Components.Tracing
 {
     internal class Span : ISpan
     {
-        public Guid TraceId { get; }
-        public Guid SpanId { get; }
-        public Guid? ParentSpanId { get; }
-        public DateTimeOffset BeginTimestamp { get; }
-        public DateTimeOffset? EndTimestamp { get; }
-        public IReadOnlyDictionary<string, object> Annotations => annotations;
-
         private Dictionary<string, object> annotations;
 
         public Span(ISpan span)
@@ -25,6 +18,13 @@ namespace Vostok.Hosting.Components.Tracing
             EndTimestamp = span.EndTimestamp;
             annotations = span.Annotations.ToDictionary(p => p.Key, p => p.Value);
         }
+
+        public Guid TraceId { get; }
+        public Guid SpanId { get; }
+        public Guid? ParentSpanId { get; }
+        public DateTimeOffset BeginTimestamp { get; }
+        public DateTimeOffset? EndTimestamp { get; }
+        public IReadOnlyDictionary<string, object> Annotations => annotations;
 
         public void SetAnnotation(string key, object value, bool allowOverwrite = true)
         {

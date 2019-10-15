@@ -7,6 +7,7 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Senders;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Metrics

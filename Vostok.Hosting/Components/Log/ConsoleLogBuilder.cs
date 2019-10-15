@@ -3,6 +3,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Log
@@ -19,7 +20,7 @@ namespace Vostok.Hosting.Components.Log
             settingsCustomization = new Customization<ConsoleLogSettings>();
             logCustomization = new Customization<ILog>();
         }
-        
+
         public IVostokConsoleLogBuilder Enable(bool synchronous = false)
         {
             enabled = true;
@@ -58,7 +59,7 @@ namespace Vostok.Hosting.Components.Log
             settingsCustomization.Customize(settings);
 
             var log = synchronous ? (ILog)new SynchronousConsoleLog(settings) : new ConsoleLog(settings);
-            
+
             logCustomization.Customize(log);
 
             return log;
