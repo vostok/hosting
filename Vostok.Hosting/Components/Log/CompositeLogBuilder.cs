@@ -75,7 +75,7 @@ namespace Vostok.Hosting.Components.Log
                 case 0:
                 {
                     context.Log.LogDisabled("All logs");
-                    context.PrintConsoleLogs();
+                    context.PrintBufferedLogs();
 
                     return new SilentLog();
                 }

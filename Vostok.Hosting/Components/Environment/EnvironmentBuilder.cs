@@ -215,7 +215,7 @@ namespace Vostok.Hosting.Components.Environment
             catch (Exception error)
             {
                 context.Log.Error(error, "Failed to build vostok hosting environment.");
-                context.PrintConsoleLogs();
+                context.PrintBufferedLogs();
 
                 DisposeEnvironment();
 

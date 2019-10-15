@@ -45,7 +45,7 @@ namespace Vostok.Hosting.Components
             substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
         }
 
-        public void PrintConsoleLogs()
+        public void PrintBufferedLogs()
         {
             // Note(kungurtsev): if log hasn't created yet, send all messages from buffer.
             Log = new SynchronousConsoleLog(new ConsoleLogSettings { ColorsEnabled = true });
