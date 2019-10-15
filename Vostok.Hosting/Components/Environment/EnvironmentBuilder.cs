@@ -19,6 +19,7 @@ using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -246,6 +247,11 @@ namespace Vostok.Hosting.Components.Environment
                 HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Logs = compositeLogBuilder.Build(context);
+            if (context.Logs.Count() == 0)
+            {
+                context.Log.LogDisabled("All logs");
+                context.PrintBufferedLogs();
+            }
             context.Log = context.Logs.BuildCompositeLog();
 
             context.SubstituteTracer(tracerBuilder.Build(context));

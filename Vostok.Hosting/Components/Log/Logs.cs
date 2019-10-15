@@ -14,7 +14,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
         private readonly ILog herculesLog;
-
+        
         public Logs(List<ILog> userLogs, ILog fileLog, ILog consoleLog, ILog herculesLog, Func<ILog, ILog> customization)
         {
             this.userLogs = userLogs;
@@ -22,6 +22,11 @@ namespace Vostok.Hosting.Components.Log
             this.consoleLog = consoleLog;
             this.herculesLog = herculesLog;
             this.customization = customization;
+        }
+
+        public int Count(bool withoutHercules = false)
+        {
+            return ToArray(withoutHercules).Length;
         }
 
         public ILog BuildCompositeLog(bool withoutHercules = false)
@@ -33,15 +38,9 @@ namespace Vostok.Hosting.Components.Log
 
         private ILog BuildCompositeLogInner(bool withoutHercules)
         {
-            var logs = userLogs.ToList();
-            logs.Add(fileLog);
-            logs.Add(consoleLog);
-            if (!withoutHercules)
-                logs.Add(herculesLog);
+            var logs = ToArray(withoutHercules);
 
-            logs = logs.Where(l => l != null).ToList();
-
-            switch (logs.Count)
+            switch (logs.Length)
             {
                 case 0:
                     return new SilentLog();
@@ -50,6 +49,17 @@ namespace Vostok.Hosting.Components.Log
                 default:
                     return new CompositeLog(logs.ToArray());
             }
+        }
+
+        private ILog[] ToArray(bool withoutHercules)
+        {
+            var logs = userLogs.ToList();
+            logs.Add(fileLog);
+            logs.Add(consoleLog);
+            if (!withoutHercules)
+                logs.Add(herculesLog);
+
+            return logs.Where(l => l != null).ToArray();
         }
 
         public void Dispose()
