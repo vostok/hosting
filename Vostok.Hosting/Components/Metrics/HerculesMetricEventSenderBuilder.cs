@@ -38,7 +38,10 @@ namespace Vostok.Hosting.Components.Metrics
             var herculesSink = context.HerculesSink;
 
             if (herculesSink == null)
+            {
+                context.Log.LogDisabled("Metrics", "disabled HerculesSink");
                 return null;
+            }
 
             var settings = new HerculesMetricSenderSettings(context.HerculesSink);
 

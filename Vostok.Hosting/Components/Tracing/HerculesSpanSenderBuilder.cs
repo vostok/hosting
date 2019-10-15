@@ -42,8 +42,16 @@ namespace Vostok.Hosting.Components.Tracing
         {
             var herculesSink = context.HerculesSink;
 
-            if (herculesSink == null || stream == null)
+            if (herculesSink == null)
+            {
+                context.Log.LogDisabled("HerculesSpanSender", "disabled HerculesSink");
                 return null;
+            }
+            if (stream == null)
+            {
+                context.Log.LogDisabled("HerculesSpanSender", "unconfigured stream");
+                return null;
+            }
 
             if (apiKeyProvider != null)
                 herculesSink.ConfigureStream(stream, new StreamSettings { ApiKeyProvider = apiKeyProvider });

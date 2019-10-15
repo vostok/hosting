@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Console;
 using Vostok.Logging.Context;
 using Vostok.Logging.Tracing;
 
@@ -72,7 +73,12 @@ namespace Vostok.Hosting.Components.Log
             switch (logs.Length)
             {
                 case 0:
+                {
+                    context.Log.LogDisabled("All logs");
+                    context.PrintConsoleLogs();
+
                     return new SilentLog();
+                }
                 case 1:
                     return logs.Single();
                 default:

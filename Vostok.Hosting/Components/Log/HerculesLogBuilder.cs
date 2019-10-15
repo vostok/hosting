@@ -50,10 +50,17 @@ namespace Vostok.Hosting.Components.Log
         public ILog Build(BuildContext context)
         {
             var herculesSink = context.HerculesSink;
-            
-            // CR(iloktionov): Let's log something about every component that's not working as intended due to missing configuration.
-            if (herculesSink == null || stream == null)
+
+            if (herculesSink == null)
+            {
+                context.Log.LogDisabled("HerculesLog", "disabled HerculesSink");
                 return null;
+            }
+            if (stream == null)
+            {
+                context.Log.LogDisabled("HerculesLog", "unconfigured stream");
+                return null;
+            }
 
             if (apiKeyProvider != null)
                 herculesSink.ConfigureStream(stream, new StreamSettings {ApiKeyProvider = apiKeyProvider});

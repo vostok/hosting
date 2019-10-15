@@ -48,7 +48,10 @@ namespace Vostok.Hosting.Components.Log
         public ILog Build(BuildContext context)
         {
             if (!enabled)
+            {
+                context.Log.LogDisabled("ConsoleLog");
                 return null;
+            }
 
             var settings = new ConsoleLogSettings();
 

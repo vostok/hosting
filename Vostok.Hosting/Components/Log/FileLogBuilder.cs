@@ -47,7 +47,10 @@ namespace Vostok.Hosting.Components.Log
         public ILog Build(BuildContext context)
         {
             if (!enabled)
+            {
+                context.Log.LogDisabled("FileLog");
                 return null;
+            }
 
             var settings = new FileLogSettings();
 

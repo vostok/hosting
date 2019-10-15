@@ -30,7 +30,10 @@ namespace Vostok.Hosting.Components.Hercules
         {
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
+            {
+                context.Log.LogDisabled("HerculesSink", "unconfigured cluster provider");
                 return new DevNullHerculesSink();
+            }
             
             var log = context.Log;
             if (suppressVerboseLogging)

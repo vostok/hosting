@@ -215,9 +215,7 @@ namespace Vostok.Hosting.Components.Environment
             catch (Exception error)
             {
                 context.Log.Error(error, "Failed to build vostok hosting environment.");
-
-                // Note(kungurtsev): if log hasn't created yet, sends all messages from buffer.
-                context.Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
+                context.PrintConsoleLogs();
 
                 DisposeEnvironment();
 

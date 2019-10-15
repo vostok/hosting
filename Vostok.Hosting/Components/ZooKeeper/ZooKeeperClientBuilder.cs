@@ -59,7 +59,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings = new ZooKeeperClientSettings(() => cluster.GetCluster());
 
             if (settings == null)
+            {
+                context.Log.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
                 return null;
+            }
 
             settingsCustomization.Customize(settings);
 

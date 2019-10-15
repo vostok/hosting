@@ -5,6 +5,12 @@ namespace Vostok.Hosting.Helpers
 {
     internal static class ILogExtensions
     {
+        public static void LogDisabled(this ILog log, string name) =>
+            log.Info("{ComponentName} has been disabled.", name);
+
+        public static void LogDisabled(this ILog log, string name, string reason) =>
+            log.Info("{ComponentName} has been disabled due to {ComponentDisabledReason}.", name, reason);
+
         public static ILog WithApplicationIdentityProperties(this ILog log, IVostokApplicationIdentity applicationIdentity)
         {
             log = log.WithProperty(WellKnownApplicationIdentityProperties.Project, applicationIdentity.Project);
