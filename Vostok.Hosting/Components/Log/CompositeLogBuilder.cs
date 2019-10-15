@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Console;
 using Vostok.Logging.Context;
 using Vostok.Logging.Tracing;
 
@@ -33,12 +32,11 @@ namespace Vostok.Hosting.Components.Log
         [NotNull]
         public ILog Build(BuildContext context)
         {
-            return BuildCompositeLog(context)
-                .WithApplicationIdentityProperties(context.ApplicationIdentity)
-                .WithTracingProperties(context.Tracer)
-                .WithOperationContext();
-        }
+            context.LogWithoutHercules = WithProperties(BuildCompositeLog(context, logBuilders.Skip(1)), context);
 
+            return WithProperties(BuildCompositeLog(context, logBuilders), context);
+        }
+        
         public IVostokCompositeLogBuilder AddLog(ILog log)
         {
             logBuilders.Add(new CustomBuilder<ILog>(log));
@@ -63,7 +61,15 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        private ILog BuildCompositeLog(BuildContext context)
+        private static ILog WithProperties(ILog log, BuildContext context)
+        {
+            return log
+                .WithApplicationIdentityProperties(context.ApplicationIdentity)
+                .WithTracingProperties(context.Tracer)
+                .WithOperationContext();
+        }
+
+        private static ILog BuildCompositeLog(BuildContext context, IEnumerable<IBuilder<ILog>> logBuilders)
         {
             var logs = logBuilders
                 .Select(b => b.Build(context))

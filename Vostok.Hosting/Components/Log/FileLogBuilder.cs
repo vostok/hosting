@@ -60,6 +60,8 @@ namespace Vostok.Hosting.Components.Log
 
             logCustomization.Customize(log);
 
+            context.FileLog = log;
+
             return log;
         }
     }

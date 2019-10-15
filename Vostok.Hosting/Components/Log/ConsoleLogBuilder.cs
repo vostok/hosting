@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Components.Log
             settingsCustomization.Customize(settings);
 
             var log = synchronous ? (ILog)new SynchronousConsoleLog(settings) : new ConsoleLog(settings);
-
+            
             logCustomization.Customize(log);
 
             return log;

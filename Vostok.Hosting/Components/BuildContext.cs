@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
+using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
@@ -8,6 +11,7 @@ using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Logging.File;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -15,11 +19,12 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Components
 {
-    internal class BuildContext
+    internal class BuildContext : IDisposable
     {
         public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
+        public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public IConfigurationSource ConfigurationSource { get; set; }
         public IConfigurationProvider ConfigurationProvider { get; set; }
@@ -29,6 +34,10 @@ namespace Vostok.Hosting.Components
 
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
+        public FileLog FileLog { get; set; }
+
+        public ILog LogWithoutHercules { get; set; }
+        
         public ILog Log
         {
             get => substitutableLog;
@@ -59,6 +68,36 @@ namespace Vostok.Hosting.Components
         {
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                Log = LogWithoutHercules ?? new SilentLog();
+                SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
+
+                (Metrics?.Root as IDisposable)?.Dispose();
+
+                (HerculesSink as IDisposable)?.Dispose();
+
+                (ServiceBeacon as IDisposable)?.Dispose();
+                (ServiceLocator as IDisposable)?.Dispose();
+                (ZooKeeperClient as IDisposable)?.Dispose();
+
+                (ClusterConfigClient as IDisposable)?.Dispose();
+                
+                Log = new SilentLog();
+
+                FileLog?.Dispose();
+                ConsoleLog.Flush();
+            }
+            catch (Exception error)
+            {
+                Log.Error(error, "Failed to dispose vostok hosting environment.");
+
+                throw;
+            }
         }
     }
 }

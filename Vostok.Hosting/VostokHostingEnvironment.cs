@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
@@ -19,38 +20,38 @@ namespace Vostok.Hosting
 
         internal VostokHostingEnvironment(
             CancellationToken shutdownToken,
-            IVostokApplicationIdentity applicationIdentity,
-            IVostokApplicationMetrics metrics,
-            ILog log,
-            ITracer tracer,
-            IHerculesSink herculesSink,
-            IConfigurationSource configurationSource,
-            IConfigurationProvider configurationProvider,
-            IServiceBeacon serviceBeacon,
-            IServiceLocator serviceLocator,
-            IContextGlobals contextGlobals,
-            IContextProperties contextProperties,
-            IContextConfiguration contextConfiguration,
-            ClusterClientSetup clusterClientSetup,
-            IVostokHostExtensions hostExtensions,
-            Action dispose)
+            [NotNull] IVostokApplicationIdentity applicationIdentity,
+            [NotNull] IVostokApplicationMetrics metrics,
+            [NotNull] ILog log,
+            [NotNull] ITracer tracer,
+            [NotNull] IHerculesSink herculesSink,
+            [NotNull] IConfigurationSource configurationSource,
+            [NotNull] IConfigurationProvider configurationProvider,
+            [NotNull] IServiceBeacon serviceBeacon,
+            [NotNull] IServiceLocator serviceLocator,
+            [NotNull] IContextGlobals contextGlobals,
+            [NotNull] IContextProperties contextProperties,
+            [NotNull] IContextConfiguration contextConfiguration,
+            [NotNull] ClusterClientSetup clusterClientSetup,
+            [NotNull] IVostokHostExtensions hostExtensions,
+            [NotNull] Action dispose)
         {
-            this.dispose = dispose;
             ShutdownToken = shutdownToken;
-            ApplicationIdentity = applicationIdentity;
-            Metrics = metrics;
-            Log = log;
-            Tracer = tracer;
-            HerculesSink = herculesSink;
-            ConfigurationSource = configurationSource;
-            ConfigurationProvider = configurationProvider;
-            ServiceBeacon = serviceBeacon;
-            ServiceLocator = serviceLocator;
-            ContextGlobals = contextGlobals;
-            ContextProperties = contextProperties;
-            ContextConfiguration = contextConfiguration;
-            ClusterClientSetup = clusterClientSetup;
-            HostExtensions = hostExtensions;
+            ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
+            Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
+            HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
+            ConfigurationSource = configurationSource ?? throw new ArgumentNullException(nameof(configurationSource));
+            ConfigurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
+            ServiceBeacon = serviceBeacon ?? throw new ArgumentNullException(nameof(serviceBeacon));
+            ServiceLocator = serviceLocator ?? throw new ArgumentNullException(nameof(serviceLocator));
+            ContextGlobals = contextGlobals ?? throw new ArgumentNullException(nameof(contextGlobals));
+            ContextProperties = contextProperties ?? throw new ArgumentNullException(nameof(contextProperties));
+            ContextConfiguration = contextConfiguration ?? throw new ArgumentNullException(nameof(contextConfiguration));
+            ClusterClientSetup = clusterClientSetup ?? throw new ArgumentNullException(nameof(clusterClientSetup));
+            HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
+            this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
         }
 
         public CancellationToken ShutdownToken { get; }

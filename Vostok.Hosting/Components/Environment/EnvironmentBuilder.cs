@@ -3,6 +3,7 @@ using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.Context;
+using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.ApplicationIdentity;
@@ -18,7 +19,6 @@ using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -217,7 +217,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log.Error(error, "Failed to build vostok hosting environment.");
                 context.PrintBufferedLogs();
 
-                DisposeEnvironment();
+                context.Dispose();
 
                 throw;
             }
@@ -242,15 +242,19 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
-            HerculesSinkProvider.Configure(context.HerculesSink, true);
+            if (context.HerculesSink != null)
+                HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Log = compositeLogBuilder.Build(context);
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
-            HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
+            if (context.HerculesSink != null)
+                HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
+
+            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
             return new VostokHostingEnvironment(
                 context.ShutdownToken,
@@ -258,21 +262,17 @@ namespace Vostok.Hosting.Components.Environment
                 context.Metrics,
                 context.Log,
                 context.Tracer,
-                context.HerculesSink,
+                context.HerculesSink ?? new DevNullHerculesSink(),
                 context.ConfigurationSource,
                 context.ConfigurationProvider,
-                serviceBeaconBuilder.Build(context),
+                context.ServiceBeacon,
                 context.ServiceLocator,
                 FlowingContext.Globals,
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
                 hostExtensionsBuilder.Build(context),
-                DisposeEnvironment);
-        }
-
-        private void DisposeEnvironment()
-        {
+                context.Dispose);
         }
     }
 }

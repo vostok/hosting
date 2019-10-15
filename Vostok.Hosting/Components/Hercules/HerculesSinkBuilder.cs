@@ -13,7 +13,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<HerculesSink>
     {
         private ClusterProviderBuilder clusterProviderBuilder;
         private Func<string> apiKeyProvider;
@@ -25,14 +25,13 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization = new Customization<HerculesSinkSettings>();
         }
 
-        [NotNull]
-        public IHerculesSink Build(BuildContext context)
+        public HerculesSink Build(BuildContext context)
         {
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
             {
                 context.Log.LogDisabled("HerculesSink", "unconfigured cluster provider");
-                return new DevNullHerculesSink();
+                return null;
             }
             
             var log = context.Log;
