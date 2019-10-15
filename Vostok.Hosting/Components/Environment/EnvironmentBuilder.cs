@@ -9,6 +9,7 @@ using Vostok.Hosting.Components.ApplicationIdentity;
 using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
+using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
@@ -41,6 +42,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
+        private readonly CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions> hostExtensionsBuilder;
 
         private EnvironmentBuilder()
         {
@@ -56,6 +58,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());;
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
+            hostExtensionsBuilder = new CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions>(new HostExtensionsBuilder());
         }
 
         public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
@@ -181,6 +184,18 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
+        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder> hostExtensionsSetup)
+        {
+            hostExtensionsBuilder.AddCustomization(hostExtensionsSetup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironmentSetupContext> hostExtensionsSetup)
+        {
+            hostExtensionsBuilder.AddCustomization(hostExtensionsSetup);
+            return this;
+        }
+
         public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> configurationSetup)
         {
             configurationSetup(configurationBuilder);
@@ -254,7 +269,7 @@ namespace Vostok.Hosting.Components.Environment
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
-                null,
+                hostExtensionsBuilder.Build(context),
                 DisposeEnvironment);
         }
 
