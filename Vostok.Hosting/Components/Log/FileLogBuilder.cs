@@ -12,7 +12,7 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private bool disabled;
+        private bool enabled;
 
         public FileLogBuilder()
         {
@@ -22,13 +22,13 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokFileLogBuilder Enable()
         {
-            disabled = false;
+            enabled = true;
             return this;
         }
 
         public IVostokFileLogBuilder Disable()
         {
-            disabled = true;
+            enabled = false;
             return this;
         }
 
@@ -46,7 +46,7 @@ namespace Vostok.Hosting.Components.Log
 
         public ILog Build(BuildContext context)
         {
-            if (disabled)
+            if (!enabled)
                 return null;
 
             var settings = new FileLogSettings();
