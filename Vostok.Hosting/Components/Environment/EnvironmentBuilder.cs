@@ -33,7 +33,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly ConfigurationBuilder configurationBuilder;
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
 
-        private readonly CustomizableBuilder<CompositeLogBuilder, ILog> compositeLogBuilder;
+        private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
@@ -49,7 +49,7 @@ namespace Vostok.Hosting.Components.Environment
             configurationBuilder = new ConfigurationBuilder();
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
 
-            compositeLogBuilder = new CustomizableBuilder<CompositeLogBuilder, ILog>(new CompositeLogBuilder());
+            compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
@@ -245,7 +245,9 @@ namespace Vostok.Hosting.Components.Environment
             if (context.HerculesSink != null)
                 HerculesSinkProvider.Configure(context.HerculesSink, true);
 
-            context.Log = compositeLogBuilder.Build(context);
+            context.Logs = compositeLogBuilder.Build(context);
+            context.Log = context.Logs.BuildCompositeLog();
+
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);

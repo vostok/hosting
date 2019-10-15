@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading;
-using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
-using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
@@ -34,9 +32,7 @@ namespace Vostok.Hosting.Components
 
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
-        public FileLog FileLog { get; set; }
-
-        public ILog LogWithoutHercules { get; set; }
+        public Logs Logs { get; set; }
         
         public ILog Log
         {
@@ -74,7 +70,7 @@ namespace Vostok.Hosting.Components
         {
             try
             {
-                Log = LogWithoutHercules ?? new SilentLog();
+                Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
                 SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
 
                 (Metrics?.Root as IDisposable)?.Dispose();
@@ -89,8 +85,7 @@ namespace Vostok.Hosting.Components
                 
                 Log = new SilentLog();
 
-                FileLog?.Dispose();
-                ConsoleLog.Flush();
+                Logs?.Dispose();
             }
             catch (Exception error)
             {
