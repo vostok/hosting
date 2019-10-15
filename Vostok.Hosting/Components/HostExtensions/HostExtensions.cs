@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Components.HostExtensions
@@ -36,6 +38,9 @@ namespace Vostok.Hosting.Components.HostExtensions
 
             return has;
         }
+
+        public IEnumerable<(Type, object)> GetAllTypes() =>
+            byType.Select(p => (p.Key, p.Value));
 
         public void Add<TExtension>(TExtension extension, string key)
         {
