@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Components.HostExtensions
             return has;
         }
 
-        public IEnumerable<(Type, object)> GetAllTypes() =>
+        public IEnumerable<(Type, object)> GetAll() =>
             byType.Select(p => (p.Key, p.Value));
 
         public void Add<TExtension>(TExtension extension, string key)

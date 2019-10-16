@@ -2,6 +2,7 @@
 using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
@@ -27,6 +28,7 @@ namespace Vostok.Hosting
             [NotNull] IHerculesSink herculesSink,
             [NotNull] IConfigurationSource configurationSource,
             [NotNull] IConfigurationProvider configurationProvider,
+            [NotNull] IClusterConfigClient clusterConfigClient,
             [NotNull] IServiceBeacon serviceBeacon,
             [NotNull] IServiceLocator serviceLocator,
             [NotNull] IContextGlobals contextGlobals,
@@ -44,6 +46,7 @@ namespace Vostok.Hosting
             HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
             ConfigurationSource = configurationSource ?? throw new ArgumentNullException(nameof(configurationSource));
             ConfigurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
+            ClusterConfigClient = clusterConfigClient ?? throw new ArgumentNullException(nameof(clusterConfigClient));
             ServiceBeacon = serviceBeacon ?? throw new ArgumentNullException(nameof(serviceBeacon));
             ServiceLocator = serviceLocator ?? throw new ArgumentNullException(nameof(serviceLocator));
             ContextGlobals = contextGlobals ?? throw new ArgumentNullException(nameof(contextGlobals));
@@ -62,6 +65,7 @@ namespace Vostok.Hosting
         public IHerculesSink HerculesSink { get; }
         public IConfigurationSource ConfigurationSource { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
+        public IClusterConfigClient ClusterConfigClient { get; }
         public IServiceBeacon ServiceBeacon { get; }
         public IServiceLocator ServiceLocator { get; }
         public IContextGlobals ContextGlobals { get; }

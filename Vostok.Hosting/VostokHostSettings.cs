@@ -21,6 +21,8 @@ namespace Vostok.Hosting
         [NotNull]
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; }
 
+        public bool ConfigureStaticProviders { get; set; } = true;
+
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
     }
 }

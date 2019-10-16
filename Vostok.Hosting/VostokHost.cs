@@ -2,12 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Logging.Abstractions;
+using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -33,6 +36,9 @@ namespace Vostok.Hosting
             ShutdownTokenSource = new CancellationTokenSource();
 
             environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
+
+            if (settings.ConfigureStaticProviders)
+                ConfigureStaticProviders();
 
             log = environment.Log.ForContext<VostokHost>();
 
@@ -134,6 +140,16 @@ namespace Vostok.Hosting
             onApplicationStateChanged.Next(newState);
             if (error != null)
                 onApplicationStateChanged.Error(error);
+        }
+
+        private void ConfigureStaticProviders()
+        {
+            LogProvider.Configure(environment.Log, true);
+            TracerProvider.Configure(environment.Tracer, true);
+            HerculesSinkProvider.Configure(environment.HerculesSink, true);
+
+            if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
+                ClusterConfigClient.TrySetDefaultClient(clusterConfigClient);
         }
 
         #region Loging

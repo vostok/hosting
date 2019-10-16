@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Vostok.Clusterclient.Core;
-using Vostok.ClusterConfig.Client;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -55,7 +54,6 @@ namespace Vostok.Hosting.Components.Environment
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
-            ;
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
             hostExtensionsBuilder = new CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions>(new HostExtensionsBuilder());
@@ -89,12 +87,8 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
-            LogProvider.Configure(context.Log, true);
-            TracerProvider.Configure(context.Tracer, true);
-
             var clusterConfigClient = clusterConfigClientBuilder.Build(context);
             context.ClusterConfigClient = clusterConfigClient;
-            ClusterConfigClient.OverwriteDefaultClient(clusterConfigClient);
 
             (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
             context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
@@ -106,8 +100,6 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
-            if (context.HerculesSink != null)
-                HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Logs = compositeLogBuilder.Build(context);
             if (context.Logs.Count() == 0)
@@ -137,6 +129,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.HerculesSink ?? new DevNullHerculesSink(),
                 context.ConfigurationSource,
                 context.ConfigurationProvider,
+                context.ClusterConfigClient,
                 context.ServiceBeacon,
                 context.ServiceLocator,
                 FlowingContext.Globals,
