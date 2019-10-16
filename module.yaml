@@ -26,7 +26,7 @@ notests *default:
     - vostok.tracing
     - vostok.clusterclient.topology.sd
     - vostok.clusterclient.topology.cc
-    - vostok.clusterconfig.client
+    - vostok.clusterconfig.client@default-client-overwrite
     - vostok.clusterconfig.client.abstractions
     - vostok.logging.hercules
     - vostok.hercules.client
@@ -47,10 +47,6 @@ notests *default:
 
 full-build > notests:
   deps:
-    - vostok.servicediscovery.kontur
-    - vostok.clusterclient.transport
-    - vostok.telemetry.kontur
-    - vostok.tracing.kontur
     
   build:
     target: Vostok.Hosting.sln
