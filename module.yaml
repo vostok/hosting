@@ -26,7 +26,7 @@ notests *default:
     - vostok.tracing
     - vostok.clusterclient.topology.sd
     - vostok.clusterclient.topology.cc
-    - vostok.clusterconfig.client@default-client-overwrite
+    - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
     - vostok.logging.hercules
     - vostok.hercules.client
