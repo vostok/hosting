@@ -40,7 +40,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
-        private readonly CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions> hostExtensionsBuilder;
+        private readonly HostExtensionsBuilder hostExtensionsBuilder;
 
         private EnvironmentBuilder()
         {
@@ -56,7 +56,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
-            hostExtensionsBuilder = new CustomizableBuilder<HostExtensionsBuilder, IVostokHostExtensions>(new HostExtensionsBuilder());
+            hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
         public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
@@ -120,7 +120,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
-            return new VostokHostingEnvironment(
+            var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.ShutdownToken,
                 context.ApplicationIdentity,
                 context.Metrics,
@@ -136,8 +136,12 @@ namespace Vostok.Hosting.Components.Environment
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
-                hostExtensionsBuilder.Build(context),
+                hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
+
+            hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
+
+            return vostokHostingEnvironment;
         }
 
         #region SetupComponents
@@ -264,7 +268,7 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironmentSetupContext> hostExtensionsSetup)
+        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> hostExtensionsSetup)
         {
             hostExtensionsBuilder.AddCustomization(hostExtensionsSetup);
             return this;

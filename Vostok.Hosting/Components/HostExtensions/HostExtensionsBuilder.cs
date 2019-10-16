@@ -1,34 +1,52 @@
-﻿using Vostok.Hosting.Abstractions;
+﻿using System;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+// ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.HostExtensions
 {
-    internal class HostExtensionsBuilder : IVostokHostExtensionsBuilder, IBuilder<IVostokHostExtensions>
+    internal class HostExtensionsBuilder : IVostokHostExtensionsBuilder
     {
-        private HostExtensions extensions;
+        public HostExtensions HostExtensions;
+        private readonly Customization<HostExtensionsBuilder> builderCustomization;
+        private IVostokHostingEnvironment environment;
 
         public HostExtensionsBuilder()
         {
-            extensions = new HostExtensions();
+            HostExtensions = new HostExtensions();
+            builderCustomization = new Customization<HostExtensionsBuilder>();
         }
 
-        public IVostokHostExtensions Build(BuildContext context)
+        public void AddCustomization(Action<IVostokHostExtensionsBuilder> setup)
         {
-            if (context.ZooKeeperClient != null)
-                extensions.Add(context.ZooKeeperClient);
+            builderCustomization.AddCustomization(setup);
+        }
 
-            return extensions;
+        public void AddCustomization(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup)
+        {
+            builderCustomization.AddCustomization(b => setup(b, environment));
+        }
+
+        public void Build(BuildContext context, IVostokHostingEnvironment environment)
+        {
+            this.environment = environment;
+
+            if (context.ZooKeeperClient != null)
+                HostExtensions.Add(context.ZooKeeperClient);
+
+            builderCustomization.Customize(this);
         }
 
         public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension)
         {
-            extensions.Add(extension);
+            HostExtensions.Add(extension);
             return this;
         }
 
         public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension, string key)
         {
-            extensions.Add(extension);
+            HostExtensions.Add(extension);
             return this;
         }
     }
