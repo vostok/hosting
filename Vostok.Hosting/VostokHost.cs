@@ -31,6 +31,8 @@ namespace Vostok.Hosting
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
+            ThreadPoolUtility.Setup();
+
             application = settings.Application;
 
             ShutdownTokenSource = new CancellationTokenSource();
