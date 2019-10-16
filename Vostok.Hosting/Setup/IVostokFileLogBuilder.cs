@@ -13,5 +13,7 @@ namespace Vostok.Hosting.Setup
         IVostokFileLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokFileLogBuilder CustomizeSettings([NotNull] Action<FileLogSettings> settingsCustomization);
+
+        IVostokFileLogBuilder SetSettingsProvider([NotNull] Func<FileLogSettings> settingsProvider);
     }
 }

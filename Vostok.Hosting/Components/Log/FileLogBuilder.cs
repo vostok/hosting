@@ -13,6 +13,7 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
+        private Func<FileLogSettings> settingsProvider;
         private bool enabled;
 
         public FileLogBuilder()
@@ -45,6 +46,12 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
+        public IVostokFileLogBuilder SetSettingsProvider(Func<FileLogSettings> settingsProvider)
+        {
+            this.settingsProvider = settingsProvider;
+            return this;
+        }
+
         public ILog Build(BuildContext context)
         {
             if (!enabled)
@@ -53,11 +60,14 @@ namespace Vostok.Hosting.Components.Log
                 return null;
             }
 
-            var settings = new FileLogSettings();
+            if (settingsProvider == null)
+            {
+                var settings = new FileLogSettings();
+                settingsCustomization.Customize(settings);
+                settingsProvider = () => settings;
+            }
 
-            settingsCustomization.Customize(settings);
-
-            var log = new FileLog(settings);
+            var log = new FileLog(settingsProvider);
 
             logCustomization.Customize(log);
 
