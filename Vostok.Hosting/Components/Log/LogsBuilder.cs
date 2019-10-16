@@ -48,14 +48,28 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
+        public IVostokCompositeLogBuilder SetupFileLog()
+        {
+            fileLogBuilder.Enable();
+            return this;
+        }
+
         public IVostokCompositeLogBuilder SetupFileLog(Action<IVostokFileLogBuilder> fileLogSetup)
         {
+            fileLogBuilder.Enable();
             fileLogSetup(fileLogBuilder);
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder SetupConsoleLog()
+        {
+            consoleLogBuilder.Enable();
             return this;
         }
 
         public IVostokCompositeLogBuilder SetupConsoleLog(Action<IVostokConsoleLogBuilder> consoleLogSetup)
         {
+            consoleLogBuilder.Enable();
             consoleLogSetup(consoleLogBuilder);
             return this;
         }

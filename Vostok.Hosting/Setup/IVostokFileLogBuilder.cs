@@ -8,8 +8,6 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokFileLogBuilder
     {
-        IVostokFileLogBuilder Enable();
-
         IVostokFileLogBuilder Disable();
 
         IVostokFileLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);

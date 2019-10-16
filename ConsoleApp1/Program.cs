@@ -75,9 +75,7 @@ namespace ConsoleApp1
                                         .CustomizeLog(
                                             l => l
                                                 .WithMinimumLevel(LogLevel.Info)))
-                                .SetupConsoleLog(
-                                    consoleLogSetup => consoleLogSetup
-                                        .Enable());
+                                .SetupConsoleLog();
                         })
                     .SetupTracer(
                         (tracerSetup, setupContext) => tracerSetup

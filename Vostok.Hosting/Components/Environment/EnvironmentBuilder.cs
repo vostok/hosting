@@ -222,12 +222,14 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder> herculesSinkSetup)
         {
+            herculesSinkBuilder.AddCustomization(b => b.Enable());
             herculesSinkBuilder.AddCustomization(herculesSinkSetup);
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> herculesSinkSetup)
         {
+            herculesSinkBuilder.AddCustomization(b => b.Enable());
             herculesSinkBuilder.AddCustomization(herculesSinkSetup);
             return this;
         }

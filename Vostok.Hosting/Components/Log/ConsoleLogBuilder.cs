@@ -21,10 +21,21 @@ namespace Vostok.Hosting.Components.Log
             logCustomization = new Customization<ILog>();
         }
 
-        public IVostokConsoleLogBuilder Enable(bool synchronous = false)
+        public IVostokConsoleLogBuilder UseSynchronious()
+        {
+            synchronous = true;
+            return this;
+        }
+
+        public IVostokConsoleLogBuilder UseAsynchronious()
+        {
+            synchronous = false;
+            return this;
+        }
+
+        public IVostokConsoleLogBuilder Enable()
         {
             enabled = true;
-            this.synchronous = synchronous;
             return this;
         }
 

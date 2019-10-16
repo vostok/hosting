@@ -17,6 +17,7 @@ namespace Vostok.Hosting.Components.Hercules
         private ClusterProviderBuilder clusterProviderBuilder;
         private Func<string> apiKeyProvider;
         private bool suppressVerboseLogging;
+        private bool enabled;
 
         public HerculesSinkBuilder()
         {
@@ -25,6 +26,12 @@ namespace Vostok.Hosting.Components.Hercules
 
         public HerculesSink Build(BuildContext context)
         {
+            if (!enabled)
+            {
+                context.Log.LogDisabled("HerculesSink");
+                return null;
+            }
+
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
             {
@@ -45,6 +52,18 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization.Customize(settings);
 
             return new HerculesSink(settings, log);
+        }
+
+        public IVostokHerculesSinkBuilder Enable()
+        {
+            enabled = true;
+            return this;
+        }
+
+        public IVostokHerculesSinkBuilder Disable()
+        {
+            enabled = false;
+            return this;
         }
 
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
