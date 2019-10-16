@@ -36,6 +36,7 @@ namespace Vostok.Hosting.Components.Tracing
 
         public IVostokTracerBuilder SetupHerculesSpanSender(Action<IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup)
         {
+            herculesSpanSenderBuilder.Enable();
             herculesSpanSenderSetup(herculesSpanSenderBuilder);
             return this;
         }

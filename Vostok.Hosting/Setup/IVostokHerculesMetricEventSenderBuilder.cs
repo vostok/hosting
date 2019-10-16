@@ -7,6 +7,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHerculesMetricEventSenderBuilder
     {
+        IVostokHerculesMetricEventSenderBuilder Disable();
+
         IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider, [CanBeNull] string stream = null);
 
         IVostokHerculesMetricEventSenderBuilder CustomizeSettings([NotNull] Action<HerculesMetricSenderSettings> settingsCustomization);

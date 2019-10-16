@@ -14,10 +14,23 @@ namespace Vostok.Hosting.Components.Tracing
         private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
         private Func<string> apiKeyProvider;
         private string stream;
+        private bool enabled;
 
         public HerculesSpanSenderBuilder()
         {
             settingsCustomization = new Customization<HerculesSpanSenderSettings>();
+        }
+
+        public IVostokHerculesSpanSenderBuilder Enable()
+        {
+            enabled = true;
+            return this;
+        }
+
+        public IVostokHerculesSpanSenderBuilder Disable()
+        {
+            enabled = false;
+            return this;
         }
 
         public IVostokHerculesSpanSenderBuilder SetStream(string stream)
@@ -40,6 +53,12 @@ namespace Vostok.Hosting.Components.Tracing
 
         public ISpanSender Build(BuildContext context)
         {
+            if (!enabled)
+            {
+                context.Log.LogDisabled("HerculesSpanSender");
+                return null;
+            }
+
             var herculesSink = context.HerculesSink;
 
             if (herculesSink == null)
