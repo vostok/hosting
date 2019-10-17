@@ -28,6 +28,12 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public IServiceBeacon Build(BuildContext context)
         {
+            if (!enabled)
+            {
+                context.Log.LogDisabled("ServiceBeacon");
+                return new DevNullServiceBeacon();
+            }
+
             var zooKeeperClient = context.ZooKeeperClient;
 
             if (zooKeeperClient == null)

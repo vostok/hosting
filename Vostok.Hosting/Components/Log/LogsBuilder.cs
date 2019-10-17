@@ -76,6 +76,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokCompositeLogBuilder SetupHerculesLog(Action<IVostokHerculesLogBuilder> herculesLogSetup)
         {
+            herculesLogBuilder.Enable();
             herculesLogSetup(herculesLogBuilder);
             return this;
         }

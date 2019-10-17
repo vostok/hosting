@@ -8,6 +8,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHerculesLogBuilder
     {
+        IVostokHerculesLogBuilder Disable();
+
         IVostokHerculesLogBuilder SetStream([NotNull] string stream);
 
         IVostokHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);

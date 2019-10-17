@@ -7,7 +7,7 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokServiceBeaconBuilder
     {
-        IVostokServiceBeaconBuilder Enable();
+        IVostokServiceBeaconBuilder Disable();
 
         IVostokServiceBeaconBuilder SetupReplicaInfo([NotNull] ReplicaInfoSetup replicaInfoSetup);
 
