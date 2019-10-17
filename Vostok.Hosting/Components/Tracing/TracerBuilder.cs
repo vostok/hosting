@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
-using Vostok.Logging.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
@@ -16,11 +15,11 @@ namespace Vostok.Hosting.Components.Tracing
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
         private readonly List<IBuilder<ISpanSender>> spanSenderBuilders;
         private readonly Customization<TracerSettings> settingsCustomization;
-        private Func<TracerSettings, ILog, ITracer> tracerProvider;
+        private Func<TracerSettings, ITracer> tracerProvider;
 
         public TracerBuilder()
         {
-            tracerProvider = (settings, log) => new Tracer(settings);
+            tracerProvider = settings => new Tracer(settings);
             herculesSpanSenderBuilder = new HerculesSpanSenderBuilder();
 
             spanSenderBuilders = new List<IBuilder<ISpanSender>> {herculesSpanSenderBuilder};
@@ -28,7 +27,7 @@ namespace Vostok.Hosting.Components.Tracing
             settingsCustomization = new Customization<TracerSettings>();
         }
 
-        public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ILog, ITracer> tracerProvider)
+        public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ITracer> tracerProvider)
         {
             this.tracerProvider = tracerProvider;
             return this;
@@ -65,7 +64,7 @@ namespace Vostok.Hosting.Components.Tracing
 
             settingsCustomization.Customize(settings);
 
-            var tracer = tracerProvider(settings, context.Log);
+            var tracer = tracerProvider(settings);
 
             return (tracer, settings);
         }
