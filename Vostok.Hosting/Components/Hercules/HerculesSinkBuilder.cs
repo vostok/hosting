@@ -16,7 +16,7 @@ namespace Vostok.Hosting.Components.Hercules
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
         private ClusterProviderBuilder clusterProviderBuilder;
         private Func<string> apiKeyProvider;
-        private bool suppressVerboseLogging;
+        private bool verboseLogging;
         private bool enabled;
 
         public HerculesSinkBuilder()
@@ -40,7 +40,7 @@ namespace Vostok.Hosting.Components.Hercules
             }
 
             var log = context.Log;
-            if (suppressVerboseLogging)
+            if (!verboseLogging)
                 log = log.WithMinimumLevel(LogLevel.Warn);
 
             // Note(kungurtsev): allow null api key provider, streams can be configured later.
@@ -90,9 +90,15 @@ namespace Vostok.Hosting.Components.Hercules
             return this;
         }
 
-        public IVostokHerculesSinkBuilder SuppressVerboseLogging()
+        public IVostokHerculesSinkBuilder EnableVerboseLogging()
         {
-            suppressVerboseLogging = true;
+            verboseLogging = true;
+            return this;
+        }
+
+        public IVostokHerculesSinkBuilder DisableVerboseLogging()
+        {
+            verboseLogging = false;
             return this;
         }
 

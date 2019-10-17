@@ -57,12 +57,15 @@ namespace Vostok.Hosting
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("Application can't be launched multiple times.");
 
-            var result = await InitializeApplicationAsync().ConfigureAwait(false)
-                         ?? await RunApplicationAsync().ConfigureAwait(false);
-
-            environment.Dispose();
-
-            return result;
+            try
+            {
+                return await InitializeApplicationAsync().ConfigureAwait(false)
+                       ?? await RunApplicationAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                environment.Dispose();
+            }
         }
 
         private async Task<VostokApplicationRunResult> InitializeApplicationAsync()

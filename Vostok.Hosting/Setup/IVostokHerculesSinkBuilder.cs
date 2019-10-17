@@ -16,7 +16,8 @@ namespace Vostok.Hosting.Setup
 
         IVostokHerculesSinkBuilder Disable();
 
-        IVostokHerculesSinkBuilder SuppressVerboseLogging();
+        IVostokHerculesSinkBuilder EnableVerboseLogging();
+        IVostokHerculesSinkBuilder DisableVerboseLogging();
 
         IVostokHerculesSinkBuilder CustomizeSettings([NotNull] Action<HerculesSinkSettings> settingsCustomization);
     }
