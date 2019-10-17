@@ -15,6 +15,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         private string application;
         private string environment;
         private ReplicaInfoSetup setup;
+        private bool enabled;
 
         public ServiceBeaconBuilder()
         {
@@ -56,6 +57,18 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 },
                 settings,
                 context.Log);
+        }
+
+        public IVostokServiceBeaconBuilder Enable()
+        {
+            enabled = true;
+            return this;
+        }
+
+        public IVostokServiceBeaconBuilder Disable()
+        {
+            enabled = false;
+            return this;
         }
 
         public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup newSetup)

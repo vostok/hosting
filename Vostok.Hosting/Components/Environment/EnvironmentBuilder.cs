@@ -240,12 +240,14 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder> serviceBeaconSetup)
         {
+            serviceBeaconBuilder.AddCustomization(b => b.Enable());
             serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> serviceBeaconSetup)
         {
+            serviceBeaconBuilder.AddCustomization(b => b.Enable());
             serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
             return this;
         }
