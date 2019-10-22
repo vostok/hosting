@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
@@ -12,16 +13,17 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
     internal class ServiceBeaconBuilder : IVostokServiceBeaconBuilder, IBuilder<IServiceBeacon>
     {
         private readonly Customization<ServiceBeaconSettings> settingsCustomization;
-        private string application;
-        private string environment;
-        private ReplicaInfoSetup setup;
+        private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
+        private IVostokApplicationIdentity applicationIdentity;
         private bool enabled;
 
         public ServiceBeaconBuilder()
         {
-            setup = s => s
-                .SetEnvironment(environment)
-                .SetApplication(application);
+            replicaInfoCustomization = new Customization<IReplicaInfoBuilder>();
+            replicaInfoCustomization.AddCustomization(
+                s => s
+                    .SetEnvironment(applicationIdentity.Environment)
+                    .SetApplication(FormatApplication(applicationIdentity)));
 
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
@@ -42,8 +44,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 return new DevNullServiceBeacon();
             }
 
-            application = context.ApplicationIdentity.Application;
-            environment = context.ApplicationIdentity.Environment;
+            applicationIdentity = context.ApplicationIdentity;
 
             var settings = new ServiceBeaconSettings();
 
@@ -59,7 +60,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                     s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
 
-                    setup(s);
+                    replicaInfoCustomization.Customize(s);
                 },
                 settings,
                 context.Log);
@@ -77,16 +78,9 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup newSetup)
+        public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup setup)
         {
-            var oldSetup = setup;
-
-            setup = c =>
-            {
-                oldSetup(c);
-                newSetup(c);
-            };
-
+            replicaInfoCustomization.AddCustomization(c => setup(c));
             return this;
         }
 
@@ -94,6 +88,24 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         {
             this.settingsCustomization.AddCustomization(settingsCustomization);
             return this;
+        }
+
+        private static string FormatApplication(IVostokApplicationIdentity identity)
+        {
+            var result = new StringBuilder();
+
+            result.Append(identity.Project);
+
+            if (identity.Subproject != null)
+            {
+                result.Append(".");
+                result.Append(identity.Subproject);
+            }
+
+            result.Append(".");
+            result.Append(identity.Application);
+
+            return result.ToString();
         }
     }
 }
