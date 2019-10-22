@@ -39,9 +39,6 @@ namespace Vostok.Hosting
 
             environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
 
-            if (settings.ConfigureStaticProviders)
-                ConfigureStaticProviders();
-
             log = environment.Log.ForContext<VostokHost>();
 
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>();
@@ -75,6 +72,9 @@ namespace Vostok.Hosting
 
             try
             {
+                if (settings.ConfigureStaticProviders)
+                    ConfigureStaticProviders();
+
                 await application.InitializeAsync(environment).ConfigureAwait(false);
 
                 log.Info("Application initialization completed successfully.");
