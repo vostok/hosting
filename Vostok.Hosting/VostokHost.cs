@@ -154,7 +154,10 @@ namespace Vostok.Hosting
             HerculesSinkProvider.Configure(environment.HerculesSink, true);
 
             if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
-                ClusterConfigClient.TrySetDefaultClient(clusterConfigClient);
+            {
+                if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient))
+                    log.Warn("ClusterConfigClient.Default has been already configured.");
+            }
         }
 
         #region Loging

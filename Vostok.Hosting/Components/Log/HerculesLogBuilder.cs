@@ -89,9 +89,9 @@ namespace Vostok.Hosting.Components.Log
 
             settingsCustomization.Customize(settings);
 
-            var log = new HerculesLog(settings);
+            ILog log = new HerculesLog(settings);
 
-            logCustomization.Customize(log);
+            log = logCustomization.Customize(log);
 
             return log;
         }

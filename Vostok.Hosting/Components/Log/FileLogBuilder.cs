@@ -67,9 +67,9 @@ namespace Vostok.Hosting.Components.Log
                 settingsProvider = () => settings;
             }
 
-            var log = new FileLog(settingsProvider);
+            ILog log = new FileLog(settingsProvider);
 
-            logCustomization.Customize(log);
+            log = logCustomization.Customize(log);
 
             return log;
         }

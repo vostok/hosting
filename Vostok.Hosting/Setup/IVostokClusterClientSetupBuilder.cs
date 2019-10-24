@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core;
 
 namespace Vostok.Hosting.Setup
 {
@@ -7,5 +8,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokClusterClientSetupBuilder
     {
         IVostokClusterClientSetupBuilder SetupTracing([NotNull] Action<IVostokClusterClientSetupTracingBuilder> tracingSetup);
+
+        IVostokClusterClientSetupBuilder CustomizeSettings([NotNull] Action<IClusterClientConfiguration> settingsCustomization);
     }
 }
