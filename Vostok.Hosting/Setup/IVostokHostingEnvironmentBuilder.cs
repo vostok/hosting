@@ -20,6 +20,12 @@ namespace Vostok.Hosting.Setup
         IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder> applicationIdentitySetup);
         IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> applicationIdentitySetup);
 
+        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder> applicationLimitsSetup);
+        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> applicationLimitsSetup);
+
+        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder> applicationReplicationInfoSetup);
+        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> applicationReplicationInfoSetup);
+
         IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder> tracerSetup);
         IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder, IVostokHostingEnvironmentSetupContext> tracerSetup);
 

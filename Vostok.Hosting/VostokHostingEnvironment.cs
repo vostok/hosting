@@ -3,10 +3,12 @@ using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Commons.Collections;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Application;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
@@ -17,11 +19,15 @@ namespace Vostok.Hosting
 {
     internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
+        private readonly Func<(int instanceIndex, int instancesCount)> applicationReplicationInfoProvider;
+        private readonly CachingTransform<(int, int), IVostokApplicationReplicationInfo> applicationReplicationInfoTransform;
         private readonly Action dispose;
 
         internal VostokHostingEnvironment(
             CancellationToken shutdownToken,
             [NotNull] IVostokApplicationIdentity applicationIdentity,
+            [NotNull] IVostokApplicationLimits applicationLimits,
+            [NotNull] Func<(int instanceIndex, int instancesCount)> applicationReplicationInfoProvider,
             [NotNull] IVostokApplicationMetrics metrics,
             [NotNull] ILog log,
             [NotNull] ITracer tracer,
@@ -40,6 +46,11 @@ namespace Vostok.Hosting
         {
             ShutdownToken = shutdownToken;
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
+            ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
+
+            this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
+            applicationReplicationInfoTransform = new CachingTransform<(int, int), IVostokApplicationReplicationInfo>(tuple => new ApplicationReplicationInfo(tuple.Item1, tuple.Item2));
+
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
@@ -59,6 +70,8 @@ namespace Vostok.Hosting
 
         public CancellationToken ShutdownToken { get; }
         public IVostokApplicationIdentity ApplicationIdentity { get; }
+        public IVostokApplicationLimits ApplicationLimits { get; }
+        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoTransform.Get(applicationReplicationInfoProvider());
         public IVostokApplicationMetrics Metrics { get; }
         public ILog Log { get; }
         public ITracer Tracer { get; }

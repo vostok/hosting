@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
-namespace Vostok.Hosting.Components.ApplicationIdentity
+namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationIdentity : IVostokApplicationIdentity
     {

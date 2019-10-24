@@ -3,7 +3,7 @@ using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
 
-namespace Vostok.Hosting.Components.ApplicationIdentity
+namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationIdentityBuilder : IVostokApplicationIdentityBuilder, IBuilder<ApplicationIdentity>
     {

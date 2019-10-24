@@ -4,7 +4,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.Context;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components.ApplicationIdentity;
+using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Hercules;
@@ -33,6 +33,8 @@ namespace Vostok.Hosting.Components.Environment
 
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
+        private readonly CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits> applicationLimitsBuilder;
+        private readonly CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<(int instanceIndex, int instancesCount)>> applicationReplicationInfoBuilder;
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
         private readonly CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
@@ -49,6 +51,8 @@ namespace Vostok.Hosting.Components.Environment
 
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
+            applicationLimitsBuilder = new CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits>(new ApplicationLimitsBuilder());
+            applicationReplicationInfoBuilder = new CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<(int instanceIndex, int instancesCount)>>(new ApplicationReplicationInfoBuilder());
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
@@ -123,6 +127,8 @@ namespace Vostok.Hosting.Components.Environment
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.ShutdownToken,
                 context.ApplicationIdentity,
+                applicationLimitsBuilder.Build(context),
+                applicationReplicationInfoBuilder.Build(context),
                 context.Metrics,
                 context.Log,
                 context.Tracer,
@@ -173,6 +179,30 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> applicationIdentitySetup)
         {
             applicationIdentityBuilder.AddCustomization(applicationIdentitySetup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder> applicationLimitsSetup)
+        {
+            applicationLimitsBuilder.AddCustomization(applicationLimitsSetup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> applicationLimitsSetup)
+        {
+            applicationLimitsBuilder.AddCustomization(applicationLimitsSetup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder> applicationReplicationInfoSetup)
+        {
+            applicationReplicationInfoBuilder.AddCustomization(applicationReplicationInfoSetup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> applicationReplicationInfoSetup)
+        {
+            applicationReplicationInfoBuilder.AddCustomization(applicationReplicationInfoSetup);
             return this;
         }
 
