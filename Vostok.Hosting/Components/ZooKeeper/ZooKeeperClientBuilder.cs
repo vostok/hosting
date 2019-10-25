@@ -28,7 +28,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
-        public IVostokZooKeeperClientBuilder SetClusterConfigClusterProvider(string path)
+        public IVostokZooKeeperClientBuilder SetClusterConfigTopology(string path)
         {
             connectionString = null;
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);

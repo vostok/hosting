@@ -72,13 +72,13 @@ namespace Vostok.Hosting.Components.Hercules
             return this;
         }
 
-        public IVostokHerculesSinkBuilder SetClusterConfigClusterProvider(string path)
+        public IVostokHerculesSinkBuilder SetClusterConfigTopology(string path)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
             return this;
         }
 
-        public IVostokHerculesSinkBuilder SetServiceDiscoveryClusterProvider(string environment, string application)
+        public IVostokHerculesSinkBuilder SetServiceDiscoveryTopology(string environment, string application)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(environment, application);
             return this;

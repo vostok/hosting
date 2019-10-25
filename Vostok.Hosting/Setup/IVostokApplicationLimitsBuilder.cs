@@ -7,9 +7,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokApplicationLimitsBuilder
     {
         IVostokApplicationLimitsBuilder SetCpuUnits(float? cpuUnits);
-        IVostokApplicationLimitsBuilder SetCpuUnitsProvider(Func<float?> cpuUnitsProvider);
+        IVostokApplicationLimitsBuilder SetCpuUnitsProvider([NotNull] Func<float?> cpuUnitsProvider);
 
         IVostokApplicationLimitsBuilder SetMemoryBytes(long? memoryBytes);
-        IVostokApplicationLimitsBuilder SetMemoryBytesProvider(Func<long?> memoryBytesProvider);
+        IVostokApplicationLimitsBuilder SetMemoryBytesProvider([NotNull] Func<long?> memoryBytesProvider);
     }
 }

@@ -8,13 +8,13 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHerculesSinkBuilder
     {
+        IVostokHerculesSinkBuilder Disable();
+
         IVostokHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
 
         IVostokHerculesSinkBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
-        IVostokHerculesSinkBuilder SetClusterConfigClusterProvider([NotNull] string path);
-        IVostokHerculesSinkBuilder SetServiceDiscoveryClusterProvider([NotNull] string environment, [NotNull] string application);
-
-        IVostokHerculesSinkBuilder Disable();
+        IVostokHerculesSinkBuilder SetClusterConfigTopology([NotNull] string path);
+        IVostokHerculesSinkBuilder SetServiceDiscoveryTopology([NotNull] string environment, [NotNull] string application);
 
         IVostokHerculesSinkBuilder EnableVerboseLogging();
         IVostokHerculesSinkBuilder DisableVerboseLogging();

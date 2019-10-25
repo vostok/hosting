@@ -9,7 +9,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokZooKeeperClientBuilder
     {
         IVostokZooKeeperClientBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
-        IVostokZooKeeperClientBuilder SetClusterConfigClusterProvider([NotNull] string path);
+        IVostokZooKeeperClientBuilder SetClusterConfigTopology([NotNull] string path);
         IVostokZooKeeperClientBuilder SetConnectionString([NotNull] string connectionString);
 
         IVostokZooKeeperClientBuilder CustomizeSettings([NotNull] Action<ZooKeeperClientSettings> settingsCustomization);

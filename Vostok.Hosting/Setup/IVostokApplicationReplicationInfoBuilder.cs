@@ -7,7 +7,7 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokApplicationReplicationInfoBuilder
     {
-        IVostokApplicationReplicationInfoBuilder SetReplicationInfo(IVostokApplicationReplicationInfo replicationInfo);
+        IVostokApplicationReplicationInfoBuilder SetReplicationInfo([NotNull] IVostokApplicationReplicationInfo replicationInfo);
 
         IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider([NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider);
     }
