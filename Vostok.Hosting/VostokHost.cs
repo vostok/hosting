@@ -23,7 +23,6 @@ namespace Vostok.Hosting
 
         private readonly VostokHostSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
-        private readonly IVostokApplication application;
         private readonly VostokHostingEnvironment environment;
         private readonly ILog log;
         private readonly AtomicBoolean launchedOnce = false;
@@ -34,8 +33,6 @@ namespace Vostok.Hosting
 
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup();
-
-            application = settings.Application;
 
             ShutdownTokenSource = new CancellationTokenSource();
 
@@ -80,7 +77,7 @@ namespace Vostok.Hosting
                 if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                     ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
 
-                await application.InitializeAsync(environment).ConfigureAwait(false);
+                await settings.Application.InitializeAsync(environment).ConfigureAwait(false);
 
                 log.Info("Application initialization completed successfully.");
                 ChangeStateTo(VostokApplicationState.Initialized);
@@ -108,7 +105,7 @@ namespace Vostok.Hosting
 
                 using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), tcs))
                 {
-                    var applicationTask = application.RunAsync(environment);
+                    var applicationTask = settings.Application.RunAsync(environment);
 
                     environment.ServiceBeacon.Start();
 
