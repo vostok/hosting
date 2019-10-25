@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Application

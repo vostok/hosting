@@ -2,6 +2,7 @@
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.HostExtensions
