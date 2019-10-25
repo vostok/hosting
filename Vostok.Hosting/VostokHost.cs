@@ -162,7 +162,7 @@ namespace Vostok.Hosting
             }
         }
 
-        #region Loging
+        #region Logging
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
