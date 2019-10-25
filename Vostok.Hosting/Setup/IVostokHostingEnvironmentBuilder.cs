@@ -7,44 +7,44 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHostingEnvironmentBuilder
     {
-        IVostokHostingEnvironmentBuilder SetupClusterConfigClient([NotNull] Action<IVostokClusterConfigClientBuilder> clusterConfigClientSetup);
+        IVostokHostingEnvironmentBuilder SetupClusterConfigClient([NotNull] Action<IVostokClusterConfigClientBuilder> setup);
 
-        IVostokHostingEnvironmentBuilder SetupConfiguration([NotNull] Action<IVostokConfigurationBuilder> configurationSetup);
+        IVostokHostingEnvironmentBuilder SetupConfiguration([NotNull] Action<IVostokConfigurationBuilder> setup);
 
-        IVostokHostingEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder> compositeLogSetup);
-        IVostokHostingEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder, IVostokHostingEnvironmentSetupContext> compositeLogSetup);
+        IVostokHostingEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupLog([NotNull] Action<IVostokCompositeLogBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder> herculesSinkSetup);
-        IVostokHostingEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> herculesSinkSetup);
+        IVostokHostingEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupHerculesSink([NotNull] Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder> applicationIdentitySetup);
-        IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> applicationIdentitySetup);
+        IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupApplicationIdentity([NotNull] Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder> applicationLimitsSetup);
-        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> applicationLimitsSetup);
+        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupApplicationLimits([NotNull] Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder> applicationReplicationInfoSetup);
-        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> applicationReplicationInfoSetup);
+        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo([NotNull] Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder> tracerSetup);
-        IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder, IVostokHostingEnvironmentSetupContext> tracerSetup);
+        IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupTracer([NotNull] Action<IVostokTracerBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder> metricsSetup);
-        IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> metricsSetup);
+        IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder> clusterClientSetup);
-        IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> clusterClientSetup);
+        IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder> zooKeeperClientSetup);
-        IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> zooKeeperClientSetup);
+        IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder> serviceBeaconSetup);
-        IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> serviceBeaconSetup);
+        IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder> serviceLocatorSetup);
-        IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> serviceLocatorSetup);
+        IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
-        IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder> hostExtensionsSetup);
-        IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> hostExtensionsSetup);
+        IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup);
     }
 }

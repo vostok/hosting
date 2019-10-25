@@ -153,119 +153,119 @@ namespace Vostok.Hosting.Components.Environment
 
         #region SetupComponents
 
-        public IVostokHostingEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder> compositeLogSetup)
+        public IVostokHostingEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder> setup)
         {
-            compositeLogBuilder.AddCustomization(compositeLogSetup);
+            compositeLogBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder, IVostokHostingEnvironmentSetupContext> compositeLogSetup)
+        public IVostokHostingEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            compositeLogBuilder.AddCustomization(compositeLogSetup);
+            compositeLogBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder> clusterConfigClientSetup)
+        public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder> setup)
         {
-            clusterConfigClientSetup(clusterConfigClientBuilder);
+            setup(clusterConfigClientBuilder);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder> applicationIdentitySetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder> setup)
         {
-            applicationIdentityBuilder.AddCustomization(applicationIdentitySetup);
+            applicationIdentityBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> applicationIdentitySetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            applicationIdentityBuilder.AddCustomization(applicationIdentitySetup);
+            applicationIdentityBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder> applicationLimitsSetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder> setup)
         {
-            applicationLimitsBuilder.AddCustomization(applicationLimitsSetup);
+            applicationLimitsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> applicationLimitsSetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationLimits(Action<IVostokApplicationLimitsBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            applicationLimitsBuilder.AddCustomization(applicationLimitsSetup);
+            applicationLimitsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder> applicationReplicationInfoSetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder> setup)
         {
-            applicationReplicationInfoBuilder.AddCustomization(applicationReplicationInfoSetup);
+            applicationReplicationInfoBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> applicationReplicationInfoSetup)
+        public IVostokHostingEnvironmentBuilder SetupApplicationReplicationInfo(Action<IVostokApplicationReplicationInfoBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            applicationReplicationInfoBuilder.AddCustomization(applicationReplicationInfoSetup);
+            applicationReplicationInfoBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder> tracerSetup)
+        public IVostokHostingEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder> setup)
         {
-            tracerBuilder.AddCustomization(tracerSetup);
+            tracerBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder, IVostokHostingEnvironmentSetupContext> tracerSetup)
+        public IVostokHostingEnvironmentBuilder SetupTracer(Action<IVostokTracerBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            tracerBuilder.AddCustomization(tracerSetup);
+            tracerBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder> metricsSetup)
+        public IVostokHostingEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder> setup)
         {
-            metricsBuilder.AddCustomization(metricsSetup);
+            metricsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> metricsSetup)
+        public IVostokHostingEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            metricsBuilder.AddCustomization(metricsSetup);
+            metricsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder> clusterClientSetup)
+        public IVostokHostingEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder> setup)
         {
-            clusterClientSetupBuilder.AddCustomization(clusterClientSetup);
+            clusterClientSetupBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> clusterClientSetup)
+        public IVostokHostingEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            clusterClientSetupBuilder.AddCustomization(clusterClientSetup);
+            clusterClientSetupBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> zooKeeperClientSetup)
+        public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> setup)
         {
-            zooKeeperClientBuilder.AddCustomization(zooKeeperClientSetup);
+            zooKeeperClientBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> zooKeeperClientSetup)
+        public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            zooKeeperClientBuilder.AddCustomization(zooKeeperClientSetup);
+            zooKeeperClientBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder> herculesSinkSetup)
+        public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder> setup)
         {
             herculesSinkBuilder.AddCustomization(b => b.Enable());
-            herculesSinkBuilder.AddCustomization(herculesSinkSetup);
+            herculesSinkBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> herculesSinkSetup)
+        public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             herculesSinkBuilder.AddCustomization(b => b.Enable());
-            herculesSinkBuilder.AddCustomization(herculesSinkSetup);
+            herculesSinkBuilder.AddCustomization(setup);
             return this;
         }
 
@@ -275,47 +275,47 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder> serviceBeaconSetup)
+        public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder> setup)
         {
             serviceBeaconBuilder.AddCustomization(b => b.Enable());
-            serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
+            serviceBeaconBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> serviceBeaconSetup)
+        public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             serviceBeaconBuilder.AddCustomization(b => b.Enable());
-            serviceBeaconBuilder.AddCustomization(serviceBeaconSetup);
+            serviceBeaconBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder> serviceLocatorSetup)
+        public IVostokHostingEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder> setup)
         {
-            serviceLocatorBuilder.AddCustomization(serviceLocatorSetup);
+            serviceLocatorBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> serviceLocatorSetup)
+        public IVostokHostingEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            serviceLocatorBuilder.AddCustomization(serviceLocatorSetup);
+            serviceLocatorBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder> hostExtensionsSetup)
+        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder> setup)
         {
-            hostExtensionsBuilder.AddCustomization(hostExtensionsSetup);
+            hostExtensionsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> hostExtensionsSetup)
+        public IVostokHostingEnvironmentBuilder SetupHostExtensions(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup)
         {
-            hostExtensionsBuilder.AddCustomization(hostExtensionsSetup);
+            hostExtensionsBuilder.AddCustomization(setup);
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> configurationSetup)
+        public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> setup)
         {
-            configurationSetup(configurationBuilder);
+            setup(configurationBuilder);
             return this;
         }
 

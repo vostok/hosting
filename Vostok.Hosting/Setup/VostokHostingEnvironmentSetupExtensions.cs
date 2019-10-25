@@ -5,16 +5,16 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public static class VostokHostingEnvironmentSetupExtensions
     {
-        public static IVostokCompositeLogBuilder SetupFileLog(this IVostokCompositeLogBuilder builder) =>
+        public static IVostokCompositeLogBuilder SetupFileLog([NotNull] this IVostokCompositeLogBuilder builder) =>
             builder.SetupFileLog(_ => {});
 
-        public static IVostokCompositeLogBuilder SetupConsoleLog(this IVostokCompositeLogBuilder builder) =>
+        public static IVostokCompositeLogBuilder SetupConsoleLog([NotNull] this IVostokCompositeLogBuilder builder) =>
             builder.SetupConsoleLog(_ => {});
 
-        public static IVostokHostingEnvironmentBuilder SetupServiceBeacon(this IVostokHostingEnvironmentBuilder builder) =>
+        public static IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
             builder.SetupServiceBeacon(_ => {});
 
-        public static IVostokMetricsBuilder SetupHerculesMetricEventSender(this IVostokMetricsBuilder builder) =>
+        public static IVostokMetricsBuilder SetupHerculesMetricEventSender([NotNull] this IVostokMetricsBuilder builder) =>
             builder.SetupHerculesMetricEventSender(_ => {});
     }
 }
