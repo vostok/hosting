@@ -32,7 +32,8 @@ namespace Vostok.Hosting
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
-            ThreadPoolUtility.Setup();
+            if (settings.ConfigureThreadPool)
+                ThreadPoolUtility.Setup();
 
             application = settings.Application;
 
@@ -75,6 +76,9 @@ namespace Vostok.Hosting
             {
                 if (settings.ConfigureStaticProviders)
                     ConfigureStaticProviders();
+                var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
+                if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
+                    ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
 
                 await application.InitializeAsync(environment).ConfigureAwait(false);
 

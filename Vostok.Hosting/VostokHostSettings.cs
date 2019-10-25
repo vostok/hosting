@@ -23,6 +23,8 @@ namespace Vostok.Hosting
 
         public bool ConfigureStaticProviders { get; set; } = true;
 
+        public bool ConfigureThreadPool { get; set; } = true;
+
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
     }
 }
