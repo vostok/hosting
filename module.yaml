@@ -10,40 +10,40 @@ notests *default:
     - module vostok.hosting.abstractions
 
   deps:
-    - vostok.logging.console
-    - vostok.configuration.sources
-    - vostok.configuration.logging
-    - vostok.configuration
+    - vostok.commons.helpers/src
+    - vostok.commons.threading/src
+    - vostok.commons.time/src
     - vostok.clusterclient.context
-    - vostok.servicediscovery
-    - vostok.zookeeper.client
-    - vostok.zookeeper.client.abstractions
-    - vostok.metrics.hercules
-    - vostok.clusterclient.tracing
-    - vostok.logging.context
-    - vostok.logging.tracing
-    - vostok.tracing.hercules
-    - vostok.tracing
-    - vostok.clusterclient.topology.sd
+    - vostok.clusterclient.core
     - vostok.clusterclient.topology.cc
+    - vostok.clusterclient.topology.sd
+    - vostok.clusterclient.tracing
     - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
-    - vostok.logging.hercules
-    - vostok.hercules.client
-    - vostok.logging.file
-    - vostok.hosting.abstractions@vostok-application
-    - vostok.clusterclient.core
-    - vostok.servicediscovery.abstractions
-    - vostok.hercules.client.abstractions
+    - vostok.configuration
     - vostok.configuration.abstractions
-    - vostok.tracing.abstractions
-    - vostok.logging.abstractions
-    - vostok.metrics
+    - vostok.configuration.logging
+    - vostok.configuration.sources
     - vostok.context
     - vostok.devtools
-    - vostok.commons.helpers/src
-    - vostok.commons.time/src
-    - vostok.commons.threading/src
+    - vostok.hercules.client
+    - vostok.hercules.client.abstractions
+    - vostok.hosting.abstractions@vostok-application
+    - vostok.logging.abstractions
+    - vostok.logging.console
+    - vostok.logging.context
+    - vostok.logging.file
+    - vostok.logging.hercules
+    - vostok.logging.tracing
+    - vostok.metrics
+    - vostok.metrics.hercules
+    - vostok.servicediscovery
+    - vostok.servicediscovery.abstractions
+    - vostok.tracing
+    - vostok.tracing.abstractions
+    - vostok.tracing.hercules
+    - vostok.zookeeper.client
+    - vostok.zookeeper.client.abstractions
 
 full-build > notests:
   deps:
