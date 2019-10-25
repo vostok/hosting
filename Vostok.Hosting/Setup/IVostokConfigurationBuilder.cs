@@ -14,9 +14,9 @@ namespace Vostok.Hosting.Setup
 
         IVostokConfigurationBuilder CustomizeConfigurationContext([NotNull] Action<IVostokConfigurationContext> configurationContextCustomization);
 
-        IVostokConfigurationBuilder CustomizeMergeSourcesSettings([NotNull] Action<SettingsMergeOptions> settingsCustomization);
+        IVostokConfigurationBuilder CustomizeSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
 
-        IVostokConfigurationBuilder CustomizeConfigurationProviderSettings([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
+        IVostokConfigurationBuilder CustomizeConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
 
         IVostokConfigurationBuilder CustomizePrintSettings([NotNull] Action<PrintSettings> settingsCustomization);
     }

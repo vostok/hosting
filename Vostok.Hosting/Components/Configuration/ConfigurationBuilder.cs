@@ -39,13 +39,13 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
-        public IVostokConfigurationBuilder CustomizeMergeSourcesSettings(Action<SettingsMergeOptions> settingsCustomization)
+        public IVostokConfigurationBuilder CustomizeSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
         {
             mergeSettingsCustomization.AddCustomization(settingsCustomization);
             return this;
         }
 
-        public IVostokConfigurationBuilder CustomizeConfigurationProviderSettings(Action<ConfigurationProviderSettings> settingsCustomization)
+        public IVostokConfigurationBuilder CustomizeConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
         {
             configurationSettingsCustomization.AddCustomization(settingsCustomization);
             return this;
