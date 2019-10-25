@@ -8,9 +8,9 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokConsoleLogBuilder
     {
-        IVostokConsoleLogBuilder UseSynchronious();
+        IVostokConsoleLogBuilder UseSynchronous();
 
-        IVostokConsoleLogBuilder UseAsynchronious();
+        IVostokConsoleLogBuilder UseAsynchronous();
 
         IVostokConsoleLogBuilder Disable();
 
