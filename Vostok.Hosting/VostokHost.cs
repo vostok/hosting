@@ -9,6 +9,7 @@ using Vostok.Commons.Threading;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Models;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
 

@@ -1,31 +1,33 @@
 ﻿using System;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Application
 {
-    internal class ApplicationReplicationInfoBuilder : IVostokApplicationReplicationInfoBuilder, IBuilder<Func<(int instanceIndex, int instancesCount)>>
+    internal class ApplicationReplicationInfoBuilder : IVostokApplicationReplicationInfoBuilder, IBuilder<Func<IVostokApplicationReplicationInfo>>
     {
-        private Func<(int instanceIndex, int instancesCount)> replicationInfoProvider;
+        private Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
 
         public ApplicationReplicationInfoBuilder()
         {
-            replicationInfoProvider = () => (0, 1);
+            replicationInfoProvider = () => new VostokApplicationReplicationInfo(0, 1);
         }
 
-        public IVostokApplicationReplicationInfoBuilder SetReplicationInfo(int instanceIndex, int instancesCount)
+        public IVostokApplicationReplicationInfoBuilder SetReplicationInfo(IVostokApplicationReplicationInfo replicationInfo)
         {
-            replicationInfoProvider = () => (instanceIndex, instancesCount);
+            replicationInfoProvider = () => replicationInfo;
             return this;
         }
 
-        public IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider(Func<(int instanceIndex, int instancesCount)> replicationInfoProvider)
+        public IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider(Func<IVostokApplicationReplicationInfo> replicationInfoProvider)
         {
             this.replicationInfoProvider = replicationInfoProvider;
             return this;
         }
 
-        public Func<(int instanceIndex, int instancesCount)> Build(BuildContext context) =>
+        Func<IVostokApplicationReplicationInfo> IBuilder<Func<IVostokApplicationReplicationInfo>>.Build(BuildContext context) =>
             replicationInfoProvider;
     }
 }

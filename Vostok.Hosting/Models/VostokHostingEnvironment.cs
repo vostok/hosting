@@ -15,19 +15,18 @@ using Vostok.Tracing.Abstractions;
 
 // ReSharper disable NotNullMemberIsNotInitialized
 
-namespace Vostok.Hosting
+namespace Vostok.Hosting.Models
 {
     internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
-        private readonly Func<(int instanceIndex, int instancesCount)> applicationReplicationInfoProvider;
-        private readonly CachingTransform<(int, int), IVostokApplicationReplicationInfo> applicationReplicationInfoTransform;
+        private readonly Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider;
         private readonly Action dispose;
 
         internal VostokHostingEnvironment(
             CancellationToken shutdownToken,
             [NotNull] IVostokApplicationIdentity applicationIdentity,
             [NotNull] IVostokApplicationLimits applicationLimits,
-            [NotNull] Func<(int instanceIndex, int instancesCount)> applicationReplicationInfoProvider,
+            [NotNull] Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider,
             [NotNull] IVostokApplicationMetrics metrics,
             [NotNull] ILog log,
             [NotNull] ITracer tracer,
@@ -47,10 +46,7 @@ namespace Vostok.Hosting
             ShutdownToken = shutdownToken;
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
             ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
-
             this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
-            applicationReplicationInfoTransform = new CachingTransform<(int, int), IVostokApplicationReplicationInfo>(tuple => new ApplicationReplicationInfo(tuple.Item1, tuple.Item2));
-
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
@@ -71,7 +67,7 @@ namespace Vostok.Hosting
         public CancellationToken ShutdownToken { get; }
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
-        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoTransform.Get(applicationReplicationInfoProvider());
+        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoProvider();
         public IVostokApplicationMetrics Metrics { get; }
         public ILog Log { get; }
         public ITracer Tracer { get; }

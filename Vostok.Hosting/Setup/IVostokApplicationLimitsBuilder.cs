@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Vostok.Hosting.Setup
 {
@@ -6,7 +7,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokApplicationLimitsBuilder
     {
         IVostokApplicationLimitsBuilder SetCpuUnits(float? cpuUnits);
+        IVostokApplicationLimitsBuilder SetCpuUnitsProvider(Func<float?> cpuUnitsProvider);
 
         IVostokApplicationLimitsBuilder SetMemoryBytes(long? memoryBytes);
+        IVostokApplicationLimitsBuilder SetMemoryBytesProvider(Func<long?> memoryBytesProvider);
     }
 }

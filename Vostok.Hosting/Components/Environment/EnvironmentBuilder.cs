@@ -15,6 +15,7 @@ using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -34,7 +35,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits> applicationLimitsBuilder;
-        private readonly CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<(int instanceIndex, int instancesCount)>> applicationReplicationInfoBuilder;
+        private readonly CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<IVostokApplicationReplicationInfo>> applicationReplicationInfoBuilder;
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
         private readonly CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
@@ -52,7 +53,7 @@ namespace Vostok.Hosting.Components.Environment
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             applicationLimitsBuilder = new CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits>(new ApplicationLimitsBuilder());
-            applicationReplicationInfoBuilder = new CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<(int instanceIndex, int instancesCount)>>(new ApplicationReplicationInfoBuilder());
+            applicationReplicationInfoBuilder = new CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<IVostokApplicationReplicationInfo>>(new ApplicationReplicationInfoBuilder());
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());

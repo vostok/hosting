@@ -1,13 +1,14 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
     public interface IVostokApplicationReplicationInfoBuilder
     {
-        IVostokApplicationReplicationInfoBuilder SetReplicationInfo(int instanceIndex, int instancesCount);
+        IVostokApplicationReplicationInfoBuilder SetReplicationInfo(IVostokApplicationReplicationInfo replicationInfo);
 
-        IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider([NotNull] Func<(int instanceIndex, int instancesCount)> replicationInfoProvider);
+        IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider([NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider);
     }
 }
