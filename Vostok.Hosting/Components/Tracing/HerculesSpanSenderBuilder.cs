@@ -12,14 +12,12 @@ namespace Vostok.Hosting.Components.Tracing
     internal class HerculesSpanSenderBuilder : IVostokHerculesSpanSenderBuilder, IBuilder<ISpanSender>
     {
         private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
-        private Func<string> apiKeyProvider;
-        private string stream;
-        private bool enabled;
+        private volatile Func<string> apiKeyProvider;
+        private volatile string stream;
+        private volatile bool enabled;
 
         public HerculesSpanSenderBuilder()
-        {
-            settingsCustomization = new Customization<HerculesSpanSenderSettings>();
-        }
+            => settingsCustomization = new Customization<HerculesSpanSenderSettings>();
 
         public IVostokHerculesSpanSenderBuilder Enable()
         {
@@ -60,7 +58,6 @@ namespace Vostok.Hosting.Components.Tracing
             }
 
             var herculesSink = context.HerculesSink;
-
             if (herculesSink == null)
             {
                 context.Log.LogDisabled("HerculesSpanSender", "disabled HerculesSink");

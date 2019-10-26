@@ -14,9 +14,9 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private Func<string> apiKeyProvider;
-        private string stream;
-        private bool enabled;
+        private volatile Func<string> apiKeyProvider;
+        private volatile string stream;
+        private volatile bool enabled;
 
         public HerculesLogBuilder()
         {
@@ -69,7 +69,6 @@ namespace Vostok.Hosting.Components.Log
             }
 
             var herculesSink = context.HerculesSink;
-
             if (herculesSink == null)
             {
                 context.Log.LogDisabled("HerculesLog", "disabled HerculesSink");
@@ -89,11 +88,7 @@ namespace Vostok.Hosting.Components.Log
 
             settingsCustomization.Customize(settings);
 
-            ILog log = new HerculesLog(settings);
-
-            log = logCustomization.Customize(log);
-
-            return log;
+            return logCustomization.Customize(new HerculesLog(settings));
         }
     }
 }

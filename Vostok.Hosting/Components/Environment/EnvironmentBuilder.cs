@@ -83,7 +83,6 @@ namespace Vostok.Hosting.Components.Environment
             {
                 context.Log.Error(error, "Failed to build vostok hosting environment.");
                 context.PrintBufferedLogs();
-
                 context.Dispose();
 
                 throw;
@@ -92,10 +91,10 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
-            var clusterConfigClient = clusterConfigClientBuilder.Build(context);
-            context.ClusterConfigClient = clusterConfigClient;
+            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
             (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
+
             context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
@@ -118,6 +117,7 @@ namespace Vostok.Hosting.Components.Environment
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
+
             if (context.HerculesSink != null)
                 HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 

@@ -11,14 +11,10 @@ namespace Vostok.Hosting.Components.Log
         private readonly ConcurrentBoundedQueue<LogEvent> queue;
 
         public BufferedLog()
-        {
-            queue = new ConcurrentBoundedQueue<LogEvent>(Capacity);
-        }
+            => queue = new ConcurrentBoundedQueue<LogEvent>(Capacity);
 
         public void Log(LogEvent @event)
-        {
-            queue.TryAdd(@event);
-        }
+            => queue.TryAdd(@event);
 
         public bool IsEnabledFor(LogLevel level) => true;
 
@@ -32,8 +28,8 @@ namespace Vostok.Hosting.Components.Log
 
         public void SendBufferedEvents(ILog log)
         {
-            var buffer = new LogEvent[Capacity];
-            var count = queue.Drain(buffer, 0, Capacity);
+            var buffer = new LogEvent[queue.Count];
+            var count = queue.Drain(buffer, 0, buffer.Length);
             for (var i = 0; i < count; i++)
                 log.Log(buffer[i]);
         }

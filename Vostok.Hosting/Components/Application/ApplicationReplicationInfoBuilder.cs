@@ -9,12 +9,10 @@ namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationReplicationInfoBuilder : IVostokApplicationReplicationInfoBuilder, IBuilder<Func<IVostokApplicationReplicationInfo>>
     {
-        private Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
+        private volatile Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
 
         public ApplicationReplicationInfoBuilder()
-        {
-            replicationInfoProvider = () => new VostokApplicationReplicationInfo(0, 1);
-        }
+            => replicationInfoProvider = () => new VostokApplicationReplicationInfo(0, 1);
 
         public IVostokApplicationReplicationInfoBuilder SetReplicationInfo(IVostokApplicationReplicationInfo replicationInfo)
         {

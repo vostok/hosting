@@ -12,8 +12,8 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<ConsoleLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private bool enabled;
-        private bool synchronous;
+        private volatile bool enabled;
+        private volatile bool synchronous;
 
         public ConsoleLogBuilder()
         {
@@ -71,9 +71,7 @@ namespace Vostok.Hosting.Components.Log
 
             var log = synchronous ? (ILog)new SynchronousConsoleLog(settings) : new ConsoleLog(settings);
 
-            log = logCustomization.Customize(log);
-
-            return log;
+            return logCustomization.Customize(log);
         }
     }
 }

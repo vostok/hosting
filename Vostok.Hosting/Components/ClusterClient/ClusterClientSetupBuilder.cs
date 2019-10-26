@@ -22,15 +22,15 @@ namespace Vostok.Hosting.Components.ClusterClient
 
         public ClusterClientSetup Build(BuildContext context)
         {
-            ClusterClientSetup setup = s =>
+            void Setup(IClusterClientConfiguration c)
             {
-                s.SetupDistributedContext();
-                s.SetupDistributedTracing(tracingBuilder.Build(context));
+                c.SetupDistributedContext();
+                c.SetupDistributedTracing(tracingBuilder.Build(context));
 
-                customization.Customize(s);
-            };
+                customization.Customize(c);
+            }
 
-            return setup;
+            return Setup;
         }
 
         public IVostokClusterClientSetupBuilder SetupTracing(Action<IVostokClusterClientSetupTracingBuilder> tracingSetup)

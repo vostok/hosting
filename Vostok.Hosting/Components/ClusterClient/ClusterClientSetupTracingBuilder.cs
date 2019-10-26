@@ -12,9 +12,7 @@ namespace Vostok.Hosting.Components.ClusterClient
         private readonly Customization<TracingConfiguration> settingsCustomization;
 
         public ClusterClientSetupTracingBuilder()
-        {
-            settingsCustomization = new Customization<TracingConfiguration>();
-        }
+            => settingsCustomization = new Customization<TracingConfiguration>();
 
         public TracingConfiguration Build(BuildContext context)
         {

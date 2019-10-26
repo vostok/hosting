@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Components.Application
         public ApplicationReplicationInfo(int instanceIndex, int instancesCount)
         {
             if (!(0 <= instanceIndex && instanceIndex < instancesCount))
-                throw new ArgumentOutOfRangeException($"Instance index not in range [{instanceIndex}, {instancesCount}).");
+                throw new ArgumentOutOfRangeException($"Instance index ({instanceIndex}) not in range [0, {instancesCount - 1}].");
 
             InstanceIndex = instanceIndex;
             InstancesCount = instancesCount;

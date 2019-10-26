@@ -20,7 +20,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IServiceLocator Build(BuildContext context)
         {
             var zooKeeperClient = context.ZooKeeperClient;
-
             if (zooKeeperClient == null)
             {
                 context.Log.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");

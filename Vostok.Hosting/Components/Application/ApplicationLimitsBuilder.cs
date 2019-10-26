@@ -7,8 +7,8 @@ namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationLimitsBuilder : IVostokApplicationLimitsBuilder, IBuilder<ApplicationLimits>
     {
-        private Func<float?> cpuUnitsProvider;
-        private Func<long?> memoryBytesProvider;
+        private volatile Func<float?> cpuUnitsProvider;
+        private volatile Func<long?> memoryBytesProvider;
 
         public ApplicationLimitsBuilder()
         {

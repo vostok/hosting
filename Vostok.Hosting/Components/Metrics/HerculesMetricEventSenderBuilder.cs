@@ -14,8 +14,8 @@ namespace Vostok.Hosting.Components.Metrics
     internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
     {
         private readonly Customization<HerculesMetricSenderSettings> settingsCustomization;
-        private List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
-        private bool enabled;
+        private readonly List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
+        private volatile bool enabled;
 
         public HerculesMetricEventSenderBuilder()
         {
@@ -56,7 +56,6 @@ namespace Vostok.Hosting.Components.Metrics
             }
 
             var herculesSink = context.HerculesSink;
-
             if (herculesSink == null)
             {
                 context.Log.LogDisabled("HerculesMetricSender", "disabled HerculesSink");

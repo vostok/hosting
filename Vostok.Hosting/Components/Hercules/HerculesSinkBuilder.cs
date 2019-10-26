@@ -14,10 +14,10 @@ namespace Vostok.Hosting.Components.Hercules
     internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<HerculesSink>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
-        private ClusterProviderBuilder clusterProviderBuilder;
-        private Func<string> apiKeyProvider;
-        private bool verboseLogging;
-        private bool enabled;
+        private volatile ClusterProviderBuilder clusterProviderBuilder;
+        private volatile Func<string> apiKeyProvider;
+        private volatile bool verboseLogging;
+        private volatile bool enabled;
 
         public HerculesSinkBuilder()
         {

@@ -19,7 +19,6 @@ namespace Vostok.Hosting.Components
     internal class BuildContext : IDisposable
     {
         private readonly SubstitutableLog substitutableLog;
-
         private readonly SubstitutableTracer substitutableTracer;
 
         public BuildContext()
@@ -49,19 +48,14 @@ namespace Vostok.Hosting.Components
             set => substitutableLog.SubstituteWith(value);
         }
 
-        public ITracer Tracer
-        {
-            get => substitutableTracer;
-        }
+        public ITracer Tracer => substitutableTracer;
 
         public void SubstituteTracer((ITracer tracer, TracerSettings tracerSettings) tracer)
-        {
-            substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
-        }
+            => substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
 
         public void PrintBufferedLogs()
         {
-            // Note(kungurtsev): if log hasn't created yet, send all messages from buffer.
+            // Note(kungurtsev): if log hasn't been created yet, send all messages from buffer.
             Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 

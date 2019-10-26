@@ -6,7 +6,12 @@ namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationIdentity : IVostokApplicationIdentity
     {
-        public ApplicationIdentity([NotNull] string project, [CanBeNull] string subproject, [NotNull] string environment, [NotNull] string application, [NotNull] string instance)
+        public ApplicationIdentity(
+            [NotNull] string project, 
+            [CanBeNull] string subproject, 
+            [NotNull] string environment, 
+            [NotNull] string application, 
+            [NotNull] string instance)
         {
             if (string.IsNullOrWhiteSpace(project))
                 throw new ArgumentOutOfRangeException(nameof(project), project, "Project should be specified.");

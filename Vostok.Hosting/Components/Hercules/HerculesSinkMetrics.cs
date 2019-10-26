@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Vostok.Commons.Time;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
@@ -17,7 +18,7 @@ namespace Vostok.Hosting.Components.Hercules
         private readonly HerculesSink herculesSink;
         private readonly IDisposable registration;
         private readonly MetricTags tags;
-        private HerculesSinkCounters previous = HerculesSinkCounters.Zero;
+        private volatile HerculesSinkCounters previous = HerculesSinkCounters.Zero;
 
         private HerculesSinkMetrics(IMetricContext context, HerculesSink herculesSink)
         {
@@ -34,17 +35,13 @@ namespace Vostok.Hosting.Components.Hercules
 
             // ReSharper disable once ObjectCreationAsStatement
             // TODO(kungurtsev): what should be final paths?
-            new HerculesSinkMetrics(
-                context.Application
-                    .WithTag("component", "HerculesSink"),
-                sink);
+            new HerculesSinkMetrics(context.Application.WithTag("component", "HerculesSink"), sink);
         }
 
         public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
         {
             var statistic = herculesSink.GetStatistics().Total;
-            var delta = statistic - previous;
-            previous = statistic;
+            var delta = statistic - Interlocked.Exchange(ref previous, statistic);
 
             yield return CreateMetricEvent(timestamp, "RecordsLostDueToBuildFailures", delta.RecordsLostDueToBuildFailures);
             yield return CreateMetricEvent(timestamp, "RecordsLostDueToOverflows", delta.RecordsLostDueToOverflows);

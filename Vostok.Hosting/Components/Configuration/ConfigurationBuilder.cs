@@ -65,11 +65,11 @@ namespace Vostok.Hosting.Components.Configuration
 
         public (IConfigurationSource, IConfigurationProvider) Build(BuildContext context)
         {
-            var mergeSettings = new SettingsMergeOptions();
-            mergeSettingsCustomization.Customize(mergeSettings);
+            var mergeOptions = new SettingsMergeOptions();
+            mergeSettingsCustomization.Customize(mergeOptions);
 
             var source = sources.Any()
-                ? (IConfigurationSource)new CombinedSource(sources.ToArray(), mergeSettings)
+                ? (IConfigurationSource)new CombinedSource(sources.ToArray(), mergeOptions)
                 : new ConstantSource(null);
 
             var printSettings = new PrintSettings();

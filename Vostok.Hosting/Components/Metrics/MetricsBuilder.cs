@@ -53,7 +53,6 @@ namespace Vostok.Hosting.Components.Metrics
         public IVostokApplicationMetrics Build(BuildContext context)
         {
             var sender = BuildCompositeMetricEventSender(context);
-
             if (sender == null)
                 return new VostokApplicationMetrics(new DevNullMetricContext(), context.ApplicationIdentity);
 

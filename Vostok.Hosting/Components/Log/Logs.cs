@@ -25,16 +25,10 @@ namespace Vostok.Hosting.Components.Log
         }
 
         public int Count(bool withoutHercules = false)
-        {
-            return ToArray(withoutHercules).Length;
-        }
+            => ToArray(withoutHercules).Length;
 
         public ILog BuildCompositeLog(bool withoutHercules = false)
-        {
-            var result = BuildCompositeLogInner(withoutHercules);
-            result = customization(result);
-            return result;
-        }
+            => customization(BuildCompositeLogInner(withoutHercules));
 
         public void Dispose()
         {

@@ -14,9 +14,7 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<ClusterConfigClientSettings> settingsCustomization;
 
         public ClusterConfigClientBuilder()
-        {
-            settingsCustomization = new Customization<ClusterConfigClientSettings>();
-        }
+            => settingsCustomization = new Customization<ClusterConfigClientSettings>();
 
         [NotNull]
         public ClusterConfigClient Build(BuildContext context)

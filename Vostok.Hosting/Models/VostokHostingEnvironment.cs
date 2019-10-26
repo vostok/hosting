@@ -11,8 +11,6 @@ using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
 
-// ReSharper disable NotNullMemberIsNotInitialized
-
 namespace Vostok.Hosting.Models
 {
     internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
@@ -41,10 +39,12 @@ namespace Vostok.Hosting.Models
             [NotNull] IVostokHostExtensions hostExtensions,
             [NotNull] Action dispose)
         {
+            this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
+            this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
+
             ShutdownToken = shutdownToken;
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
             ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
-            this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
@@ -59,7 +59,6 @@ namespace Vostok.Hosting.Models
             ContextConfiguration = contextConfiguration ?? throw new ArgumentNullException(nameof(contextConfiguration));
             ClusterClientSetup = clusterClientSetup ?? throw new ArgumentNullException(nameof(clusterClientSetup));
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
-            this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
         }
 
         public CancellationToken ShutdownToken { get; }
@@ -82,8 +81,6 @@ namespace Vostok.Hosting.Models
         public IVostokHostExtensions HostExtensions { get; }
 
         public void Dispose()
-        {
-            dispose();
-        }
+            => dispose();
     }
 }

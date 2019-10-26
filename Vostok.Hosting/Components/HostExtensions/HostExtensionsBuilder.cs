@@ -9,9 +9,10 @@ namespace Vostok.Hosting.Components.HostExtensions
 {
     internal class HostExtensionsBuilder : IVostokHostExtensionsBuilder
     {
-        public HostExtensions HostExtensions;
+        public readonly HostExtensions HostExtensions;
+
         private readonly Customization<HostExtensionsBuilder> builderCustomization;
-        private IVostokHostingEnvironment environment;
+        private volatile IVostokHostingEnvironment environment;
 
         public HostExtensionsBuilder()
         {
@@ -20,14 +21,10 @@ namespace Vostok.Hosting.Components.HostExtensions
         }
 
         public void AddCustomization(Action<IVostokHostExtensionsBuilder> setup)
-        {
-            builderCustomization.AddCustomization(setup);
-        }
+            => builderCustomization.AddCustomization(setup);
 
         public void AddCustomization(Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup)
-        {
-            builderCustomization.AddCustomization(b => setup(b, environment));
-        }
+            => builderCustomization.AddCustomization(b => setup(b, environment));
 
         public void Build(BuildContext context, IVostokHostingEnvironment environment)
         {

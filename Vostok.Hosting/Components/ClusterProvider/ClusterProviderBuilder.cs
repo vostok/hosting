@@ -11,14 +11,10 @@ namespace Vostok.Hosting.Components.ClusterProvider
         private readonly Func<BuildContext, IClusterProvider> provider;
 
         private ClusterProviderBuilder(Func<BuildContext, IClusterProvider> provider)
-        {
-            this.provider = provider;
-        }
+            => this.provider = provider;
 
         public static ClusterProviderBuilder FromValue(IClusterProvider value)
-        {
-            return new ClusterProviderBuilder(context => value);
-        }
+            => new ClusterProviderBuilder(context => value);
 
         public static ClusterProviderBuilder FromClusterConfig(string path) =>
             new ClusterProviderBuilder(

@@ -7,11 +7,11 @@ namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationIdentityBuilder : IVostokApplicationIdentityBuilder, IBuilder<ApplicationIdentity>
     {
-        private string project;
-        private string subproject;
-        private string environment;
-        private string application;
-        private string instance;
+        private volatile string project;
+        private volatile string subproject;
+        private volatile string environment;
+        private volatile string application;
+        private volatile string instance;
 
         [NotNull]
         public ApplicationIdentity Build(BuildContext context) =>

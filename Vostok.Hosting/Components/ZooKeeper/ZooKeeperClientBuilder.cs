@@ -13,8 +13,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
     internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
-        private ClusterProviderBuilder clusterProviderBuilder;
-        private string connectionString;
+        private volatile ClusterProviderBuilder clusterProviderBuilder;
+        private volatile string connectionString;
 
         public ZooKeeperClientBuilder()
         {

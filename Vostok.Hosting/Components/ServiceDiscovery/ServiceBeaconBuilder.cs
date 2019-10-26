@@ -14,8 +14,8 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
     {
         private readonly Customization<ServiceBeaconSettings> settingsCustomization;
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
-        private IVostokApplicationIdentity applicationIdentity;
-        private bool enabled;
+        private volatile IVostokApplicationIdentity applicationIdentity;
+        private volatile bool enabled;
 
         public ServiceBeaconBuilder()
         {
@@ -37,7 +37,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             }
 
             var zooKeeperClient = context.ZooKeeperClient;
-
             if (zooKeeperClient == null)
             {
                 context.Log.LogDisabled("ServiceBeacon", "disabled ZooKeeperClient");

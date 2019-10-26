@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Abstractions.Wrappers;
 
@@ -22,10 +23,7 @@ namespace Vostok.Hosting.Components.Log
 
         public void SubstituteWith(ILog newLog)
         {
-            var oldLog = baseLog;
-
-            baseLog = newLog;
-
+            var oldLog = Interlocked.Exchange(ref baseLog, newLog);
             if (oldLog is BufferedLog bufferedLog)
             {
                 bufferedLog.SendBufferedEvents(newLog);

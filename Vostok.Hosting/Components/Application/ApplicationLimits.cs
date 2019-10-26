@@ -12,7 +12,7 @@ namespace Vostok.Hosting.Components.Application
         public ApplicationLimits([NotNull] Func<float?> cpuUnitsProvider, [NotNull] Func<long?> memoryBytesProvider)
         {
             this.cpuUnitsProvider = cpuUnitsProvider ?? throw new ArgumentNullException(nameof(cpuUnitsProvider));
-            this.memoryBytesProvider = memoryBytesProvider ?? throw new ArgumentNullException(nameof(memoryBytesProvider));;
+            this.memoryBytesProvider = memoryBytesProvider ?? throw new ArgumentNullException(nameof(memoryBytesProvider));
         }
 
         public float? CpuUnits => cpuUnitsProvider();

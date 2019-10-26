@@ -14,7 +14,6 @@ namespace Vostok.Hosting.Components.Log
     internal class LogsBuilder : IVostokCompositeLogBuilder, IBuilder<Logs>
     {
         private readonly List<ILog> userLogs;
-
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
@@ -22,7 +21,6 @@ namespace Vostok.Hosting.Components.Log
         public LogsBuilder()
         {
             userLogs = new List<ILog>();
-
             herculesLogBuilder = new HerculesLogBuilder();
             fileLogBuilder = new FileLogBuilder();
             consoleLogBuilder = new ConsoleLogBuilder();

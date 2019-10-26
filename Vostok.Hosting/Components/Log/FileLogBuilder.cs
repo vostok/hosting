@@ -13,8 +13,8 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private Func<FileLogSettings> settingsProvider;
-        private bool enabled;
+        private volatile Func<FileLogSettings> settingsProvider;
+        private volatile bool enabled;
 
         public FileLogBuilder()
         {
@@ -67,11 +67,7 @@ namespace Vostok.Hosting.Components.Log
                 settingsProvider = () => settings;
             }
 
-            ILog log = new FileLog(settingsProvider);
-
-            log = logCustomization.Customize(log);
-
-            return log;
+            return logCustomization.Customize(new FileLog(settingsProvider));
         }
     }
 }

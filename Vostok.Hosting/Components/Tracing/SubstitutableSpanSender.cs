@@ -1,4 +1,5 @@
-﻿using Vostok.Tracing;
+﻿using System.Threading;
+using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Tracing
@@ -9,14 +10,9 @@ namespace Vostok.Hosting.Components.Tracing
 
         public void SubstituteWith(TracerSettings tracerSettings)
         {
-            var oldSender = baseSender;
-
-            baseSender = tracerSettings.Sender;
-
+            var oldSender = Interlocked.Exchange(ref baseSender, tracerSettings.Sender);
             if (oldSender is BufferedSpanSender bufferedSpanSender)
-            {
                 bufferedSpanSender.SendBufferedSpans(tracerSettings);
-            }
         }
 
         public void Send(ISpan span) =>

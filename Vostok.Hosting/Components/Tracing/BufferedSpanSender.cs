@@ -10,17 +10,16 @@ namespace Vostok.Hosting.Components.Tracing
         private readonly ConcurrentBoundedQueue<ISpan> queue;
 
         public BufferedSpanSender()
-        {
-            queue = new ConcurrentBoundedQueue<ISpan>(Capacity);
-        }
+            => queue = new ConcurrentBoundedQueue<ISpan>(Capacity);
 
         public void SendBufferedSpans(TracerSettings tracerSettings)
         {
-            var buffer = new ISpan[Capacity];
-            var count = queue.Drain(buffer, 0, Capacity);
+            var buffer = new ISpan[queue.Count];
+            var count = queue.Drain(buffer, 0, buffer.Length);
+
             for (var i = 0; i < count; i++)
             {
-                var span = new Span(buffer[i]);
+                var span = new BufferedSpan(buffer[i]);
 
                 if (tracerSettings.Host != null)
                     span.SetAnnotation(WellKnownAnnotations.Common.Host, tracerSettings.Host);
@@ -34,8 +33,6 @@ namespace Vostok.Hosting.Components.Tracing
         }
 
         public void Send(ISpan span)
-        {
-            queue.TryAdd(span);
-        }
+            => queue.TryAdd(span);
     }
 }
