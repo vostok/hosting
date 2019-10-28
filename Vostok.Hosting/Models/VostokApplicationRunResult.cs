@@ -33,5 +33,16 @@ namespace Vostok.Hosting.Models
             State = state;
             Error = error;
         }
+
+        /// <summary>
+        /// Throws an <see cref="Error"/> if application has been crashed.
+        /// </summary>
+        public VostokApplicationRunResult EnsureSuccess()
+        {
+            if (Error != null)
+                throw Error;
+
+            return this;
+        }
     }
 }
