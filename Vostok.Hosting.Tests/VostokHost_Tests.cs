@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Tests
 
             var result = host.RunAsync().GetAwaiter().GetResult();
 
-            result.Status.Should().Be(VostokApplicationState.Exited);
+            result.State.Should().Be(VostokApplicationState.Exited);
 
             application.Initialized.Should().BeTrue();
             application.Run.Should().BeTrue();
