@@ -89,7 +89,7 @@ namespace Vostok.Hosting
                 log.Error(error, "Unhandled exception has occurred while initializing application.");
                 ChangeStateTo(VostokApplicationState.CrashedDuringInitialization, error);
 
-                return new VostokApplicationRunResult(VostokApplicationRunStatus.CrashedDuringInitialization, error);
+                return new VostokApplicationRunResult(VostokApplicationState.CrashedDuringInitialization, error);
             }
         }
 
@@ -125,19 +125,19 @@ namespace Vostok.Hosting
 
                         log.Info("Application successfully stopped.");
                         ChangeStateTo(VostokApplicationState.Stopped);
-                        return new VostokApplicationRunResult(VostokApplicationRunStatus.Stopped);
+                        return new VostokApplicationRunResult(VostokApplicationState.Stopped);
                     }
 
                     log.Info("Application exited.");
                     ChangeStateTo(VostokApplicationState.Exited);
-                    return new VostokApplicationRunResult(VostokApplicationRunStatus.Exited);
+                    return new VostokApplicationRunResult(VostokApplicationState.Exited);
                 }
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while running application.");
                 ChangeStateTo(VostokApplicationState.CrashedDuringRunning, error);
-                return new VostokApplicationRunResult(VostokApplicationRunStatus.CrashedDuringRunning, error);
+                return new VostokApplicationRunResult(VostokApplicationState.CrashedDuringRunning, error);
             }
         }
 

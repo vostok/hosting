@@ -6,12 +6,12 @@ namespace Vostok.Hosting.Models
     [PublicAPI]
     public class VostokApplicationRunResult
     {
-        public readonly VostokApplicationRunStatus Status;
+        public readonly VostokApplicationState Status;
 
         [CanBeNull]
         public readonly Exception Error;
 
-        public VostokApplicationRunResult(VostokApplicationRunStatus status, [CanBeNull] Exception error = null)
+        public VostokApplicationRunResult(VostokApplicationState status, [CanBeNull] Exception error = null)
         {
             Status = status;
             Error = error;
