@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Clusterclient.Context;
 using Vostok.Clusterclient.Core;
+using Vostok.ClusterClient.Datacenters;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
@@ -26,6 +27,14 @@ namespace Vostok.Hosting.Components.ClusterClient
             {
                 c.SetupDistributedContext();
                 c.SetupDistributedTracing(tracingBuilder.Build(context));
+
+                if (context.Datacenters != null)
+                    c.SetupWeighedReplicaOrdering(
+                        weightOrdering =>
+                        {
+                            weightOrdering.SetupAvoidInactiveDatacentersWeightModifier(context.Datacenters);
+                            weightOrdering.SetupBoostLocalDatacentersWeightModifier(context.Datacenters);
+                        });
 
                 customization.Customize(c);
             }

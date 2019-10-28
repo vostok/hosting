@@ -2,6 +2,7 @@
 using System.Threading;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
+using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
@@ -37,6 +38,7 @@ namespace Vostok.Hosting.Components
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
+        public IDatacenters Datacenters { get; set; }
 
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 

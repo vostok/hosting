@@ -2,11 +2,13 @@
 using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.Context;
+using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.ClusterClient;
 using Vostok.Hosting.Components.Configuration;
+using Vostok.Hosting.Components.Datacenters;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
@@ -39,6 +41,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
         private readonly CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup> clusterClientSetupBuilder;
+        private readonly CustomizableBuilder<DatacentersBuilder, IDatacenters> datacentersBuilder;
         private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
@@ -57,6 +60,7 @@ namespace Vostok.Hosting.Components.Environment
             herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             clusterClientSetupBuilder = new CustomizableBuilder<ClusterClientSetupBuilder, ClusterClientSetup>(new ClusterClientSetupBuilder());
+            datacentersBuilder = new CustomizableBuilder<DatacentersBuilder, IDatacenters>(new DatacentersBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
@@ -98,6 +102,8 @@ namespace Vostok.Hosting.Components.Environment
             context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+
+            context.Datacenters = datacentersBuilder.Build(context);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
@@ -143,6 +149,7 @@ namespace Vostok.Hosting.Components.Environment
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
+                context.Datacenters ?? new DevNullDatacenters(),
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
 
@@ -240,6 +247,18 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupClusterClientSetup(Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             clusterClientSetupBuilder.AddCustomization(setup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupDatacenters(Action<IVostokDatacentersBuilder> setup)
+        {
+            datacentersBuilder.AddCustomization(setup);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupDatacenters(Action<IVostokDatacentersBuilder, IVostokHostingEnvironmentSetupContext> setup)
+        {
+            datacentersBuilder.AddCustomization(setup);
             return this;
         }
 

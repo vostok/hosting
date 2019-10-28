@@ -35,6 +35,9 @@ namespace Vostok.Hosting.Setup
         IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupClusterClientSetup([NotNull] Action<IVostokClusterClientSetupBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
+        IVostokHostingEnvironmentBuilder SetupDatacenters([NotNull] Action<IVostokDatacentersBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupDatacenters([NotNull] Action<IVostokDatacentersBuilder, IVostokHostingEnvironmentSetupContext> setup);
+
         IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupZooKeeperClient([NotNull] Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup);
 

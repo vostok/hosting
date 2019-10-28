@@ -36,6 +36,7 @@ namespace Vostok.Hosting.Models
             [NotNull] IContextProperties contextProperties,
             [NotNull] IContextConfiguration contextConfiguration,
             [NotNull] ClusterClientSetup clusterClientSetup,
+            [NotNull] Datacenters.IDatacenters datacenters,
             [NotNull] IVostokHostExtensions hostExtensions,
             [NotNull] Action dispose)
         {
@@ -58,6 +59,7 @@ namespace Vostok.Hosting.Models
             ContextProperties = contextProperties ?? throw new ArgumentNullException(nameof(contextProperties));
             ContextConfiguration = contextConfiguration ?? throw new ArgumentNullException(nameof(contextConfiguration));
             ClusterClientSetup = clusterClientSetup ?? throw new ArgumentNullException(nameof(clusterClientSetup));
+            Datacenters = datacenters ?? throw new ArgumentNullException(nameof(datacenters));
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
         }
 
@@ -78,6 +80,7 @@ namespace Vostok.Hosting.Models
         public IContextProperties ContextProperties { get; }
         public IContextConfiguration ContextConfiguration { get; }
         public ClusterClientSetup ClusterClientSetup { get; }
+        public Datacenters.IDatacenters Datacenters { get; }
         public IVostokHostExtensions HostExtensions { get; }
 
         public void Dispose()
