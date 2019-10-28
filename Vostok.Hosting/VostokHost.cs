@@ -19,7 +19,7 @@ namespace Vostok.Hosting
     public class VostokHost
     {
         public readonly CancellationTokenSource ShutdownTokenSource;
-        public volatile VostokApplicationState ApplicationState;
+        public VostokApplicationState ApplicationState { get; private set; }
 
         private readonly VostokHostSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
