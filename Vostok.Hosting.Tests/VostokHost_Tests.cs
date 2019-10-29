@@ -23,7 +23,7 @@ namespace Vostok.Hosting.Tests
                         (applicationIdentitySetup, setupContext) => applicationIdentitySetup
                             .SetProject("Infrastructure")
                             .SetSubproject("vostok")
-                            .SetEnvironment(setupContext.ClusterConfigClient.Get("app/environment")?.Value ?? "default")
+                            .SetEnvironment("dev")
                             .SetApplication("simple-application")
                             .SetInstance("1")
                     )
