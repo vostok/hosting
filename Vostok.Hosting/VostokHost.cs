@@ -19,48 +19,45 @@ namespace Vostok.Hosting
     public class VostokHost
     {
         public readonly CancellationTokenSource ShutdownTokenSource;
-        public VostokApplicationState ApplicationState { get; private set; }
 
         private readonly VostokHostSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
-        private readonly VostokHostingEnvironment environment;
-        private readonly ILog log;
         private readonly AtomicBoolean launchedOnce = false;
+        private VostokHostingEnvironment environment;
+        private ILog log;
 
         public VostokHost([NotNull] VostokHostSettings settings)
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-
-            if (settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup();
-
+            
             ShutdownTokenSource = new CancellationTokenSource();
-
-            environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token);
-
-            log = environment.Log.ForContext<VostokHost>();
 
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>();
             ChangeStateTo(VostokApplicationState.NotInitialized);
         }
 
+        public VostokApplicationState ApplicationState { get; private set; }
+
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         public async Task<VostokApplicationRunResult> RunAsync()
         {
-            LogApplicationIdentity(environment.ApplicationIdentity);
-
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("Application can't be launched multiple times.");
 
-            try
+            if (settings.ConfigureThreadPool)
+                ThreadPoolUtility.Setup();
+
+            using (environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token))
             {
+                log = environment.Log.ForContext<VostokHost>();
+
+                LogApplicationIdentity(environment.ApplicationIdentity);
+
+                ConfigureHostBeforeRun();
+
                 return await InitializeApplicationAsync().ConfigureAwait(false)
                        ?? await RunApplicationAsync().ConfigureAwait(false);
-            }
-            finally
-            {
-                environment.Dispose();
             }
         }
 
@@ -71,12 +68,6 @@ namespace Vostok.Hosting
 
             try
             {
-                if (settings.ConfigureStaticProviders)
-                    ConfigureStaticProviders();
-                var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
-                if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
-                    ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
-
                 await settings.Application.InitializeAsync(environment).ConfigureAwait(false);
 
                 log.Info("Application initialization completed successfully.");
@@ -147,6 +138,16 @@ namespace Vostok.Hosting
             onApplicationStateChanged.Next(newState);
             if (error != null)
                 onApplicationStateChanged.Error(error);
+        }
+
+        private void ConfigureHostBeforeRun()
+        {
+            var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
+            if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
+                ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
+
+            if (settings.ConfigureStaticProviders)
+                ConfigureStaticProviders();
         }
 
         private void ConfigureStaticProviders()
