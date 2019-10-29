@@ -11,11 +11,21 @@ namespace Vostok.Hosting.Components.HostExtensions
         private readonly ConcurrentDictionary<Type, object> byType = new ConcurrentDictionary<Type, object>();
         private readonly ConcurrentDictionary<(string, Type), object> byKey = new ConcurrentDictionary<(string, Type), object>();
 
-        public TExtension Get<TExtension>() =>
-            (TExtension)byType[typeof(TExtension)];
+        public TExtension Get<TExtension>()
+        {
+            if (!byType.TryGetValue(typeof(TExtension), out var obj))
+                throw new KeyNotFoundException($"Host extension with type '{typeof(TExtension)}' has not been registered.");
 
-        public TExtension Get<TExtension>(string key) =>
-            (TExtension)byKey[(key, typeof(TExtension))];
+            return (TExtension)obj;
+        }
+
+        public TExtension Get<TExtension>(string key)
+        {
+            if (!byKey.TryGetValue((key, typeof(TExtension)), out var obj))
+                throw new KeyNotFoundException($"Host extension with key '{key}' and type '{typeof(TExtension)}' has not been registered.");
+
+            return (TExtension)obj;
+        }
 
         public bool TryGet<TExtension>(out TExtension result)
         {
