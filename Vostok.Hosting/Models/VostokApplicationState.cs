@@ -11,8 +11,10 @@ namespace Vostok.Hosting.Models
         Running,
         Stopping,
         Stopped,
+        StoppedForcibly,
         Exited,
         CrashedDuringInitialization,
-        CrashedDuringRunning
+        CrashedDuringRunning,
+        CrashedDuringStopping
     }
 }
