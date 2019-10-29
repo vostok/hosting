@@ -22,7 +22,7 @@ namespace Vostok.Hosting.Components
     {
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
-        
+
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
@@ -44,7 +44,7 @@ namespace Vostok.Hosting.Components
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
         public Logs Logs { get; set; }
-        
+
         public ILog Log
         {
             get => substitutableLog;
@@ -102,16 +102,13 @@ namespace Vostok.Hosting.Components
             }
         }
 
-        private void LogDisposing(string componentName) =>
-            Log.ForContext<VostokHostingEnvironment>().Info("Disposing {ComponentName}.", componentName);
-
         public void LogDisabled(string name) =>
             Log.ForContext(typeof(VostokHostingEnvironmentFactory)).Info("{ComponentName} has been disabled.", name);
 
         public void LogDisabled(string name, string reason) =>
             Log.ForContext(typeof(VostokHostingEnvironmentFactory)).Info("{ComponentName} has been disabled due to {ComponentDisabledReason}.", name, reason);
 
-        private ILog LogOrConsoleLog() =>
-            Logs.Count() == 0 ? new SynchronousConsoleLog() : Log;
+        private void LogDisposing(string componentName) =>
+            Log.ForContext<VostokHostingEnvironment>().Info("Disposing {ComponentName}.", componentName);
     }
 }
