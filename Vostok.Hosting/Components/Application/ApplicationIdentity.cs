@@ -14,13 +14,15 @@ namespace Vostok.Hosting.Components.Application
             [NotNull] string instance)
         {
             if (string.IsNullOrWhiteSpace(project))
-                throw new ArgumentOutOfRangeException(nameof(project), project, "Project should be specified.");
+                throw new ArgumentNullException(nameof(project), "Project should be specified.");
+            if (string.IsNullOrWhiteSpace(subproject))
+                subproject = null;
             if (string.IsNullOrWhiteSpace(environment))
-                throw new ArgumentOutOfRangeException(nameof(environment), environment, "Environment should be specified.");
+                throw new ArgumentNullException(nameof(environment), "Environment should be specified.");
             if (string.IsNullOrWhiteSpace(application))
-                throw new ArgumentOutOfRangeException(nameof(application), application, "Application should be specified.");
+                throw new ArgumentNullException(nameof(application), "Application should be specified.");
             if (string.IsNullOrWhiteSpace(instance))
-                throw new ArgumentOutOfRangeException(nameof(instance), instance, "Instance should be specified.");
+                throw new ArgumentNullException(nameof(instance), "Instance should be specified.");
 
             Project = project;
             Subproject = subproject;
