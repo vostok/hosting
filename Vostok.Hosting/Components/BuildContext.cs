@@ -65,16 +65,15 @@ namespace Vostok.Hosting.Components
         {
             try
             {
-                Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
-                SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
-
                 (Metrics?.Root as IDisposable)?.Dispose();
-
-                (HerculesSink as IDisposable)?.Dispose();
 
                 (ServiceBeacon as IDisposable)?.Dispose();
                 (ServiceLocator as IDisposable)?.Dispose();
                 (ZooKeeperClient as IDisposable)?.Dispose();
+
+                Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
+                SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
+                (HerculesSink as IDisposable)?.Dispose();
 
                 (ClusterConfigClient as IDisposable)?.Dispose();
 
