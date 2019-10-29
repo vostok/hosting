@@ -26,7 +26,11 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 return new DevNullServiceLocator();
             }
 
-            return new ServiceLocator(zooKeeperClient, new ServiceLocatorSettings());
+            var settings = new ServiceLocatorSettings();
+
+            settingsCustomization.Customize(settings);
+
+            return new ServiceLocator(zooKeeperClient, settings);
         }
 
         public IVostokServiceLocatorBuilder CustomizeSettings(Action<ServiceLocatorSettings> settingsCustomization)
