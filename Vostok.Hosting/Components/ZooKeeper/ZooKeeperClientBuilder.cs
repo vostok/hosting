@@ -61,7 +61,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
             if (settings == null)
             {
-                context.Log.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
+                context.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
                 return null;
             }
 

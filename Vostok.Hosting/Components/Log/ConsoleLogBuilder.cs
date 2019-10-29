@@ -61,7 +61,7 @@ namespace Vostok.Hosting.Components.Log
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("ConsoleLog");
+                context.LogDisabled("ConsoleLog");
                 return null;
             }
 

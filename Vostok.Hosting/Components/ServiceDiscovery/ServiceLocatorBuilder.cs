@@ -22,7 +22,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             var zooKeeperClient = context.ZooKeeperClient;
             if (zooKeeperClient == null)
             {
-                context.Log.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
+                context.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
                 return new DevNullServiceLocator();
             }
 

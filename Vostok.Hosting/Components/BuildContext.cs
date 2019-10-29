@@ -7,6 +7,7 @@ using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Tracing;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
@@ -21,7 +22,7 @@ namespace Vostok.Hosting.Components
     {
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
-
+        
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
@@ -43,7 +44,7 @@ namespace Vostok.Hosting.Components
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
 
         public Logs Logs { get; set; }
-
+        
         public ILog Log
         {
             get => substitutableLog;
@@ -65,28 +66,52 @@ namespace Vostok.Hosting.Components
         {
             try
             {
+                LogDisposing("VostokHostingEnvironment");
+
+                LogDisposing("Metrics");
                 (Metrics?.Root as IDisposable)?.Dispose();
 
+                LogDisposing("ServiceBeacon");
                 (ServiceBeacon as IDisposable)?.Dispose();
+
+                LogDisposing("ServiceLocator");
                 (ServiceLocator as IDisposable)?.Dispose();
+
+                LogDisposing("ZooKeeperClient");
                 (ZooKeeperClient as IDisposable)?.Dispose();
 
                 Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
                 SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
+
+                LogDisposing("HerculesSink");
                 (HerculesSink as IDisposable)?.Dispose();
 
+                LogDisposing("ClusterConfigClient");
                 (ClusterConfigClient as IDisposable)?.Dispose();
 
+                LogDisposing("Log");
                 Log = new SilentLog();
 
                 Logs?.Dispose();
             }
             catch (Exception error)
             {
-                Log.Error(error, "Failed to dispose vostok hosting environment.");
+                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose vostok hosting environment.");
 
                 throw;
             }
         }
+
+        private void LogDisposing(string componentName) =>
+            Log.ForContext<VostokHostingEnvironment>().Info("Disposing {ComponentName}.", componentName);
+
+        public void LogDisabled(string name) =>
+            Log.ForContext(typeof(VostokHostingEnvironmentFactory)).Info("{ComponentName} has been disabled.", name);
+
+        public void LogDisabled(string name, string reason) =>
+            Log.ForContext(typeof(VostokHostingEnvironmentFactory)).Info("{ComponentName} has been disabled due to {ComponentDisabledReason}.", name, reason);
+
+        private ILog LogOrConsoleLog() =>
+            Logs.Count() == 0 ? new SynchronousConsoleLog() : Log;
     }
 }

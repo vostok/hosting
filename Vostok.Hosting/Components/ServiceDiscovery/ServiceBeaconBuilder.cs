@@ -32,14 +32,14 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("ServiceBeacon");
+                context.LogDisabled("ServiceBeacon");
                 return new DevNullServiceBeacon();
             }
 
             var zooKeeperClient = context.ZooKeeperClient;
             if (zooKeeperClient == null)
             {
-                context.Log.LogDisabled("ServiceBeacon", "disabled ZooKeeperClient");
+                context.LogDisabled("ServiceBeacon", "disabled ZooKeeperClient");
                 return new DevNullServiceBeacon();
             }
 

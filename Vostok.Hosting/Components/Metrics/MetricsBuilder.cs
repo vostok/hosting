@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Components.Metrics
 
             var settings = new MetricContextConfig(sender)
             {
-                ErrorCallback = e => context.Log.Error(e, "Failed to send metrics.")
+                ErrorCallback = e => context.Log.ForContext<MetricContext>().Error(e, "Failed to send metrics.")
             };
 
             settingsCustomization.Customize(settings);

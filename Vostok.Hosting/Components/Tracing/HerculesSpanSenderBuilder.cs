@@ -53,20 +53,20 @@ namespace Vostok.Hosting.Components.Tracing
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("HerculesSpanSender");
+                context.LogDisabled("HerculesSpanSender");
                 return null;
             }
 
             var herculesSink = context.HerculesSink;
             if (herculesSink == null)
             {
-                context.Log.LogDisabled("HerculesSpanSender", "disabled HerculesSink");
+                context.LogDisabled("HerculesSpanSender", "disabled HerculesSink");
                 return null;
             }
 
             if (stream == null)
             {
-                context.Log.LogDisabled("HerculesSpanSender", "unconfigured stream");
+                context.LogDisabled("HerculesSpanSender", "unconfigured stream");
                 return null;
             }
 

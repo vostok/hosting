@@ -64,20 +64,20 @@ namespace Vostok.Hosting.Components.Log
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("HerculesLog");
+                context.LogDisabled("HerculesLog");
                 return null;
             }
 
             var herculesSink = context.HerculesSink;
             if (herculesSink == null)
             {
-                context.Log.LogDisabled("HerculesLog", "disabled HerculesSink");
+                context.LogDisabled("HerculesLog", "disabled HerculesSink");
                 return null;
             }
 
             if (stream == null)
             {
-                context.Log.LogDisabled("HerculesLog", "unconfigured stream");
+                context.LogDisabled("HerculesLog", "unconfigured stream");
                 return null;
             }
 

@@ -22,13 +22,13 @@ namespace Vostok.Hosting.Components.Datacenters
         {
             if (datacenterMapping == null)
             {
-                context.Log.LogDisabled("Datacenters", "unconfigured mapping");
+                context.LogDisabled("Datacenters", "unconfigured mapping");
                 return null;
             }
 
             if (activeDatacentersProvider == null)
             {
-                context.Log.LogDisabled("Datacenters", "unconfigured active datacenters provider");
+                context.LogDisabled("Datacenters", "unconfigured active datacenters provider");
                 return null;
             }
 

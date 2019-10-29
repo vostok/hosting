@@ -85,7 +85,7 @@ namespace Vostok.Hosting.Components.Environment
             }
             catch (Exception error)
             {
-                context.Log.Error(error, "Failed to build vostok hosting environment.");
+                context.Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to build vostok hosting environment.");
                 context.PrintBufferedLogs();
                 context.Dispose();
 
@@ -112,13 +112,9 @@ namespace Vostok.Hosting.Components.Environment
             context.HerculesSink = herculesSinkBuilder.Build(context);
 
             context.Logs = compositeLogBuilder.Build(context);
-            if (context.Logs.Count() == 0)
-            {
-                context.Log.LogDisabled("All logs");
-                context.PrintBufferedLogs();
-            }
-
-            context.Log = context.Logs.BuildCompositeLog();
+            var hasLogs = context.Logs.Count() > 0;
+            if (hasLogs)
+                context.Log = context.Logs.BuildCompositeLog();
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
@@ -127,7 +123,7 @@ namespace Vostok.Hosting.Components.Environment
             if (context.HerculesSink != null)
                 HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 
-            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.Error(error, errorMessage);
+            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
@@ -154,6 +150,13 @@ namespace Vostok.Hosting.Components.Environment
                 context.Dispose);
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
+
+            if (!hasLogs)
+            {
+                context.LogDisabled("All logs");
+                context.PrintBufferedLogs();
+                context.Log = context.Logs.BuildCompositeLog();
+            }
 
             return vostokHostingEnvironment;
         }

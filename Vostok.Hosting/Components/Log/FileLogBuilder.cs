@@ -56,7 +56,7 @@ namespace Vostok.Hosting.Components.Log
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("FileLog");
+                context.LogDisabled("FileLog");
                 return null;
             }
 

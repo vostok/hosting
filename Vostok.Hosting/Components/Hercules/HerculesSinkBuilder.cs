@@ -28,14 +28,14 @@ namespace Vostok.Hosting.Components.Hercules
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("HerculesSink");
+                context.LogDisabled("HerculesSink");
                 return null;
             }
 
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
             {
-                context.Log.LogDisabled("HerculesSink", "unconfigured cluster provider");
+                context.LogDisabled("HerculesSink", "unconfigured cluster provider");
                 return null;
             }
 

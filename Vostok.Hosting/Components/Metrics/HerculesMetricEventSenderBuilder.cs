@@ -51,14 +51,14 @@ namespace Vostok.Hosting.Components.Metrics
         {
             if (!enabled)
             {
-                context.Log.LogDisabled("HerculesMetricSender");
+                context.LogDisabled("HerculesMetricSender");
                 return null;
             }
 
             var herculesSink = context.HerculesSink;
             if (herculesSink == null)
             {
-                context.Log.LogDisabled("HerculesMetricSender", "disabled HerculesSink");
+                context.LogDisabled("HerculesMetricSender", "disabled HerculesSink");
                 return null;
             }
 
