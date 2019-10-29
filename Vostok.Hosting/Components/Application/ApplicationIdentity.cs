@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
@@ -13,16 +15,22 @@ namespace Vostok.Hosting.Components.Application
             [NotNull] string application, 
             [NotNull] string instance)
         {
+            var missingFields = new List<string>();
+
             if (string.IsNullOrWhiteSpace(project))
-                throw new ArgumentNullException(nameof(project), "Project should be specified.");
+                missingFields.Add(nameof(project));
             if (string.IsNullOrWhiteSpace(subproject))
                 subproject = null;
             if (string.IsNullOrWhiteSpace(environment))
-                throw new ArgumentNullException(nameof(environment), "Environment should be specified.");
+                missingFields.Add(nameof(environment));
             if (string.IsNullOrWhiteSpace(application))
-                throw new ArgumentNullException(nameof(application), "Application should be specified.");
+                missingFields.Add(nameof(application));
             if (string.IsNullOrWhiteSpace(instance))
-                throw new ArgumentNullException(nameof(instance), "Instance should be specified.");
+                missingFields.Add(nameof(instance));
+
+            if (missingFields.Any())
+                // ReSharper disable once NotResolvedInText
+                throw new ArgumentNullException(string.Join(", ", missingFields) + " should be specified.");
 
             Project = project;
             Subproject = subproject;
