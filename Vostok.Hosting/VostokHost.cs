@@ -56,8 +56,10 @@ namespace Vostok.Hosting
 
                 ConfigureHostBeforeRun();
 
-                return await InitializeApplicationAsync().ConfigureAwait(false)
-                       ?? await RunApplicationAsync().ConfigureAwait(false);
+                var result = await InitializeApplicationAsync().ConfigureAwait(false);
+                if (result.State == VostokApplicationState.Initialized)
+                    result = await RunApplicationAsync().ConfigureAwait(false);
+                return result;
             }
         }
 
@@ -71,16 +73,12 @@ namespace Vostok.Hosting
                 await settings.Application.InitializeAsync(environment).ConfigureAwait(false);
 
                 log.Info("Application initialization completed successfully.");
-                ChangeStateTo(VostokApplicationState.Initialized);
-
-                return null;
+                return ReturnResult(VostokApplicationState.Initialized);
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while initializing application.");
-                ChangeStateTo(VostokApplicationState.CrashedDuringInitialization, error);
-
-                return new VostokApplicationRunResult(VostokApplicationState.CrashedDuringInitialization, error);
+                return ReturnResult(VostokApplicationState.CrashedDuringInitialization, error);
             }
         }
 
@@ -106,30 +104,46 @@ namespace Vostok.Hosting
 
                     if (shutdownToken.IsCancellationRequested)
                     {
-                        log.Info("Cancellation requested, waiting for application to complete with timeout = {Timeout}.", settings.ShutdownTimeout);
+                        log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", settings.ShutdownTimeout);
                         ChangeStateTo(VostokApplicationState.Stopping);
 
                         if (!await applicationTask.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
                         {
-                            throw new OperationCanceledException($"Cancellation requested, but application has not exited within {settings.ShutdownTimeout} timeout.");
+                            log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", settings.ShutdownTimeout);
+                            return ReturnResult(VostokApplicationState.StoppedForcibly);
+                        }
+
+                        try
+                        {
+                            await applicationTask.ConfigureAwait(false);
+                        }
+                        catch (Exception error)
+                        {
+                            log.Error(error, "Unhandled exception has occurred while stopping application.");
+                            return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
                         }
 
                         log.Info("Application successfully stopped.");
-                        ChangeStateTo(VostokApplicationState.Stopped);
-                        return new VostokApplicationRunResult(VostokApplicationState.Stopped);
+                        return ReturnResult(VostokApplicationState.Stopped);
                     }
 
+                    await applicationTask.ConfigureAwait(false);
+
                     log.Info("Application exited.");
-                    ChangeStateTo(VostokApplicationState.Exited);
-                    return new VostokApplicationRunResult(VostokApplicationState.Exited);
+                    return ReturnResult(VostokApplicationState.Exited);
                 }
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while running application.");
-                ChangeStateTo(VostokApplicationState.CrashedDuringRunning, error);
-                return new VostokApplicationRunResult(VostokApplicationState.CrashedDuringRunning, error);
+                return ReturnResult(VostokApplicationState.CrashedDuringRunning, error);
             }
+        }
+
+        private VostokApplicationRunResult ReturnResult(VostokApplicationState newState, Exception error = null)
+        {
+            ChangeStateTo(newState, error);
+            return new VostokApplicationRunResult(newState, error);
         }
 
         private void ChangeStateTo(VostokApplicationState newState, Exception error = null)

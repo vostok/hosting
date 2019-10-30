@@ -14,10 +14,12 @@ namespace Vostok.Hosting.Models
         /// <para>Returns final state of application after <see cref="IVostokApplication.InitializeAsync"/> and <see cref="IVostokApplication.RunAsync"/> has been called. </para>
         /// <para>Possible final states:</para>
         /// <list type="bullet">
-        ///     <item><description><see cref="VostokApplicationState.Stopped"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.Exited"/></description></item>
+        ///     <item><description><see cref="VostokApplicationState.Stopped"/></description></item>
+        ///     <item><description><see cref="VostokApplicationState.StoppedForcibly"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringInitialization"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringRunning"/></description></item>
+        ///     <item><description><see cref="VostokApplicationState.CrashedDuringStopping"/></description></item>
         /// </list>
         /// </summary>
         public readonly VostokApplicationState State;
