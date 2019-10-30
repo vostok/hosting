@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
@@ -16,6 +18,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
         private volatile IVostokApplicationIdentity applicationIdentity;
         private volatile bool enabled;
+        private volatile bool registerDeniedFromNonActiveDatacenters;
 
         public ServiceBeaconBuilder()
         {
@@ -47,6 +50,9 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
             var settings = new ServiceBeaconSettings();
 
+            if (registerDeniedFromNonActiveDatacenters)
+                settings.RegistrationAllowedProvider = RegistrationAllowedProvider(context.Datacenters);
+
             settingsCustomization.Customize(settings);
 
             return new ServiceBeacon(
@@ -65,6 +71,18 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 context.Log);
         }
 
+        private Func<bool> RegistrationAllowedProvider(IDatacenters datacenters)
+        {
+            if (datacenters == null)
+                return null;
+
+            return () =>
+            {
+                var dc = datacenters.GetLocalDatacenter();
+                return dc == null || datacenters.GetActiveDatacenters().Contains(dc);
+            };
+        }
+
         public IVostokServiceBeaconBuilder Enable()
         {
             enabled = true;
@@ -74,6 +92,18 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IVostokServiceBeaconBuilder Disable()
         {
             enabled = false;
+            return this;
+        }
+
+        public IVostokServiceBeaconBuilder DenyRegistrationFromNotActiveDatacenters()
+        {
+            registerDeniedFromNonActiveDatacenters = true;
+            return this;
+        }
+
+        public IVostokServiceBeaconBuilder AllowRegistrationFromNotActiveDatacenters()
+        {
+            registerDeniedFromNonActiveDatacenters = false;
             return this;
         }
 

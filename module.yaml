@@ -39,7 +39,7 @@ notests *default:
     - vostok.logging.tracing
     - vostok.metrics
     - vostok.metrics.hercules
-    - vostok.servicediscovery
+    - vostok.servicediscovery@registration-allowed
     - vostok.servicediscovery.abstractions
     - vostok.tracing
     - vostok.tracing.abstractions

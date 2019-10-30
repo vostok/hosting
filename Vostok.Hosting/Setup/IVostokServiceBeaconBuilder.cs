@@ -9,6 +9,10 @@ namespace Vostok.Hosting.Setup
     {
         IVostokServiceBeaconBuilder Disable();
 
+        IVostokServiceBeaconBuilder DenyRegistrationFromNotActiveDatacenters();
+
+        IVostokServiceBeaconBuilder AllowRegistrationFromNotActiveDatacenters();
+
         IVostokServiceBeaconBuilder SetupReplicaInfo([NotNull] ReplicaInfoSetup replicaInfoSetup);
 
         IVostokServiceBeaconBuilder CustomizeSettings([NotNull] Action<ServiceBeaconSettings> settingsCustomization);
