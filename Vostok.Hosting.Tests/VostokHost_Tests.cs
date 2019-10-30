@@ -6,6 +6,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Vostok.Commons.Helpers.Extensions;
+using Vostok.Commons.Testing;
 using Vostok.Commons.Testing.Observable;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Models;
@@ -43,7 +44,36 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public void Should_return_Stopped()
+        public void Should_return_Stopped_initializing()
+        {
+            var runTask = CreateAndRunAsync(
+                new SimpleApplicationSettings
+                {
+                    InitializeSleep = 10.Seconds()
+                });
+
+            CheckStates(
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing);
+
+            host.ShutdownTokenSource.Cancel();
+
+            runTask
+                .GetAwaiter()
+                .GetResult()
+                .State
+                .Should()
+                .Be(VostokApplicationState.Stopped);
+
+            CheckStates(
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing,
+                VostokApplicationState.Stopping,
+                VostokApplicationState.Stopped);
+        }
+
+        [Test]
+        public void Should_return_Stopped_running()
         {
             var runTask = CreateAndRunAsync(
                 new SimpleApplicationSettings
@@ -76,7 +106,38 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public void Should_return_StoppedForcibly()
+        public void Should_return_StoppedForcibly_initializing()
+        {
+            var runTask = CreateAndRunAsync(
+                new SimpleApplicationSettings
+                {
+                    InitializeSleep = 10.Seconds(),
+                    GracefulShutdown = false
+                });
+
+            CheckStates(
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing);
+
+            host.ShutdownTokenSource.Cancel();
+
+            runTask
+                .GetAwaiter()
+                .GetResult()
+                .State
+                .Should()
+                .Be(VostokApplicationState.StoppedForcibly);
+
+            CheckStates(
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing,
+                VostokApplicationState.Stopping,
+                VostokApplicationState.StoppedForcibly);
+        }
+
+
+        [Test]
+        public void Should_return_StoppedForcibly_running()
         {
             var runTask = CreateAndRunAsync(
                 new SimpleApplicationSettings
@@ -158,7 +219,38 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public void Should_return_CrashedDuringStopping()
+        public void Should_return_CrashedDuringStopping_initializing()
+        {
+            var runTask = CreateAndRunAsync(
+                new SimpleApplicationSettings
+                {
+                    InitializeSleep = 10.Seconds(),
+                    CrashDuringStopping = true
+                });
+
+            CheckStates(
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing);
+
+            host.ShutdownTokenSource.Cancel();
+
+            runTask
+                .GetAwaiter()
+                .GetResult()
+                .State
+                .Should()
+                .Be(VostokApplicationState.CrashedDuringStopping);
+
+            CheckStates(
+                crashError,
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.Initializing,
+                VostokApplicationState.Stopping,
+                VostokApplicationState.CrashedDuringStopping);
+        }
+
+        [Test]
+        public void Should_return_CrashedDuringStopping_running()
         {
             var runTask = CreateAndRunAsync(
                 new SimpleApplicationSettings
@@ -243,6 +335,9 @@ namespace Vostok.Hosting.Tests
 
         private void CheckStates(Exception e, params VostokApplicationState[] states)
         {
+            ((Action)(() => host.ApplicationState.Should().Be(states.Last())))
+                .ShouldPassIn(1.Seconds());
+
             var notifications = states.Select(Notification.CreateOnNext).ToList();
             if (e != null)
                 notifications.Add(Notification.CreateOnError<VostokApplicationState>(e));
@@ -314,7 +409,7 @@ namespace Vostok.Hosting.Tests
                 if (settings.CrashDuringInitializing)
                     throw settings.CrashError;
 
-                await Task.Delay(settings.InitializeSleep);
+                await SleepAsync(environment, settings.InitializeSleep);
             }
 
             public async Task RunAsync(IVostokHostingEnvironment environment)
@@ -324,16 +419,19 @@ namespace Vostok.Hosting.Tests
                 if (settings.CrashDuringRunning)
                     throw settings.CrashError;
 
-                if (settings.CrashDuringStopping)
-                {
-                    await Task.Delay(settings.RunSleep, environment.ShutdownToken).SilentlyContinue();
-                    throw settings.CrashError;
-                }
+                await SleepAsync(environment, settings.RunSleep);
+            }
 
-                if (settings.GracefulShutdown)
-                    await Task.Delay(settings.RunSleep, environment.ShutdownToken).SilentlyContinue();
+            private async Task SleepAsync(IVostokHostingEnvironment environment, TimeSpan sleep)
+            {
+                if (settings.GracefulShutdown || settings.CrashDuringStopping)
+                {
+                    await Task.Delay(sleep, environment.ShutdownToken).SilentlyContinue();
+                    if (settings.CrashDuringStopping && environment.ShutdownToken.IsCancellationRequested)
+                        throw settings.CrashError;
+                }
                 else
-                    await Task.Delay(settings.RunSleep);
+                    await Task.Delay(sleep);
             }
         }
     }

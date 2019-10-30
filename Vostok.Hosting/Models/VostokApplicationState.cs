@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Models
         Initializing,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.InitializeAsync"/> has been completed successfully.
+        /// Application <see cref="IVostokApplication.InitializeAsync"/> has completed successfully.
         /// </summary>
         Initialized,
 
@@ -45,22 +45,22 @@ namespace Vostok.Hosting.Models
         StoppedForcibly,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.RunAsync"/> has been completed successfully.
+        /// Application <see cref="IVostokApplication.RunAsync"/> has completed successfully.
         /// </summary>
         Exited,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.InitializeAsync"/> has been failed.
+        /// Application <see cref="IVostokApplication.InitializeAsync"/> has failed.
         /// </summary>
         CrashedDuringInitialization,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.RunAsync"/> has been failed.
+        /// Application <see cref="IVostokApplication.RunAsync"/> has failed.
         /// </summary>
         CrashedDuringRunning,
 
         /// <summary>
-        /// Application crashed after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
+        /// Application has crashed after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         CrashedDuringStopping
     }

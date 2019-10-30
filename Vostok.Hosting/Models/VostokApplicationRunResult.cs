@@ -37,7 +37,7 @@ namespace Vostok.Hosting.Models
         }
 
         /// <summary>
-        /// Throws an <see cref="Error"/> if application has been crashed.
+        /// Throws an <see cref="Error"/> if application has crashed.
         /// </summary>
         public VostokApplicationRunResult EnsureSuccess()
         {

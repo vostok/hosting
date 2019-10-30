@@ -41,7 +41,7 @@ namespace Vostok.Hosting
 
         /// <summary>
         /// <para>Whether or not to configure thread pool.</para>
-        /// <para>If set to <c>false</c>, should be configured manually before <see cref="VostokHost.RunAsync"/> will be called.</para>
+        /// <para>If set to <c>false</c>, thread pool should be configured manually before <see cref="VostokHost.RunAsync"/> will be called.</para>
         /// </summary>
         public bool ConfigureThreadPool { get; set; } = true;
 

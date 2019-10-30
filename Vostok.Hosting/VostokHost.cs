@@ -29,7 +29,7 @@ namespace Vostok.Hosting
         public VostokHost([NotNull] VostokHostSettings settings)
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            
+
             ShutdownTokenSource = new CancellationTokenSource();
 
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>();
@@ -70,10 +70,7 @@ namespace Vostok.Hosting
 
             try
             {
-                await settings.Application.InitializeAsync(environment).ConfigureAwait(false);
-
-                log.Info("Application initialization completed successfully.");
-                return ReturnResult(VostokApplicationState.Initialized);
+                return await RunPhaseAsync(true).ConfigureAwait(false);
             }
             catch (Exception error)
             {
@@ -89,54 +86,72 @@ namespace Vostok.Hosting
 
             try
             {
-                var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                var shutdownToken = environment.ShutdownToken;
-
-                using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), tcs))
-                {
-                    var applicationTask = settings.Application.RunAsync(environment);
-
-                    environment.ServiceBeacon.Start();
-
-                    await Task.WhenAny(applicationTask, tcs.Task).ConfigureAwait(false);
-
-                    environment.ServiceBeacon.Stop();
-
-                    if (shutdownToken.IsCancellationRequested)
-                    {
-                        log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", settings.ShutdownTimeout);
-                        ChangeStateTo(VostokApplicationState.Stopping);
-
-                        if (!await applicationTask.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
-                        {
-                            log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", settings.ShutdownTimeout);
-                            return ReturnResult(VostokApplicationState.StoppedForcibly);
-                        }
-
-                        try
-                        {
-                            await applicationTask.ConfigureAwait(false);
-                        }
-                        catch (Exception error)
-                        {
-                            log.Error(error, "Unhandled exception has occurred while stopping application.");
-                            return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
-                        }
-
-                        log.Info("Application successfully stopped.");
-                        return ReturnResult(VostokApplicationState.Stopped);
-                    }
-
-                    await applicationTask.ConfigureAwait(false);
-
-                    log.Info("Application exited.");
-                    return ReturnResult(VostokApplicationState.Exited);
-                }
+                return await RunPhaseAsync(false).ConfigureAwait(false);
             }
             catch (Exception error)
             {
                 log.Error(error, "Unhandled exception has occurred while running application.");
                 return ReturnResult(VostokApplicationState.CrashedDuringRunning, error);
+            }
+        }
+
+        private async Task<VostokApplicationRunResult> RunPhaseAsync(bool initialize)
+        {
+            var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var shutdownToken = environment.ShutdownToken;
+
+            using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
+            {
+                var task = initialize
+                    ? settings.Application.InitializeAsync(environment)
+                    : settings.Application.RunAsync(environment);
+
+                if (!initialize)
+                    environment.ServiceBeacon.Start();
+
+                await Task.WhenAny(task, shutdown.Task).ConfigureAwait(false);
+
+                if (!initialize)
+                    environment.ServiceBeacon.Stop();
+
+                if (shutdownToken.IsCancellationRequested)
+                {
+                    log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", settings.ShutdownTimeout);
+                    ChangeStateTo(VostokApplicationState.Stopping);
+
+                    if (!await task.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
+                    {
+                        log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", settings.ShutdownTimeout);
+                        return ReturnResult(VostokApplicationState.StoppedForcibly);
+                    }
+
+                    try
+                    {
+                        await task.ConfigureAwait(false);
+                    }
+                    catch (Exception error)
+                    {
+                        log.Error(error, "Unhandled exception has occurred while stopping application.");
+                        return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
+                    }
+
+                    log.Info("Application successfully stopped.");
+                    return ReturnResult(VostokApplicationState.Stopped);
+                }
+
+                await task.ConfigureAwait(false);
+
+                if (initialize)
+                {
+                    log.Info("Application initialization completed successfully.");
+                    return ReturnResult(VostokApplicationState.Initialized);
+                }
+                // ReSharper disable once RedundantIfElseBlock
+                else
+                {
+                    log.Info("Application exited.");
+                    return ReturnResult(VostokApplicationState.Exited);
+                }
             }
         }
 
