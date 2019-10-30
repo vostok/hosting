@@ -17,7 +17,7 @@ namespace Vostok.Hosting
         public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
         {
             return EnvironmentBuilder.Build(
-                setup ?? throw new ArgumentNullException(nameof(setup)), 
+                setup ?? throw new ArgumentNullException(nameof(setup)),
                 shutdownToken);
         }
     }

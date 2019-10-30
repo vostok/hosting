@@ -19,11 +19,11 @@ namespace Vostok.Hosting.Tests
     internal class VostokHost_Tests
     {
         private readonly TimeSpan shutdownTimeout = 1.Seconds();
+        private readonly Exception error = new Exception("Error.");
+        private readonly Exception crashError = new Exception("Crashed.");
         private SimpleApplication application;
         private VostokHost host;
         private TestObserver<VostokApplicationState> observer;
-        private readonly Exception error = new Exception("Error.");
-        private readonly Exception crashError = new Exception("Crashed.");
 
         [Test]
         public void Should_return_Exited()
@@ -134,7 +134,6 @@ namespace Vostok.Hosting.Tests
                 VostokApplicationState.Stopping,
                 VostokApplicationState.StoppedForcibly);
         }
-
 
         [Test]
         public void Should_return_StoppedForcibly_running()
