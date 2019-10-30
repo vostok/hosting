@@ -17,6 +17,7 @@ namespace Vostok.Hosting
 {
     /// <summary>
     /// <para>An <see cref="IVostokApplication"/> launcher.</para>
+    /// <para>May be used as self-hosted or inside some hosting like kubernetes.</para>
     /// <para>Responsible for doing the following:</para>
     /// <list type="bullet">
     ///     <item><description>Creating an instance of <see cref="IVostokHostingEnvironment"/> using <see cref="VostokHostSettings.EnvironmentSetup"/>.</description></item>
