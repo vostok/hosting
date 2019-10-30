@@ -49,6 +49,7 @@ notests *default:
 
 full-build > notests:
   deps:
+    - vostok.commons.testing/src
     
   build:
     target: Vostok.Hosting.sln
