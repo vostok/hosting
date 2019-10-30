@@ -38,25 +38,25 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokHerculesLogBuilder SetStream(string stream)
         {
-            this.stream = stream;
+            this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
             return this;
         }
 
         public IVostokHerculesLogBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            this.apiKeyProvider = apiKeyProvider;
+            this.apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
             return this;
         }
 
         public IVostokHerculesLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
-            this.logCustomization.AddCustomization(logCustomization);
+            this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
             return this;
         }
 
         public IVostokHerculesLogBuilder CustomizeSettings(Action<HerculesLogSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

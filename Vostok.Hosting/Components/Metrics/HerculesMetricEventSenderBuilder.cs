@@ -37,13 +37,13 @@ namespace Vostok.Hosting.Components.Metrics
 
         public IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)
         {
-            apiKeyProviderBuilders.Add((stream, apiKeyProvider));
+            apiKeyProviderBuilders.Add((stream, apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider))));
             return this;
         }
 
         public IVostokHerculesMetricEventSenderBuilder CustomizeSettings(Action<HerculesMetricSenderSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

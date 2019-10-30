@@ -35,31 +35,31 @@ namespace Vostok.Hosting.Components.Configuration
 
         public IVostokConfigurationBuilder AddSource(IConfigurationSource source)
         {
-            sources.Add(source);
+            sources.Add(source ?? throw new ArgumentNullException(nameof(source)));
             return this;
         }
 
         public IVostokConfigurationBuilder CustomizeSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
         {
-            mergeSettingsCustomization.AddCustomization(settingsCustomization);
+            mergeSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
         public IVostokConfigurationBuilder CustomizeConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
         {
-            configurationSettingsCustomization.AddCustomization(settingsCustomization);
+            configurationSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
         public IVostokConfigurationBuilder CustomizePrintSettings(Action<PrintSettings> settingsCustomization)
         {
-            printSettingsCustomization.AddCustomization(settingsCustomization);
+            printSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
         public IVostokConfigurationBuilder CustomizeConfigurationContext(Action<IVostokConfigurationContext> configurationContextCustomization)
         {
-            this.configurationContextCustomization.AddCustomization(configurationContextCustomization);
+            this.configurationContextCustomization.AddCustomization(configurationContextCustomization ?? throw new ArgumentNullException(nameof(configurationContextCustomization)));
             return this;
         }
 

@@ -34,19 +34,20 @@ namespace Vostok.Hosting.Components.Metrics
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
         {
             herculesMetricEventSenderBuilder.Enable();
-            herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder);
+            herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder ?? throw new ArgumentNullException(nameof(herculesMetricEventSenderSetup)));
             return this;
         }
 
         public IVostokMetricsBuilder AddMetricEventSender(IMetricEventSender metricEventSender)
         {
-            metricEventSenderBuilders.Add(new CustomBuilder<IMetricEventSender>(metricEventSender));
+            metricEventSenderBuilders.Add(new CustomBuilder<IMetricEventSender>(
+                metricEventSender ?? throw new ArgumentNullException(nameof(metricEventSender))));
             return this;
         }
 
         public IVostokMetricsBuilder CustomizeSettings(Action<MetricContextConfig> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

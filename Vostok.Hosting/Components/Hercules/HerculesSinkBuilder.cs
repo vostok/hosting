@@ -68,25 +68,27 @@ namespace Vostok.Hosting.Components.Hercules
 
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
-            this.apiKeyProvider = apiKeyProvider;
+            this.apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetClusterConfigTopology(string path)
         {
-            clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
+            clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetServiceDiscoveryTopology(string environment, string application)
         {
-            clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(environment, application);
+            clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(
+                environment ?? throw new ArgumentNullException(nameof(environment)), 
+                application ?? throw new ArgumentNullException(nameof(application)));
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
-            clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
+            clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
             return this;
         }
 
@@ -104,7 +106,7 @@ namespace Vostok.Hosting.Components.Hercules
 
         public IVostokHerculesSinkBuilder CustomizeSettings(Action<HerculesSinkSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
     }

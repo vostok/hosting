@@ -44,13 +44,14 @@ namespace Vostok.Hosting.Components.ClusterClient
 
         public IVostokClusterClientSetupBuilder SetupTracing(Action<IVostokClusterClientSetupTracingBuilder> tracingSetup)
         {
+            tracingSetup = tracingSetup ?? throw new ArgumentNullException(nameof(tracingSetup));
             tracingSetup(tracingBuilder);
             return this;
         }
 
         public IVostokClusterClientSetupBuilder CustomizeSettings(Action<IClusterClientConfiguration> settingsCustomization)
         {
-            customization.AddCustomization(settingsCustomization);
+            customization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
     }

@@ -25,7 +25,7 @@ namespace Vostok.Hosting.Components.ClusterClient
 
         public IVostokClusterClientSetupTracingBuilder CustomizeSettings(Action<TracingConfiguration> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
     }

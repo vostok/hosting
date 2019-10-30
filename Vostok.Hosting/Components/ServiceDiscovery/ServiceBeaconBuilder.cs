@@ -109,13 +109,14 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup setup)
         {
+            setup = setup ?? throw new ArgumentNullException(nameof(setup));
             replicaInfoCustomization.AddCustomization(c => setup(c));
             return this;
         }
 
         public IVostokServiceBeaconBuilder CustomizeSettings(Action<ServiceBeaconSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

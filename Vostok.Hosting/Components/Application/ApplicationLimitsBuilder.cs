@@ -24,7 +24,7 @@ namespace Vostok.Hosting.Components.Application
 
         public IVostokApplicationLimitsBuilder SetCpuUnitsProvider(Func<float?> cpuUnitsProvider)
         {
-            this.cpuUnitsProvider = cpuUnitsProvider;
+            this.cpuUnitsProvider = cpuUnitsProvider ?? throw new ArgumentNullException(nameof(cpuUnitsProvider));
             return this;
         }
 
@@ -36,7 +36,7 @@ namespace Vostok.Hosting.Components.Application
 
         public IVostokApplicationLimitsBuilder SetMemoryBytesProvider(Func<long?> memoryBytesProvider)
         {
-            this.memoryBytesProvider = memoryBytesProvider;
+            this.memoryBytesProvider = memoryBytesProvider ?? throw new ArgumentNullException(nameof(memoryBytesProvider));
             return this;
         }
 

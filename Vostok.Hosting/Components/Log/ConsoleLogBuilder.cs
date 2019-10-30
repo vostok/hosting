@@ -47,13 +47,13 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokConsoleLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
-            this.logCustomization.AddCustomization(logCustomization);
+            this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
             return this;
         }
 
         public IVostokConsoleLogBuilder CustomizeSettings(Action<ConsoleLogSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

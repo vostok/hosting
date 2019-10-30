@@ -16,13 +16,14 @@ namespace Vostok.Hosting.Components.Application
 
         public IVostokApplicationReplicationInfoBuilder SetReplicationInfo(IVostokApplicationReplicationInfo replicationInfo)
         {
+            replicationInfo = replicationInfo ?? throw new ArgumentNullException(nameof(replicationInfo));
             replicationInfoProvider = () => replicationInfo;
             return this;
         }
 
         public IVostokApplicationReplicationInfoBuilder SetReplicationInfoProvider(Func<IVostokApplicationReplicationInfo> replicationInfoProvider)
         {
-            this.replicationInfoProvider = replicationInfoProvider;
+            this.replicationInfoProvider = replicationInfoProvider ?? throw new ArgumentNullException(nameof(replicationInfoProvider));
             return this;
         }
 

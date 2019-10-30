@@ -42,7 +42,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokCompositeLogBuilder AddLog(ILog log)
         {
-            userLogs.Add(log);
+            userLogs.Add(log ?? throw new ArgumentNullException(nameof(log)));
             return this;
         }
 
@@ -55,7 +55,7 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder SetupFileLog(Action<IVostokFileLogBuilder> fileLogSetup)
         {
             fileLogBuilder.Enable();
-            fileLogSetup(fileLogBuilder);
+            fileLogSetup(fileLogBuilder ?? throw new ArgumentNullException(nameof(fileLogSetup)));
             return this;
         }
 
@@ -68,14 +68,14 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder SetupConsoleLog(Action<IVostokConsoleLogBuilder> consoleLogSetup)
         {
             consoleLogBuilder.Enable();
-            consoleLogSetup(consoleLogBuilder);
+            consoleLogSetup(consoleLogBuilder ?? throw new ArgumentNullException(nameof(consoleLogSetup)));
             return this;
         }
 
         public IVostokCompositeLogBuilder SetupHerculesLog(Action<IVostokHerculesLogBuilder> herculesLogSetup)
         {
             herculesLogBuilder.Enable();
-            herculesLogSetup(herculesLogBuilder);
+            herculesLogSetup(herculesLogBuilder ?? throw new ArgumentNullException(nameof(herculesLogSetup)));
             return this;
         }
     }

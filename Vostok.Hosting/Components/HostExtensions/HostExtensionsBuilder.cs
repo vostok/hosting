@@ -38,13 +38,17 @@ namespace Vostok.Hosting.Components.HostExtensions
 
         public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension)
         {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
             HostExtensions.Add(extension);
             return this;
         }
 
         public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension, string key)
         {
-            HostExtensions.Add(extension);
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            HostExtensions.Add(extension, key ?? throw new ArgumentNullException(nameof(key)));
             return this;
         }
     }

@@ -35,7 +35,7 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Be(VostokApplicationState.Exited);
 
-            CheckStates(
+            CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
@@ -65,7 +65,7 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Be(VostokApplicationState.Stopped);
 
-            CheckStates(
+            CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Stopping,
@@ -96,7 +96,7 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Be(VostokApplicationState.Stopped);
 
-            CheckStates(
+            CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
@@ -128,7 +128,7 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Be(VostokApplicationState.StoppedForcibly);
 
-            CheckStates(
+            CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Stopping,
@@ -161,7 +161,7 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Be(VostokApplicationState.StoppedForcibly);
 
-            CheckStates(
+            CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
@@ -333,7 +333,17 @@ namespace Vostok.Hosting.Tests
             CheckStates(null, states);
         }
 
+        private void CheckStatesCompleted(params VostokApplicationState[] states)
+        {
+            CheckStates(null, true, states);
+        }
+
         private void CheckStates(Exception e, params VostokApplicationState[] states)
+        {
+            CheckStates(e, false, states);
+        }
+
+        private void CheckStates(Exception e, bool completed, params VostokApplicationState[] states)
         {
             ((Action)(() => host.ApplicationState.Should().Be(states.Last())))
                 .ShouldPassIn(1.Seconds());
@@ -341,6 +351,8 @@ namespace Vostok.Hosting.Tests
             var notifications = states.Select(Notification.CreateOnNext).ToList();
             if (e != null)
                 notifications.Add(Notification.CreateOnError<VostokApplicationState>(e));
+            if (completed)
+                notifications.Add(Notification.CreateOnCompleted<VostokApplicationState>());
 
             observer.Messages.Should().BeEquivalentTo(notifications, options => options.WithStrictOrdering());
         }

@@ -27,12 +27,14 @@ namespace Vostok.Hosting.Components.Tracing
 
         public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ITracer> tracerProvider)
         {
-            this.tracerProvider = tracerProvider;
+            this.tracerProvider = tracerProvider ?? throw new ArgumentNullException(nameof(tracerProvider));
             return this;
         }
 
         public IVostokTracerBuilder SetupHerculesSpanSender(Action<IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup)
         {
+            herculesSpanSenderSetup = herculesSpanSenderSetup ?? throw new ArgumentNullException(nameof(herculesSpanSenderSetup));
+
             herculesSpanSenderBuilder.Enable();
             herculesSpanSenderSetup(herculesSpanSenderBuilder);
             return this;
@@ -40,13 +42,13 @@ namespace Vostok.Hosting.Components.Tracing
 
         public IVostokTracerBuilder AddSpanSender(ISpanSender spanSender)
         {
-            spanSenderBuilders.Add(new CustomBuilder<ISpanSender>(spanSender));
+            spanSenderBuilders.Add(new CustomBuilder<ISpanSender>(spanSender ?? throw new ArgumentNullException(nameof(spanSender))));
             return this;
         }
 
         public IVostokTracerBuilder CustomizeSettings(Action<TracerSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

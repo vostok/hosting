@@ -24,27 +24,27 @@ namespace Vostok.Hosting.Components.ZooKeeper
         public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
             connectionString = null;
-            clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider);
+            clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
             return this;
         }
 
         public IVostokZooKeeperClientBuilder SetClusterConfigTopology(string path)
         {
             connectionString = null;
-            clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path);
+            clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
             return this;
         }
 
         public IVostokZooKeeperClientBuilder SetConnectionString(string connectionString)
         {
             clusterProviderBuilder = null;
-            this.connectionString = connectionString;
+            this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             return this;
         }
 
         public IVostokZooKeeperClientBuilder CustomizeSettings(Action<ZooKeeperClientSettings> settingsCustomization)
         {
-            this.settingsCustomization.AddCustomization(settingsCustomization);
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 

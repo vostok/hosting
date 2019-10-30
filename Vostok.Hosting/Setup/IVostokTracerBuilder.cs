@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokTracerBuilder
     {
-        IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ITracer> tracerProvider);
+        IVostokTracerBuilder SetTracerProvider([NotNull] Func<TracerSettings, ITracer> tracerProvider);
 
         IVostokTracerBuilder SetupHerculesSpanSender([NotNull] Action<IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup);
 
