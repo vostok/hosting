@@ -15,9 +15,20 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting
 {
+    /// <summary>
+    /// <para>An <see cref="IVostokApplication"/> launcher.</para>
+    /// <para>Responsible for doing the following:</para>
+    /// <list type="bullet">
+    ///     <item><description>Creating an instance of <see cref="IVostokHostingEnvironment"/> using <see cref="VostokHostSettings.EnvironmentSetup"/>.</description></item>
+    ///     <item><description>Running the application by calling <see cref="IVostokApplication.InitializeAsync"/> and then <see cref="IVostokApplication.RunAsync"/>.</description></item>
+    /// </list>
+    /// </summary>
     [PublicAPI]
     public class VostokHost
     {
+        /// <summary>
+        /// A cancellation token source which should be used for stopping application.
+        /// </summary>
         public readonly CancellationTokenSource ShutdownTokenSource;
 
         private readonly VostokHostSettings settings;
@@ -36,10 +47,34 @@ namespace Vostok.Hosting
             ChangeStateTo(VostokApplicationState.NotInitialized);
         }
 
+        /// <summary>
+        /// Returns current <see cref="VostokApplicationState"/>.
+        /// </summary>
         public VostokApplicationState ApplicationState { get; private set; }
 
+        /// <summary>
+        /// <para>Returns an observable sequence of application states.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnNext"/> notifications every time current <see cref="ApplicationState"/> changes.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnError"/> if application crashes.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when executing of application completes.</para>
+        /// <para>Immediately produces a notification with current <see cref="ApplicationState"/> when subscribed to.</para>
+        /// </summary>
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
+        /// <summary>
+        /// <para>Launches <see cref="IVostokApplication"/>.</para>
+        /// <para>Performs following operations:</para>
+        /// <list type="bullet">
+        ///     <item><description>Creates an instance of <see cref="IVostokHostingEnvironment"/> using <see cref="VostokHostSettings.EnvironmentSetup"/>.</description></item>
+        ///     <item><description>Configures thread pool if <see cref="VostokHostSettings.ConfigureThreadPool"/> specified.</description></item>
+        ///     <item><description>Configures static providers if <see cref="VostokHostSettings.ConfigureStaticProviders"/> specified.</description></item>
+        ///     <item><description>Calls <see cref="IVostokApplication.InitializeAsync"/>.</description></item>
+        ///     <item><description>Calls <see cref="IVostokApplication.RunAsync"/>.</description></item>
+        ///     <item><description>Stops application in case of <see cref="ShutdownTokenSource"/> has been canceled.</description></item>
+        /// </list>
+        /// <para>May throw an exception if error occured during environment creation.</para>
+        /// <para>Can not throw exceptions from <see cref="IVostokApplication"/>, puts them into <see cref="VostokApplicationRunResult.Error"/>.</para>
+        /// </summary>
         public async Task<VostokApplicationRunResult> RunAsync()
         {
             if (!launchedOnce.TrySetTrue())
@@ -59,6 +94,9 @@ namespace Vostok.Hosting
                 var result = await InitializeApplicationAsync().ConfigureAwait(false);
                 if (result.State == VostokApplicationState.Initialized)
                     result = await RunApplicationAsync().ConfigureAwait(false);
+
+                onApplicationStateChanged.Complete();
+
                 return result;
             }
         }

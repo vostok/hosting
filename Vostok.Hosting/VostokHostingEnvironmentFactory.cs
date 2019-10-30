@@ -9,6 +9,9 @@ namespace Vostok.Hosting
     [PublicAPI]
     public static class VostokHostingEnvironmentFactory
     {
+        /// <summary>
+        /// Creates an instance of <see cref="IVostokHostingEnvironment"/>, using given <paramref name="setup"/> and <paramref name="shutdownToken"/>.
+        /// </summary>
         public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
         {
             return EnvironmentBuilder.Build(setup, shutdownToken);
