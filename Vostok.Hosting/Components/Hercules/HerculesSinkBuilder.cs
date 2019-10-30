@@ -81,7 +81,7 @@ namespace Vostok.Hosting.Components.Hercules
         public IVostokHerculesSinkBuilder SetServiceDiscoveryTopology(string environment, string application)
         {
             clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(
-                environment ?? throw new ArgumentNullException(nameof(environment)), 
+                environment ?? throw new ArgumentNullException(nameof(environment)),
                 application ?? throw new ArgumentNullException(nameof(application)));
             return this;
         }

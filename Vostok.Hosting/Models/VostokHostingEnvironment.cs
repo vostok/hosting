@@ -5,6 +5,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
+using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
@@ -36,7 +37,7 @@ namespace Vostok.Hosting.Models
             [NotNull] IContextProperties contextProperties,
             [NotNull] IContextConfiguration contextConfiguration,
             [NotNull] ClusterClientSetup clusterClientSetup,
-            [NotNull] Datacenters.IDatacenters datacenters,
+            [NotNull] IDatacenters datacenters,
             [NotNull] IVostokHostExtensions hostExtensions,
             [NotNull] Action dispose)
         {
@@ -80,7 +81,7 @@ namespace Vostok.Hosting.Models
         public IContextProperties ContextProperties { get; }
         public IContextConfiguration ContextConfiguration { get; }
         public ClusterClientSetup ClusterClientSetup { get; }
-        public Datacenters.IDatacenters Datacenters { get; }
+        public IDatacenters Datacenters { get; }
         public IVostokHostExtensions HostExtensions { get; }
 
         public void Dispose()

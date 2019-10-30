@@ -9,10 +9,10 @@ namespace Vostok.Hosting.Components.Application
     internal class ApplicationIdentity : IVostokApplicationIdentity
     {
         public ApplicationIdentity(
-            [NotNull] string project, 
-            [CanBeNull] string subproject, 
-            [NotNull] string environment, 
-            [NotNull] string application, 
+            [NotNull] string project,
+            [CanBeNull] string subproject,
+            [NotNull] string environment,
+            [NotNull] string application,
             [NotNull] string instance)
         {
             var missingFields = new List<string>();

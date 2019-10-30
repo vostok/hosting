@@ -71,18 +71,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 context.Log);
         }
 
-        private Func<bool> RegistrationAllowedProvider(IDatacenters datacenters)
-        {
-            if (datacenters == null)
-                return null;
-
-            return () =>
-            {
-                var dc = datacenters.GetLocalDatacenter();
-                return dc == null || datacenters.GetActiveDatacenters().Contains(dc);
-            };
-        }
-
         public IVostokServiceBeaconBuilder Enable()
         {
             enabled = true;
@@ -136,6 +124,18 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             result.Append(identity.Application);
 
             return result.ToString();
+        }
+
+        private Func<bool> RegistrationAllowedProvider(IDatacenters datacenters)
+        {
+            if (datacenters == null)
+                return null;
+
+            return () =>
+            {
+                var dc = datacenters.GetLocalDatacenter();
+                return dc == null || datacenters.GetActiveDatacenters().Contains(dc);
+            };
         }
     }
 }

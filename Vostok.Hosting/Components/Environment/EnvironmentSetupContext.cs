@@ -8,9 +8,9 @@ namespace Vostok.Hosting.Components.Environment
     internal class EnvironmentSetupContext : IVostokHostingEnvironmentSetupContext
     {
         public EnvironmentSetupContext(
-            ILog log, 
-            IConfigurationSource configurationSource, 
-            IConfigurationProvider configurationProvider, 
+            ILog log,
+            IConfigurationSource configurationSource,
+            IConfigurationProvider configurationProvider,
             IClusterConfigClient clusterConfigClient)
         {
             Log = log;

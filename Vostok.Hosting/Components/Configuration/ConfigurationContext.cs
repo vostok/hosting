@@ -9,8 +9,8 @@ namespace Vostok.Hosting.Components.Configuration
     internal class ConfigurationContext : IVostokConfigurationContext
     {
         public ConfigurationContext(
-            IConfigurationSource configurationSource, 
-            IConfigurationProvider configurationProvider, 
+            IConfigurationSource configurationSource,
+            IConfigurationProvider configurationProvider,
             IClusterConfigClient clusterConfigClient)
         {
             ConfigurationSource = configurationSource;
