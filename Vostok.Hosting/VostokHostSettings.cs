@@ -46,7 +46,7 @@ namespace Vostok.Hosting
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <summary>
-        /// Timeout for application graceful shutdown, after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
+        /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
     }

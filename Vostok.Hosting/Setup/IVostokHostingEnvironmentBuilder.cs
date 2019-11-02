@@ -9,7 +9,7 @@ namespace Vostok.Hosting.Setup
     /// <para>Use it to configure all components.</para>
     /// <para>Uses following design principles:</para>
     /// <list type="bullet">
-    ///     <item><description>All components have to be manually configured from scratch.</description></item>
+    ///     <item><description>All components have to be manually configured from scratch (opt-in behaviour).</description></item>
     ///     <item><description>If some component has not been configured, info message will be printed on console or built log.</description></item>
     ///     <item><description>If some error has occured during environment building, error message will be printed on console or built log.</description></item>
     ///     <item><description>Full configuration of each component implementation is available via settings customization.</description></item>

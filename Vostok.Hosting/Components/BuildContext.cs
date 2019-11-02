@@ -96,7 +96,7 @@ namespace Vostok.Hosting.Components
             }
             catch (Exception error)
             {
-                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose vostok hosting environment.");
+                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose of the hosting environment.");
 
                 throw;
             }
@@ -109,6 +109,6 @@ namespace Vostok.Hosting.Components
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} has been disabled due to {ComponentDisabledReason}.", name, reason);
 
         private void LogDisposing(string componentName) =>
-            Log.ForContext<VostokHostingEnvironment>().Info("Disposing {ComponentName}.", componentName);
+            Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
     }
 }

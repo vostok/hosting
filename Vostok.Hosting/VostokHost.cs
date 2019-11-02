@@ -35,8 +35,9 @@ namespace Vostok.Hosting
         private readonly VostokHostSettings settings;
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly AtomicBoolean launchedOnce = false;
-        private VostokHostingEnvironment environment;
-        private ILog log;
+
+        private volatile VostokHostingEnvironment environment;
+        private volatile ILog log;
 
         public VostokHost([NotNull] VostokHostSettings settings)
         {
@@ -57,13 +58,13 @@ namespace Vostok.Hosting
         /// <para>Returns an observable sequence of application states.</para>
         /// <para>This sequence produces <see cref="IObserver{T}.OnNext"/> notifications every time current <see cref="ApplicationState"/> changes.</para>
         /// <para>This sequence produces <see cref="IObserver{T}.OnError"/> if application crashes.</para>
-        /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when executing of application completes.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when application execution completes.</para>
         /// <para>Immediately produces a notification with current <see cref="ApplicationState"/> when subscribed to.</para>
         /// </summary>
         public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         /// <summary>
-        /// <para>Launches <see cref="IVostokApplication"/>.</para>
+        /// <para>Launches the provided <see cref="IVostokApplication"/>.</para>
         /// <para>Performs following operations:</para>
         /// <list type="bullet">
         ///     <item><description>Creates an instance of <see cref="IVostokHostingEnvironment"/> using <see cref="VostokHostSettings.EnvironmentSetup"/>.</description></item>
@@ -71,10 +72,10 @@ namespace Vostok.Hosting
         ///     <item><description>Configures static providers if <see cref="VostokHostSettings.ConfigureStaticProviders"/> specified.</description></item>
         ///     <item><description>Calls <see cref="IVostokApplication.InitializeAsync"/>.</description></item>
         ///     <item><description>Calls <see cref="IVostokApplication.RunAsync"/>.</description></item>
-        ///     <item><description>Stops application in case of <see cref="ShutdownTokenSource"/> has been canceled.</description></item>
+        ///     <item><description>Stops application if <see cref="ShutdownTokenSource"/> has been canceled.</description></item>
         /// </list>
-        /// <para>May throw an exception if error occured during environment creation.</para>
-        /// <para>Can not throw exceptions from <see cref="IVostokApplication"/>, puts them into <see cref="VostokApplicationRunResult.Error"/>.</para>
+        /// <para>May throw an exception if an error occurs during environment creation.</para>
+        /// <para>Does not rethrow exceptions from <see cref="IVostokApplication"/>, stores them in result's <see cref="VostokApplicationRunResult.Error"/> property.</para>
         /// </summary>
         public async Task<VostokApplicationRunResult> RunAsync()
         {
@@ -227,7 +228,7 @@ namespace Vostok.Hosting
             if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
             {
                 if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient))
-                    log.Warn("ClusterConfigClient.Default has been already configured.");
+                    log.Warn("ClusterConfigClient.Default has already been configured.");
             }
         }
 

@@ -85,7 +85,7 @@ namespace Vostok.Hosting.Components.Environment
             }
             catch (Exception error)
             {
-                context.Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to build vostok hosting environment.");
+                context.Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to build hosting environment.");
                 context.PrintBufferedLogs();
                 context.Dispose();
 
@@ -145,7 +145,7 @@ namespace Vostok.Hosting.Components.Environment
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
                 clusterClientSetupBuilder.Build(context),
-                context.Datacenters ?? new DevNullDatacenters(),
+                context.Datacenters ?? new EmptyDatacenters(),
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
 

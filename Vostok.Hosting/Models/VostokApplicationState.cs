@@ -15,52 +15,52 @@ namespace Vostok.Hosting.Models
         NotInitialized,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.InitializeAsync"/> has been called.
+        /// <see cref="IVostokApplication.InitializeAsync"/> has been called.
         /// </summary>
         Initializing,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.InitializeAsync"/> has completed successfully.
+        /// <see cref="IVostokApplication.InitializeAsync"/> has completed successfully.
         /// </summary>
         Initialized,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.RunAsync"/> has been called.
+        /// <see cref="IVostokApplication.RunAsync"/> has been called.
         /// </summary>
         Running,
 
         /// <summary>
-        /// Application <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
+        /// <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         Stopping,
 
         /// <summary>
-        /// Application successfully exited after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
+        /// Application successfully exited after <see cref="IVostokHostingEnvironment.ShutdownToken"/> had been canceled.
         /// </summary>
         Stopped,
 
         /// <summary>
-        /// Application not exited after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled within given <see cref="VostokHostSettings.ShutdownTimeout"/>.
+        /// Application did not exit in time after <see cref="IVostokHostingEnvironment.ShutdownToken"/> had been canceled.
         /// </summary>
         StoppedForcibly,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.RunAsync"/> has completed successfully.
+        /// <see cref="IVostokApplication.RunAsync"/> has completed successfully.
         /// </summary>
         Exited,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.InitializeAsync"/> has failed.
+        /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception.
         /// </summary>
         CrashedDuringInitialization,
 
         /// <summary>
-        /// Application <see cref="IVostokApplication.RunAsync"/> has failed.
+        /// <see cref="IVostokApplication.RunAsync"/> has failed with an exception.
         /// </summary>
         CrashedDuringRunning,
 
         /// <summary>
-        /// Application has crashed after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
+        /// Application crashed after <see cref="IVostokHostingEnvironment.ShutdownToken"/> had been canceled.
         /// </summary>
         CrashedDuringStopping
     }

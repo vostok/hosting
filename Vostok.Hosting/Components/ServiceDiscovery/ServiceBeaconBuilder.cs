@@ -131,11 +131,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             if (datacenters == null)
                 return null;
 
-            return () =>
-            {
-                var dc = datacenters.GetLocalDatacenter();
-                return dc == null || datacenters.GetActiveDatacenters().Contains(dc);
-            };
+            return datacenters.LocalDatacenterIsActive;
         }
     }
 }

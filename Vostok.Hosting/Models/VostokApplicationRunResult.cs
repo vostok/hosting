@@ -11,7 +11,7 @@ namespace Vostok.Hosting.Models
     public class VostokApplicationRunResult
     {
         /// <summary>
-        /// <para>Returns final state of application after <see cref="IVostokApplication.InitializeAsync"/> and <see cref="IVostokApplication.RunAsync"/> has been called. </para>
+        /// <para>Returns final state of application after <see cref="IVostokApplication.InitializeAsync"/> and <see cref="IVostokApplication.RunAsync"/> had been called. </para>
         /// <para>Possible final states:</para>
         /// <list type="bullet">
         ///     <item><description><see cref="VostokApplicationState.Exited"/></description></item>
@@ -37,7 +37,7 @@ namespace Vostok.Hosting.Models
         }
 
         /// <summary>
-        /// Throws an <see cref="Error"/> if application has crashed.
+        /// Throws the <see cref="Error"/> if application has crashed.
         /// </summary>
         public VostokApplicationRunResult EnsureSuccess()
         {
