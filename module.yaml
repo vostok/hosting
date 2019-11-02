@@ -11,7 +11,6 @@ notests *default:
 
   deps:
     - vostok.clusterclient.datacenters
-    - vostok.datacenters
     - vostok.commons.helpers/src
     - vostok.commons.threading/src
     - vostok.commons.time/src
@@ -27,6 +26,7 @@ notests *default:
     - vostok.configuration.logging
     - vostok.configuration.sources
     - vostok.context
+    - vostok.datacenters
     - vostok.devtools
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
@@ -39,7 +39,7 @@ notests *default:
     - vostok.logging.tracing
     - vostok.metrics
     - vostok.metrics.hercules
-    - vostok.servicediscovery@registration-allowed
+    - vostok.servicediscovery
     - vostok.servicediscovery.abstractions
     - vostok.tracing
     - vostok.tracing.abstractions
