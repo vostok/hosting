@@ -14,12 +14,16 @@ namespace Vostok.Hosting.Components.Datacenters
         private readonly Customization<DatacentersSettings> settingsCustomization;
         private volatile Func<IPAddress, string> datacenterMapping;
         private volatile Func<IReadOnlyCollection<string>> activeDatacentersProvider;
+        private volatile IDatacenters instance;
 
         public DatacentersBuilder() =>
             settingsCustomization = new Customization<DatacentersSettings>();
 
         public IDatacenters Build(BuildContext context)
         {
+            if (instance != null)
+                return instance;
+
             if (datacenterMapping == null)
             {
                 context.LogDisabled("Datacenters", "unconfigured mapping");
@@ -37,6 +41,12 @@ namespace Vostok.Hosting.Components.Datacenters
             settingsCustomization.Customize(settings);
 
             return new Vostok.Datacenters.Datacenters(settings);
+        }
+
+        public IVostokDatacentersBuilder UseInstance(IDatacenters datacenters)
+        {
+            instance = datacenters ?? throw new ArgumentNullException(nameof(datacenters));
+            return this;
         }
 
         public IVostokDatacentersBuilder SetDatacenterMapping(Func<IPAddress, string> datacenterMapping)

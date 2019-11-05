@@ -9,6 +9,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokDatacentersBuilder
     {
+        IVostokDatacentersBuilder UseInstance([NotNull] IDatacenters datacenters);
+
         IVostokDatacentersBuilder SetDatacenterMapping([NotNull] Func<IPAddress, string> datacenterMapping);
 
         IVostokDatacentersBuilder SetActiveDatacentersProvider([NotNull] Func<IReadOnlyCollection<string>> activeDatacentersProvider);
