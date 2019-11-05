@@ -6,6 +6,7 @@ using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Environment;
@@ -224,6 +225,7 @@ namespace Vostok.Hosting
             LogProvider.Configure(environment.Log, true);
             TracerProvider.Configure(environment.Tracer, true);
             HerculesSinkProvider.Configure(environment.HerculesSink, true);
+            DatacentersProvider.Configure(environment.Datacenters, true);
 
             if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
             {
