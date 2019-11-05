@@ -7,7 +7,8 @@ namespace Vostok.Hosting
     /// A set of extensions for <see cref="VostokHost"/>.
     /// </summary>
     [PublicAPI]
-    public static class VostokHostExtensions
+    // Note(kungurtsev): please do not rename this class to `VostokHostExtensions` to avoid collision with IVostokHostExtensions implementation.
+    public static class VostokHost_Extensions
     {
         /// <inheritdoc cref="VostokHost.RunAsync"/>
         public static VostokApplicationRunResult Run([NotNull] this VostokHost vostokHost) =>
