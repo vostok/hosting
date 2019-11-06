@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Clusterclient.Context;
 using Vostok.Clusterclient.Core;
+using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.ClusterClient.Datacenters;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Hosting.Helpers;
@@ -13,12 +14,14 @@ namespace Vostok.Hosting.Components.ClusterClient
     internal class ClusterClientSetupBuilder : IVostokClusterClientSetupBuilder, IBuilder<ClusterClientSetup>
     {
         private ClusterClientSetupTracingBuilder tracingBuilder;
-        private Customization<IClusterClientConfiguration> customization;
+        private Customization<IClusterClientConfiguration> settingsCustomization;
+        private Customization<IWeighedReplicaOrderingBuilder> weightOrderingCustomization;
 
         public ClusterClientSetupBuilder()
         {
             tracingBuilder = new ClusterClientSetupTracingBuilder();
-            customization = new Customization<IClusterClientConfiguration>();
+            settingsCustomization = new Customization<IClusterClientConfiguration>();
+            weightOrderingCustomization = new Customization<IWeighedReplicaOrderingBuilder>();
         }
 
         public ClusterClientSetup Build(BuildContext context)
@@ -34,9 +37,10 @@ namespace Vostok.Hosting.Components.ClusterClient
                         {
                             weightOrdering.SetupAvoidInactiveDatacentersWeightModifier(context.Datacenters);
                             weightOrdering.SetupBoostLocalDatacentersWeightModifier(context.Datacenters);
+                            weightOrderingCustomization.Customize(weightOrdering);
                         });
 
-                customization.Customize(c);
+                settingsCustomization.Customize(c);
             }
 
             return Setup;
@@ -51,7 +55,13 @@ namespace Vostok.Hosting.Components.ClusterClient
 
         public IVostokClusterClientSetupBuilder CustomizeSettings(Action<IClusterClientConfiguration> settingsCustomization)
         {
-            customization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            return this;
+        }
+
+        public IVostokClusterClientSetupBuilder CustomizeWeightOrdering(Action<IWeighedReplicaOrderingBuilder> weightOrderingCustomization)
+        {
+            this.weightOrderingCustomization.AddCustomization(weightOrderingCustomization ?? throw new ArgumentNullException(nameof(weightOrderingCustomization)));
             return this;
         }
     }
