@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Models
@@ -9,6 +10,9 @@ namespace Vostok.Hosting.Models
     {
         public VostokApplicationReplicationInfo(int instanceIndex, int instancesCount)
         {
+            if (!(0 <= instanceIndex && instanceIndex < instancesCount))
+                throw new ArgumentOutOfRangeException($"Instance index ({instanceIndex}) not in range [0, {instancesCount - 1}].");
+
             InstanceIndex = instanceIndex;
             InstancesCount = instancesCount;
         }
