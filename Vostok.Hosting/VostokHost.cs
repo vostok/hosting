@@ -143,9 +143,12 @@ namespace Vostok.Hosting
 
             using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
             {
+                // ReSharper disable MethodSupportsCancellation
+                // Note(kungurtsev): Task.Run needed for synchronous code.
                 var task = initialize
-                    ? settings.Application.InitializeAsync(environment)
-                    : settings.Application.RunAsync(environment);
+                    ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
+                    : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
+                // ReSharper restore MethodSupportsCancellation
 
                 if (!initialize)
                     environment.ServiceBeacon.Start();
