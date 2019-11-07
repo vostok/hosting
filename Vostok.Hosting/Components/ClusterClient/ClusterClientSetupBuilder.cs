@@ -40,6 +40,8 @@ namespace Vostok.Hosting.Components.ClusterClient
                             weightOrderingCustomization.Customize(weightOrdering);
                         });
 
+                c.ClientApplicationName = context.ServiceBeacon.ReplicaInfo.Application;
+
                 settingsCustomization.Customize(c);
             }
 
