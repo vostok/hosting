@@ -1,6 +1,6 @@
 ﻿using System;
+using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions.Models;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Hercules;

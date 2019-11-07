@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember

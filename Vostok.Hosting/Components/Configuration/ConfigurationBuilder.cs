@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vostok.Commons.Helpers;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
@@ -8,7 +9,6 @@ using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
 using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember

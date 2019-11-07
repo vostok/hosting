@@ -1,6 +1,6 @@
 ﻿using System;
 using Vostok.Clusterclient.Tracing;
-using Vostok.Hosting.Helpers;
+using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember

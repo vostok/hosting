@@ -1,7 +1,7 @@
 ﻿using System;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Commons.Helpers;
 using Vostok.Hosting.Components.ClusterProvider;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;

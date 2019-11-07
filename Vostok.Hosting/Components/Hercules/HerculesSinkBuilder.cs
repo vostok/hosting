@@ -1,9 +1,9 @@
 ﻿using System;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
+using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client;
 using Vostok.Hosting.Components.ClusterProvider;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 

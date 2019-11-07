@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
+using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;

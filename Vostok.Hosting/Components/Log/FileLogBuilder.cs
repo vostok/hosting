@@ -1,5 +1,5 @@
 ﻿using System;
-using Vostok.Hosting.Helpers;
+using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.File;

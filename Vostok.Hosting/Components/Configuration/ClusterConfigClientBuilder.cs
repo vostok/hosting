@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
-using Vostok.Hosting.Helpers;
+using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember

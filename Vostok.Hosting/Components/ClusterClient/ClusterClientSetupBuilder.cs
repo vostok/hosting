@@ -4,7 +4,7 @@ using Vostok.Clusterclient.Core;
 using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.ClusterClient.Datacenters;
 using Vostok.Clusterclient.Tracing;
-using Vostok.Hosting.Helpers;
+using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember

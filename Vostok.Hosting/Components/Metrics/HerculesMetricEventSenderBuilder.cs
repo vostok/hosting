@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hercules.Client.Abstractions.Models;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Metrics;
 using Vostok.Metrics.Hercules;
