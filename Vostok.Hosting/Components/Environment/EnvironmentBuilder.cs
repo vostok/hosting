@@ -116,6 +116,8 @@ namespace Vostok.Hosting.Components.Environment
             if (hasLogs)
                 context.Log = context.Logs.BuildCompositeLog();
 
+            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
+            
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
@@ -124,9 +126,7 @@ namespace Vostok.Hosting.Components.Environment
                 HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
-
-            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
-
+            
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.ShutdownToken,
                 context.ApplicationIdentity,

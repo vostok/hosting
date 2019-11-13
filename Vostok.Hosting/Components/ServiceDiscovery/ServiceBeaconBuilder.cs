@@ -3,6 +3,7 @@ using System.Text;
 using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -25,7 +26,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             replicaInfoCustomization.AddCustomization(
                 s => s
                     .SetEnvironment(applicationIdentity.Environment)
-                    .SetApplication(FormatApplication(applicationIdentity)));
+                    .SetApplication(applicationIdentity.FormatServiceName()));
 
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
@@ -105,24 +106,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
-        }
-
-        private static string FormatApplication(IVostokApplicationIdentity identity)
-        {
-            var result = new StringBuilder();
-
-            result.Append(identity.Project);
-
-            if (identity.Subproject != null)
-            {
-                result.Append(".");
-                result.Append(identity.Subproject);
-            }
-
-            result.Append(".");
-            result.Append(identity.Application);
-
-            return result.ToString();
         }
 
         private Func<bool> RegistrationAllowedProvider(IDatacenters datacenters)

@@ -4,6 +4,7 @@ using System.Linq;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+using Vostok.ServiceDiscovery;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 
@@ -59,9 +60,15 @@ namespace Vostok.Hosting.Components.Tracing
 
             var settings = new TracerSettings(spanSender)
             {
-                Application = context.ApplicationIdentity.Application,
+                Application = context.ApplicationIdentity.FormatServiceName(),
                 Environment = context.ApplicationIdentity.Environment
             };
+
+            if (context.ServiceBeacon is ServiceBeacon beacon)
+            {
+                settings.Application = beacon.ReplicaInfo.Application;
+                settings.Environment = beacon.ReplicaInfo.Environment;
+            }
 
             settingsCustomization.Customize(settings);
 
