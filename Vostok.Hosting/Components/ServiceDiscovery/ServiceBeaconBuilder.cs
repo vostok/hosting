@@ -51,7 +51,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             var settings = new ServiceBeaconSettings();
 
             if (registerDeniedFromNonActiveDatacenters)
-                settings.RegistrationAllowedProvider = RegistrationAllowedProvider(context.Datacenters);
+                settings.RegistrationAllowedProvider = LocalDatacenterIsActive(context.Datacenters);
 
             settingsCustomization.Customize(settings);
 
@@ -108,7 +108,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        private Func<bool> RegistrationAllowedProvider(IDatacenters datacenters)
+        private Func<bool> LocalDatacenterIsActive(IDatacenters datacenters)
         {
             if (datacenters == null)
                 return null;
