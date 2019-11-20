@@ -35,7 +35,7 @@ namespace Vostok.Hosting.Components.Hercules
 
             // ReSharper disable once ObjectCreationAsStatement
             // TODO(kungurtsev): what should be final paths?
-            new HerculesSinkMetrics(context.Application.WithTag("component", "HerculesSink"), sink);
+            new HerculesSinkMetrics(context.Application.WithTag("owner", "ByHosting").WithTag("component", "HerculesSink"), sink);
         }
 
         public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
@@ -61,7 +61,7 @@ namespace Vostok.Hosting.Components.Hercules
             return new MetricEvent(
                 value,
                 tags
-                    .Append("summarized", "total") //may be by stream
+                    .Append("summarized", "Total") //may be by stream
                     .Append(WellKnownTagKeys.Name, name),
                 timestamp,
                 null,
