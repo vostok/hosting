@@ -140,6 +140,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ConfigurationProvider,
                 context.ClusterConfigClient,
                 context.ServiceBeacon,
+                null,
                 context.ServiceLocator,
                 FlowingContext.Globals,
                 FlowingContext.Properties,

@@ -32,6 +32,7 @@ namespace Vostok.Hosting.Models
             [NotNull] IConfigurationProvider configurationProvider,
             [NotNull] IClusterConfigClient clusterConfigClient,
             [NotNull] IServiceBeacon serviceBeacon,
+            [CanBeNull] int? port,
             [NotNull] IServiceLocator serviceLocator,
             [NotNull] IContextGlobals contextGlobals,
             [NotNull] IContextProperties contextProperties,
@@ -55,6 +56,7 @@ namespace Vostok.Hosting.Models
             ConfigurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
             ClusterConfigClient = clusterConfigClient ?? throw new ArgumentNullException(nameof(clusterConfigClient));
             ServiceBeacon = serviceBeacon ?? throw new ArgumentNullException(nameof(serviceBeacon));
+            Port = port;
             ServiceLocator = serviceLocator ?? throw new ArgumentNullException(nameof(serviceLocator));
             ContextGlobals = contextGlobals ?? throw new ArgumentNullException(nameof(contextGlobals));
             ContextProperties = contextProperties ?? throw new ArgumentNullException(nameof(contextProperties));
@@ -76,6 +78,7 @@ namespace Vostok.Hosting.Models
         public IConfigurationProvider ConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
         public IServiceBeacon ServiceBeacon { get; }
+        public int? Port { get; }
         public IServiceLocator ServiceLocator { get; }
         public IContextGlobals ContextGlobals { get; }
         public IContextProperties ContextProperties { get; }
