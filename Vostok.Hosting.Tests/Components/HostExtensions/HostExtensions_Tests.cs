@@ -16,8 +16,8 @@ namespace Vostok.Hosting.Tests.Components.HostExtensions
             extensions.Add(42);
             extensions.Add("hello");
 
-            extensions.Add(1, "a");
-            extensions.Add(2, "b");
+            extensions.Add("a", 1);
+            extensions.Add("b", 2);
 
             extensions.Get<int>().Should().Be(42);
             extensions.Get<string>().Should().Be("hello");
@@ -36,8 +36,8 @@ namespace Vostok.Hosting.Tests.Components.HostExtensions
             extensions.Add(42);
             extensions.Add("hello");
 
-            extensions.Add(1, "a");
-            extensions.Add(2, "b");
+            extensions.Add("a", 1);
+            extensions.Add("b", 2);
 
             ((Action)(() => extensions.Get<char>()))
                 .Should()

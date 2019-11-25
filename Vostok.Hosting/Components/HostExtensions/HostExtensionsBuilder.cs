@@ -44,11 +44,27 @@ namespace Vostok.Hosting.Components.HostExtensions
             return this;
         }
 
-        public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension, string key)
+        public IVostokHostExtensionsBuilder Add(Type type, object extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            HostExtensions.Add(extension, key ?? throw new ArgumentNullException(nameof(key)));
+            HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), extension);
+            return this;
+        }
+
+        public IVostokHostExtensionsBuilder Add<TExtension>(string key, TExtension extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            HostExtensions.Add(key ?? throw new ArgumentNullException(nameof(key)), extension);
+            return this;
+        }
+
+        public IVostokHostExtensionsBuilder Add<TExtension>(Type type, string key, TExtension extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), key ?? throw new ArgumentNullException(nameof(key)), extension);
             return this;
         }
     }

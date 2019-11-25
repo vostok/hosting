@@ -52,14 +52,16 @@ namespace Vostok.Hosting.Components.HostExtensions
         public IEnumerable<(Type, object)> GetAll() =>
             byType.Select(p => (p.Key, p.Value));
 
-        public void Add<TExtension>(TExtension extension, string key)
-        {
-            byKey.TryAdd((key, typeof(TExtension)), extension);
-        }
+        public void Add<TExtension>(TExtension extension) =>
+            Add(typeof(TExtension), extension);
 
-        public void Add<TExtension>(TExtension extension)
-        {
-            byType.TryAdd(typeof(TExtension), extension);
-        }
+        public void Add(Type type, object extension) =>
+            byType.TryAdd(type, extension);
+
+        public void Add<TExtension>(string key, TExtension extension) =>
+            Add(typeof(TExtension), key, extension);
+
+        public void Add(Type type, string key, object extension) =>
+            byKey.TryAdd((key, type), extension);
     }
 }
