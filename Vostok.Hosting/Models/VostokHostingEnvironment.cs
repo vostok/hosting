@@ -75,6 +75,7 @@ namespace Vostok.Hosting.Models
         public ITracer Tracer { get; }
         public IHerculesSink HerculesSink { get; }
         public IConfigurationSource ConfigurationSource { get; }
+        public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
         public IServiceBeacon ServiceBeacon { get; }
