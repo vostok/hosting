@@ -10,15 +10,18 @@ namespace Vostok.Hosting.Components.Configuration
     {
         public ConfigurationContext(
             IConfigurationSource configurationSource,
+            IConfigurationSource secretConfigurationSource,
             IConfigurationProvider configurationProvider,
             IClusterConfigClient clusterConfigClient)
         {
             ConfigurationSource = configurationSource;
+            SecretConfigurationSource = secretConfigurationSource;
             ConfigurationProvider = configurationProvider;
             ClusterConfigClient = clusterConfigClient;
         }
 
         public IConfigurationSource ConfigurationSource { get; }
+        public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
     }

@@ -97,7 +97,7 @@ namespace Vostok.Hosting.Components.Environment
         {
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
-            (context.ConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
+            (context.ConfigurationSource, context.SecretConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
 
             context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
 
@@ -137,10 +137,11 @@ namespace Vostok.Hosting.Components.Environment
                 context.Tracer,
                 context.HerculesSink ?? new DevNullHerculesSink(),
                 context.ConfigurationSource,
+                context.SecretConfigurationSource,
                 context.ConfigurationProvider,
                 context.ClusterConfigClient,
                 context.ServiceBeacon,
-                null,
+                null, //TODO: port
                 context.ServiceLocator,
                 FlowingContext.Globals,
                 FlowingContext.Properties,

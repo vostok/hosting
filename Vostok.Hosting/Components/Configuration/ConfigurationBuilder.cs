@@ -15,11 +15,13 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Configuration
 {
-    internal class ConfigurationBuilder : IVostokConfigurationBuilder, IBuilder<(IConfigurationSource, IConfigurationProvider)>
+    internal class ConfigurationBuilder : IVostokConfigurationBuilder, IBuilder<(IConfigurationSource, IConfigurationSource, IConfigurationProvider)>
     {
         private readonly List<IConfigurationSource> sources;
+        private readonly List<IConfigurationSource> secretSources;
 
         private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
+        private readonly Customization<SettingsMergeOptions> mergeSecretSettingsCustomization;
         private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
@@ -27,7 +29,9 @@ namespace Vostok.Hosting.Components.Configuration
         public ConfigurationBuilder()
         {
             sources = new List<IConfigurationSource>();
+            secretSources = new List<IConfigurationSource>();
             mergeSettingsCustomization = new Customization<SettingsMergeOptions>();
+            mergeSecretSettingsCustomization = new Customization<SettingsMergeOptions>();
             configurationSettingsCustomization = new Customization<ConfigurationProviderSettings>();
             printSettingsCustomization = new Customization<PrintSettings>();
             configurationContextCustomization = new Customization<IVostokConfigurationContext>();
@@ -39,9 +43,21 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
+        public IVostokConfigurationBuilder AddSecretSource(IConfigurationSource source)
+        {
+            secretSources.Add(source ?? throw new ArgumentNullException(nameof(source)));
+            return this;
+        }
+
         public IVostokConfigurationBuilder CustomizeSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
         {
             mergeSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            return this;
+        }
+
+        public IVostokConfigurationBuilder CustomizeSecretSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
+        {
+            mergeSecretSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
@@ -63,13 +79,18 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
-        public (IConfigurationSource, IConfigurationProvider) Build(BuildContext context)
+        public (IConfigurationSource, IConfigurationSource, IConfigurationProvider) Build(BuildContext context)
         {
             var mergeOptions = new SettingsMergeOptions();
             mergeSettingsCustomization.Customize(mergeOptions);
-
             var source = sources.Any()
                 ? (IConfigurationSource)new CombinedSource(sources.ToArray(), mergeOptions)
+                : new ConstantSource(null);
+
+            var secretMergeOptions = new SettingsMergeOptions();
+            mergeSettingsCustomization.Customize(secretMergeOptions);
+            var secretSource = secretSources.Any()
+                ? (IConfigurationSource)new CombinedSource(secretSources.ToArray(), secretMergeOptions)
                 : new ConstantSource(null);
 
             var printSettings = new PrintSettings();
@@ -83,9 +104,9 @@ namespace Vostok.Hosting.Components.Configuration
 
             var provider = new ConfigurationProvider(providerSettings);
 
-            configurationContextCustomization.Customize(new ConfigurationContext(source, provider, context.ClusterConfigClient));
+            configurationContextCustomization.Customize(new ConfigurationContext(source, secretSource, provider, context.ClusterConfigClient));
 
-            return (source, provider);
+            return (source, secretSource, provider);
         }
     }
 }

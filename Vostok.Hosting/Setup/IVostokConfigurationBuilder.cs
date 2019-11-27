@@ -11,10 +11,12 @@ namespace Vostok.Hosting.Setup
     public interface IVostokConfigurationBuilder
     {
         IVostokConfigurationBuilder AddSource([NotNull] IConfigurationSource source);
+        IVostokConfigurationBuilder AddSecretSource([NotNull] IConfigurationSource source);
 
         IVostokConfigurationBuilder CustomizeConfigurationContext([NotNull] Action<IVostokConfigurationContext> configurationContextCustomization);
 
         IVostokConfigurationBuilder CustomizeSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
+        IVostokConfigurationBuilder CustomizeSecretSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
 
         IVostokConfigurationBuilder CustomizeConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
 

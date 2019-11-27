@@ -35,6 +35,7 @@ namespace Vostok.Hosting.Components
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public IConfigurationSource ConfigurationSource { get; set; }
+        public IConfigurationSource SecretConfigurationSource { get; set; }
         public IConfigurationProvider ConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }

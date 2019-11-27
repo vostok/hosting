@@ -29,6 +29,7 @@ namespace Vostok.Hosting.Models
             [NotNull] ITracer tracer,
             [NotNull] IHerculesSink herculesSink,
             [NotNull] IConfigurationSource configurationSource,
+            [NotNull] IConfigurationSource secretConfigurationSource,
             [NotNull] IConfigurationProvider configurationProvider,
             [NotNull] IClusterConfigClient clusterConfigClient,
             [NotNull] IServiceBeacon serviceBeacon,
@@ -53,6 +54,7 @@ namespace Vostok.Hosting.Models
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
             HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
             ConfigurationSource = configurationSource ?? throw new ArgumentNullException(nameof(configurationSource));
+            SecretConfigurationSource = secretConfigurationSource ?? throw new ArgumentNullException(nameof(secretConfigurationSource));
             ConfigurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
             ClusterConfigClient = clusterConfigClient ?? throw new ArgumentNullException(nameof(clusterConfigClient));
             ServiceBeacon = serviceBeacon ?? throw new ArgumentNullException(nameof(serviceBeacon));
