@@ -30,7 +30,7 @@ notests *default:
     - vostok.devtools
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
-    - vostok.hosting.abstractions@vostok-application
+    - vostok.hosting.abstractions@step2
     - vostok.logging.abstractions
     - vostok.logging.console
     - vostok.logging.context
