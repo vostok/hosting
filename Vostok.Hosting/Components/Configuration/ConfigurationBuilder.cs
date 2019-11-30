@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Vostok.Commons.Helpers;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
+using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
+using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -25,6 +28,7 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
+        private MethodInfo methodInfo;
 
         public ConfigurationBuilder()
         {
@@ -103,10 +107,34 @@ namespace Vostok.Hosting.Components.Configuration
             configurationSettingsCustomization.Customize(providerSettings);
 
             var provider = new ConfigurationProvider(providerSettings);
+            SetupSources(provider, source, secretSource, context.ApplicationType);
 
             configurationContextCustomization.Customize(new ConfigurationContext(source, secretSource, provider, context.ClusterConfigClient));
 
             return (source, secretSource, provider);
+        }
+
+        private void SetupSources(ConfigurationProvider provider, IConfigurationSource source, IConfigurationSource secretSource, Type contextApplicationType)
+        {
+            foreach (var requiresConfiguration in contextApplicationType.GetCustomAttributes<RequiresConfiguration>(true))
+                SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, source);
+
+            foreach (var requiresConfiguration in contextApplicationType.GetCustomAttributes<RequiresSecretConfiguration>(true))
+                SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, secretSource);
+        }
+
+        private void SetupSource(ConfigurationProvider provider, Type configurationType, string scope, IConfigurationSource source)
+        {
+            methodInfo = provider.GetType().GetMethod("SetupSourceFor");
+            if (methodInfo == null)
+                throw new Exception("SetupSourceFor method not found.");
+
+            if (!string.IsNullOrEmpty(scope))
+                source = source.ScopeTo(scope);
+
+            methodInfo
+                .MakeGenericMethod(configurationType)
+                .Invoke(provider, new object[] { source });
         }
     }
 }
