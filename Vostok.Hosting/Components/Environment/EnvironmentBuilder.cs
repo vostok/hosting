@@ -68,16 +68,20 @@ namespace Vostok.Hosting.Components.Environment
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
-        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken, Type vostokApplicationType)
         {
             var builder = new EnvironmentBuilder();
             setup(builder);
-            return builder.Build(shutdownToken);
+            return builder.Build(shutdownToken, vostokApplicationType);
         }
 
-        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
+        private VostokHostingEnvironment Build(CancellationToken shutdownToken, Type vostokApplicationType)
         {
-            var context = new BuildContext {ShutdownToken = shutdownToken};
+            var context = new BuildContext
+            {
+                ShutdownToken = shutdownToken,
+                ApplicationType = vostokApplicationType
+            };
 
             try
             {
@@ -126,7 +130,9 @@ namespace Vostok.Hosting.Components.Environment
                 HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
-            
+
+            context.ServiceBeacon.ReplicaInfo.TryGetUrl(out var url);
+
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.ShutdownToken,
                 context.ApplicationIdentity,
@@ -141,7 +147,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ConfigurationProvider,
                 context.ClusterConfigClient,
                 context.ServiceBeacon,
-                null, //TODO: port
+                url?.Port,
                 context.ServiceLocator,
                 FlowingContext.Globals,
                 FlowingContext.Properties,

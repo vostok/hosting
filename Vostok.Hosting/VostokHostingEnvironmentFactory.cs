@@ -15,8 +15,12 @@ namespace Vostok.Hosting
         /// </summary>
         /// <param name="setup">Delegate which configures <see cref="IVostokHostingEnvironment"/>.</param>
         /// <param name="shutdownToken">Cancellation token, that will be passed into <see cref="IVostokHostingEnvironment.ShutdownToken"/>.</param>
+        /// <param name="vostokApplicationType">Type of vostok application that will use result environment.</param>
         [NotNull]
-        public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken = default)
-            => EnvironmentBuilder.Build(setup ?? throw new ArgumentNullException(nameof(setup)), shutdownToken);
+        public static IVostokHostingEnvironment Create(
+            [NotNull] VostokHostingEnvironmentSetup setup,
+            CancellationToken shutdownToken = default,
+            [CanBeNull] Type vostokApplicationType = null)
+            => EnvironmentBuilder.Build(setup ?? throw new ArgumentNullException(nameof(setup)), shutdownToken, vostokApplicationType);
     }
 }

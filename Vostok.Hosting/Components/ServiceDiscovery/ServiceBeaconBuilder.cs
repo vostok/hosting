@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Text;
+using System.Reflection;
 using Vostok.Commons.Helpers;
+using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
@@ -18,15 +20,18 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
         private volatile IVostokApplicationIdentity applicationIdentity;
         private volatile bool enabled;
-        private volatile bool registerDeniedFromNonActiveDatacenters;
+        private volatile bool registrationDeniedFromNonActiveDatacenters;
 
         public ServiceBeaconBuilder()
         {
             replicaInfoCustomization = new Customization<IReplicaInfoBuilder>();
+
             replicaInfoCustomization.AddCustomization(
-                s => s
-                    .SetEnvironment(applicationIdentity.Environment)
-                    .SetApplication(applicationIdentity.FormatServiceName()));
+                s =>
+                {
+                    s.SetEnvironment(applicationIdentity.Environment);
+                    s.SetApplication(applicationIdentity.FormatServiceName());
+                });
 
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
@@ -50,7 +55,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
             var settings = new ServiceBeaconSettings();
 
-            if (registerDeniedFromNonActiveDatacenters)
+            if (registrationDeniedFromNonActiveDatacenters)
                 settings.RegistrationAllowedProvider = LocalDatacenterIsActive(context.Datacenters);
 
             settingsCustomization.Customize(settings);
@@ -64,6 +69,9 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                     s.SetProperty(WellKnownApplicationIdentityProperties.Environment, context.ApplicationIdentity.Environment);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
+
+                    if (context.ApplicationType?.GetCustomAttribute<RequiresPort>(true) != null)
+                        s.SetPort(FreeTcpPortFinder.GetFreePort());
 
                     replicaInfoCustomization.Customize(s);
                 },
@@ -85,13 +93,13 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public IVostokServiceBeaconBuilder DenyRegistrationFromNotActiveDatacenters()
         {
-            registerDeniedFromNonActiveDatacenters = true;
+            registrationDeniedFromNonActiveDatacenters = true;
             return this;
         }
 
         public IVostokServiceBeaconBuilder AllowRegistrationFromNotActiveDatacenters()
         {
-            registerDeniedFromNonActiveDatacenters = false;
+            registrationDeniedFromNonActiveDatacenters = false;
             return this;
         }
 
