@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting.Setup
 {
@@ -28,5 +29,11 @@ namespace Vostok.Hosting.Setup
         /// </summary>
         public static IVostokMetricsBuilder SetupHerculesMetricEventSender([NotNull] this IVostokMetricsBuilder builder) =>
             builder.SetupHerculesMetricEventSender(_ => {});
+
+        /// <summary>
+        /// Sets given <paramref name="port"/> to <see cref="IServiceBeacon"/>.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetPort([NotNull] this IVostokHostingEnvironmentBuilder builder, int port) =>
+            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetPort(port)));
     }
 }
