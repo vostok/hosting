@@ -91,7 +91,7 @@ namespace Vostok.Hosting.Components.Configuration
                 : new ConstantSource(null);
 
             var secretMergeOptions = new SettingsMergeOptions();
-            mergeSettingsCustomization.Customize(secretMergeOptions);
+            mergeSecretSettingsCustomization.Customize(secretMergeOptions);
             var secretSource = secretSources.Any()
                 ? (IConfigurationSource)new CombinedSource(secretSources.ToArray(), secretMergeOptions)
                 : new ConstantSource(null);
