@@ -123,13 +123,13 @@ namespace Vostok.Hosting.Components.Configuration
                 SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, secretSource);
         }
 
-        private void SetupSource(ConfigurationProvider provider, Type configurationType, string scope, IConfigurationSource source)
+        private void SetupSource(ConfigurationProvider provider, Type configurationType, string[] scope, IConfigurationSource source)
         {
             methodInfo = provider.GetType().GetMethod("SetupSourceFor");
             if (methodInfo == null)
                 throw new Exception("SetupSourceFor method not found.");
 
-            if (!string.IsNullOrEmpty(scope))
+            if (scope.Any())
                 source = source.ScopeTo(scope);
 
             methodInfo
