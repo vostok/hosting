@@ -6,6 +6,7 @@ using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Configuration;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -234,6 +235,12 @@ namespace Vostok.Hosting
             {
                 if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient))
                     log.Warn("ClusterConfigClient.Default has already been configured.");
+            }
+
+            if (environment.ConfigurationProvider is ConfigurationProvider configurationProvider)
+            {
+                if (!ConfigurationProvider.TrySetDefault(configurationProvider))
+                    log.Warn("ConfigurationProvider.Default has already been configured.");
             }
         }
 

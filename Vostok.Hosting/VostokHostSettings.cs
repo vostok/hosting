@@ -1,6 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Time;
+using Vostok.Configuration;
+using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
@@ -34,8 +37,15 @@ namespace Vostok.Hosting
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; }
 
         /// <summary>
-        /// <para>Whether or not to configure static providers before running application.</para>
-        /// <para>See <see cref="LogProvider"/>, <see cref="TracerProvider"/> and <see cref="HerculesSinkProvider"/> for more information.</para>
+        /// <para>Determines whether or not to configure following static providers before running the application:</para>
+        /// <list type="bullet">
+        ///     <item><description><see cref="LogProvider"/></description></item>
+        ///     <item><description><see cref="TracerProvider"/></description></item>
+        ///     <item><description><see cref="HerculesSinkProvider"/></description></item>
+        ///     <item><description><see cref="DatacentersProvider"/></description></item>
+        ///     <item><description>ClusterConfigClient.<see cref="ClusterConfigClient.Default"/></description></item>
+        ///     <item><description>ConfigurationProvider.<see cref="ConfigurationProvider.Default"/></description></item>
+        /// </list>
         /// </summary>
         public bool ConfigureStaticProviders { get; set; } = true;
 
