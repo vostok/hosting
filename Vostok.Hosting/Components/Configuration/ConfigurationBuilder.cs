@@ -28,7 +28,6 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
-        private MethodInfo methodInfo;
 
         public ConfigurationBuilder()
         {
@@ -125,16 +124,10 @@ namespace Vostok.Hosting.Components.Configuration
 
         private void SetupSource(ConfigurationProvider provider, Type configurationType, string[] scope, IConfigurationSource source)
         {
-            methodInfo = provider.GetType().GetMethod("SetupSourceFor");
-            if (methodInfo == null)
-                throw new Exception("SetupSourceFor method not found.");
-
             if (scope.Any())
                 source = source.ScopeTo(scope);
 
-            methodInfo
-                .MakeGenericMethod(configurationType)
-                .Invoke(provider, new object[] { source });
+            provider.SetupSourceFor(configurationType, source);
         }
     }
 }
