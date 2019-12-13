@@ -99,7 +99,12 @@ namespace Vostok.Hosting.Components.Environment
 
             (context.ConfigurationSource, context.SecretConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
 
-            context.SetupContext = new EnvironmentSetupContext(context.Log, context.ConfigurationSource, context.ConfigurationProvider, context.ClusterConfigClient);
+            context.SetupContext = new EnvironmentSetupContext(
+                context.Log, 
+                context.ConfigurationSource, 
+                context.SecretConfigurationSource, 
+                context.ConfigurationProvider, 
+                context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
 

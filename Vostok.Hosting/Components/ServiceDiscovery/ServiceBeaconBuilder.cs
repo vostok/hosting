@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Vostok.Commons.Helpers;
 using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
