@@ -70,7 +70,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                     s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
 
-                    if (context.ApplicationType?.GetCustomAttribute<RequiresPort>(true) != null)
+                    if (RequirementDetector.RequiresPort(context.ApplicationType))
                         s.SetPort(FreeTcpPortFinder.GetFreePort());
 
                     replicaInfoCustomization.Customize(s);

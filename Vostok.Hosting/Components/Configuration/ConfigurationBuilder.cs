@@ -115,13 +115,10 @@ namespace Vostok.Hosting.Components.Configuration
 
         private void SetupSources(ConfigurationProvider provider, IConfigurationSource source, IConfigurationSource secretSource, Type contextApplicationType)
         {
-            if (contextApplicationType == null)
-                return;
-
-            foreach (var requiresConfiguration in contextApplicationType.GetCustomAttributes<RequiresConfiguration>(true))
+            foreach (var requiresConfiguration in RequirementDetector.GetRequiredConfigurations(contextApplicationType))
                 SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, source);
 
-            foreach (var requiresConfiguration in contextApplicationType.GetCustomAttributes<RequiresSecretConfiguration>(true))
+            foreach (var requiresConfiguration in RequirementDetector.GetRequiredSecretConfigurations(contextApplicationType))
                 SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, secretSource);
         }
 
