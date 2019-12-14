@@ -112,6 +112,7 @@ namespace Vostok.Hosting
             var applicationType = settings.Application.GetType();
 
             RequirementsHelper.EnsurePort(applicationType, builder);
+            RequirementsHelper.EnsureConfigurations(applicationType, builder);
 
             settings.EnvironmentSetup(builder);
         }
