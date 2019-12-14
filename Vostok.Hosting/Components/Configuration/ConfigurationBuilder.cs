@@ -8,10 +8,8 @@ using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Binders;
 using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
-using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
-using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -114,8 +112,6 @@ namespace Vostok.Hosting.Components.Configuration
             var provider = new ConfigurationProvider(providerSettings);
             var secretProvider = new ConfigurationProvider(secretProviderSettings);
 
-            SetupSources(provider, source, secretSource, context.ApplicationType);
-
             var configurationContext = new ConfigurationContext(source, secretSource, provider, secretProvider, context.ClusterConfigClient);
 
             configurationContextCustomization.Customize(configurationContext);
@@ -133,23 +129,6 @@ namespace Vostok.Hosting.Components.Configuration
                 return new CombinedSource(sources.ToArray(), mergeOptions);
 
             return new ConstantSource(null);
-        }
-
-        private void SetupSources(ConfigurationProvider provider, IConfigurationSource source, IConfigurationSource secretSource, Type contextApplicationType)
-        {
-            foreach (var requiresConfiguration in RequirementDetector.GetRequiredConfigurations(contextApplicationType))
-                SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, source);
-
-            foreach (var requiresConfiguration in RequirementDetector.GetRequiredSecretConfigurations(contextApplicationType))
-                SetupSource(provider, requiresConfiguration.Type, requiresConfiguration.Scope, secretSource);
-        }
-
-        private void SetupSource(ConfigurationProvider provider, Type configurationType, string[] scope, IConfigurationSource source)
-        {
-            if (scope.Any())
-                source = source.ScopeTo(scope);
-
-            provider.SetupSourceFor(configurationType, source);
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
-using Vostok.Commons.Helpers.Network;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
@@ -68,9 +66,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                     s.SetProperty(WellKnownApplicationIdentityProperties.Environment, context.ApplicationIdentity.Environment);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
-
-                    if (RequirementDetector.RequiresPort(context.ApplicationType))
-                        s.SetPort(FreeTcpPortFinder.GetFreePort());
 
                     replicaInfoCustomization.Customize(s);
                 },

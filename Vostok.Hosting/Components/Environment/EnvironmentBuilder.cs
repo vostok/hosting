@@ -64,19 +64,18 @@ namespace Vostok.Hosting.Components.Environment
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
-        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken, Type vostokApplicationType)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
         {
             var builder = new EnvironmentBuilder();
             setup(builder);
-            return builder.Build(shutdownToken, vostokApplicationType);
+            return builder.Build(shutdownToken);
         }
 
-        private VostokHostingEnvironment Build(CancellationToken shutdownToken, Type vostokApplicationType)
+        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
         {
             var context = new BuildContext
             {
                 ShutdownToken = shutdownToken,
-                ApplicationType = vostokApplicationType
             };
 
             try

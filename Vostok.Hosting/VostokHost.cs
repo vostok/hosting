@@ -87,7 +87,7 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup();
 
-            using (environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token, settings.Application.GetType()))
+            using (environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token))
             {
                 log = environment.Log.ForContext<VostokHost>();
 

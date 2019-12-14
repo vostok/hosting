@@ -29,7 +29,6 @@ namespace Vostok.Hosting.Components
             substitutableTracer = new SubstitutableTracer();
         }
 
-        public Type ApplicationType { get; set; }
         public CancellationToken ShutdownToken { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
