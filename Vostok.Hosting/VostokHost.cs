@@ -124,6 +124,8 @@ namespace Vostok.Hosting
 
             try
             {
+                RequirementsChecker.Check(settings.Application.GetType(), environment);
+
                 return await RunPhaseAsync(true).ConfigureAwait(false);
             }
             catch (Exception error)
