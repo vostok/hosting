@@ -20,13 +20,17 @@ namespace Vostok.Hosting.Setup
         [NotNull]
         IConfigurationSource ConfigurationSource { get; }
 
+        /// <inheritdoc cref="IVostokHostingEnvironment.ConfigurationProvider"/>
+        [NotNull]
+        IConfigurationProvider ConfigurationProvider { get; }
+
         /// <inheritdoc cref="IVostokHostingEnvironment.SecretConfigurationSource"/>
         [NotNull]
         IConfigurationSource SecretConfigurationSource { get; }
 
-        /// <inheritdoc cref="IVostokHostingEnvironment.ConfigurationProvider"/>
+        /// <inheritdoc cref="IVostokHostingEnvironment.SecretConfigurationProvider"/>
         [NotNull]
-        IConfigurationProvider ConfigurationProvider { get; }
+        IConfigurationProvider SecretConfigurationProvider { get; }
 
         /// <inheritdoc cref="IVostokHostingEnvironment.ClusterConfigClient"/>
         [NotNull]

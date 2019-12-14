@@ -12,12 +12,14 @@ namespace Vostok.Hosting.Components.Environment
             IConfigurationSource configurationSource,
             IConfigurationSource secretConfigurationSource,
             IConfigurationProvider configurationProvider,
+            IConfigurationProvider secretConfigurationProvider,
             IClusterConfigClient clusterConfigClient)
         {
             Log = log;
             ConfigurationSource = configurationSource;
-            SecretConfigurationSource = secretConfigurationSource;
             ConfigurationProvider = configurationProvider;
+            SecretConfigurationSource = secretConfigurationSource;
+            SecretConfigurationProvider = secretConfigurationProvider;
             ClusterConfigClient = clusterConfigClient;
         }
 
@@ -25,6 +27,7 @@ namespace Vostok.Hosting.Components.Environment
         public IConfigurationSource ConfigurationSource { get; }
         public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
+        public IConfigurationProvider SecretConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
     }
 }

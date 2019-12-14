@@ -38,6 +38,7 @@ namespace Vostok.Hosting.Components
         public IConfigurationSource ConfigurationSource { get; set; }
         public IConfigurationSource SecretConfigurationSource { get; set; }
         public IConfigurationProvider ConfigurationProvider { get; set; }
+        public IConfigurationProvider SecretConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }

@@ -30,6 +30,7 @@ namespace Vostok.Hosting.Models
             [NotNull] IConfigurationSource configurationSource,
             [NotNull] IConfigurationSource secretConfigurationSource,
             [NotNull] IConfigurationProvider configurationProvider,
+            [NotNull] IConfigurationProvider secretConfigurationProvider,
             [NotNull] IClusterConfigClient clusterConfigClient,
             [NotNull] IServiceBeacon serviceBeacon,
             [CanBeNull] int? port,
@@ -52,8 +53,9 @@ namespace Vostok.Hosting.Models
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
             HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
             ConfigurationSource = configurationSource ?? throw new ArgumentNullException(nameof(configurationSource));
-            SecretConfigurationSource = secretConfigurationSource ?? throw new ArgumentNullException(nameof(secretConfigurationSource));
             ConfigurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
+            SecretConfigurationSource = secretConfigurationSource ?? throw new ArgumentNullException(nameof(secretConfigurationSource));
+            SecretConfigurationProvider = secretConfigurationProvider ?? throw new ArgumentNullException(nameof(secretConfigurationProvider));
             ClusterConfigClient = clusterConfigClient ?? throw new ArgumentNullException(nameof(clusterConfigClient));
             ServiceBeacon = serviceBeacon ?? throw new ArgumentNullException(nameof(serviceBeacon));
             Port = port;
@@ -76,6 +78,7 @@ namespace Vostok.Hosting.Models
         public IConfigurationSource ConfigurationSource { get; }
         public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
+        public IConfigurationProvider SecretConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
         public IServiceBeacon ServiceBeacon { get; }
         public int? Port { get; }

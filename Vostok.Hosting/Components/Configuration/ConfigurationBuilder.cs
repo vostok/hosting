@@ -5,6 +5,7 @@ using Vostok.Commons.Helpers;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
+using Vostok.Configuration.Binders;
 using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
 using Vostok.Configuration.Sources;
@@ -17,14 +18,16 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Configuration
 {
-    internal class ConfigurationBuilder : IVostokConfigurationBuilder, IBuilder<(IConfigurationSource, IConfigurationSource, IConfigurationProvider)>
+    internal class ConfigurationBuilder : IVostokConfigurationBuilder,
+        IBuilder<(IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)>
     {
         private readonly List<IConfigurationSource> sources;
         private readonly List<IConfigurationSource> secretSources;
 
         private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
         private readonly Customization<SettingsMergeOptions> mergeSecretSettingsCustomization;
-        private readonly Customization<ConfigurationProviderSettings> configurationSettingsCustomization;
+        private readonly Customization<ConfigurationProviderSettings> providerCustomization;
+        private readonly Customization<ConfigurationProviderSettings> secretProviderCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
 
@@ -34,7 +37,8 @@ namespace Vostok.Hosting.Components.Configuration
             secretSources = new List<IConfigurationSource>();
             mergeSettingsCustomization = new Customization<SettingsMergeOptions>();
             mergeSecretSettingsCustomization = new Customization<SettingsMergeOptions>();
-            configurationSettingsCustomization = new Customization<ConfigurationProviderSettings>();
+            providerCustomization = new Customization<ConfigurationProviderSettings>();
+            secretProviderCustomization = new Customization<ConfigurationProviderSettings>();
             printSettingsCustomization = new Customization<PrintSettings>();
             configurationContextCustomization = new Customization<IVostokConfigurationContext>();
         }
@@ -65,7 +69,13 @@ namespace Vostok.Hosting.Components.Configuration
 
         public IVostokConfigurationBuilder CustomizeConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
         {
-            configurationSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            providerCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            return this;
+        }
+
+        public IVostokConfigurationBuilder CustomizeSecretConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
+        {
+            secretProviderCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
@@ -80,36 +90,49 @@ namespace Vostok.Hosting.Components.Configuration
             this.configurationContextCustomization.AddCustomization(configurationContextCustomization ?? throw new ArgumentNullException(nameof(configurationContextCustomization)));
             return this;
         }
-
-        public (IConfigurationSource, IConfigurationSource, IConfigurationProvider) Build(BuildContext context)
+        
+        public (IConfigurationSource source,
+            IConfigurationSource secretSource,
+            IConfigurationProvider provider,
+            IConfigurationProvider secretProvider) Build(BuildContext context)
         {
-            var mergeOptions = new SettingsMergeOptions();
-            mergeSettingsCustomization.Customize(mergeOptions);
-            var source = sources.Any()
-                ? (IConfigurationSource)new CombinedSource(sources.ToArray(), mergeOptions)
-                : new ConstantSource(null);
+            var source = PrepareCombinedSource(mergeSettingsCustomization, sources);
+            var secretSource = PrepareCombinedSource(mergeSecretSettingsCustomization, secretSources);
 
-            var secretMergeOptions = new SettingsMergeOptions();
-            mergeSecretSettingsCustomization.Customize(secretMergeOptions);
-            var secretSource = secretSources.Any()
-                ? (IConfigurationSource)new CombinedSource(secretSources.ToArray(), secretMergeOptions)
-                : new ConstantSource(null);
+            var providerSettings = new ConfigurationProviderSettings()
+                .WithErrorLogging(context.Log)
+                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings()));
 
-            var printSettings = new PrintSettings();
-            printSettingsCustomization.Customize(printSettings);
+            providerCustomization.Customize(providerSettings);
 
-            var providerSettings =
-                new ConfigurationProviderSettings()
-                    .WithErrorLogging(context.Log)
-                    .WithSettingsLogging(context.Log, printSettings);
-            configurationSettingsCustomization.Customize(providerSettings);
+            var secretProviderSettings = new ConfigurationProviderSettings()
+                .WithErrorLogging(context.Log);
+
+            secretProviderCustomization.Customize(secretProviderSettings);
+            secretProviderSettings.Binder = new SecretBinder(secretProviderSettings.Binder ?? new DefaultSettingsBinder());
 
             var provider = new ConfigurationProvider(providerSettings);
+            var secretProvider = new ConfigurationProvider(secretProviderSettings);
+
             SetupSources(provider, source, secretSource, context.ApplicationType);
 
-            configurationContextCustomization.Customize(new ConfigurationContext(source, secretSource, provider, context.ClusterConfigClient));
+            var configurationContext = new ConfigurationContext(source, secretSource, provider, secretProvider, context.ClusterConfigClient);
 
-            return (source, secretSource, provider);
+            configurationContextCustomization.Customize(configurationContext);
+
+            return (source, secretSource, provider, secretProvider);
+        }
+
+        private static IConfigurationSource PrepareCombinedSource(Customization<SettingsMergeOptions> mergeCustomization, IReadOnlyList<IConfigurationSource> sources)
+        {
+            var mergeOptions = new SettingsMergeOptions();
+
+            mergeCustomization.Customize(mergeOptions);
+
+            if (sources.Any())
+                return new CombinedSource(sources.ToArray(), mergeOptions);
+
+            return new ConstantSource(null);
         }
 
         private void SetupSources(ConfigurationProvider provider, IConfigurationSource source, IConfigurationSource secretSource, Type contextApplicationType)

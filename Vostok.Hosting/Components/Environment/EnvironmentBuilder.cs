@@ -97,13 +97,17 @@ namespace Vostok.Hosting.Components.Environment
         {
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
-            (context.ConfigurationSource, context.SecretConfigurationSource, context.ConfigurationProvider) = configurationBuilder.Build(context);
+            (context.ConfigurationSource,
+                context.SecretConfigurationSource,
+                context.ConfigurationProvider,
+                context.SecretConfigurationProvider) = configurationBuilder.Build(context);
 
             context.SetupContext = new EnvironmentSetupContext(
-                context.Log, 
-                context.ConfigurationSource, 
-                context.SecretConfigurationSource, 
-                context.ConfigurationProvider, 
+                context.Log,
+                context.ConfigurationSource,
+                context.SecretConfigurationSource,
+                context.ConfigurationProvider,
+                context.SecretConfigurationProvider,
                 context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
@@ -122,7 +126,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log = context.Logs.BuildCompositeLog();
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
-            
+
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
@@ -146,6 +150,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ConfigurationSource,
                 context.SecretConfigurationSource,
                 context.ConfigurationProvider,
+                context.SecretConfigurationProvider,
                 context.ClusterConfigClient,
                 context.ServiceBeacon,
                 url?.Port,
