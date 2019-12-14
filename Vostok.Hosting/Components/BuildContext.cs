@@ -16,6 +16,8 @@ using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
+// ReSharper disable SuspiciousTypeConversion.Global
+
 namespace Vostok.Hosting.Components
 {
     internal class BuildContext : IDisposable
@@ -87,6 +89,15 @@ namespace Vostok.Hosting.Components
 
                 LogDisposing("HerculesSink");
                 (HerculesSink as IDisposable)?.Dispose();
+
+                LogDisposing("Datacenters");
+                (Datacenters as IDisposable)?.Dispose();
+
+                LogDisposing("ConfigurationProvider");
+                (ConfigurationProvider as IDisposable)?.Dispose();
+
+                LogDisposing("SecretConfigurationProvider");
+                (SecretConfigurationProvider as IDisposable)?.Dispose();
 
                 LogDisposing("ClusterConfigClient");
                 (ClusterConfigClient as IDisposable)?.Dispose();
