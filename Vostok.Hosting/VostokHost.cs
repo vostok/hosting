@@ -12,6 +12,8 @@ using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
+using Vostok.Hosting.Requirements;
+using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Tracing.Abstractions;
 
@@ -87,7 +89,7 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup();
 
-            using (environment = EnvironmentBuilder.Build(settings.EnvironmentSetup, ShutdownTokenSource.Token))
+            using (environment = EnvironmentBuilder.Build(SetupEnvironment, ShutdownTokenSource.Token))
             {
                 log = environment.Log.ForContext<VostokHost>();
 
@@ -103,6 +105,15 @@ namespace Vostok.Hosting
 
                 return result;
             }
+        }
+
+        private void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
+        {
+            var applicationType = settings.Application.GetType();
+
+            RequirementsHelper.EnsurePort(applicationType, builder);
+
+            settings.EnvironmentSetup(builder);
         }
 
         private async Task<VostokApplicationRunResult> InitializeApplicationAsync()
