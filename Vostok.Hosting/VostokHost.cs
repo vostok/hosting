@@ -2,20 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
-using Vostok.Configuration;
-using Vostok.Datacenters;
-using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
-using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -235,27 +231,7 @@ namespace Vostok.Hosting
                 ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
 
             if (settings.ConfigureStaticProviders)
-                ConfigureStaticProviders();
-        }
-
-        private void ConfigureStaticProviders()
-        {
-            LogProvider.Configure(environment.Log, true);
-            TracerProvider.Configure(environment.Tracer, true);
-            HerculesSinkProvider.Configure(environment.HerculesSink, true);
-            DatacentersProvider.Configure(environment.Datacenters, true);
-
-            if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
-            {
-                if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient))
-                    log.Warn("ClusterConfigClient.Default has already been configured.");
-            }
-
-            if (environment.ConfigurationProvider is ConfigurationProvider configurationProvider)
-            {
-                if (!ConfigurationProvider.TrySetDefault(configurationProvider))
-                    log.Warn("ConfigurationProvider.Default has already been configured.");
-            }
+                StaticProvidersHelper.Configure(environment);
         }
 
         #region Logging
