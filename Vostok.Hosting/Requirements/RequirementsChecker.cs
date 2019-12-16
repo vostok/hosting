@@ -61,10 +61,22 @@ namespace Vostok.Hosting.Requirements
         {
             var registeredExtensions = new HashSet<Type>(environment.HostExtensions.GetAll().Select(ext => ext.Item1));
 
-            foreach (var requiredExtension in RequirementDetector.GetRequiredHostExtensions(applicationType))
+            foreach (var requiredExtension in RequirementDetector.GetRequiredHostExtensions(applicationType).Where(h => h.Key == null))
             {
                 if (!registeredExtensions.Contains(requiredExtension.Type))
                     errors.Add($"Application requires a host extension of type '{requiredExtension.Type}', which is not registered by host (see IVostokHostingEnvironmentBuilder.SetupHostExtensions).");
+            }
+
+            foreach (var requiredExtension in RequirementDetector.GetRequiredHostExtensions(applicationType).Where(h => h.Key != null))
+            {
+                try
+                {
+                    environment.HostExtensions.Get(requiredExtension.Type, requiredExtension.Key);
+                }
+                catch
+                {
+                    errors.Add($"Application requires a host extension of type '{requiredExtension.Type}' with key '{requiredExtension.Key}', which is not registered by host (see IVostokHostingEnvironmentBuilder.SetupHostExtensions).");
+                }
             }
         }
 
