@@ -36,13 +36,8 @@ namespace Vostok.Hosting.Components.HostExtensions
             builderCustomization.Customize(this);
         }
 
-        public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension)
-        {
-            if (extension == null)
-                throw new ArgumentNullException(nameof(extension));
-            HostExtensions.Add(extension);
-            return this;
-        }
+        public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension) =>
+            Add(typeof(TExtension), extension);
 
         public IVostokHostExtensionsBuilder Add(Type type, object extension)
         {
@@ -52,15 +47,11 @@ namespace Vostok.Hosting.Components.HostExtensions
             return this;
         }
 
-        public IVostokHostExtensionsBuilder Add(string key, object extension)
-        {
-            if (extension == null)
-                throw new ArgumentNullException(nameof(extension));
-            HostExtensions.Add(key ?? throw new ArgumentNullException(nameof(key)), extension);
-            return this;
-        }
+        public IVostokHostExtensionsBuilder Add<TExtension>(string key, TExtension extension) =>
+            Add(typeof(TExtension), key, extension);
+        
 
-        public IVostokHostExtensionsBuilder Add<TExtension>(Type type, string key, TExtension extension)
+        public IVostokHostExtensionsBuilder Add(Type type, string key, object extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
