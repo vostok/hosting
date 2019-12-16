@@ -52,7 +52,7 @@ namespace Vostok.Hosting.Components.HostExtensions
             return this;
         }
 
-        public IVostokHostExtensionsBuilder Add<TExtension>(string key, TExtension extension)
+        public IVostokHostExtensionsBuilder Add(string key, object extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));

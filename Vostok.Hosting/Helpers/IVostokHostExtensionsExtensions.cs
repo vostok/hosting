@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Helpers
