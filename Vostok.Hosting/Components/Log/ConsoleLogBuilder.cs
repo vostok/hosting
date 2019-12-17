@@ -65,7 +65,10 @@ namespace Vostok.Hosting.Components.Log
                 return null;
             }
 
-            var settings = new ConsoleLogSettings();
+            var settings = new ConsoleLogSettings
+            {
+                ColorsEnabled = true
+            };
 
             settingsCustomization.Customize(settings);
 
