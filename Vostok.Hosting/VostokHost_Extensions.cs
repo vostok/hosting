@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting
@@ -13,5 +14,19 @@ namespace Vostok.Hosting
         /// <inheritdoc cref="VostokHost.RunAsync"/>
         public static VostokApplicationRunResult Run([NotNull] this VostokHost vostokHost) =>
             vostokHost.RunAsync().GetAwaiter().GetResult();
+
+        /// <summary>
+        /// Listen <see cref="Console.CancelKeyPress"/> and shutdown vostok host if called.
+        /// </summary>
+        public static VostokHost WithConsoleCancellation([NotNull] this VostokHost vostokHost)
+        {
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                e.Cancel = true;
+                vostokHost.ShutdownTokenSource.Cancel();
+            };
+
+            return vostokHost;
+        }
     }
 }
