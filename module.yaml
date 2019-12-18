@@ -22,17 +22,17 @@ notests *default:
     - module vostok.zookeeper.client
 
   deps:
-    - vostok.clusterclient.datacenters
-    - vostok.commons.helpers/src
-    - vostok.commons.threading/src
-    - vostok.commons.time/src
     - vostok.clusterclient.context
     - vostok.clusterclient.core
+    - vostok.clusterclient.datacenters
     - vostok.clusterclient.topology.cc
     - vostok.clusterclient.topology.sd
     - vostok.clusterclient.tracing
     - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
+    - vostok.commons.helpers/src
+    - vostok.commons.threading/src
+    - vostok.commons.time/src
     - vostok.configuration
     - vostok.configuration.abstractions
     - vostok.configuration.logging
