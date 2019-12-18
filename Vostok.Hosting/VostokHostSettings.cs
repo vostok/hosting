@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
@@ -47,5 +48,11 @@ namespace Vostok.Hosting
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
+
+        /// <summary>
+        /// Additional actions that will be executed right before application initialization.
+        /// </summary>
+        [NotNull]
+        public List<Action> BeforeInitializeApplication { get; } = new List<Action>();
     }
 }
