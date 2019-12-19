@@ -52,7 +52,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
         /// </summary>
-        [CanBeNull]
-        public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; }
+        [NotNull]
+        public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; } = new List<Action<IVostokHostingEnvironment>>();
     }
 }
