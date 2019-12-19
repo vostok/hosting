@@ -14,7 +14,7 @@ namespace Vostok.Hosting
     [PublicAPI]
     public class VostokHostSettings
     {
-        public VostokHostSettings([NotNull] IVostokApplication application, [CanBeNull] VostokHostingEnvironmentSetup environmentSetup = null)
+        public VostokHostSettings([NotNull] IVostokApplication application, [NotNull] VostokHostingEnvironmentSetup environmentSetup)
         {
             Application = application ?? throw new ArgumentNullException(nameof(application));
             EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
@@ -52,7 +52,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
         /// </summary>
-        [NotNull]
-        public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; } = new List<Action<IVostokHostingEnvironment>>();
+        [CanBeNull]
+        public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; }
     }
 }

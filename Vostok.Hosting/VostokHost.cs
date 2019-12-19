@@ -93,8 +93,9 @@ namespace Vostok.Hosting
 
                 ConfigureHostBeforeRun();
 
-                foreach (var action in settings.BeforeInitializeApplication)
-                    action(environment);
+                if (settings.BeforeInitializeApplication != null)
+                    foreach (var action in settings.BeforeInitializeApplication)
+                        action(environment);
 
                 var result = await InitializeApplicationAsync().ConfigureAwait(false);
                 if (result.State == VostokApplicationState.Initialized)
