@@ -85,6 +85,8 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup();
 
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            using (settings.Application as IDisposable)
             using (environment = EnvironmentBuilder.Build(SetupEnvironment, ShutdownTokenSource.Token))
             {
                 log = environment.Log.ForContext<VostokHost>();
@@ -93,9 +95,8 @@ namespace Vostok.Hosting
 
                 ConfigureHostBeforeRun();
 
-                if (settings.BeforeInitializeApplication != null)
-                    foreach (var action in settings.BeforeInitializeApplication)
-                        action(environment);
+                foreach (var action in settings.BeforeInitializeApplication)
+                    action(environment);
 
                 var result = await InitializeApplicationAsync().ConfigureAwait(false);
                 if (result.State == VostokApplicationState.Initialized)
