@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
 using Vostok.Datacenters;
