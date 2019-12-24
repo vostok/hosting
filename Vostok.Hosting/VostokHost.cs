@@ -6,6 +6,7 @@ using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
