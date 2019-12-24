@@ -24,13 +24,13 @@ namespace Vostok.Hosting
         /// An application which will be run.
         /// </summary>
         [NotNull]
-        public IVostokApplication Application { get; }
+        public IVostokApplication Application { get; set; }
 
         /// <summary>
         /// A delegate which will be used to configure <see cref="IVostokHostingEnvironment"/>.
         /// </summary>
         [NotNull]
-        public VostokHostingEnvironmentSetup EnvironmentSetup { get; }
+        public VostokHostingEnvironmentSetup EnvironmentSetup { get; set; }
 
         /// <summary>
         /// <para>Determines whether to configure following static providers before running the application.</para>
