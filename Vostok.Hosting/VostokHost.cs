@@ -86,8 +86,8 @@ namespace Vostok.Hosting
                 ThreadPoolUtility.Setup();
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            using (settings.Application as IDisposable)
             using (environment = EnvironmentBuilder.Build(SetupEnvironment))
+            using (settings.Application as IDisposable)
             {
                 log = environment.Log.ForContext<VostokHost>();
 
