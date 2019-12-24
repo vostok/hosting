@@ -32,6 +32,7 @@
     <Compile Include="..\..\vostok.commons.threading\Vostok.Commons.Threading\AtomicBoolean.cs" Link="Commons\AtomicBoolean.cs" />
     <Compile Include="..\..\vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolState.cs" Link="Commons\ThreadPoolState.cs" />
     <Compile Include="..\..\vostok.commons.threading\Vostok.Commons.Threading\ThreadPoolUtility.cs" Link="Commons\ThreadPoolUtility.cs" />
+    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanArithmetics.cs" Link="Commons\TimeSpanArithmetics.cs" />
     <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs" Link="Commons\TimeSpanConversions.cs" />
   </ItemGroup>
   <ItemGroup>

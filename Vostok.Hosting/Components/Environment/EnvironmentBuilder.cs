@@ -188,7 +188,7 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
-            this.shutdownTimeout = shutdownTimeout;
+            this.shutdownTimeout = shutdownTimeout.Cut(100.Milliseconds(), 0.05);
             return this;
         }
 
