@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Vostok.Commons.Time;
 using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
@@ -45,11 +48,15 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
 
+        private List<CancellationToken> shutdownTokens;
+        private TimeSpan shutdownTimeout;
+
         private EnvironmentBuilder()
         {
+            shutdownTokens = new List<CancellationToken>();
+            shutdownTimeout = 5.Seconds();
             configurationBuilder = new ConfigurationBuilder();
             clusterConfigClientBuilder = new ClusterConfigClientBuilder();
-
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             applicationLimitsBuilder = new CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits>(new ApplicationLimitsBuilder());
@@ -64,20 +71,16 @@ namespace Vostok.Hosting.Components.Environment
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
-        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken, TimeSpan shutdownTimeout)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup)
         {
             var builder = new EnvironmentBuilder();
             setup(builder);
-            return builder.Build(shutdownToken, shutdownTimeout);
+            return builder.Build();
         }
 
-        private VostokHostingEnvironment Build(CancellationToken shutdownToken, TimeSpan shutdownTimeout)
+        private VostokHostingEnvironment Build()
         {
-            var context = new BuildContext
-            {
-                ShutdownToken = shutdownToken,
-                ShutdownTimeout = shutdownTimeout
-            };
+            var context = new BuildContext();
 
             try
             {
@@ -139,8 +142,8 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceBeacon.ReplicaInfo.TryGetUrl(out var url);
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
-                context.ShutdownToken,
-                context.ShutdownTimeout,
+                shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
+                shutdownTimeout,
                 context.ApplicationIdentity,
                 applicationLimitsBuilder.Build(context),
                 applicationReplicationInfoBuilder.Build(context),
@@ -176,6 +179,18 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         #region SetupComponents
+
+        public IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken)
+        {
+            shutdownTokens.Add(shutdownToken);
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
+        {
+            this.shutdownTimeout = shutdownTimeout;
+            return this;
+        }
 
         public IVostokHostingEnvironmentBuilder SetupLog(Action<IVostokCompositeLogBuilder> setup)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
@@ -18,6 +19,9 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHostingEnvironmentBuilder
     {
+        IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken);
+        IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout);
+
         IVostokHostingEnvironmentBuilder SetupClusterConfigClient([NotNull] Action<IVostokClusterConfigClientBuilder> setup);
 
         IVostokHostingEnvironmentBuilder SetupConfiguration([NotNull] Action<IVostokConfigurationBuilder> setup);

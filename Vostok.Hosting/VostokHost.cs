@@ -87,7 +87,7 @@ namespace Vostok.Hosting
 
             // ReSharper disable once SuspiciousTypeConversion.Global
             using (settings.Application as IDisposable)
-            using (environment = EnvironmentBuilder.Build(SetupEnvironment, ShutdownTokenSource.Token, settings.ShutdownTimeout))
+            using (environment = EnvironmentBuilder.Build(SetupEnvironment))
             {
                 log = environment.Log.ForContext<VostokHost>();
 
@@ -110,6 +110,9 @@ namespace Vostok.Hosting
 
         private void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
         {
+            builder.SetupShutdownToken(ShutdownTokenSource.Token);
+            builder.SetupShutdownTimeout(settings.ShutdownTimeout);
+
             var applicationType = settings.Application.GetType();
 
             RequirementsHelper.EnsurePort(applicationType, builder);
