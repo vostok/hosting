@@ -20,6 +20,7 @@ namespace Vostok.Hosting.Models
 
         internal VostokHostingEnvironment(
             CancellationToken shutdownToken,
+            TimeSpan shutdownTimeout,
             [NotNull] IVostokApplicationIdentity applicationIdentity,
             [NotNull] IVostokApplicationLimits applicationLimits,
             [NotNull] Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider,
@@ -46,6 +47,7 @@ namespace Vostok.Hosting.Models
             this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
 
             ShutdownToken = shutdownToken;
+            ShutdownTimeout = shutdownTimeout;
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
             ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
@@ -68,6 +70,7 @@ namespace Vostok.Hosting.Models
         }
 
         public CancellationToken ShutdownToken { get; }
+        public TimeSpan ShutdownTimeout { get; }
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
         public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoProvider();

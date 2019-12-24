@@ -32,6 +32,7 @@ namespace Vostok.Hosting.Components
         }
 
         public CancellationToken ShutdownToken { get; set; }
+        public TimeSpan ShutdownTimeout { get; set; }
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }

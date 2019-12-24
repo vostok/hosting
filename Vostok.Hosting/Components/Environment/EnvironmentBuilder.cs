@@ -64,18 +64,19 @@ namespace Vostok.Hosting.Components.Environment
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
-        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, CancellationToken shutdownToken, TimeSpan shutdownTimeout)
         {
             var builder = new EnvironmentBuilder();
             setup(builder);
-            return builder.Build(shutdownToken);
+            return builder.Build(shutdownToken, shutdownTimeout);
         }
 
-        private VostokHostingEnvironment Build(CancellationToken shutdownToken)
+        private VostokHostingEnvironment Build(CancellationToken shutdownToken, TimeSpan shutdownTimeout)
         {
             var context = new BuildContext
             {
                 ShutdownToken = shutdownToken,
+                ShutdownTimeout = shutdownTimeout
             };
 
             try
@@ -139,6 +140,7 @@ namespace Vostok.Hosting.Components.Environment
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.ShutdownToken,
+                context.ShutdownTimeout,
                 context.ApplicationIdentity,
                 applicationLimitsBuilder.Build(context),
                 applicationReplicationInfoBuilder.Build(context),
