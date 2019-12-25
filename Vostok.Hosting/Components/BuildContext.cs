@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
 using Vostok.Datacenters;
@@ -42,8 +43,8 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
-
         public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
+        public List<object> DisposableHostExtensions { get; set; }
 
         public Logs Logs { get; set; }
 
@@ -70,6 +71,12 @@ namespace Vostok.Hosting.Components
             {
                 LogDisposing("VostokHostingEnvironment");
 
+                foreach (var hostExtension in DisposableHostExtensions ?? new List<object>())
+                {
+                    LogDisposing($"{hostExtension.GetType().Name} extension");
+                    (hostExtension as IDisposable)?.Dispose();
+                }
+                
                 LogDisposing("Metrics");
                 (Metrics?.Root as IDisposable)?.Dispose();
 

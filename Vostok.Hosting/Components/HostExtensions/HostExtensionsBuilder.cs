@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
@@ -12,12 +13,14 @@ namespace Vostok.Hosting.Components.HostExtensions
         public readonly HostExtensions HostExtensions;
 
         private readonly Customization<HostExtensionsBuilder> builderCustomization;
+        private readonly List<object> disposable;
         private volatile IVostokHostingEnvironment environment;
 
         public HostExtensionsBuilder()
         {
             HostExtensions = new HostExtensions();
             builderCustomization = new Customization<HostExtensionsBuilder>();
+            disposable = new List<object>();
         }
 
         public void AddCustomization(Action<IVostokHostExtensionsBuilder> setup)
@@ -34,28 +37,43 @@ namespace Vostok.Hosting.Components.HostExtensions
                 HostExtensions.Add(context.ZooKeeperClient);
 
             builderCustomization.Customize(this);
+
+            context.DisposableHostExtensions = disposable;
         }
 
         public IVostokHostExtensionsBuilder Add<TExtension>(TExtension extension) =>
             Add(typeof(TExtension), extension);
 
-        public IVostokHostExtensionsBuilder Add(Type type, object extension)
+        public IVostokHostExtensionsBuilder AddDisposable<TExtension>(TExtension extension) =>
+            Add(typeof(TExtension), extension, true);
+
+        public IVostokHostExtensionsBuilder Add(Type type, object extension, bool disposable = false)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), extension);
+
+            if (disposable)
+                this.disposable.Add(extension);
+
             return this;
         }
 
         public IVostokHostExtensionsBuilder Add<TExtension>(string key, TExtension extension) =>
             Add(typeof(TExtension), key, extension);
-        
 
-        public IVostokHostExtensionsBuilder Add(Type type, string key, object extension)
+        public IVostokHostExtensionsBuilder AddDisposable<TExtension>(string key, TExtension extension) =>
+            Add(typeof(TExtension), key, extension, true);
+
+        public IVostokHostExtensionsBuilder Add(Type type, string key, object extension, bool disposable = false)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), key ?? throw new ArgumentNullException(nameof(key)), extension);
+
+            if (disposable)
+                this.disposable.Add(extension);
+
             return this;
         }
     }

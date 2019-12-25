@@ -6,7 +6,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHostExtensionsBuilder
     {
         IVostokHostExtensionsBuilder Add<TExtension>([NotNull] TExtension extension);
-
         IVostokHostExtensionsBuilder Add<TExtension>([NotNull] string key, [NotNull] TExtension extension);
+
+        IVostokHostExtensionsBuilder AddDisposable<TExtension>([NotNull] TExtension extension);
+        IVostokHostExtensionsBuilder AddDisposable<TExtension>([NotNull] string key, [NotNull] TExtension extension);
     }
 }
