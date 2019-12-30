@@ -16,7 +16,6 @@ namespace Vostok.Hosting.Components.Hercules
         private static readonly TimeSpan ScrapePeriod = 1.Minutes();
 
         private readonly HerculesSink herculesSink;
-        private readonly IDisposable registration;
         private readonly MetricTags tags;
         private volatile HerculesSinkCounters previous = HerculesSinkCounters.Zero;
 
@@ -25,7 +24,7 @@ namespace Vostok.Hosting.Components.Hercules
             this.herculesSink = herculesSink;
             tags = context.Tags;
 
-            registration = context.Register(this, ScrapePeriod);
+            context.Register(this, ScrapePeriod);
         }
 
         public static void Measure(IVostokApplicationMetrics context, IHerculesSink herculesSink)
