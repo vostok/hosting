@@ -134,8 +134,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.Metrics = metricsBuilder.Build(context);
 
-            if (context.HerculesSink != null)
-                HerculesSinkMetrics.Measure(context.Metrics, context.HerculesSink);
+            HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
 
