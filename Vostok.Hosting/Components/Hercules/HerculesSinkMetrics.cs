@@ -38,7 +38,6 @@ namespace Vostok.Hosting.Components.Hercules
                 return;
 
             // ReSharper disable once ObjectCreationAsStatement
-            // TODO(kungurtsev): what should be final paths?
             new HerculesSinkMetrics(sink, context.Application.WithTag("owner", "ByHosting").WithTag("component", "HerculesSink"), log);
         }
 
