@@ -56,12 +56,12 @@ namespace Vostok.Hosting.Components.HostExtensions
             Add(typeof(TExtension), extension);
 
         public void Add(Type type, object extension) =>
-            byType.TryAdd(type, extension);
+            byType[type] = extension;
 
         public void Add<TExtension>(string key, TExtension extension) =>
             Add(typeof(TExtension), key, extension);
 
         public void Add(Type type, string key, object extension) =>
-            byKey.TryAdd((key, type), extension);
+            byKey[(key, type)] = extension;
     }
 }
