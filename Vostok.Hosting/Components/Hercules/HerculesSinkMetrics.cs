@@ -37,7 +37,7 @@ namespace Vostok.Hosting.Components.Hercules
                 return;
 
             // ReSharper disable once ObjectCreationAsStatement
-            new HerculesSinkMetrics(sink, context.Application.WithTag("owner", "ByHosting").WithTag("component", "HerculesSink"), log);
+            new HerculesSinkMetrics(sink, context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink"), log);
         }
 
         public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
