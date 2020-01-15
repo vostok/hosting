@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Components.ClusterProvider;
 using Vostok.Hosting.Setup;
+using Vostok.Logging.Abstractions;
+using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions.Model;
 
 // ReSharper disable ParameterHidesMember
 
@@ -67,7 +71,19 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
             settingsCustomization.Customize(settings);
 
-            return new ZooKeeperClient(settings, context.Log);
+            return new ZooKeeperClient(settings, 
+                context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
+        }
+
+        private bool IsDataChangedLog(IReadOnlyDictionary<string, object> properties)
+        {
+            if (!properties.TryGetValue("NodeEventType", out var eventType))
+                return false;
+            if (!properties.TryGetValue("NodePath", out var path))
+                return false;
+            return
+                eventType is NodeChangedEventType castedEventType && castedEventType == NodeChangedEventType.DataChanged &&
+                path is string castedPath && castedPath.StartsWith(new ServiceLocatorSettings().ZooKeeperNodesPrefix);
         }
     }
 }
