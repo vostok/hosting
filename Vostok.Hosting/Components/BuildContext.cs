@@ -76,7 +76,7 @@ namespace Vostok.Hosting.Components
                     LogDisposing($"{hostExtension.GetType().Name} extension");
                     (hostExtension as IDisposable)?.Dispose();
                 }
-                
+
                 LogDisposing("Metrics");
                 (Metrics?.Root as IDisposable)?.Dispose();
 

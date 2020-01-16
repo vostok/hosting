@@ -78,6 +78,7 @@ namespace Vostok.Hosting.Components.Hercules
                 message.Append($"{count} {kvp.Key}");
                 started = true;
             }
+
             message.Append(started ? ")." : ".");
 
             log.Info(message.ToString(), delta.SentRecords.Count, delta.SentRecords.Size);

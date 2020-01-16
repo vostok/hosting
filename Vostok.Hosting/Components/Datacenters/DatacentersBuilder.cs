@@ -52,9 +52,9 @@ namespace Vostok.Hosting.Components.Datacenters
         public IVostokDatacentersBuilder SetDatacenterMapping(Func<IPAddress, string> datacenterMapping)
         {
             this.datacenterMapping = datacenterMapping ?? throw new ArgumentNullException(nameof(datacenterMapping));
-            
+
             instance = null;
-            
+
             return this;
         }
 
@@ -70,7 +70,7 @@ namespace Vostok.Hosting.Components.Datacenters
         public IVostokDatacentersBuilder CustomizeSettings(Action<DatacentersSettings> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
-            
+
             instance = null;
 
             return this;

@@ -71,7 +71,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
             settingsCustomization.Customize(settings);
 
-            return new ZooKeeperClient(settings, 
+            return new ZooKeeperClient(
+                settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
         }
 

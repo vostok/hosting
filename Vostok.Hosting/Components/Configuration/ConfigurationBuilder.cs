@@ -88,7 +88,7 @@ namespace Vostok.Hosting.Components.Configuration
             this.configurationContextCustomization.AddCustomization(configurationContextCustomization ?? throw new ArgumentNullException(nameof(configurationContextCustomization)));
             return this;
         }
-        
+
         public (IConfigurationSource source,
             IConfigurationSource secretSource,
             IConfigurationProvider provider,
