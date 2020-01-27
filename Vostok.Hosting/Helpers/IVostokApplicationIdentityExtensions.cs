@@ -1,12 +1,16 @@
 ﻿using System.Text;
+using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Helpers
 {
     internal static class IVostokApplicationIdentityExtensions
     {
-        public static string FormatServiceName(this IVostokApplicationIdentity identity)
+        public static string FormatServiceName([CanBeNull] this IVostokApplicationIdentity identity)
         {
+            if (identity == null)
+                return null;
+
             var result = new StringBuilder();
 
             result.Append(identity.Project);

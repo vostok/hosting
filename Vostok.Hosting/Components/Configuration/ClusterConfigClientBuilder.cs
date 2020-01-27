@@ -22,7 +22,12 @@ namespace Vostok.Hosting.Components.Configuration
             var settings = new ClusterConfigClientSettings
             {
                 Log = context.Log,
-                AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
+                AdditionalSetup = setup =>
+                {
+                    // Note(kungurtsev): do not fill setup.ClientApplicationName here, because build of context.ApplicationIdentity requires ClusterConfigClient.
+
+                    setup.SetupDistributedTracing(context.Tracer);
+                }
             };
 
             settingsCustomization.Customize(settings);

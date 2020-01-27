@@ -4,6 +4,7 @@ using Vostok.Clusterclient.Tracing;
 using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client;
 using Vostok.Hosting.Components.ClusterProvider;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 
@@ -46,7 +47,11 @@ namespace Vostok.Hosting.Components.Hercules
             // Note(kungurtsev): allow null api key provider, streams can be configured later.
             var settings = new HerculesSinkSettings(cluster, apiKeyProvider ?? (() => null))
             {
-                AdditionalSetup = setup => setup.SetupDistributedTracing(context.Tracer)
+                AdditionalSetup = setup =>
+                {
+                    setup.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
+                    setup.SetupDistributedTracing(context.Tracer);
+                }
             };
 
             settingsCustomization.Customize(settings);
