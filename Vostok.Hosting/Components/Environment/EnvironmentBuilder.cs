@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Vostok.Clusterclient.Core;
 using Vostok.Commons.Time;
 using Vostok.Context;
 using Vostok.Datacenters;
@@ -115,7 +114,6 @@ namespace Vostok.Hosting.Components.Environment
                 context.ClusterConfigClient);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-            ClusterClientDefaults.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
 
             context.Datacenters = datacentersBuilder.Build(context);
 

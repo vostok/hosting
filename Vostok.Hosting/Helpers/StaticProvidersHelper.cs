@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.Configuration;
 using Vostok.Datacenters;
@@ -32,6 +33,8 @@ namespace Vostok.Hosting.Helpers
         {
             if (environment == null)
                 throw new ArgumentNullException(nameof(environment));
+
+            ClusterClientDefaults.ClientApplicationName = environment.ApplicationIdentity.FormatServiceName();
 
             LogProvider.Configure(environment.Log, true);
             TracerProvider.Configure(environment.Tracer, true);
