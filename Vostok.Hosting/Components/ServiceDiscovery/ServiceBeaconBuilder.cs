@@ -2,10 +2,12 @@
 using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 // ReSharper disable ParameterHidesMember
 
@@ -35,42 +37,22 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public IServiceBeacon Build(BuildContext context)
         {
+            applicationIdentity = context.ApplicationIdentity;
+
             if (!enabled)
             {
                 context.LogDisabled("ServiceBeacon");
-                return new DevNullServiceBeacon();
+                return new DevNullServiceBeacon(CreateReplicaInfo(context));
             }
 
             var zooKeeperClient = context.ZooKeeperClient;
             if (zooKeeperClient == null)
             {
                 context.LogDisabled("ServiceBeacon", "disabled ZooKeeperClient");
-                return new DevNullServiceBeacon();
+                return new DevNullServiceBeacon(CreateReplicaInfo(context));
             }
 
-            applicationIdentity = context.ApplicationIdentity;
-
-            var settings = new ServiceBeaconSettings();
-
-            if (registrationDeniedFromNonActiveDatacenters)
-                settings.RegistrationAllowedProvider = LocalDatacenterIsActive(context.Datacenters);
-
-            settingsCustomization.Customize(settings);
-
-            return new ServiceBeacon(
-                zooKeeperClient,
-                s =>
-                {
-                    s.SetProperty(WellKnownApplicationIdentityProperties.Project, context.ApplicationIdentity.Project);
-                    s.SetProperty(WellKnownApplicationIdentityProperties.Subproject, context.ApplicationIdentity.Subproject);
-                    s.SetProperty(WellKnownApplicationIdentityProperties.Environment, context.ApplicationIdentity.Environment);
-                    s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
-                    s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
-
-                    replicaInfoCustomization.Customize(s);
-                },
-                settings,
-                context.Log);
+            return CreateBeacon(zooKeeperClient, context);
         }
 
         public IVostokServiceBeaconBuilder Enable()
@@ -116,6 +98,34 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 return null;
 
             return datacenters.LocalDatacenterIsActive;
+        }
+
+        private IReplicaInfo CreateReplicaInfo(BuildContext context)
+            => CreateBeacon(new DevNullZooKeeperClient(), context).ReplicaInfo;
+
+        private ServiceBeacon CreateBeacon(IZooKeeperClient zooKeeperClient, BuildContext context)
+        {
+            var settings = new ServiceBeaconSettings();
+
+            if (registrationDeniedFromNonActiveDatacenters)
+                settings.RegistrationAllowedProvider = LocalDatacenterIsActive(context.Datacenters);
+
+            settingsCustomization.Customize(settings);
+
+            return new ServiceBeacon(
+                zooKeeperClient,
+                s =>
+                {
+                    s.SetProperty(WellKnownApplicationIdentityProperties.Project, context.ApplicationIdentity.Project);
+                    s.SetProperty(WellKnownApplicationIdentityProperties.Subproject, context.ApplicationIdentity.Subproject);
+                    s.SetProperty(WellKnownApplicationIdentityProperties.Environment, context.ApplicationIdentity.Environment);
+                    s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
+                    s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
+
+                    replicaInfoCustomization.Customize(s);
+                },
+                settings,
+                context.Log);
         }
     }
 }
