@@ -195,11 +195,17 @@ namespace Vostok.Hosting
                     }
                     catch (Exception error)
                     {
+                        if (error is OperationCanceledException)
+                        {
+                            log.Info("Application has successfully stopped.");
+                            return ReturnResult(VostokApplicationState.Stopped);
+                        }
+
                         log.Error(error, "Unhandled exception has occurred while stopping application.");
                         return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
                     }
 
-                    log.Info("Application successfully stopped.");
+                    log.Info("Application has successfully stopped.");
                     return ReturnResult(VostokApplicationState.Stopped);
                 }
 
