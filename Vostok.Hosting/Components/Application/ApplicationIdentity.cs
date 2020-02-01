@@ -30,7 +30,7 @@ namespace Vostok.Hosting.Components.Application
 
             if (missingFields.Any())
                 // ReSharper disable once NotResolvedInText
-                throw new ArgumentNullException(string.Join(", ", missingFields) + " should be specified.");
+                throw new ArgumentException(string.Join(", ", missingFields) + " should be specified.");
 
             Project = project;
             Subproject = subproject;

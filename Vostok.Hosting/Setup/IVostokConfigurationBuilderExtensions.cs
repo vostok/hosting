@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.CommandLine;
 using Vostok.Configuration.Sources.Environment;
 using Vostok.Configuration.Sources.Json;
