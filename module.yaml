@@ -37,6 +37,9 @@ notests *default:
     - vostok.configuration.abstractions
     - vostok.configuration.logging
     - vostok.configuration.sources
+    - vostok.configuration.sources.cc
+    - vostok.configuration.sources.json
+    - vostok.configuration.sources.yaml
     - vostok.context
     - vostok.datacenters
     - vostok.devtools

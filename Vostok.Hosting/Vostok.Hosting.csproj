@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
   <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
@@ -164,6 +163,18 @@
     <Reference Include="Vostok.ClusterClient.Datacenters">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.datacenters\Vostok.ClusterClient.Datacenters\bin\Release\netstandard2.0\Vostok.ClusterClient.Datacenters.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Json">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.json\Vostok.Configuration.Sources.Json\bin\Release\netstandard2.0\Vostok.Configuration.Sources.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.ClusterConfig">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.cc\Vostok.Configuration.Sources.ClusterConfig\bin\Release\netstandard2.0\Vostok.Configuration.Sources.ClusterConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Yaml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.yaml\Vostok.Configuration.Sources.Yaml\bin\Release\netstandard2.0\Vostok.Configuration.Sources.Yaml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
