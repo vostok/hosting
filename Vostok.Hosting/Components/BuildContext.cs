@@ -83,17 +83,17 @@ namespace Vostok.Hosting.Components
                 LogDisposing("ServiceBeacon");
                 (ServiceBeacon as IDisposable)?.Dispose();
 
-                LogDisposing("ServiceLocator");
-                (ServiceLocator as IDisposable)?.Dispose();
-
-                LogDisposing("ZooKeeperClient");
-                (ZooKeeperClient as IDisposable)?.Dispose();
-
                 Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
                 SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
 
                 LogDisposing("HerculesSink");
                 (HerculesSink as IDisposable)?.Dispose();
+
+                LogDisposing("ServiceLocator");
+                (ServiceLocator as IDisposable)?.Dispose();
+
+                LogDisposing("ZooKeeperClient");
+                (ZooKeeperClient as IDisposable)?.Dispose();
 
                 LogDisposing("Datacenters");
                 (Datacenters as IDisposable)?.Dispose();
