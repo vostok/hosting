@@ -6,6 +6,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
+using Vostok.Logging.File.Configuration;
 using Vostok.Logging.Tracing;
 
 // ReSharper disable ParameterHidesMember
@@ -53,12 +54,6 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
-            return this;
-        }
-
-        public IVostokCompositeLogBuilder SetupFileLog()
-        {
-            fileLogBuilder.Enable();
             return this;
         }
 
