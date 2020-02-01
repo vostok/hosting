@@ -34,7 +34,7 @@ namespace Vostok.Hosting.Components.HostExtensions
         {
             this.environment = environment;
 
-            if (context.ZooKeeperClient != null || !(context.ZooKeeperClient is DevNullZooKeeperClient))
+            if (context.ZooKeeperClient != null && !(context.ZooKeeperClient is DevNullZooKeeperClient))
                 HostExtensions.Add(context.ZooKeeperClient);
 
             builderCustomization.Customize(this);
