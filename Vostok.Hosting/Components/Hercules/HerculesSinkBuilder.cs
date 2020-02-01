@@ -44,6 +44,8 @@ namespace Vostok.Hosting.Components.Hercules
             if (!verboseLogging)
                 log = log.WithMinimumLevel(LogLevel.Warn);
 
+            log = log.DropEvents(evt => evt?.MessageTemplate != null && evt.MessageTemplate.Contains("put event to a disposed"));
+
             // Note(kungurtsev): allow null api key provider, streams can be configured later.
             var settings = new HerculesSinkSettings(cluster, apiKeyProvider ?? (() => null))
             {
