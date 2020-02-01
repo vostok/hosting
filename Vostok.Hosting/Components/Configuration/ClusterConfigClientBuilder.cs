@@ -32,6 +32,9 @@ namespace Vostok.Hosting.Components.Configuration
 
             settingsCustomization.Customize(settings);
 
+            if (!settings.EnableLocalSettings && !settings.EnableClusterSettings)
+                context.LogDisabled("ClusterConfigClient", "explicit configuration");
+
             return new ClusterConfigClient(settings);
         }
 
