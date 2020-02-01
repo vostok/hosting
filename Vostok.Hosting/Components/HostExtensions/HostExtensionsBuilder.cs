@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -33,7 +34,7 @@ namespace Vostok.Hosting.Components.HostExtensions
         {
             this.environment = environment;
 
-            if (context.ZooKeeperClient != null)
+            if (context.ZooKeeperClient != null || !(context.ZooKeeperClient is DevNullZooKeeperClient))
                 HostExtensions.Add(context.ZooKeeperClient);
 
             builderCustomization.Customize(this);
