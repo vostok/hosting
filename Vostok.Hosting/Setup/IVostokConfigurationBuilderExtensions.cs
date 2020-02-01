@@ -4,6 +4,7 @@ using Vostok.Configuration.Sources.CommandLine;
 using Vostok.Configuration.Sources.Environment;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Configuration.Sources.Object;
+using Vostok.Configuration.Sources.Xml;
 using Vostok.Configuration.Sources.Yaml;
 using Vostok.Hosting.Components.Configuration;
 
@@ -40,6 +41,12 @@ namespace Vostok.Hosting.Setup
 
         public static IVostokConfigurationBuilder AddSecretYamlFile([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string path)
             => builder.AddSecretSource(new YamlFileSource(path));
+
+        public static IVostokConfigurationBuilder AddXmlFile([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string path)
+            => builder.AddSource(new XmlFileSource(path));
+
+        public static IVostokConfigurationBuilder AddSecretXmlFile([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string path)
+            => builder.AddSecretSource(new XmlFileSource(path));
 
         public static IVostokConfigurationBuilder AddClusterConfig([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string prefix)
             => builder.AddSource(ccClient => new ClusterConfigSourceWithParsers(ccClient, prefix));
