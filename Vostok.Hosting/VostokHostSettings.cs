@@ -45,6 +45,11 @@ namespace Vostok.Hosting
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <summary>
+        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>.
+        /// </summary>
+        public bool LogApplicationConfiguration { get; set; } = true;
+
+        /// <summary>
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();

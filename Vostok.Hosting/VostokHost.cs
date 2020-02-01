@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Extensions;
+using Vostok.Configuration.Primitives;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
@@ -93,8 +97,14 @@ namespace Vostok.Hosting
                 log = environment.Log.ForContext<VostokHost>();
 
                 LogApplicationIdentity(environment.ApplicationIdentity);
+                LogApplicationLimits(environment.ApplicationLimits);
+                LogApplicationReplication(environment.ApplicationReplicationInfo);
+                LogApplicationConfiguration(environment.ConfigurationSource);
+                LogHostExtensions(environment.HostExtensions);
 
                 ConfigureHostBeforeRun();
+
+                LogThreadPoolSettings();
 
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
@@ -262,6 +272,36 @@ namespace Vostok.Hosting
                 : new object[] {applicationIdentity.Project, applicationIdentity.Subproject, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance};
 
             log.Info(messageTemplate, messageParameters);
+        }
+
+        private void LogApplicationLimits(IVostokApplicationLimits limits)
+            => log.Info("Application limits: {CpuLimit} CPU, {MemoryLimit} memory.", 
+                limits.CpuUnits?.ToString("F2") ?? "unlimited",
+                limits.MemoryBytes.HasValue ? new DataSize(limits.MemoryBytes.Value).ToString() : "unlimited");
+
+        private void LogApplicationReplication(IVostokApplicationReplicationInfo info)
+            => log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
+
+        private void LogApplicationConfiguration(IConfigurationSource source)
+        {
+            try
+            {
+                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", source.Get());
+            }
+            catch
+            {
+                log.Warn("Application configuration is unknown.");
+            }
+        }
+
+        private void LogHostExtensions(IVostokHostExtensions extensions)
+            => log.Info("Registered host extensions: {HostExtensions}.", extensions.GetAll().Select(pair => pair.Item1.Name).ToArray());
+
+        private void LogThreadPoolSettings()
+        {
+            var state = ThreadPoolUtility.GetPoolState();
+
+            log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
         }
 
         #endregion
