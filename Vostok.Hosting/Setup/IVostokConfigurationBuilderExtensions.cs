@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
-using Vostok.Configuration.Sources.ClusterConfig;
 using Vostok.Configuration.Sources.CommandLine;
 using Vostok.Configuration.Sources.Environment;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Configuration.Sources.Object;
-using Vostok.Configuration.Sources.Xml;
 using Vostok.Configuration.Sources.Yaml;
 using Vostok.Hosting.Components.Configuration;
 

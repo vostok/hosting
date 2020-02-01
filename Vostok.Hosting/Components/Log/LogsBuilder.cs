@@ -6,7 +6,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Context;
-using Vostok.Logging.File.Configuration;
 using Vostok.Logging.Tracing;
 
 // ReSharper disable ParameterHidesMember
