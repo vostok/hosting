@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Topology.CC;
 using Vostok.Clusterclient.Topology.SD;
+using Vostok.Hosting.Components.ServiceDiscovery;
 
 namespace Vostok.Hosting.Components.ClusterProvider
 {
@@ -26,7 +27,7 @@ namespace Vostok.Hosting.Components.ClusterProvider
         public static ClusterProviderBuilder FromServiceDiscovery(string environment, string application) =>
             new ClusterProviderBuilder(
                 context =>
-                    context.ServiceLocator == null
+                    context.ServiceLocator == null || context.ServiceLocator is DevNullServiceLocator
                         ? null
                         : new ServiceDiscoveryClusterProvider(context.ServiceLocator, environment, application, context.Log));
 
