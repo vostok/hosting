@@ -1,5 +1,6 @@
 ﻿using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 
@@ -15,7 +16,7 @@ namespace Vostok.Hosting.Components.Environment
             IConfigurationProvider secretConfigurationProvider,
             IClusterConfigClient clusterConfigClient)
         {
-            Log = log;
+            Log = log.ForContext<VostokHostingEnvironment>();
             ConfigurationSource = configurationSource;
             ConfigurationProvider = configurationProvider;
             SecretConfigurationSource = secretConfigurationSource;
