@@ -9,6 +9,8 @@ namespace Vostok.Hosting.Setup
     {
         IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
 
+        IVostokCompositeLogBuilder AddLog([NotNull] string name, [NotNull] ILog log);
+
         IVostokCompositeLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokCompositeLogBuilder SetupFileLog([NotNull] Action<IVostokFileLogBuilder> fileLogSetup);

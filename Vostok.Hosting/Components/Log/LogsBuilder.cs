@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Helpers;
@@ -14,15 +15,16 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LogsBuilder : IVostokCompositeLogBuilder, IBuilder<Logs>
     {
-        private readonly List<ILog> userLogs;
+        private readonly List<(string, ILog)> userLogs;
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
         private readonly Customization<ILog> logCustomization;
+        private int unnamedLogsCounter;
 
         public LogsBuilder()
         {
-            userLogs = new List<ILog>();
+            userLogs = new List<(string, ILog)>();
             herculesLogBuilder = new HerculesLogBuilder();
             fileLogBuilder = new FileLogBuilder();
             consoleLogBuilder = new ConsoleLogBuilder();
@@ -45,8 +47,11 @@ namespace Vostok.Hosting.Components.Log
         }
 
         public IVostokCompositeLogBuilder AddLog(ILog log)
+            => AddLog($"{log.GetType()}-{Interlocked.Increment(ref unnamedLogsCounter)}", log);
+
+        public IVostokCompositeLogBuilder AddLog(string name, ILog log)
         {
-            userLogs.Add(log ?? throw new ArgumentNullException(nameof(log)));
+            userLogs.Add((name ?? throw new ArgumentNullException(nameof(name)), log ?? throw new ArgumentNullException(nameof(log))));
             return this;
         }
 
