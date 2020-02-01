@@ -176,6 +176,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.sources.yaml\Vostok.Configuration.Sources.Yaml\bin\Release\netstandard2.0\Vostok.Configuration.Sources.Yaml.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Configuration.Sources.Xml">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration.sources.xml\Vostok.Configuration.Sources.Xml\bin\Release\netstandard2.0\Vostok.Configuration.Sources.Xml.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

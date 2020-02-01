@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Helpers;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
@@ -21,6 +22,7 @@ namespace Vostok.Hosting.Components.Configuration
     {
         private readonly List<IConfigurationSource> sources;
         private readonly List<IConfigurationSource> secretSources;
+        private readonly List<Func<IClusterConfigClient, IConfigurationSource>> clusterConfigSources;
 
         private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
         private readonly Customization<SettingsMergeOptions> mergeSecretSettingsCustomization;
@@ -33,6 +35,7 @@ namespace Vostok.Hosting.Components.Configuration
         {
             sources = new List<IConfigurationSource>();
             secretSources = new List<IConfigurationSource>();
+            clusterConfigSources = new List<Func<IClusterConfigClient, IConfigurationSource>>();
             mergeSettingsCustomization = new Customization<SettingsMergeOptions>();
             mergeSecretSettingsCustomization = new Customization<SettingsMergeOptions>();
             providerCustomization = new Customization<ConfigurationProviderSettings>();
@@ -44,6 +47,12 @@ namespace Vostok.Hosting.Components.Configuration
         public IVostokConfigurationBuilder AddSource(IConfigurationSource source)
         {
             sources.Add(source ?? throw new ArgumentNullException(nameof(source)));
+            return this;
+        }
+
+        public IVostokConfigurationBuilder AddSource(Func<IClusterConfigClient, IConfigurationSource> sourceProvider)
+        {
+            clusterConfigSources.Add(sourceProvider ?? throw new ArgumentNullException(nameof(sourceProvider)));
             return this;
         }
 
@@ -94,6 +103,8 @@ namespace Vostok.Hosting.Components.Configuration
             IConfigurationProvider provider,
             IConfigurationProvider secretProvider) Build(BuildContext context)
         {
+            sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
+
             var source = PrepareCombinedSource(mergeSettingsCustomization, sources);
             var secretSource = PrepareCombinedSource(mergeSecretSettingsCustomization, secretSources);
 

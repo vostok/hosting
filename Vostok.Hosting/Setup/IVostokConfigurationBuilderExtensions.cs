@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
+using Vostok.Configuration.Sources.ClusterConfig;
 using Vostok.Configuration.Sources.CommandLine;
 using Vostok.Configuration.Sources.Environment;
 using Vostok.Configuration.Sources.Json;
 using Vostok.Configuration.Sources.Object;
+using Vostok.Configuration.Sources.Xml;
 using Vostok.Configuration.Sources.Yaml;
 
 namespace Vostok.Hosting.Setup
@@ -39,5 +42,16 @@ namespace Vostok.Hosting.Setup
 
         public static IVostokConfigurationBuilder AddSecretYamlFile([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string path)
             => builder.AddSecretSource(new YamlFileSource(path));
+
+        public static IVostokConfigurationBuilder AddClusterConfig([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string prefix)
+            => builder.AddSource(ccClient => new ClusterConfigSource(new ClusterConfigSourceSettings(ccClient, prefix)
+            {
+                ConditionalValuesParsers = new List<(ValueNodeParser, ValueNodeCondition)>
+                {
+                    (XmlConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".xml")),
+                    (JsonConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".json")),
+                    (YamlConfigurationParser.Parse, node => node.Name != null && (node.Name.EndsWith(".yaml") || node.Name.EndsWith("yml")))
+                }
+            }));
     }
 }

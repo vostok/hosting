@@ -39,6 +39,7 @@ notests *default:
     - vostok.configuration.sources
     - vostok.configuration.sources.cc
     - vostok.configuration.sources.json
+    - vostok.configuration.sources.xml
     - vostok.configuration.sources.yaml
     - vostok.context
     - vostok.datacenters
