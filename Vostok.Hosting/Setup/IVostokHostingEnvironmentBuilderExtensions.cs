@@ -7,16 +7,46 @@ namespace Vostok.Hosting.Setup
     public static class IVostokHostingEnvironmentBuilderExtensions
     {
         /// <summary>
-        /// Enables service beacon.
+        /// Disables ClusterConfig client altogether.
         /// </summary>
-        public static IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
-            builder.SetupServiceBeacon(_ => {});
+        public static IVostokHostingEnvironmentBuilder DisableClusterConfig([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder
+                .DisableClusterConfigLocalSettings()
+                .DisableClusterConfigRemoteSettings();
+
+        /// <summary>
+        /// Disables local settings for ClusterConfig client.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder DisableClusterConfigLocalSettings([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupClusterConfigClient(
+                clusterConfigBuilder => clusterConfigBuilder.CustomizeSettings(
+                    settings => { settings.EnableLocalSettings = false; }));
+
+        /// <summary>
+        /// Disables remote (cluster) settings for ClusterConfig client.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder DisableClusterConfigRemoteSettings([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupClusterConfigClient(
+                clusterConfigBuilder => clusterConfigBuilder.CustomizeSettings(
+                    settings => { settings.EnableClusterSettings = false; }));
+
+        /// <summary>
+        /// Disables Hercules telemetry altogether.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder DisableHercules([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupHerculesSink(sink => sink.Disable());
+
+        /// <summary>
+        /// Disables service beacon.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder DisableServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.Disable());
 
         /// <summary>
         /// Enables service beacon.
         /// </summary>
-        public static IVostokHostingEnvironmentBuilder DisableServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
-            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.Disable());
+        public static IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupServiceBeacon(_ => {});
 
         /// <summary>
         /// Applies given <paramref name="port"/> to <see cref="IServiceBeacon"/> configuration.
