@@ -8,6 +8,7 @@ using Vostok.Configuration.Sources.Json;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Configuration.Sources.Xml;
 using Vostok.Configuration.Sources.Yaml;
+using Vostok.Hosting.Components.Configuration;
 
 namespace Vostok.Hosting.Setup
 {
@@ -44,14 +45,6 @@ namespace Vostok.Hosting.Setup
             => builder.AddSecretSource(new YamlFileSource(path));
 
         public static IVostokConfigurationBuilder AddClusterConfig([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string prefix)
-            => builder.AddSource(ccClient => new ClusterConfigSource(new ClusterConfigSourceSettings(ccClient, prefix)
-            {
-                ConditionalValuesParsers = new List<(ValueNodeParser, ValueNodeCondition)>
-                {
-                    (XmlConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".xml")),
-                    (JsonConfigurationParser.Parse, node => node.Name != null && node.Name.EndsWith(".json")),
-                    (YamlConfigurationParser.Parse, node => node.Name != null && (node.Name.EndsWith(".yaml") || node.Name.EndsWith("yml")))
-                }
-            }));
+            => builder.AddSource(ccClient => new ClusterConfigSourceWithParsers(ccClient, prefix));
     }
 }
