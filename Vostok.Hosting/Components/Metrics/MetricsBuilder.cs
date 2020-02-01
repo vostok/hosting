@@ -18,6 +18,7 @@ namespace Vostok.Hosting.Components.Metrics
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
         private readonly Customization<MetricContextConfig> settingsCustomization;
+        private volatile bool addLoggingSender;
 
         public MetricsBuilder()
         {
@@ -36,6 +37,12 @@ namespace Vostok.Hosting.Components.Metrics
         {
             herculesMetricEventSenderBuilder.Enable();
             herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder ?? throw new ArgumentNullException(nameof(herculesMetricEventSenderSetup)));
+            return this;
+        }
+
+        public IVostokMetricsBuilder SetupLoggingMetricEventSender()
+        {
+            addLoggingSender = true;
             return this;
         }
 
@@ -76,16 +83,19 @@ namespace Vostok.Hosting.Components.Metrics
             var metricEventSenders = metricEventSenderBuilders
                 .Select(b => b.Build(context))
                 .Where(s => s != null)
-                .ToArray();
+                .ToList();
 
-            switch (metricEventSenders.Length)
+            if (addLoggingSender)
+                metricEventSenders.Add(new LoggingMetricEventSender(context.Log));
+
+            switch (metricEventSenders.Count)
             {
                 case 0:
                     return null;
                 case 1:
                     return metricEventSenders.Single();
                 default:
-                    return new CompositeMetricEventSender(metricEventSenders);
+                    return new CompositeMetricEventSender(metricEventSenders.ToArray());
             }
         }
     }
