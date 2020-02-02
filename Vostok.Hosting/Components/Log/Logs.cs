@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
 
 namespace Vostok.Hosting.Components.Log
@@ -25,44 +26,48 @@ namespace Vostok.Hosting.Components.Log
         }
 
         public int Count(bool withoutHercules = false)
-            => ToArray(withoutHercules).Length;
+            => SelectLogs(withoutHercules).Count();
 
         public ILog BuildCompositeLog(bool withoutHercules = false)
-            => customization(BuildCompositeLogInner(withoutHercules));
+        {
+            var builder = new ConfigurableLogBuilder();
+
+            foreach (var (name, log) in SelectLogs(withoutHercules))
+                builder.AddLog(name, log);
+
+            var configurableLog = builder.Build();
+
+            LogConfiguredLoggers(configurableLog);
+
+            return customization(configurableLog);
+        }
 
         public void Dispose()
         {
+            userLogs.ForEach(pair => (pair.log as IDisposable)?.Dispose());
+
             (fileLog as IDisposable)?.Dispose();
+            
             ConsoleLog.Flush();
         }
 
-        private ILog BuildCompositeLogInner(bool withoutHercules)
+        private IEnumerable<(string name, ILog log)> SelectLogs(bool withoutHercules)
         {
-            var logs = ToArray(withoutHercules);
+            foreach (var pair in userLogs)
+                if (pair.log != null)
+                    yield return pair;
 
-            switch (logs.Length)
-            {
-                case 0:
-                    return new SilentLog();
-                case 1:
-                    return logs.Single();
-                default:
-                    return new CompositeLog(logs.ToArray());
-            }
+            if (fileLog != null)
+                yield return ("File", fileLog);
+
+            if (consoleLog != null)
+                yield return ("Console", consoleLog);
+
+            if (herculesLog != null && !withoutHercules)
+                yield return ("Hercules", herculesLog);
         }
 
-        private ILog[] ToArray(bool withoutHercules)
-        {
-            var logs = new List<ILog>();
-            
-            logs.AddRange(userLogs.Select(tuple => tuple.log));
-            logs.Add(fileLog);
-            logs.Add(consoleLog);
-            
-            if (!withoutHercules)
-                logs.Add(herculesLog);
-
-            return logs.Where(l => l != null).ToArray();
-        }
+        private void LogConfiguredLoggers(ConfigurableLog log)
+            => log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", log.BaseLogs.Keys.ToArray());
     }
 }

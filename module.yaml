@@ -48,6 +48,7 @@ notests *default:
     - vostok.hercules.client.abstractions
     - vostok.hosting.abstractions
     - vostok.logging.abstractions
+    - vostok.logging.configuration
     - vostok.logging.console
     - vostok.logging.context
     - vostok.logging.file

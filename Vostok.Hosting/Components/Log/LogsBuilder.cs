@@ -15,7 +15,7 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LogsBuilder : IVostokCompositeLogBuilder, IBuilder<Logs>
     {
-        private readonly List<(string, ILog)> userLogs;
+        private readonly List<(string name, ILog log)> userLogs;
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
@@ -24,7 +24,7 @@ namespace Vostok.Hosting.Components.Log
 
         public LogsBuilder()
         {
-            userLogs = new List<(string, ILog)>();
+            userLogs = new List<(string name, ILog log)>();
             herculesLogBuilder = new HerculesLogBuilder();
             fileLogBuilder = new FileLogBuilder();
             consoleLogBuilder = new ConsoleLogBuilder();
@@ -47,7 +47,7 @@ namespace Vostok.Hosting.Components.Log
         }
 
         public IVostokCompositeLogBuilder AddLog(ILog log)
-            => AddLog($"{log.GetType()}-{Interlocked.Increment(ref unnamedLogsCounter)}", log);
+            => AddLog($"{log.GetType().Name}-{Interlocked.Increment(ref unnamedLogsCounter)}", log);
 
         public IVostokCompositeLogBuilder AddLog(string name, ILog log)
         {
