@@ -21,6 +21,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;

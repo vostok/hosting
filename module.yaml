@@ -12,6 +12,7 @@ notests *default:
     - module vostok.configuration.sources
     - module vostok.hercules.client
     - module vostok.hosting.abstractions
+    - module vostok.logging.configuration
     - module vostok.logging.console
     - module vostok.logging.file
     - module vostok.logging.hercules

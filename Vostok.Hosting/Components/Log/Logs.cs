@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
@@ -11,17 +12,25 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly List<(string name, ILog log)> userLogs;
         private readonly Func<ILog, ILog> customization;
+        private readonly IObservable<LogConfigurationRule[]> rules;
 
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
         private readonly ILog herculesLog;
 
-        public Logs(List<(string name, ILog log)> userLogs, ILog fileLog, ILog consoleLog, ILog herculesLog, Func<ILog, ILog> customization)
+        public Logs(
+            List<(string name, ILog log)> userLogs, 
+            ILog fileLog, 
+            ILog consoleLog, 
+            ILog herculesLog,
+            IObservable<LogConfigurationRule[]> rules,
+            Func<ILog, ILog> customization)
         {
             this.userLogs = userLogs;
             this.fileLog = fileLog;
             this.consoleLog = consoleLog;
             this.herculesLog = herculesLog;
+            this.rules = rules;
             this.customization = customization;
         }
 
@@ -35,7 +44,11 @@ namespace Vostok.Hosting.Components.Log
             foreach (var (name, log) in SelectLogs(withoutHercules))
                 builder.AddLog(name, log);
 
+            builder.SetRules(rules);
+
             var configurableLog = builder.Build();
+
+            configurableLog.WaitForRulesInitialization(1.Seconds());
 
             LogConfiguredLoggers(configurableLog);
 

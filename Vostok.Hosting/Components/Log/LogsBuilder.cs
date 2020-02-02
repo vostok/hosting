@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Commons.Helpers;
+using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Context;
 using Vostok.Logging.Tracing;
 
@@ -19,6 +21,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
+        private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<ILog> logCustomization;
         private int unnamedLogsCounter;
 
@@ -28,6 +31,7 @@ namespace Vostok.Hosting.Components.Log
             herculesLogBuilder = new HerculesLogBuilder();
             fileLogBuilder = new FileLogBuilder();
             consoleLogBuilder = new ConsoleLogBuilder();
+            rulesBuilder = new LogRulesBuilder();
             logCustomization = new Customization<ILog>();
         }
 
@@ -39,6 +43,7 @@ namespace Vostok.Hosting.Components.Log
                 fileLogBuilder.Build(context),
                 consoleLogBuilder.Build(context),
                 herculesLogBuilder.Build(context),
+                rulesBuilder.Build(context),
                 finalLog => logCustomization.Customize(
                     finalLog
                         .WithApplicationIdentityProperties(context.ApplicationIdentity)
@@ -52,6 +57,24 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder AddLog(string name, ILog log)
         {
             userLogs.Add((name ?? throw new ArgumentNullException(nameof(name)), log ?? throw new ArgumentNullException(nameof(log))));
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder AddRule(LogConfigurationRule rule)
+        {
+            rulesBuilder.Add(rule);
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder AddRules(IConfigurationSource source)
+        {
+            rulesBuilder.Add(source);
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder ClearRules()
+        {
+            rulesBuilder.Clear();
             return this;
         }
 

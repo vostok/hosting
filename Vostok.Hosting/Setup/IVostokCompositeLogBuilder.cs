@@ -1,6 +1,8 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Configuration.Abstractions;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 
 namespace Vostok.Hosting.Setup
 {
@@ -10,6 +12,12 @@ namespace Vostok.Hosting.Setup
         IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
 
         IVostokCompositeLogBuilder AddLog([NotNull] string name, [NotNull] ILog log);
+
+        IVostokCompositeLogBuilder AddRule([NotNull] LogConfigurationRule rule);
+
+        IVostokCompositeLogBuilder AddRules([NotNull] IConfigurationSource source);
+
+        IVostokCompositeLogBuilder ClearRules();
 
         IVostokCompositeLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
