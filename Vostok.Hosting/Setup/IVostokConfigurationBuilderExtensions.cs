@@ -1,11 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Vostok.ClusterConfig.Client.Abstractions;
-using Vostok.Configuration;
-using Vostok.Configuration.Abstractions;
-using Vostok.Configuration.Abstractions.Merging;
-using Vostok.Configuration.Printing;
-using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.CommandLine;
 using Vostok.Configuration.Sources.Environment;
 using Vostok.Configuration.Sources.Json;
@@ -56,74 +50,5 @@ namespace Vostok.Hosting.Setup
 
         public static IVostokConfigurationBuilder AddClusterConfig([NotNull] this IVostokConfigurationBuilder builder, [NotNull] string prefix)
             => builder.AddSource(ccClient => new ClusterConfigSourceWithParsers(ccClient, prefix));
-
-        public static IVostokConfigurationBuilder NestSources([NotNull] this IVostokConfigurationBuilder builder, [NotNull] params string[] scopes)
-            => new NestedSourcesBuilder(builder, scopes);
-
-        private class NestedSourcesBuilder : IVostokConfigurationBuilder
-        {
-            private readonly IVostokConfigurationBuilder builder;
-            private readonly string[] scopes;
-
-            public NestedSourcesBuilder(IVostokConfigurationBuilder builder, string[] scopes)
-            {
-                this.builder = builder;
-                this.scopes = scopes;
-            }
-
-            public IVostokConfigurationBuilder AddSource(IConfigurationSource source)
-            {
-                builder.AddSource(source.Nest(scopes));
-                return this;
-            }
-
-            public IVostokConfigurationBuilder AddSource(Func<IClusterConfigClient, IConfigurationSource> sourceProvider)
-            {
-                builder.AddSource(ccClient => sourceProvider(ccClient).Nest(scopes));
-                return this;
-            }
-
-            public IVostokConfigurationBuilder AddSecretSource(IConfigurationSource source)
-            {
-                builder.AddSecretSource(source.Nest(scopes));
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizeConfigurationContext(Action<IVostokConfigurationContext> configurationContextCustomization)
-            {
-                builder.CustomizeConfigurationContext(configurationContextCustomization);
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizeSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
-            {
-                builder.CustomizeSettingsMerging(settingsCustomization);
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizeSecretSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
-            {
-                builder.CustomizeSecretSettingsMerging(settingsCustomization);
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizeConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
-            {
-                builder.CustomizeConfigurationProvider(settingsCustomization);
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizeSecretConfigurationProvider(Action<ConfigurationProviderSettings> settingsCustomization)
-            {
-                builder.CustomizeSecretConfigurationProvider(settingsCustomization);
-                return this;
-            }
-
-            public IVostokConfigurationBuilder CustomizePrintSettings(Action<PrintSettings> settingsCustomization)
-            {
-                builder.CustomizePrintSettings(settingsCustomization);
-                return this;
-            }
-        }
     }
 }

@@ -62,6 +62,15 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
+        public IVostokConfigurationBuilder SetupNestedSources(string[] scopes, Action<IVostokConfigurationSourcesBuilder> setup)
+        {
+            if (setup == null)
+                throw new ArgumentNullException(nameof(setup));
+
+            setup(new NestedSourcesBuilder(this, scopes ?? throw new ArgumentNullException(nameof(scopes))));
+            return this;
+        }
+
         public IVostokConfigurationBuilder CustomizeSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
         {
             mergeSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));

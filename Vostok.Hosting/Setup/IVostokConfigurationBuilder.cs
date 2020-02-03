@@ -14,6 +14,7 @@ namespace Vostok.Hosting.Setup
         IVostokConfigurationBuilder AddSource([NotNull] IConfigurationSource source);
         IVostokConfigurationBuilder AddSource([NotNull] Func<IClusterConfigClient, IConfigurationSource> sourceProvider);
         IVostokConfigurationBuilder AddSecretSource([NotNull] IConfigurationSource source);
+        IVostokConfigurationBuilder SetupNestedSources([NotNull] string[] scopes, Action<IVostokConfigurationSourcesBuilder> setup);
 
         IVostokConfigurationBuilder CustomizeConfigurationContext([NotNull] Action<IVostokConfigurationContext> configurationContextCustomization);
 
