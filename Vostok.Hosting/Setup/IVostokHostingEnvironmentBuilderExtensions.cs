@@ -1,4 +1,7 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Sources;
+using Vostok.Logging.Configuration;
 using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting.Setup
@@ -59,5 +62,11 @@ namespace Vostok.Hosting.Setup
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetBaseUrlPath([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string path) =>
             builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetUrlPath(path)));
+
+        /// <summary>
+        /// Adds <see cref="LogConfigurationRule"/>s from built-in <see cref="IConfigurationSource"/> in given <paramref name="scope"/>.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder AddLoggingRulesFromSettings([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] params string[] scope) =>
+            builder.SetupLog((log, context) => log.AddRules(context.ConfigurationSource.ScopeTo(scope)));
     }
 }
