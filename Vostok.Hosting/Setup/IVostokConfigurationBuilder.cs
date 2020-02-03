@@ -1,14 +1,20 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration;
+using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Printing;
 
 namespace Vostok.Hosting.Setup
 {
     [PublicAPI]
-    public interface IVostokConfigurationBuilder : IVostokConfigurationSourcesBuilder
+    public interface IVostokConfigurationBuilder
     {
+        IVostokConfigurationBuilder AddSource([NotNull] IConfigurationSource source);
+        IVostokConfigurationBuilder AddSource([NotNull] Func<IClusterConfigClient, IConfigurationSource> sourceProvider);
+        IVostokConfigurationBuilder AddSecretSource([NotNull] IConfigurationSource source);
+
         IVostokConfigurationBuilder CustomizeConfigurationContext([NotNull] Action<IVostokConfigurationContext> configurationContextCustomization);
 
         IVostokConfigurationBuilder CustomizeSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);

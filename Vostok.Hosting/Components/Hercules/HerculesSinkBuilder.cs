@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
+using Vostok.ClusterConfig.Client.Helpers;
 using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client;
 using Vostok.Hosting.Components.ClusterProvider;
@@ -90,6 +91,12 @@ namespace Vostok.Hosting.Components.Hercules
             clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(
                 environment ?? throw new ArgumentNullException(nameof(environment)),
                 application ?? throw new ArgumentNullException(nameof(application)));
+            return this;
+        }
+
+        public IVostokHerculesSinkBuilder SetExternalUrlTopology(string url)
+        {
+            clusterProviderBuilder = ClusterProviderBuilder.FromValue(new FixedClusterProvider(url ?? throw new ArgumentNullException(nameof(url))));
             return this;
         }
 

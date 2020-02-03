@@ -1,3 +1,8 @@
+## 0.1.4 (03-02-2020):
+
+- Added an option to configure HerculesSink topology from an external URL.
+- Fixed backward compatibility for chained calls in IVostokConfigurationBuilder.
+
 ## 0.1.3 (03-02-2020):
 
 - Added configuration extensions to use settings from common sources.

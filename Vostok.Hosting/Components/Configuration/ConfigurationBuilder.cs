@@ -44,19 +44,19 @@ namespace Vostok.Hosting.Components.Configuration
             configurationContextCustomization = new Customization<IVostokConfigurationContext>();
         }
 
-        public IVostokConfigurationSourcesBuilder AddSource(IConfigurationSource source)
+        public IVostokConfigurationBuilder AddSource(IConfigurationSource source)
         {
             sources.Add(source ?? throw new ArgumentNullException(nameof(source)));
             return this;
         }
 
-        public IVostokConfigurationSourcesBuilder AddSource(Func<IClusterConfigClient, IConfigurationSource> sourceProvider)
+        public IVostokConfigurationBuilder AddSource(Func<IClusterConfigClient, IConfigurationSource> sourceProvider)
         {
             clusterConfigSources.Add(sourceProvider ?? throw new ArgumentNullException(nameof(sourceProvider)));
             return this;
         }
 
-        public IVostokConfigurationSourcesBuilder AddSecretSource(IConfigurationSource source)
+        public IVostokConfigurationBuilder AddSecretSource(IConfigurationSource source)
         {
             secretSources.Add(source ?? throw new ArgumentNullException(nameof(source)));
             return this;
