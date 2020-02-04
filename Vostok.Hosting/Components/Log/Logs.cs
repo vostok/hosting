@@ -57,8 +57,6 @@ namespace Vostok.Hosting.Components.Log
 
         public void Dispose()
         {
-            userLogs.ForEach(pair => (pair.log as IDisposable)?.Dispose());
-
             (fileLog as IDisposable)?.Dispose();
             
             ConsoleLog.Flush();
