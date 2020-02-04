@@ -69,8 +69,6 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 return null;
             }
 
-            settings.LoggingLevel = LogLevel.Warn;
-
             settingsCustomization.Customize(settings);
 
             return new ZooKeeperClient(
