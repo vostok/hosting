@@ -1,3 +1,7 @@
+## 0.1.5 (04-02-2020):
+
+Minor fixes.
+
 ## 0.1.4 (03-02-2020):
 
 - Added an option to configure HerculesSink topology from an external URL.
