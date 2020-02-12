@@ -45,11 +45,11 @@ namespace Vostok.Hosting.Helpers
 
             if (environment.ClusterConfigClient is ClusterConfigClient clusterConfigClient)
             {
-                if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient))
+                if (!ClusterConfigClient.TrySetDefaultClient(clusterConfigClient) && !ReferenceEquals(ClusterConfigClient.Default, environment.ClusterConfigClient))
                     log.Warn("ClusterConfigClient.Default has already been configured.");
             }
 
-            if (environment.ConfigurationProvider is ConfigurationProvider configurationProvider)
+            if (environment.ConfigurationProvider is ConfigurationProvider configurationProvider && !ReferenceEquals(ConfigurationProvider.Default, environment.ConfigurationProvider))
             {
                 if (!ConfigurationProvider.TrySetDefault(configurationProvider))
                     log.Warn("ConfigurationProvider.Default has already been configured.");

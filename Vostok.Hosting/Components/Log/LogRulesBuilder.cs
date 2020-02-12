@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Sources.Combined;
-using Vostok.Configuration.Sources.Constant;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Logging.Configuration;
 

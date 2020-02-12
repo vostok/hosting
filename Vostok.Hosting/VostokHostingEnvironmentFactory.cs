@@ -14,6 +14,13 @@ namespace Vostok.Hosting
         /// </summary>
         [NotNull]
         public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup)
-            => EnvironmentBuilder.Build(setup ?? throw new ArgumentNullException(nameof(setup)));
+            => Create(setup, new VostokHostingEnvironmentFactorySettings());
+
+        /// <summary>
+        /// Creates an instance of <see cref="IVostokHostingEnvironment"/>, using given <paramref name="setup"/>.
+        /// </summary>
+        [NotNull]
+        public static IVostokHostingEnvironment Create([NotNull] VostokHostingEnvironmentSetup setup, [NotNull] VostokHostingEnvironmentFactorySettings settings)
+            => EnvironmentBuilder.Build(setup ?? throw new ArgumentNullException(nameof(setup)), settings);
     }
 }

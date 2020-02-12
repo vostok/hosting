@@ -90,8 +90,13 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup();
 
+            var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
+            {
+                ConfigureStaticProviders = settings.ConfigureStaticProviders
+            };
+
             // ReSharper disable once SuspiciousTypeConversion.Global
-            using (environment = EnvironmentBuilder.Build(SetupEnvironment))
+            using (environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings))
             using (settings.Application as IDisposable)
             {
                 log = environment.Log.ForContext<VostokHost>();
