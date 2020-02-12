@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
-using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
 using Vostok.Hosting.Abstractions;
@@ -17,6 +17,7 @@ using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -104,12 +105,13 @@ namespace Vostok.Hosting
                 LogApplicationIdentity(environment.ApplicationIdentity);
                 LogApplicationLimits(environment.ApplicationLimits);
                 LogApplicationReplication(environment.ApplicationReplicationInfo);
-                LogApplicationConfiguration(environment.ConfigurationSource);
                 LogHostExtensions(environment.HostExtensions);
 
                 ConfigureHostBeforeRun();
-
                 LogThreadPoolSettings();
+
+                WarmupConfiguration();
+                WarmupZooKeeper();
 
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
@@ -264,6 +266,33 @@ namespace Vostok.Hosting
                 StaticProvidersHelper.Configure(environment);
         }
 
+        private void WarmupConfiguration()
+        {
+            if (!settings.WarmupConfiguration)
+                return;
+
+            log.Info("Warming up application configuration..");
+
+            environment.ClusterConfigClient.Get(Guid.NewGuid().ToString());
+
+            var ordinarySettings = environment.ConfigurationSource.Get();
+            
+            environment.SecretConfigurationSource.Get();
+
+            if (settings.LogApplicationConfiguration)
+                LogApplicationConfiguration(ordinarySettings);
+        }
+
+        private void WarmupZooKeeper()
+        {
+            if (settings.WarmupZooKeeper && environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
+            {
+                log.Info("Warming up ZooKeeper connection..");
+
+                zooKeeperClient.Exists("/");
+            }
+        }
+
         #region Logging
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
@@ -287,11 +316,11 @@ namespace Vostok.Hosting
         private void LogApplicationReplication(IVostokApplicationReplicationInfo info)
             => log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
 
-        private void LogApplicationConfiguration(IConfigurationSource source)
+        private void LogApplicationConfiguration(ISettingsNode configuration)
         {
             try
             {
-                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", source.Get());
+                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", configuration);
             }
             catch
             {

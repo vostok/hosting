@@ -45,9 +45,19 @@ namespace Vostok.Hosting
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <summary>
-        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>.
+        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>. Requires <see cref="WarmupConfiguration"/>.
         /// </summary>
         public bool LogApplicationConfiguration { get; set; } = true;
+
+        /// <summary>
+        /// If set to <c>true</c>, warms up configuration sources before initializing the application. Required by <see cref="LogApplicationConfiguration"/>.
+        /// </summary>
+        public bool WarmupConfiguration { get; set; } = true;
+
+        /// <summary>
+        /// If set to <c>true</c>, warms up ZooKeeper client before initializing the application.
+        /// </summary>
+        public bool WarmupZooKeeper { get; set; } = true;
 
         /// <summary>
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
