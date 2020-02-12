@@ -21,7 +21,7 @@ namespace Vostok.Hosting.Components.ClusterProvider
         public static ClusterProviderBuilder FromClusterConfig(string path) =>
             new ClusterProviderBuilder(
                 context =>
-                    context.ClusterConfigClient == null || context.ClusterConfigClient is DevNullClusterConfigClient
+                    context.ClusterConfigClient == null || context.ClusterConfigClient is DisabledClusterConfigClient
                         ? null
                         : new ClusterConfigClusterProvider(context.ClusterConfigClient, path, context.Log));
 
