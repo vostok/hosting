@@ -88,7 +88,7 @@ namespace Vostok.Hosting
                 throw new InvalidOperationException("Application can't be launched multiple times.");
 
             if (settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup();
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
             var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
             {
@@ -258,7 +258,7 @@ namespace Vostok.Hosting
         {
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
-                ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
 
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(environment);
