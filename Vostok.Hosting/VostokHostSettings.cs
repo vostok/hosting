@@ -33,7 +33,7 @@ namespace Vostok.Hosting
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; set; }
 
         /// <summary>
-        /// <para>Determines whether to configure following static providers before running the application.</para>
+        /// <para>Determines whether to configure static providers before running the application.</para>
         /// <para>See <see cref="StaticProvidersHelper.Configure"/> for more details.</para>
         /// </summary>
         public bool ConfigureStaticProviders { get; set; } = true;
@@ -45,14 +45,29 @@ namespace Vostok.Hosting
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <summary>
-        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>.
+        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>. Requires <see cref="WarmupConfiguration"/>.
         /// </summary>
         public bool LogApplicationConfiguration { get; set; } = true;
+
+        /// <summary>
+        /// If set to <c>true</c>, warms up configuration sources before initializing the application. Required by <see cref="LogApplicationConfiguration"/>.
+        /// </summary>
+        public bool WarmupConfiguration { get; set; } = true;
+
+        /// <summary>
+        /// If set to <c>true</c>, warms up ZooKeeper client before initializing the application.
+        /// </summary>
+        public bool WarmupZooKeeper { get; set; } = true;
 
         /// <summary>
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
         public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
+
+        /// <summary>
+        /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
+        /// </summary>
+        public int ThreadPoolTuningMultiplier { get; set; } = 32;
 
         /// <summary>
         /// Additional actions that will be executed right before application initialization.

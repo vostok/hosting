@@ -34,10 +34,40 @@ namespace Vostok.Hosting.Setup
                     settings => { settings.EnableClusterSettings = false; }));
 
         /// <summary>
+        /// Enables ClusterConfig client in case it was disabled.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder EnableClusterConfig([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder
+                .EnableClusterConfigLocalSettings()
+                .EnableClusterConfigRemoteSettings();
+
+        /// <summary>
+        /// Enables local settings for ClusterConfig client.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder EnableClusterConfigLocalSettings([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupClusterConfigClient(
+                clusterConfigBuilder => clusterConfigBuilder.CustomizeSettings(
+                    settings => { settings.EnableLocalSettings = true; }));
+
+        /// <summary>
+        /// Enables remote (cluster) settings for ClusterConfig client.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder EnableClusterConfigRemoteSettings([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupClusterConfigClient(
+                clusterConfigBuilder => clusterConfigBuilder.CustomizeSettings(
+                    settings => { settings.EnableClusterSettings = true; }));
+
+        /// <summary>
         /// Disables Hercules telemetry altogether.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder DisableHercules([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
             builder.SetupHerculesSink(sink => sink.Disable());
+
+        /// <summary>
+        /// Disables ZooKeeper connection.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder DisableZooKeeper([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetupZooKeeperClient(zk => zk.Disable());
 
         /// <summary>
         /// Disables service beacon.

@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
-using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
 using Vostok.Hosting.Abstractions;
@@ -17,6 +17,7 @@ using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -88,10 +89,15 @@ namespace Vostok.Hosting
                 throw new InvalidOperationException("Application can't be launched multiple times.");
 
             if (settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup();
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
+
+            var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
+            {
+                ConfigureStaticProviders = settings.ConfigureStaticProviders
+            };
 
             // ReSharper disable once SuspiciousTypeConversion.Global
-            using (environment = EnvironmentBuilder.Build(SetupEnvironment))
+            using (environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings))
             using (settings.Application as IDisposable)
             {
                 log = environment.Log.ForContext<VostokHost>();
@@ -99,12 +105,13 @@ namespace Vostok.Hosting
                 LogApplicationIdentity(environment.ApplicationIdentity);
                 LogApplicationLimits(environment.ApplicationLimits);
                 LogApplicationReplication(environment.ApplicationReplicationInfo);
-                LogApplicationConfiguration(environment.ConfigurationSource);
                 LogHostExtensions(environment.HostExtensions);
 
                 ConfigureHostBeforeRun();
-
                 LogThreadPoolSettings();
+
+                WarmupConfiguration();
+                WarmupZooKeeper();
 
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
@@ -253,10 +260,37 @@ namespace Vostok.Hosting
         {
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
-                ThreadPoolUtility.Setup(processorCount: cpuUnitsLimit.Value);
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
 
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(environment);
+        }
+
+        private void WarmupConfiguration()
+        {
+            if (!settings.WarmupConfiguration)
+                return;
+
+            log.Info("Warming up application configuration..");
+
+            environment.ClusterConfigClient.Get(Guid.NewGuid().ToString());
+
+            var ordinarySettings = environment.ConfigurationSource.Get();
+            
+            environment.SecretConfigurationSource.Get();
+
+            if (settings.LogApplicationConfiguration)
+                LogApplicationConfiguration(ordinarySettings);
+        }
+
+        private void WarmupZooKeeper()
+        {
+            if (settings.WarmupZooKeeper && environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
+            {
+                log.Info("Warming up ZooKeeper connection..");
+
+                zooKeeperClient.Exists("/");
+            }
         }
 
         #region Logging
@@ -282,11 +316,11 @@ namespace Vostok.Hosting
         private void LogApplicationReplication(IVostokApplicationReplicationInfo info)
             => log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
 
-        private void LogApplicationConfiguration(IConfigurationSource source)
+        private void LogApplicationConfiguration(ISettingsNode configuration)
         {
             try
             {
-                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", source.Get());
+                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", configuration);
             }
             catch
             {

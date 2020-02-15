@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Vostok.ClusterConfig.Client;
 using Vostok.Commons.Time;
+using Vostok.Configuration;
 using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
@@ -32,6 +34,8 @@ namespace Vostok.Hosting.Components.Environment
 {
     internal class EnvironmentBuilder : IVostokHostingEnvironmentBuilder
     {
+        private readonly VostokHostingEnvironmentFactorySettings settings;
+
         private readonly ConfigurationBuilder configurationBuilder;
         private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
 
@@ -51,8 +55,10 @@ namespace Vostok.Hosting.Components.Environment
         private List<CancellationToken> shutdownTokens;
         private TimeSpan shutdownTimeout;
 
-        private EnvironmentBuilder()
+        private EnvironmentBuilder(VostokHostingEnvironmentFactorySettings settings)
         {
+            this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
+
             shutdownTokens = new List<CancellationToken>();
             shutdownTimeout = 5.Seconds();
             configurationBuilder = new ConfigurationBuilder();
@@ -71,9 +77,9 @@ namespace Vostok.Hosting.Components.Environment
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
-        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup)
+        public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
         {
-            var builder = new EnvironmentBuilder();
+            var builder = new EnvironmentBuilder(settings);
             setup(builder);
             return builder.Build();
         }
@@ -98,12 +104,24 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
+            if (settings.ConfigureStaticProviders)
+            {
+                LogProvider.Configure(context.Log, true);
+                TracerProvider.Configure(context.Tracer, true);
+            }
+
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
+
+            if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
+                ClusterConfigClient.TrySetDefaultClient(ccClient);
 
             (context.ConfigurationSource,
                 context.SecretConfigurationSource,
                 context.ConfigurationProvider,
                 context.SecretConfigurationProvider) = configurationBuilder.Build(context);
+
+            if (settings.ConfigureStaticProviders && context.ConfigurationProvider is ConfigurationProvider configProvider)
+                ConfigurationProvider.TrySetDefault(configProvider);
 
             context.SetupContext = new EnvironmentSetupContext(
                 context.Log,
@@ -117,11 +135,17 @@ namespace Vostok.Hosting.Components.Environment
 
             context.Datacenters = datacentersBuilder.Build(context);
 
+            if (settings.ConfigureStaticProviders && context.Datacenters != null)
+                DatacentersProvider.Configure(context.Datacenters, true);
+
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
+
+            if (settings.ConfigureStaticProviders && context.HerculesSink != null)
+                HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Logs = compositeLogBuilder.Build(context);
             var hasLogs = context.Logs.Count() > 0;
@@ -136,7 +160,8 @@ namespace Vostok.Hosting.Components.Environment
 
             HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
-            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
+            if (settings.ConfigureStaticProviders)
+                FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
 
             context.ServiceBeacon.ReplicaInfo.TryGetUrl(out var url);
 
@@ -283,12 +308,14 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> setup)
         {
+            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
+            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }

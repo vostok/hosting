@@ -26,7 +26,6 @@ namespace Vostok.Hosting.Components.Configuration
                 AdditionalSetup = setup =>
                 {
                     // Note(kungurtsev): do not fill setup.ClientApplicationName here, because build of context.ApplicationIdentity requires ClusterConfigClient.
-
                     setup.SetupDistributedTracing(context.Tracer);
                 }
             };
@@ -36,7 +35,7 @@ namespace Vostok.Hosting.Components.Configuration
             if (!settings.EnableLocalSettings && !settings.EnableClusterSettings)
             {
                 context.LogDisabled("ClusterConfigClient", "explicit configuration");
-                return new DevNullClusterConfigClient();
+                return new DisabledClusterConfigClient();
             }
 
             return new ClusterConfigClient(settings);

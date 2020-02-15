@@ -385,7 +385,9 @@ namespace Vostok.Hosting.Tests
             host = new VostokHost(
                 new VostokHostSettings(application, environmentSetup)
                 {
-                    ShutdownTimeout = shutdownTimeout
+                    ShutdownTimeout = shutdownTimeout,
+                    WarmupConfiguration = false,
+                    WarmupZooKeeper = false,
                 });
 
             host.OnApplicationStateChanged.Subscribe(observer);
