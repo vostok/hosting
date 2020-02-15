@@ -19,10 +19,21 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
+        private volatile bool enabled;
 
         public ZooKeeperClientBuilder()
+            => settingsCustomization = new Customization<ZooKeeperClientSettings>();
+
+        public IVostokZooKeeperClientBuilder Enable()
         {
-            settingsCustomization = new Customization<ZooKeeperClientSettings>();
+            enabled = true;
+            return this;
+        }
+
+        public IVostokZooKeeperClientBuilder Disable()
+        {
+            enabled = false;
+            return this;
         }
 
         public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
@@ -54,6 +65,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
         public IZooKeeperClient Build(BuildContext context)
         {
+            if (!enabled)
+                return null;
+
             ZooKeeperClientSettings settings = null;
 
             if (connectionString != null)

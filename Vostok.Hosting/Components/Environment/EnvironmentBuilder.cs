@@ -308,12 +308,14 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> setup)
         {
+            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
+            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
