@@ -1,3 +1,10 @@
+## 0.1.6 (15-02-2020):
+
+- Implemented https://github.com/vostok/hosting/issues/3.
+- Now warming up configuration and ZK connection before app initialization by default.
+- ThreadPool tuning multiplier is now configurable.
+- Additional environment configuration extensions (DisableZooKeeper, EnableClusterConfig).
+
 ## 0.1.5 (04-02-2020):
 
 Minor fixes.
