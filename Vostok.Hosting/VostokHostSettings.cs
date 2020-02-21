@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Helpers;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting
@@ -74,5 +75,11 @@ namespace Vostok.Hosting
         /// </summary>
         [NotNull]
         public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; } = new List<Action<IVostokHostingEnvironment>>();
+
+        /// <summary>
+        /// Observers that will be subscribed to <see cref="VostokHost.OnApplicationStateChanged"/> on <see cref="VostokHost"/> creation.
+        /// </summary>
+        [NotNull]
+        public List<IObserver<VostokApplicationState>> ApplicationStateObservers { get; set; } = new List<IObserver<VostokApplicationState>>();
     }
 }

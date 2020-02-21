@@ -52,6 +52,10 @@ namespace Vostok.Hosting
             ShutdownTokenSource = new CancellationTokenSource();
 
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>();
+
+            foreach (var observer in settings.ApplicationStateObservers)
+                onApplicationStateChanged.Subscribe(observer);
+
             ChangeStateTo(VostokApplicationState.NotInitialized);
         }
 
@@ -117,6 +121,7 @@ namespace Vostok.Hosting
                     action(environment);
 
                 var result = await InitializeApplicationAsync().ConfigureAwait(false);
+
                 if (result.State == VostokApplicationState.Initialized)
                     result = await RunApplicationAsync().ConfigureAwait(false);
 
@@ -276,7 +281,7 @@ namespace Vostok.Hosting
             environment.ClusterConfigClient.Get(Guid.NewGuid().ToString());
 
             var ordinarySettings = environment.ConfigurationSource.Get();
-            
+
             environment.SecretConfigurationSource.Get();
 
             if (settings.LogApplicationConfiguration)
@@ -309,7 +314,8 @@ namespace Vostok.Hosting
         }
 
         private void LogApplicationLimits(IVostokApplicationLimits limits)
-            => log.Info("Application limits: {CpuLimit} CPU, {MemoryLimit} memory.", 
+            => log.Info(
+                "Application limits: {CpuLimit} CPU, {MemoryLimit} memory.",
                 limits.CpuUnits?.ToString("F2") ?? "unlimited",
                 limits.MemoryBytes.HasValue ? new DataSize(limits.MemoryBytes.Value).ToString() : "unlimited");
 
