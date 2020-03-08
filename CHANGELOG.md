@@ -1,3 +1,7 @@
+## 0.1.7 (08-03-2020):
+
+Added extensions to quickly set ServiceBeacon's url scheme.
+
 ## 0.1.6 (15-02-2020):
 
 - Implemented https://github.com/vostok/hosting/issues/3.
