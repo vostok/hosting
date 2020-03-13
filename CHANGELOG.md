@@ -1,6 +1,10 @@
-## 0.1.7 (13-03-2020):
+## 0.1.8 (13-03-2020):
 
-- Fix lazy setup for configuration.
+Fix lazy setup for configuration.
+
+## 0.1.7 (08-03-2020):
+
+Added extensions to quickly set ServiceBeacon's url scheme.
 
 ## 0.1.6 (15-02-2020):
 

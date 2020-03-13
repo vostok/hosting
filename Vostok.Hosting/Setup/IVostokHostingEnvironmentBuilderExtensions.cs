@@ -94,6 +94,18 @@ namespace Vostok.Hosting.Setup
             builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetUrlPath(path)));
 
         /// <summary>
+        /// Applies given url <paramref name="scheme"/> to <see cref="IServiceBeacon"/> configuration.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetUrlScheme([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string scheme) =>
+            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetScheme(scheme)));
+
+        /// <summary>
+        /// Enables HTTPS scheme in <see cref="IServiceBeacon"/> configuration.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetHttpsScheme([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetUrlScheme("https");
+
+        /// <summary>
         /// Adds <see cref="LogConfigurationRule"/>s from built-in <see cref="IConfigurationSource"/> in given <paramref name="scope"/>.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder AddLoggingRulesFromSettings([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] params string[] scope) =>
