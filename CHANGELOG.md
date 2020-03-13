@@ -1,3 +1,7 @@
+## 0.1.7 (13-03-2020):
+
+- Fix lazy setup for configuration.
+
 ## 0.1.6 (15-02-2020):
 
 - Implemented https://github.com/vostok/hosting/issues/3.

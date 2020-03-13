@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Vostok.ClusterConfig.Client;
+using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Time;
 using Vostok.Configuration;
+using Vostok.Configuration.Abstractions;
 using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
@@ -36,9 +38,8 @@ namespace Vostok.Hosting.Components.Environment
     {
         private readonly VostokHostingEnvironmentFactorySettings settings;
 
-        private readonly ConfigurationBuilder configurationBuilder;
-        private readonly ClusterConfigClientBuilder clusterConfigClientBuilder;
-
+        private readonly CustomizableBuilder<ConfigurationBuilder, (IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)> configurationBuilder;
+        private readonly CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient> clusterConfigClientBuilder;
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits> applicationLimitsBuilder;
@@ -61,8 +62,8 @@ namespace Vostok.Hosting.Components.Environment
 
             shutdownTokens = new List<CancellationToken>();
             shutdownTimeout = 5.Seconds();
-            configurationBuilder = new ConfigurationBuilder();
-            clusterConfigClientBuilder = new ClusterConfigClientBuilder();
+            configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)>(new ConfigurationBuilder());
+            clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             applicationLimitsBuilder = new CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits>(new ApplicationLimitsBuilder());
@@ -230,7 +231,7 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder> setup)
         {
-            setup(clusterConfigClientBuilder ?? throw new ArgumentNullException(nameof(setup)));
+            clusterConfigClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
@@ -374,8 +375,7 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> setup)
         {
-            setup = setup ?? throw new ArgumentNullException(nameof(setup));
-            setup(configurationBuilder);
+            configurationBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
