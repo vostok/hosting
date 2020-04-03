@@ -9,6 +9,7 @@ using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
+using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
@@ -103,6 +104,7 @@ namespace Vostok.Hosting
                 log = environment.Log.ForContext<VostokHost>();
 
                 LogApplicationIdentity(environment.ApplicationIdentity);
+                LogLocalDatacenter(environment.Datacenters);
                 LogApplicationLimits(environment.ApplicationLimits);
                 LogApplicationReplication(environment.ApplicationReplicationInfo);
                 LogHostExtensions(environment.HostExtensions);
@@ -276,7 +278,7 @@ namespace Vostok.Hosting
             environment.ClusterConfigClient.Get(Guid.NewGuid().ToString());
 
             var ordinarySettings = environment.ConfigurationSource.Get();
-            
+
             environment.SecretConfigurationSource.Get();
 
             if (settings.LogApplicationConfiguration)
@@ -308,13 +310,17 @@ namespace Vostok.Hosting
             log.Info(messageTemplate, messageParameters);
         }
 
-        private void LogApplicationLimits(IVostokApplicationLimits limits)
-            => log.Info("Application limits: {CpuLimit} CPU, {MemoryLimit} memory.", 
+        private void LogLocalDatacenter(IDatacenters datacenters) =>
+            log.Info("Application datacenter: {DatacenterName}.", datacenters.GetLocalDatacenter() ?? "unknown");
+
+        private void LogApplicationLimits(IVostokApplicationLimits limits) =>
+            log.Info(
+                "Application limits: {CpuLimit} CPU, {MemoryLimit} memory.",
                 limits.CpuUnits?.ToString("F2") ?? "unlimited",
                 limits.MemoryBytes.HasValue ? new DataSize(limits.MemoryBytes.Value).ToString() : "unlimited");
 
-        private void LogApplicationReplication(IVostokApplicationReplicationInfo info)
-            => log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
+        private void LogApplicationReplication(IVostokApplicationReplicationInfo info) =>
+            log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
 
         private void LogApplicationConfiguration(ISettingsNode configuration)
         {

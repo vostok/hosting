@@ -1,3 +1,7 @@
+## 0.1.9 (03-04-2020):
+
+Log datacenters, init them before ApplicationIdentity.
+
 ## 0.1.8 (13-03-2020):
 
 Fix lazy setup for configuration.

@@ -132,12 +132,11 @@ namespace Vostok.Hosting.Components.Environment
                 context.SecretConfigurationProvider,
                 context.ClusterConfigClient);
 
-            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
-
             context.Datacenters = datacentersBuilder.Build(context);
-
             if (settings.ConfigureStaticProviders && context.Datacenters != null)
                 DatacentersProvider.Configure(context.Datacenters, true);
+
+            context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
