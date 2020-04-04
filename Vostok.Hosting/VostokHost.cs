@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
@@ -103,6 +105,7 @@ namespace Vostok.Hosting
             {
                 log = environment.Log.ForContext<VostokHost>();
 
+                LogEnvironmentInfo();
                 LogApplicationIdentity(environment.ApplicationIdentity);
                 LogLocalDatacenter(environment.Datacenters);
                 LogApplicationLimits(environment.ApplicationLimits);
@@ -296,6 +299,19 @@ namespace Vostok.Hosting
         }
 
         #region Logging
+
+        private void LogEnvironmentInfo()
+        {
+            log.Info("Application user = '{User}'.", Environment.UserName);
+            log.Info("Application host FQDN = '{HostFQDN}'.", EnvironmentInfo.FQDN);
+            log.Info("Application process id = '{ProcessId}'.", EnvironmentInfo.ProcessId);
+            log.Info("Application process name = '{ProcessName}'.", EnvironmentInfo.ProcessName);
+            log.Info("Application base directory = '{BaseDirectory}'.", EnvironmentInfo.BaseDirectory);
+            log.Info("Application current directory = '{CurrentDirectory}'.", Environment.CurrentDirectory);
+            log.Info("Application OS = '{OperatingSystem}'.", RuntimeInformation.OSDescription);
+            log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
+            log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
+        }
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
         {
