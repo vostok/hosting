@@ -1,3 +1,7 @@
+## 0.1.10 (04-04-2020):
+
+VostokHost: log environment info before startup.
+
 ## 0.1.9 (03-04-2020):
 
 Log datacenters, init them before ApplicationIdentity.
