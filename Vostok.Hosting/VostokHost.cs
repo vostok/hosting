@@ -303,6 +303,7 @@ namespace Vostok.Hosting
         private void LogEnvironmentInfo()
         {
             log.Info("Application user = '{User}'.", Environment.UserName);
+            log.Info("Application host = '{Host}'.", EnvironmentInfo.Host);
             log.Info("Application host FQDN = '{HostFQDN}'.", EnvironmentInfo.FQDN);
             log.Info("Application process id = '{ProcessId}'.", EnvironmentInfo.ProcessId);
             log.Info("Application process name = '{ProcessName}'.", EnvironmentInfo.ProcessName);
