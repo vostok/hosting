@@ -1,3 +1,7 @@
+## 0.1.11 (07-04-2020):
+
+Local hostname can be configured using 'VOSTOK_LOCAL_HOSTNAME' environment variable.
+
 ## 0.1.10 (04-04-2020):
 
 VostokHost: log environment info before startup.
