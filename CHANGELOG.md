@@ -1,3 +1,7 @@
+## 0.1.12 (07-08-2020):
+
+Update lz4 and hercules.client.
+
 ## 0.1.11 (07-04-2020):
 
 Local hostname can be configured using 'VOSTOK_LOCAL_HOSTNAME' environment variable.
