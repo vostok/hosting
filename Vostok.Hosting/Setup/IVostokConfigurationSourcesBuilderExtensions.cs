@@ -34,7 +34,7 @@ namespace Vostok.Hosting.Setup
         public static IVostokConfigurationSourcesBuilder AddAppSettingsJson([NotNull] this IVostokConfigurationSourcesBuilder builder)
             => builder
                 .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json");
+                .AddJsonFile($"appsettings.{GetDotnetEnvironment()}.json");
 
         public static IVostokConfigurationSourcesBuilder AddYamlFile([NotNull] this IVostokConfigurationSourcesBuilder builder, [NotNull] string path)
             => builder.AddSource(new YamlFileSource(path));
@@ -50,5 +50,10 @@ namespace Vostok.Hosting.Setup
 
         public static IVostokConfigurationSourcesBuilder AddClusterConfig([NotNull] this IVostokConfigurationSourcesBuilder builder, [NotNull] string prefix)
             => builder.AddSource(ccClient => new ClusterConfigSourceWithParsers(ccClient, prefix));
+
+        private static string GetDotnetEnvironment()
+            => Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? 
+               Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? 
+               "Production";
     }
 }
