@@ -303,28 +303,64 @@ namespace Vostok.Hosting.Tests
         {
             application = new SimpleApplication(new SimpleApplicationSettings());
 
-            VostokHostingEnvironmentSetup environmentSetup = setup =>
+            void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
-                setup
-                    .SetupApplicationIdentity(
-                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup
-                            .SetProject("Infrastructure")
+                builder.SetupApplicationIdentity(
+                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup.SetProject("Infrastructure")
                             .SetSubproject("vostok")
                             .SetEnvironment("dev")
                             .SetApplication("simple-application")
-                            .SetInstance("1")
-                    )
-                    .SetupLog(
-                        logSetup => throw error);
-            };
+                            .SetInstance("1"))
+                    .SetupLog(logSetup => throw error);
+            }
 
             host = new VostokHost(
-                new VostokHostSettings(application, environmentSetup)
+                new VostokHostSettings(application, EnvironmentSetup)
                 {
                     ShutdownTimeout = shutdownTimeout
                 });
 
             ((Action)(() => host.Run())).Should().Throw<Exception>().Which.Should().Be(error);
+        }
+
+        [Test]
+        public void Should_allow_to_use_statically_configured_app_identity_properties_during_configuration_setup()
+        {
+            application = new SimpleApplication(new SimpleApplicationSettings());
+
+            void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
+            {
+                builder.SetupApplicationIdentity(
+                    id => id
+                        .SetProject("infra")
+                        .SetSubproject("vostok")
+                        .SetApplication("app")
+                        .SetInstance("1"));
+
+                builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
+
+                builder.SetupConfiguration(
+                    (config, ctx) =>
+                    {
+                        ctx.Log.Info(ctx.ApplicationIdentity.ToString());
+
+                        ctx.ApplicationIdentity.Project.Should().Be("infra");
+                        ctx.ApplicationIdentity.Subproject.Should().Be("vostok");
+                        ctx.ApplicationIdentity.Application.Should().Be("app");
+                        ctx.ApplicationIdentity.Instance.Should().Be("1");
+
+                        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                        Action action = () => ctx.ApplicationIdentity.Environment.GetHashCode();
+
+                        var exception = action.Should().Throw<InvalidOperationException>().Which;
+
+                        Console.Out.WriteLine(exception);
+                    });
+            }
+
+            host = new VostokHost(new VostokHostSettings(application, EnvironmentSetup));
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
         }
 
         private void CheckStates(params VostokApplicationState[] states)
@@ -363,27 +399,19 @@ namespace Vostok.Hosting.Tests
             settings.CrashError = crashError;
             application = new SimpleApplication(settings);
 
-            VostokHostingEnvironmentSetup environmentSetup = setup =>
+            void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
             {
-                setup
-                    .SetupApplicationIdentity(
-                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup
-                            .SetProject("Infrastructure")
+                builder.SetupApplicationIdentity(
+                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup.SetProject("Infrastructure")
                             .SetSubproject("vostok")
                             .SetEnvironment("dev")
                             .SetApplication("simple-application")
-                            .SetInstance("1")
-                    )
-                    .SetupLog(
-                        logSetup =>
-                            logSetup
-                                .SetupConsoleLog(
-                                    consoleLogSetup =>
-                                        consoleLogSetup.UseSynchronous()));
-            };
+                            .SetInstance("1"))
+                    .SetupLog(logSetup => logSetup.SetupConsoleLog(consoleLogSetup => consoleLogSetup.UseSynchronous()));
+            }
 
             host = new VostokHost(
-                new VostokHostSettings(application, environmentSetup)
+                new VostokHostSettings(application, EnvironmentSetup)
                 {
                     ShutdownTimeout = shutdownTimeout,
                     WarmupConfiguration = false,
