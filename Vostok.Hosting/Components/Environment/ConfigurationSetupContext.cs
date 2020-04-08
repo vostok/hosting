@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 
@@ -11,7 +12,7 @@ namespace Vostok.Hosting.Components.Environment
 
         public ConfigurationSetupContext(ILog log, Func<IVostokApplicationIdentity> identityProvider)
         {
-            Log = log;
+            Log = log.ForContext<VostokHostingEnvironment>();
 
             this.identityProvider = identityProvider;
         }

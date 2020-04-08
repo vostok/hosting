@@ -339,6 +339,8 @@ namespace Vostok.Hosting.Tests
 
                 builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
 
+                builder.SetupLog(log => log.SetupConsoleLog(console => console.UseSynchronous()));
+
                 builder.SetupConfiguration(
                     (config, ctx) =>
                     {
@@ -358,7 +360,11 @@ namespace Vostok.Hosting.Tests
                     });
             }
 
-            host = new VostokHost(new VostokHostSettings(application, EnvironmentSetup));
+            host = new VostokHost(new VostokHostSettings(application, EnvironmentSetup)
+            {
+                WarmupConfiguration = false,
+                WarmupZooKeeper = false
+            });
 
             host.Run().State.Should().Be(VostokApplicationState.Exited);
         }

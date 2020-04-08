@@ -1,4 +1,4 @@
-## 0.1.14 (08-04-2020):
+## 0.1.15 (08-04-2020):
 
 - Statically configured parts of application identity can now be used during configuration setup.
 - Identity members can now be specified via environment variables.
