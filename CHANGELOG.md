@@ -1,3 +1,7 @@
+## 0.1.13 (08-04-2020):
+
+AddAppSettingsJson extension now recognizes DOTNET_ENVIRONMENT env variable.
+
 ## 0.1.12 (07-08-2020):
 
 Update lz4 and hercules.client.
