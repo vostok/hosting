@@ -113,6 +113,8 @@ namespace Vostok.Hosting.Components.Environment
                 TracerProvider.Configure(context.Tracer, true);
             }
 
+            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
+
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
@@ -126,7 +128,7 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders && context.ConfigurationProvider is ConfigurationProvider configProvider)
                 ConfigurationProvider.TrySetDefault(configProvider);
 
-            context.SetupContext = new EnvironmentSetupContext(
+            context.EnvironmentSetupContext = new EnvironmentSetupContext(
                 context.Log,
                 context.ConfigurationSource,
                 context.SecretConfigurationSource,
@@ -236,9 +238,9 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder, IVostokApplicationIdentity> setup)
+        public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder, IVostokConfigurationSetupContext> setup)
         {
-            clusterConfigClientBuilder.AddCustomization(builder => setup(builder, intermediateApplicationIdentityBuilder.Build(null)));
+            clusterConfigClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
@@ -387,9 +389,9 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder, IVostokApplicationIdentity> setup)
+        public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder, IVostokConfigurationSetupContext> setup)
         {
-            configurationBuilder.AddCustomization(builder => setup(builder, intermediateApplicationIdentityBuilder.Build(null)));
+            configurationBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 

@@ -43,7 +43,8 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
-        public IVostokHostingEnvironmentSetupContext SetupContext { get; set; }
+        public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
+        public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public List<object> DisposableHostExtensions { get; set; }
 
         public Logs Logs { get; set; }
