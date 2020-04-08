@@ -40,6 +40,7 @@ namespace Vostok.Hosting.Components.Application
             => $"Project = {project ?? "N/A"}; Subproject = {Subproject ?? "N/A"}; Environment = {environment ?? "N/A"}; Application = {application ?? "N/A"}; Instance = {instance ?? "N/A"}";
 
         private Exception CreateException(string field)
-            => new InvalidOperationException($"Application identity field '{field}' can't be accessed at this time as it hasn't been configured yet.");
+            => new InvalidOperationException($"Application identity field '{field}' can't be accessed at this time as it hasn't been configured yet. " +
+                                             "This may indicate a cyclic depedency arising from an attempt to use configuration-based identity members to set up configuration.");
     }
 }
