@@ -43,5 +43,8 @@ namespace Vostok.Hosting.Components.Application
         public string Environment { get; set; }
         public string Application { get; set; }
         public string Instance { get; set; }
+
+        public override string ToString()
+            => $"Project = {Project}; Subproject = {Subproject ?? "N/A"}; Environment = {Environment}; Application = {Application}; Instance = {Instance}";
     }
 }

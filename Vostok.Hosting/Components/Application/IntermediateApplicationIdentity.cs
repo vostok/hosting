@@ -36,6 +36,9 @@ namespace Vostok.Hosting.Components.Application
 
         public string Instance => instance ?? throw CreateException(nameof(instance));
 
+        public override string ToString()
+            => $"Project = {project ?? "N/A"}; Subproject = {Subproject ?? "N/A"}; Environment = {environment ?? "N/A"}; Application = {application ?? "N/A"}; Instance = {instance ?? "N/A"}";
+
         private Exception CreateException(string field)
             => new InvalidOperationException($"Application identity field '{field}' can't be accessed at this time as it hasn't been configured yet.");
     }
