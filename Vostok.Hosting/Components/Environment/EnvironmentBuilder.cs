@@ -51,6 +51,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
+        private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
 
         private List<CancellationToken> shutdownTokens;
@@ -75,6 +76,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
+            intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
         }
 
@@ -111,6 +113,8 @@ namespace Vostok.Hosting.Components.Environment
                 TracerProvider.Configure(context.Tracer, true);
             }
 
+            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
+
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
@@ -124,7 +128,7 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders && context.ConfigurationProvider is ConfigurationProvider configProvider)
                 ConfigurationProvider.TrySetDefault(configProvider);
 
-            context.SetupContext = new EnvironmentSetupContext(
+            context.EnvironmentSetupContext = new EnvironmentSetupContext(
                 context.Log,
                 context.ConfigurationSource,
                 context.SecretConfigurationSource,
@@ -234,9 +238,16 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
+        public IVostokHostingEnvironmentBuilder SetupClusterConfigClient(Action<IVostokClusterConfigClientBuilder, IVostokConfigurationSetupContext> setup)
+        {
+            clusterConfigClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
         public IVostokHostingEnvironmentBuilder SetupApplicationIdentity(Action<IVostokApplicationIdentityBuilder> setup)
         {
             applicationIdentityBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            setup(intermediateApplicationIdentityBuilder);
             return this;
         }
 
@@ -373,6 +384,12 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder> setup)
+        {
+            configurationBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder, IVostokConfigurationSetupContext> setup)
         {
             configurationBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;

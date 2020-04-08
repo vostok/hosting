@@ -29,8 +29,7 @@ namespace Vostok.Hosting.Components.Application
                 missingFields.Add(nameof(instance));
 
             if (missingFields.Any())
-                // ReSharper disable once NotResolvedInText
-                throw new ArgumentException(string.Join(", ", missingFields) + " should be specified.");
+                throw new ArgumentException($"Some of the Vostok application identity required fields have not been specified: '{string.Join(", ", missingFields)}'.");
 
             Project = project;
             Subproject = subproject;
@@ -44,5 +43,8 @@ namespace Vostok.Hosting.Components.Application
         public string Environment { get; set; }
         public string Application { get; set; }
         public string Instance { get; set; }
+
+        public override string ToString()
+            => $"Project = {Project}; Subproject = {Subproject ?? "N/A"}; Environment = {Environment}; Application = {Application}; Instance = {Instance}";
     }
 }
