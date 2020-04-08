@@ -1,3 +1,9 @@
+## 0.1.14 (08-04-2020):
+
+- Statically configured parts of application identity can now be used during configuration setup.
+- Identity members can now be specified via environment variables.
+- Clear messages for errors related to incomplete identities.
+
 ## 0.1.13 (08-04-2020):
 
 AddAppSettingsJson extension now recognizes DOTNET_ENVIRONMENT env variable.
