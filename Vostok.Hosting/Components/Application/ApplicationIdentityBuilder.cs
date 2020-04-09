@@ -11,7 +11,7 @@ namespace Vostok.Hosting.Components.Application
     internal class ApplicationIdentityBuilder : IVostokApplicationIdentityBuilder, IBuilder<IVostokApplicationIdentity>
     {
         protected volatile string project = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityProject);
-        protected volatile string subproject = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentitySubroject);
+        protected volatile string subproject = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentitySubproject);
         protected volatile string environment = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityEnvironment);
         protected volatile string application = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityApplication);
         protected volatile string instance = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityInstance);
