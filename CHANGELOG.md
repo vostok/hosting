@@ -1,3 +1,7 @@
+## 0.1.16 (12-04-2020)
+
+Environment variable names are public now.
+
 ## 0.1.15 (08-04-2020):
 
 - Statically configured parts of application identity can now be used during configuration setup.

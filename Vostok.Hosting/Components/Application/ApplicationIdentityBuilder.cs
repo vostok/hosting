@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -10,11 +9,11 @@ namespace Vostok.Hosting.Components.Application
 {
     internal class ApplicationIdentityBuilder : IVostokApplicationIdentityBuilder, IBuilder<IVostokApplicationIdentity>
     {
-        protected volatile string project = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityProject);
-        protected volatile string subproject = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentitySubproject);
-        protected volatile string environment = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityEnvironment);
-        protected volatile string application = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityApplication);
-        protected volatile string instance = System.Environment.GetEnvironmentVariable(EnvironmentVariables.IdentityInstance);
+        protected volatile string project = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityProject);
+        protected volatile string subproject = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentitySubproject);
+        protected volatile string environment = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityEnvironment);
+        protected volatile string application = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityApplication);
+        protected volatile string instance = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityInstance);
 
         [NotNull]
         public virtual IVostokApplicationIdentity Build(BuildContext context) =>
