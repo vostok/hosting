@@ -41,7 +41,8 @@ namespace Vostok.Hosting
         /// </summary>
         public readonly CancellationTokenSource ShutdownTokenSource;
 
-        private readonly VostokHostSettings settings;
+        protected readonly VostokHostSettings settings;
+
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly AtomicBoolean launchedOnce = false;
 
@@ -61,7 +62,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// Returns current <see cref="VostokApplicationState"/>.
         /// </summary>
-        public VostokApplicationState ApplicationState { get; private set; }
+        public virtual VostokApplicationState ApplicationState { get; private set; }
 
         /// <summary>
         /// <para>Returns an observable sequence of application states.</para>
@@ -70,7 +71,7 @@ namespace Vostok.Hosting
         /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when application execution completes.</para>
         /// <para>Immediately produces a notification with current <see cref="ApplicationState"/> when subscribed to.</para>
         /// </summary>
-        public IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
+        public virtual IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
         /// <summary>
         /// <para>Launches the provided <see cref="IVostokApplication"/>.</para>
@@ -86,7 +87,7 @@ namespace Vostok.Hosting
         /// <para>May throw an exception if an error occurs during environment creation.</para>
         /// <para>Does not rethrow exceptions from <see cref="IVostokApplication"/>, stores them in result's <see cref="VostokApplicationRunResult.Error"/> property.</para>
         /// </summary>
-        public async Task<VostokApplicationRunResult> RunAsync()
+        public virtual async Task<VostokApplicationRunResult> RunAsync()
         {
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("Application can't be launched multiple times.");
