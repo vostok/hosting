@@ -62,7 +62,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
-        public TimeSpan ShutdownTimeout { get; set; } = 5.Seconds();
+        public TimeSpan ShutdownTimeout { get; set; } = 10.Seconds();
 
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
