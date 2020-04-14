@@ -107,12 +107,12 @@ namespace Vostok.Hosting
         /// <summary>
         /// Starts the execution of the application and optionally waits for given state to occur.
         /// </summary>
-        public Task StartAsync(VostokApplicationState? stateToAwait = VostokApplicationState.Running)
+        public async Task StartAsync(VostokApplicationState? stateToAwait = VostokApplicationState.Running)
         {
             var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
 
             if (stateToAwait == null)
-                return Task.CompletedTask;
+                return;
 
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -123,11 +123,12 @@ namespace Vostok.Hosting
                         stateCompletionSource.TrySetResult(true);
                 });
 
-            var resultTask = Task.WhenAny(runnerTask, stateCompletionSource.Task);
+            using (subscription)
+            {
+                var completedTask = await Task.WhenAny(runnerTask, stateCompletionSource.Task).ConfigureAwait(false);
 
-            resultTask.ContinueWith(_ => subscription.Dispose());
-
-            return resultTask;
+                await completedTask.ConfigureAwait(false);
+            }
         }
 
         /// <summary>
