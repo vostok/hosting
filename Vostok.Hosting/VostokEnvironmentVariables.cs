@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Commons.Environment;
 
 namespace Vostok.Hosting
 {
@@ -11,9 +12,9 @@ namespace Vostok.Hosting
         public const string IdentityApplication = "VOSTOK_IDENTITY_APPLICATION";
         public const string IdentityInstance = "VOSTOK_IDENTITY_INSTANCE";
 
-        public const string LocalDatacenter = "VOSTOK_LOCAL_DATACENTER";
-        public const string LocalHostname = "VOSTOK_LOCAL_HOSTNAME";
-        public const string LocalFQDN = "VOSTOK_LOCAL_FQDN";
+        public const string LocalDatacenter = Datacenters.Datacenters.LocalDatacenterVariable;
+        public const string LocalHostname = EnvironmentInfo.LocalHostnameVariable;
+        public const string LocalFQDN = EnvironmentInfo.LocalFQDNVariable;
 
         public const string HostingType = "VOSTOK_HOSTING_TYPE";
     }
