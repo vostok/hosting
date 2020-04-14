@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Testing;
@@ -37,6 +38,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running,
@@ -54,6 +57,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing);
 
             host.ShutdownTokenSource.Cancel();
@@ -67,6 +72,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Stopping,
                 VostokApplicationState.Stopped);
@@ -83,6 +90,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running);
@@ -98,6 +107,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running,
@@ -117,6 +128,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing);
 
             host.ShutdownTokenSource.Cancel();
@@ -130,6 +143,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Stopping,
                 VostokApplicationState.StoppedForcibly);
@@ -147,6 +162,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running);
@@ -162,11 +179,55 @@ namespace Vostok.Hosting.Tests
 
             CheckStatesCompleted(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running,
                 VostokApplicationState.Stopping,
                 VostokApplicationState.StoppedForcibly);
+        }
+
+        [Test]
+        public void Should_return_CrashedDuringEnvironmentSetup()
+        {
+            var runTask = CreateAndRunAsync(new SimpleApplicationSettings(), builder => builder.SetupDatacenters(_ => throw error));
+
+            runTask
+                .GetAwaiter()
+                .GetResult()
+                .State
+                .Should()
+                .Be(VostokApplicationState.CrashedDuringEnvironmentSetup);
+
+            CheckStates(
+                error,
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.CrashedDuringEnvironmentSetup);
+        }
+
+        [Test]
+        public void Should_return_CrashedDuringEnvironmentWarmup()
+        {
+            var runTask = CreateAndRunAsync(new SimpleApplicationSettings(), additionalHostSetup: settings =>
+            {
+                settings.BeforeInitializeApplication.Add(_ => throw error);
+            });
+
+            runTask
+                .GetAwaiter()
+                .GetResult()
+                .State
+                .Should()
+                .Be(VostokApplicationState.CrashedDuringEnvironmentWarmup);
+
+            CheckStates(
+                error,
+                VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
+                VostokApplicationState.CrashedDuringEnvironmentWarmup);
         }
 
         [Test]
@@ -188,6 +249,8 @@ namespace Vostok.Hosting.Tests
             CheckStates(
                 crashError,
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.CrashedDuringInitialization);
         }
@@ -211,6 +274,8 @@ namespace Vostok.Hosting.Tests
             CheckStates(
                 crashError,
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running,
@@ -229,6 +294,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing);
 
             host.ShutdownTokenSource.Cancel();
@@ -243,6 +310,8 @@ namespace Vostok.Hosting.Tests
             CheckStates(
                 crashError,
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Stopping,
                 VostokApplicationState.CrashedDuringStopping);
@@ -260,6 +329,8 @@ namespace Vostok.Hosting.Tests
 
             CheckStates(
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running);
@@ -276,6 +347,8 @@ namespace Vostok.Hosting.Tests
             CheckStates(
                 crashError,
                 VostokApplicationState.NotInitialized,
+                VostokApplicationState.EnvironmentSetup,
+                VostokApplicationState.EnvironmentWarmup,
                 VostokApplicationState.Initializing,
                 VostokApplicationState.Initialized,
                 VostokApplicationState.Running,
@@ -299,90 +372,52 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public void Should_throw_Exception_from_environment_builder()
+        public async Task Should_allow_to_use_statically_configured_app_identity_properties_during_configuration_setup()
         {
-            application = new SimpleApplication(new SimpleApplicationSettings());
-
-            void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
-            {
-                builder.SetupApplicationIdentity(
-                        (applicationIdentitySetup, setupContext) => applicationIdentitySetup.SetProject("Infrastructure")
-                            .SetSubproject("vostok")
-                            .SetEnvironment("dev")
-                            .SetApplication("simple-application")
-                            .SetInstance("1"))
-                    .SetupLog(logSetup => throw error);
-            }
-
-            host = new VostokHost(
-                new VostokHostSettings(application, EnvironmentSetup)
+            var result = await CreateAndRunAsync(new SimpleApplicationSettings(),
+                builder =>
                 {
-                    ShutdownTimeout = shutdownTimeout
+                    builder.SetupApplicationIdentity(
+                        id => id
+                            .SetProject("infra")
+                            .SetSubproject("vostok")
+                            .SetApplication("app")
+                            .SetInstance("1"));
+
+                    builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
+
+                    builder.SetupLog(log => log.SetupConsoleLog(console => console.UseSynchronous()));
+
+                    builder.SetupConfiguration(
+                        (config, ctx) =>
+                        {
+                            ctx.Log.Info(ctx.ApplicationIdentity.ToString());
+
+                            ctx.ApplicationIdentity.Project.Should().Be("infra");
+                            ctx.ApplicationIdentity.Subproject.Should().Be("vostok");
+                            ctx.ApplicationIdentity.Application.Should().Be("app");
+                            ctx.ApplicationIdentity.Instance.Should().Be("1");
+
+                            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                            Action action = () => ctx.ApplicationIdentity.Environment.GetHashCode();
+
+                            var exception = action.Should().Throw<InvalidOperationException>().Which;
+
+                            Console.Out.WriteLine(exception);
+                        });
                 });
 
-            ((Action)(() => host.Run())).Should().Throw<Exception>().Which.Should().Be(error);
-        }
-
-        [Test]
-        public void Should_allow_to_use_statically_configured_app_identity_properties_during_configuration_setup()
-        {
-            application = new SimpleApplication(new SimpleApplicationSettings());
-
-            void EnvironmentSetup(IVostokHostingEnvironmentBuilder builder)
-            {
-                builder.SetupApplicationIdentity(
-                    id => id
-                        .SetProject("infra")
-                        .SetSubproject("vostok")
-                        .SetApplication("app")
-                        .SetInstance("1"));
-
-                builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
-
-                builder.SetupLog(log => log.SetupConsoleLog(console => console.UseSynchronous()));
-
-                builder.SetupConfiguration(
-                    (config, ctx) =>
-                    {
-                        ctx.Log.Info(ctx.ApplicationIdentity.ToString());
-
-                        ctx.ApplicationIdentity.Project.Should().Be("infra");
-                        ctx.ApplicationIdentity.Subproject.Should().Be("vostok");
-                        ctx.ApplicationIdentity.Application.Should().Be("app");
-                        ctx.ApplicationIdentity.Instance.Should().Be("1");
-
-                        // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                        Action action = () => ctx.ApplicationIdentity.Environment.GetHashCode();
-
-                        var exception = action.Should().Throw<InvalidOperationException>().Which;
-
-                        Console.Out.WriteLine(exception);
-                    });
-            }
-
-            host = new VostokHost(new VostokHostSettings(application, EnvironmentSetup)
-            {
-                WarmupConfiguration = false,
-                WarmupZooKeeper = false
-            });
-
-            host.Run().State.Should().Be(VostokApplicationState.Exited);
+            result.State.Should().Be(VostokApplicationState.Exited);
         }
 
         private void CheckStates(params VostokApplicationState[] states)
-        {
-            CheckStates(null, states);
-        }
+            => CheckStates(null, states);
 
         private void CheckStatesCompleted(params VostokApplicationState[] states)
-        {
-            CheckStates(null, true, states);
-        }
+            => CheckStates(null, true, states);
 
         private void CheckStates(Exception e, params VostokApplicationState[] states)
-        {
-            CheckStates(e, false, states);
-        }
+            => CheckStates(e, false, states);
 
         private void CheckStates(Exception e, bool completed, params VostokApplicationState[] states)
         {
@@ -398,7 +433,10 @@ namespace Vostok.Hosting.Tests
             observer.Messages.Should().BeEquivalentTo(notifications, options => options.WithStrictOrdering());
         }
 
-        private Task<VostokApplicationRunResult> CreateAndRunAsync(SimpleApplicationSettings settings)
+        private Task<VostokApplicationRunResult> CreateAndRunAsync(
+            [NotNull] SimpleApplicationSettings settings,
+            [CanBeNull] Action<IVostokHostingEnvironmentBuilder> additionalEnvSetup = null,
+            [CanBeNull] Action<VostokHostSettings> additionalHostSetup = null)
         {
             observer = new TestObserver<VostokApplicationState>();
 
@@ -414,19 +452,32 @@ namespace Vostok.Hosting.Tests
                             .SetApplication("simple-application")
                             .SetInstance("1"))
                     .SetupLog(logSetup => logSetup.SetupConsoleLog(consoleLogSetup => consoleLogSetup.UseSynchronous()));
+
+                additionalEnvSetup?.Invoke(builder);
             }
 
-            host = new VostokHost(
-                new VostokHostSettings(application, EnvironmentSetup)
-                {
-                    ShutdownTimeout = shutdownTimeout,
-                    WarmupConfiguration = false,
-                    WarmupZooKeeper = false,
-                });
+            var hostSettings = new TestHostSettings(application, EnvironmentSetup)
+            {
+                ShutdownTimeout = shutdownTimeout
+            };
+
+            additionalHostSetup?.Invoke(hostSettings);
+
+            host = new VostokHost(hostSettings);
 
             host.OnApplicationStateChanged.Subscribe(observer);
 
             return host.RunAsync();
+        }
+
+        private class TestHostSettings : VostokHostSettings
+        {
+            public TestHostSettings([NotNull] IVostokApplication application, [NotNull] VostokHostingEnvironmentSetup environmentSetup)
+                : base(application, environmentSetup)
+            {
+                WarmupConfiguration = false;
+                WarmupZooKeeper = false;
+            }
         }
 
         private class SimpleApplicationSettings

@@ -15,6 +15,16 @@ namespace Vostok.Hosting.Models
         NotInitialized,
 
         /// <summary>
+        /// <see cref="IVostokHostingEnvironment"/> is being constructed.
+        /// </summary>
+        EnvironmentSetup,
+
+        /// <summary>
+        /// <see cref="IVostokHostingEnvironment"/> is being warmed up.
+        /// </summary>
+        EnvironmentWarmup,
+
+        /// <summary>
         /// <see cref="IVostokApplication.InitializeAsync"/> has been called.
         /// </summary>
         Initializing,
@@ -48,6 +58,16 @@ namespace Vostok.Hosting.Models
         /// <see cref="IVostokApplication.RunAsync"/> has completed successfully.
         /// </summary>
         Exited,
+
+        /// <summary>
+        /// Construction of <see cref="IVostokHostingEnvironment"/> has failed with an exception.
+        /// </summary>
+        CrashedDuringEnvironmentSetup,
+
+        /// <summary>
+        /// Warmup of <see cref="IVostokHostingEnvironment"/> has failed with an exception.
+        /// </summary>
+        CrashedDuringEnvironmentWarmup,
 
         /// <summary>
         /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception.

@@ -21,6 +21,7 @@ using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
+// ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Vostok.Hosting
 {
@@ -95,40 +96,48 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
-            var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
-            {
-                ConfigureStaticProviders = settings.ConfigureStaticProviders
-            };
+            var result = BuildEnvironment();
+            if (result != null)
+                return result;
 
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            using (environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings))
+            using (environment)
             using (settings.Application as IDisposable)
             {
-                log = environment.Log.ForContext<VostokHost>();
+                result = WarmupEnvironment();
+                
+                if (result != null)
+                    return result;
 
-                LogEnvironmentInfo();
-                LogApplicationIdentity(environment.ApplicationIdentity);
-                LogLocalDatacenter(environment.Datacenters);
-                LogApplicationLimits(environment.ApplicationLimits);
-                LogApplicationReplication(environment.ApplicationReplicationInfo);
-                LogHostExtensions(environment.HostExtensions);
-
-                ConfigureHostBeforeRun();
-                LogThreadPoolSettings();
-
-                WarmupConfiguration();
-                WarmupZooKeeper();
-
-                foreach (var action in settings.BeforeInitializeApplication)
-                    action(environment);
-
-                var result = await InitializeApplicationAsync().ConfigureAwait(false);
+                result = await InitializeApplicationAsync().ConfigureAwait(false);
+                
                 if (result.State == VostokApplicationState.Initialized)
                     result = await RunApplicationAsync().ConfigureAwait(false);
 
-                onApplicationStateChanged.Complete();
-
                 return result;
+            }
+        }
+
+        [CanBeNull]
+        private VostokApplicationRunResult BuildEnvironment()
+        {
+            ChangeStateTo(VostokApplicationState.EnvironmentSetup);
+
+            try
+            {
+                var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
+                {
+                    ConfigureStaticProviders = settings.ConfigureStaticProviders
+                };
+
+                environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
+                
+                log = environment.Log.ForContext<VostokHost>();
+                
+                return null;
+            }
+            catch (Exception error)
+            {
+                return ReturnResult(VostokApplicationState.CrashedDuringEnvironmentSetup, error);
             }
         }
 
@@ -145,6 +154,38 @@ namespace Vostok.Hosting
             settings.EnvironmentSetup(builder);
         }
 
+        [CanBeNull]
+        private VostokApplicationRunResult WarmupEnvironment()
+        {
+            ChangeStateTo(VostokApplicationState.EnvironmentWarmup);
+
+            try
+            {
+                LogEnvironmentInfo();
+                LogApplicationIdentity(environment.ApplicationIdentity);
+                LogLocalDatacenter(environment.Datacenters);
+                LogApplicationLimits(environment.ApplicationLimits);
+                LogApplicationReplication(environment.ApplicationReplicationInfo);
+                LogHostExtensions(environment.HostExtensions);
+
+                ConfigureHostBeforeRun();
+                LogThreadPoolSettings();
+
+                WarmupConfiguration();
+                WarmupZooKeeper();
+
+                foreach (var action in settings.BeforeInitializeApplication)
+                    action(environment);
+
+                return null;
+            }
+            catch (Exception error)
+            {
+                log.Error(error, "Unhandled exception has occurred while warming up the environment.");
+                return ReturnResult(VostokApplicationState.CrashedDuringEnvironmentWarmup, error);
+            }
+        }
+
         private async Task<VostokApplicationRunResult> InitializeApplicationAsync()
         {
             log.Info("Initializing application.");
@@ -158,7 +199,7 @@ namespace Vostok.Hosting
             }
             catch (Exception error)
             {
-                log.Error(error, "Unhandled exception has occurred while initializing application.");
+                log.Error(error, "Unhandled exception has occurred while initializing the application.");
                 return ReturnResult(VostokApplicationState.CrashedDuringInitialization, error);
             }
         }
@@ -174,7 +215,7 @@ namespace Vostok.Hosting
             }
             catch (Exception error)
             {
-                log.Error(error, "Unhandled exception has occurred while running application.");
+                log.Error(error, "Unhandled exception has occurred while running the application.");
                 return ReturnResult(VostokApplicationState.CrashedDuringRunning, error);
             }
         }
@@ -257,9 +298,13 @@ namespace Vostok.Hosting
         private void ChangeStateTo(VostokApplicationState newState, Exception error = null)
         {
             ApplicationState = newState;
+            
             onApplicationStateChanged.Next(newState);
+            
             if (error != null)
                 onApplicationStateChanged.Error(error);
+            else if (newState.IsTerminal())
+                onApplicationStateChanged.Complete();
         }
 
         private void ConfigureHostBeforeRun()

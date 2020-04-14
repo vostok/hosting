@@ -17,6 +17,8 @@ namespace Vostok.Hosting.Models
         ///     <item><description><see cref="VostokApplicationState.Exited"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.Stopped"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.StoppedForcibly"/></description></item>
+        ///     <item><description><see cref="VostokApplicationState.CrashedDuringEnvironmentSetup"/></description></item>
+        ///     <item><description><see cref="VostokApplicationState.CrashedDuringEnvironmentWarmup"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringInitialization"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringRunning"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringStopping"/></description></item>
@@ -35,6 +37,11 @@ namespace Vostok.Hosting.Models
             State = state;
             Error = error;
         }
+
+        /// <summary>
+        /// Returns <c>true</c> if the application or host has crashed with an exception or <c>false</c> otherwise.
+        /// </summary>
+        public bool Crashed => Error != null;
 
         /// <summary>
         /// Throws the <see cref="Error"/> if application has crashed.
