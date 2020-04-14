@@ -17,13 +17,23 @@ namespace Vostok.Hosting.Tests
         public void TestSetup()
         {
             application = new Application();
-            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment));
-            host.Start();
+            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
+            {
+                WarmupZooKeeper = false,
+                WarmupConfiguration = false
+            });
         }
 
-        [Test]
-        public void Start_should_wait_until_running_by_default()
-            => host.ApplicationState.Should().Be(VostokApplicationState.Running);
+        [TestCase(VostokApplicationState.EnvironmentSetup)]
+        [TestCase(VostokApplicationState.EnvironmentWarmup)]
+        [TestCase(VostokApplicationState.Initializing)]
+        [TestCase(VostokApplicationState.Initialized)]
+        [TestCase(VostokApplicationState.Running)]
+        public void Start_should_wait_until_given_state_occurs(VostokApplicationState stateToAwait)
+        {
+            host.Start(stateToAwait);
+            host.ApplicationState.Should().Match<VostokApplicationState>(state => state >= stateToAwait);
+        }
 
         [TearDown]
         public void TearDown()

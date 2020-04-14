@@ -17,7 +17,11 @@ namespace Vostok.Hosting
             vostokHost.RunAsync().GetAwaiter().GetResult();
 
         /// <inheritdoc cref="VostokHost.StartAsync"/>
-        public static void Start([NotNull] this VostokHost vostokHost, VostokApplicationState? stateToAwait = VostokApplicationState.Running) =>
+        public static void Start([NotNull] this VostokHost vostokHost) =>
+            vostokHost.StartAsync().GetAwaiter().GetResult();
+
+        /// <inheritdoc cref="VostokHost.StartAsync"/>
+        public static void Start([NotNull] this VostokHost vostokHost, VostokApplicationState stateToAwait) =>
             vostokHost.StartAsync(stateToAwait).GetAwaiter().GetResult();
 
         /// <inheritdoc cref="VostokHost.StopAsync"/>

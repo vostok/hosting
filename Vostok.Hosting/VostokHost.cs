@@ -107,7 +107,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// Starts the execution of the application and optionally waits for given state to occur.
         /// </summary>
-        public async Task StartAsync(VostokApplicationState? stateToAwait = VostokApplicationState.Running)
+        public async Task StartAsync(VostokApplicationState? stateToAwait = null)
         {
             var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
 
