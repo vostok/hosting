@@ -1,3 +1,9 @@
+## 0.1.17 (15-04-2020):
+
+- VostokHost is now suitable to serve as a base class for other hosts.
+- VostokHostSettings: increased default shutdown timeout to 10 seconds.
+- VostokApplicationState received four new values: EnvironmentSetup, EnvironmentWarmup, CrashedDuringEnvironmentSetup, CrashedDuringEnvironmentWarmup.
+
 ## 0.1.16 (12-04-2020)
 
 Environment variable names are public now.
