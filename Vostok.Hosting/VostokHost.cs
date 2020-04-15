@@ -112,11 +112,6 @@ namespace Vostok.Hosting
         /// </summary>
         public async Task StartAsync(VostokApplicationState? stateToAwait = null)
         {
-            var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
-
-            if (stateToAwait == null)
-                return;
-
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             var subscription = OnApplicationStateChanged.Subscribe(
@@ -126,8 +121,13 @@ namespace Vostok.Hosting
                         stateCompletionSource.TrySetResult(true);
                 });
 
+            var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
+
             using (subscription)
             {
+                if (stateToAwait == null)
+                    return;
+
                 var completedTask = await Task.WhenAny(runnerTask, stateCompletionSource.Task).ConfigureAwait(false);
 
                 await completedTask.ConfigureAwait(false);
