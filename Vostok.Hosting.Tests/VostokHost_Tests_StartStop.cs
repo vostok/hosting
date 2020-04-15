@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Vostok.Hosting.Abstractions;
@@ -10,19 +11,8 @@ namespace Vostok.Hosting.Tests
     [TestFixture]
     internal class VostokHost_Tests_StartStop
     {
-        private Application application;
+        private IVostokApplication application;
         private VostokHost host;
-
-        [SetUp]
-        public void TestSetup()
-        {
-            application = new Application();
-            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
-            {
-                WarmupZooKeeper = false,
-                WarmupConfiguration = false
-            });
-        }
 
         [TestCase(VostokApplicationState.EnvironmentSetup)]
         [TestCase(VostokApplicationState.EnvironmentWarmup)]
@@ -31,15 +21,52 @@ namespace Vostok.Hosting.Tests
         [TestCase(VostokApplicationState.Running)]
         public void Start_should_wait_until_given_state_occurs(VostokApplicationState stateToAwait)
         {
+            application = new Application();
+            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
+            {
+                WarmupZooKeeper = false,
+                WarmupConfiguration = false
+            });
+
             host.Start(stateToAwait);
             host.ApplicationState.Should().Match<VostokApplicationState>(state => state >= stateToAwait);
-        }
 
-        [TearDown]
-        public void TearDown()
-        {
             host.Stop();
             host.ApplicationState.IsTerminal().Should().BeTrue();
+        }
+
+        [Test]
+        public void Start_should_throw_on_initialize_fail()
+        {
+            application = new BadApplication(true);
+            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
+            {
+                WarmupZooKeeper = false,
+                WarmupConfiguration = false
+            });
+            
+            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
+            checkStart.Should().Throw<Exception>().WithMessage("initialize");
+
+            Action checkStop = () => host.Stop();
+            checkStop.Should().Throw<Exception>().WithMessage("initialize");
+        }
+
+        [Test]
+        public void Start_should_not_throw_on_run_fail()
+        {
+            application = new BadApplication(false);
+            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
+            {
+                WarmupZooKeeper = false,
+                WarmupConfiguration = false
+            });
+
+            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
+            checkStart.Should().NotThrow();
+
+            Action checkStop = () => host.Stop();
+            checkStop.Should().Throw<Exception>().WithMessage("run");
         }
 
         private class Application : IVostokApplication
@@ -55,6 +82,20 @@ namespace Vostok.Hosting.Tests
 
                 return source.Task;
             }
+        }
+
+        private class BadApplication : IVostokApplication
+        {
+            private readonly bool failInitialize;
+
+            public BadApplication(bool failInitialize) =>
+                this.failInitialize = failInitialize;
+
+            public Task InitializeAsync(IVostokHostingEnvironment environment)
+                => failInitialize ? throw new Exception("initialize") : Task.CompletedTask;
+
+            public Task RunAsync(IVostokHostingEnvironment environment)
+                => throw new Exception("run");
         }
 
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
