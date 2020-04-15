@@ -108,7 +108,10 @@ namespace Vostok.Hosting
         }
 
         /// <summary>
-        /// Starts the execution of the application and optionally waits for given state to occur.
+        /// <para>Starts the execution of the application and optionally waits for given state to occur.</para>
+        /// <para>If not given a <paramref name="stateToAwait"/>, acts in a fire-and-forget fashion.</para>
+        /// <para>If given <paramref name="stateToAwait"/> is not reached before the task returned by
+        /// <see cref="RunAsync"/> completes, simply awaits that task instead, propagating its error in case of crash.</para>
         /// </summary>
         public async Task StartAsync(VostokApplicationState? stateToAwait = null)
         {
@@ -135,7 +138,8 @@ namespace Vostok.Hosting
         }
 
         /// <summary>
-        /// Cancels the execution of the application and waits for the host to stop.
+        /// <para>Cancels the execution of the application and waits for the host to stop.</para>
+        /// <para>If <paramref name="ensureSuccess"/> is <c>true</c> (which is the default), propagates errors from app crashes.</para>
         /// </summary>
         public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
         {
