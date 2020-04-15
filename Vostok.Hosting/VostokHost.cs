@@ -74,6 +74,9 @@ namespace Vostok.Hosting
         /// <para>This sequence produces <see cref="IObserver{T}.OnError"/> if application crashes.</para>
         /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when application execution completes.</para>
         /// <para>Immediately produces a notification with current <see cref="ApplicationState"/> when subscribed to.</para>
+        /// <para>Note that terminal notifications (<see cref="IObserver{T}.OnError"/> and <see cref="IObserver{T}.OnCompleted"/>)
+        /// do not guarantee full completion of the task returned by <see cref="RunAsync"/> (the host may run its own cleanup after those).
+        /// These notifications merely signify the final, terminal nature of the last reported status.</para>
         /// </summary>
         public virtual IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
