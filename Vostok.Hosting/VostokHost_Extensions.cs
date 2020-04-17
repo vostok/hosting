@@ -26,7 +26,12 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHost.StopAsync"/>
         [NotNull]
-        public static VostokApplicationRunResult Stop([NotNull] this VostokHost vostokHost, bool ensureSuccess = true) =>
+        public static VostokApplicationRunResult Stop([NotNull] this VostokHost vostokHost) =>
+            vostokHost.StopAsync().GetAwaiter().GetResult();
+
+        /// <inheritdoc cref="VostokHost.StopAsync"/>
+        [NotNull]
+        public static VostokApplicationRunResult Stop([NotNull] this VostokHost vostokHost, bool ensureSuccess) =>
             vostokHost.StopAsync(ensureSuccess).GetAwaiter().GetResult();
 
         /// <summary>

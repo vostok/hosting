@@ -112,8 +112,9 @@ namespace Vostok.Hosting
         /// <para>If not given a <paramref name="stateToAwait"/>, acts in a fire-and-forget fashion.</para>
         /// <para>If given <paramref name="stateToAwait"/> is not reached before the task returned by
         /// <see cref="RunAsync"/> completes, simply awaits that task instead, propagating its error in case of crash.</para>
+        /// <para>Waits for the <see cref="VostokApplicationState.Running"/> state by default.</para>
         /// </summary>
-        public async Task StartAsync(VostokApplicationState? stateToAwait = null)
+        public async Task StartAsync(VostokApplicationState? stateToAwait = VostokApplicationState.Running)
         {
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
