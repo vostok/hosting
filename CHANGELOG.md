@@ -1,3 +1,7 @@
+## 0.1.18 (17-04-2020):
+
+VostokHost received two new methods for lifecycle management: Start and Stop. These are useful for testing.
+
 ## 0.1.17 (15-04-2020):
 
 - VostokHost is now suitable to serve as a base class for other hosts.
