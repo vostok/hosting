@@ -8,6 +8,7 @@ using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
@@ -46,7 +47,9 @@ namespace Vostok.Hosting
 
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly AtomicBoolean launchedOnce = false;
+        private readonly object launchGate = new object();
 
+        private volatile Task<VostokApplicationRunResult> workerTask;
         private volatile VostokHostingEnvironment environment;
         private volatile ILog log;
 
@@ -71,6 +74,9 @@ namespace Vostok.Hosting
         /// <para>This sequence produces <see cref="IObserver{T}.OnError"/> if application crashes.</para>
         /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when application execution completes.</para>
         /// <para>Immediately produces a notification with current <see cref="ApplicationState"/> when subscribed to.</para>
+        /// <para>Note that terminal notifications (<see cref="IObserver{T}.OnError"/> and <see cref="IObserver{T}.OnCompleted"/>)
+        /// do not guarantee full completion of the task returned by <see cref="RunAsync"/> (the host may run its own cleanup after those).
+        /// These notifications merely signify the final, terminal nature of the last reported status.</para>
         /// </summary>
         public virtual IObservable<VostokApplicationState> OnApplicationStateChanged => onApplicationStateChanged;
 
@@ -88,11 +94,74 @@ namespace Vostok.Hosting
         /// <para>May throw an exception if an error occurs during environment creation.</para>
         /// <para>Does not rethrow exceptions from <see cref="IVostokApplication"/>, stores them in result's <see cref="VostokApplicationRunResult.Error"/> property.</para>
         /// </summary>
-        public virtual async Task<VostokApplicationRunResult> RunAsync()
+        public virtual Task<VostokApplicationRunResult> RunAsync()
         {
-            if (!launchedOnce.TrySetTrue())
-                throw new InvalidOperationException("Application can't be launched multiple times.");
+            lock (launchGate)
+            {
+                if (!launchedOnce.TrySetTrue())
+                    throw new InvalidOperationException("Application can't be launched multiple times.");
 
+                workerTask = Task.Run(RunInternalAsync);
+            }
+
+            return workerTask;
+        }
+
+        /// <summary>
+        /// <para>Starts the execution of the application and optionally waits for given state to occur.</para>
+        /// <para>If not given a <paramref name="stateToAwait"/>, acts in a fire-and-forget fashion.</para>
+        /// <para>If given <paramref name="stateToAwait"/> is not reached before the task returned by
+        /// <see cref="RunAsync"/> completes, simply awaits that task instead, propagating its error in case of crash.</para>
+        /// <para>Waits for the <see cref="VostokApplicationState.Running"/> state by default.</para>
+        /// </summary>
+        public async Task StartAsync(VostokApplicationState? stateToAwait = VostokApplicationState.Running)
+        {
+            var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            var subscription = OnApplicationStateChanged.Subscribe(
+                state =>
+                {
+                    if (state == stateToAwait)
+                        stateCompletionSource.TrySetResult(true);
+                });
+
+            using (subscription)
+            {
+                var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
+
+                if (stateToAwait == null)
+                    return;
+
+                var completedTask = await Task.WhenAny(runnerTask, stateCompletionSource.Task).ConfigureAwait(false);
+
+                await completedTask.ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// <para>Cancels the execution of the application and waits for the host to stop.</para>
+        /// <para>If <paramref name="ensureSuccess"/> is <c>true</c> (which is the default), propagates errors from app crashes.</para>
+        /// </summary>
+        public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
+        {
+            Task<VostokApplicationRunResult> resultTask;
+
+            lock (launchGate)
+                resultTask = workerTask;
+
+            if (resultTask == null)
+                return Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
+
+            ShutdownTokenSource.Cancel();
+
+            if (ensureSuccess)
+                resultTask = resultTask.ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
+
+            return resultTask;
+        }
+
+        private async Task<VostokApplicationRunResult> RunInternalAsync()
+        {
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
@@ -104,12 +173,12 @@ namespace Vostok.Hosting
             using (settings.Application as IDisposable)
             {
                 result = WarmupEnvironment();
-                
+
                 if (result != null)
                     return result;
 
                 result = await InitializeApplicationAsync().ConfigureAwait(false);
-                
+
                 if (result.State == VostokApplicationState.Initialized)
                     result = await RunApplicationAsync().ConfigureAwait(false);
 
