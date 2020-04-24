@@ -22,6 +22,7 @@ using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
+
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Vostok.Hosting
@@ -170,7 +171,7 @@ namespace Vostok.Hosting
                 return result;
 
             using (environment)
-            using (settings.Application as IDisposable)
+            using (new LogApplicationDispose(settings.Application as IDisposable, log))
             {
                 result = WarmupEnvironment();
 
@@ -199,9 +200,9 @@ namespace Vostok.Hosting
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
-                
+
                 log = environment.Log.ForContext<VostokHost>();
-                
+
                 return null;
             }
             catch (Exception error)
@@ -367,9 +368,9 @@ namespace Vostok.Hosting
         private void ChangeStateTo(VostokApplicationState newState, Exception error = null)
         {
             ApplicationState = newState;
-            
+
             onApplicationStateChanged.Next(newState);
-            
+
             if (error != null)
                 onApplicationStateChanged.Error(error);
             else if (newState.IsTerminal())
@@ -474,6 +475,27 @@ namespace Vostok.Hosting
             var state = ThreadPoolUtility.GetPoolState();
 
             log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
+        }
+
+        private class LogApplicationDispose : IDisposable
+        {
+            private readonly IDisposable disposable;
+            private readonly ILog log;
+
+            public LogApplicationDispose(IDisposable disposable, ILog log)
+            {
+                this.disposable = disposable;
+                this.log = log;
+            }
+
+            public void Dispose()
+            {
+                if (disposable != null)
+                {
+                    log.Info("Disposing of application..");
+                    disposable.Dispose();
+                }
+            }
         }
 
         #endregion
