@@ -1,3 +1,7 @@
+## 0.1.19 (24-04-2020):
+
+Log application dispose.
+
 ## 0.1.18 (17-04-2020):
 
 VostokHost received two new methods for lifecycle management: Start and Stop. These are useful for testing.
