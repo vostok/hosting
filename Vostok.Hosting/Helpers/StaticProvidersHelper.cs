@@ -3,10 +3,12 @@ using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.Configuration;
+using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
+using Vostok.ServiceDiscovery;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Helpers
@@ -35,11 +37,15 @@ namespace Vostok.Hosting.Helpers
                 throw new ArgumentNullException(nameof(environment));
 
             ClusterClientDefaults.ClientApplicationName = environment.ApplicationIdentity.FormatServiceName();
+            if (environment.ServiceBeacon is ServiceBeacon beacon)
+                ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
 
             LogProvider.Configure(environment.Log, true);
             TracerProvider.Configure(environment.Tracer, true);
             HerculesSinkProvider.Configure(environment.HerculesSink, true);
             DatacentersProvider.Configure(environment.Datacenters, true);
+
+            FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => environment.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
 
             var log = environment.Log.ForContext(typeof(StaticProvidersHelper));
 

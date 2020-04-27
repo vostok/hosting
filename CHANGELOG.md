@@ -1,3 +1,7 @@
+## 0.1.20 (27-04-2020):
+
+Fix `ClusterClientDefaults.ClientApplicationName` filling.
+
 ## 0.1.19 (24-04-2020):
 
 Log application dispose.

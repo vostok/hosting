@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Time;
@@ -25,6 +26,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -158,6 +160,10 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
+            ClusterClientDefaults.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
+            if (context.ServiceBeacon is ServiceBeacon beacon)
+                ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
+
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
@@ -202,6 +208,9 @@ namespace Vostok.Hosting.Components.Environment
                 context.PrintBufferedLogs();
                 context.Log = context.Logs.BuildCompositeLog();
             }
+
+            if (settings.ConfigureStaticProviders)
+                StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
             return vostokHostingEnvironment;
         }

@@ -382,9 +382,6 @@ namespace Vostok.Hosting
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
-
-            if (settings.ConfigureStaticProviders)
-                StaticProvidersHelper.Configure(environment);
         }
 
         private void WarmupConfiguration()
