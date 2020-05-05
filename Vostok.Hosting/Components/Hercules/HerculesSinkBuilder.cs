@@ -27,6 +27,8 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization = new Customization<HerculesSinkSettings>();
         }
 
+        public bool IsEnabled => enabled;
+
         public IHerculesSink Build(BuildContext context)
         {
             if (!enabled)

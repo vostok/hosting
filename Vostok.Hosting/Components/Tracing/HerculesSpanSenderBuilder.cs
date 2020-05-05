@@ -19,6 +19,8 @@ namespace Vostok.Hosting.Components.Tracing
         public HerculesSpanSenderBuilder()
             => settingsCustomization = new Customization<HerculesSpanSenderSettings>();
 
+        public bool IsEnabled => enabled;
+
         public IVostokHerculesSpanSenderBuilder Enable()
         {
             enabled = true;

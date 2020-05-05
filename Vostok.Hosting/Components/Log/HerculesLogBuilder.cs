@@ -24,6 +24,8 @@ namespace Vostok.Hosting.Components.Log
             logCustomization = new Customization<ILog>();
         }
 
+        public bool IsEnabled => enabled;
+
         public IVostokHerculesLogBuilder Enable()
         {
             enabled = true;

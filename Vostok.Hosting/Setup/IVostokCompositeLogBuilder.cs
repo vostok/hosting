@@ -9,6 +9,12 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokCompositeLogBuilder
     {
+        bool IsFileLogEnabled { get; }
+        
+        bool IsConsoleLogEnabled { get; }
+        
+        bool IsHerculesLogEnabled { get; }
+
         IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
 
         IVostokCompositeLogBuilder AddLog([NotNull] string name, [NotNull] ILog log);

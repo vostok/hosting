@@ -23,6 +23,8 @@ namespace Vostok.Hosting.Components.Metrics
             settingsCustomization = new Customization<HerculesMetricSenderSettings>();
         }
 
+        public bool IsEnabled => enabled;
+
         public IVostokHerculesMetricEventSenderBuilder Disable()
         {
             enabled = false;

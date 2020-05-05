@@ -22,6 +22,8 @@ namespace Vostok.Hosting.Components.Log
             logCustomization = new Customization<ILog>();
         }
 
+        public bool IsEnabled => enabled;
+
         public IVostokFileLogBuilder Enable()
         {
             enabled = true;

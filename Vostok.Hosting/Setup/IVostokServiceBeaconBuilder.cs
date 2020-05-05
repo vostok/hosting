@@ -7,6 +7,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokServiceBeaconBuilder
     {
+        bool IsEnabled { get; }
+
         IVostokServiceBeaconBuilder Disable();
 
         IVostokServiceBeaconBuilder DenyRegistrationFromNotActiveDatacenters();

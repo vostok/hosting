@@ -25,6 +25,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
 
+        public bool IsEnabled => enabled;
+
         public IVostokZooKeeperClientBuilder Enable()
         {
             enabled = true;

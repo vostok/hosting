@@ -9,6 +9,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokZooKeeperClientBuilder
     {
+        bool IsEnabled { get; }
+
         IVostokZooKeeperClientBuilder Disable();
         IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance);
 

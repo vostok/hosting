@@ -35,6 +35,12 @@ namespace Vostok.Hosting.Components.Log
             logCustomization = new Customization<ILog>();
         }
 
+        public bool IsFileLogEnabled => fileLogBuilder.IsEnabled;
+        
+        public bool IsConsoleLogEnabled => consoleLogBuilder.IsEnabled;
+
+        public bool IsHerculesLogEnabled => herculesLogBuilder.IsEnabled;
+
         [NotNull]
         public Logs Build(BuildContext context)
         {

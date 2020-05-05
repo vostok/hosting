@@ -35,6 +35,8 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
 
+        public bool IsEnabled => enabled;
+
         public IServiceBeacon Build(BuildContext context)
         {
             applicationIdentity = context.ApplicationIdentity;
