@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Sources;
+using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.ServiceDiscovery.Abstractions;
 
@@ -85,25 +86,37 @@ namespace Vostok.Hosting.Setup
         /// Applies given <paramref name="port"/> to <see cref="IServiceBeacon"/> configuration.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetPort([NotNull] this IVostokHostingEnvironmentBuilder builder, int port) =>
-            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetPort(port)));
+            builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetPort(port)));
 
         /// <summary>
         /// Applies given base url <paramref name="path"/> to <see cref="IServiceBeacon"/> configuration.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetBaseUrlPath([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string path) =>
-            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetUrlPath(path)));
+            builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetUrlPath(path)));
 
         /// <summary>
         /// Applies given url <paramref name="scheme"/> to <see cref="IServiceBeacon"/> configuration.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetUrlScheme([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string scheme) =>
-            builder.SetupServiceBeacon(serviceBeaconSetup => serviceBeaconSetup.SetupReplicaInfo(replicaInfoSetup => replicaInfoSetup.SetScheme(scheme)));
+            builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetScheme(scheme)));
 
         /// <summary>
         /// Enables HTTPS scheme in <see cref="IServiceBeacon"/> configuration.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetHttpsScheme([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
             builder.SetUrlScheme("https");
+
+        /// <summary>
+        /// Applies given <paramref name="environment"/> name to <see cref="IServiceBeacon"/> configuration. Note the this environment might differ from app identity <see cref="IVostokApplicationIdentity.Environment"/>.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetBeaconEnvironment([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string environment) =>
+            builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetEnvironment(environment)));
+
+        /// <summary>
+        /// Applies given <paramref name="application"/> name to <see cref="IServiceBeacon"/> configuration. Note the this application might differ from app identity <see cref="IVostokApplicationIdentity.Application"/>.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetBeaconApplication([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] string application) =>
+            builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetApplication(application)));
 
         /// <summary>
         /// Adds <see cref="LogConfigurationRule"/>s from built-in <see cref="IConfigurationSource"/> in given <paramref name="scope"/>.
