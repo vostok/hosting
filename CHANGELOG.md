@@ -1,4 +1,4 @@
-## 0.1.21 (05-05-2020:
+## 0.1.21 (05-05-2020):
 
 - Added extensions on `IVostokHostingEnvironmentBuilder` to quickly setup env/app for ServiceBeacon.
 - Added an option to provide custom external instances of IClusterConfigClient, IHerculesSink and IZooKeeperClient.
