@@ -30,6 +30,8 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<ConfigurationProviderSettings> secretProviderCustomization;
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
+        private readonly Customization<IConfigurationSource> sourceCustomization;
+        private readonly Customization<IConfigurationSource> secretSourceCustomization;
 
         public ConfigurationBuilder()
         {
@@ -42,6 +44,8 @@ namespace Vostok.Hosting.Components.Configuration
             secretProviderCustomization = new Customization<ConfigurationProviderSettings>();
             printSettingsCustomization = new Customization<PrintSettings>();
             configurationContextCustomization = new Customization<IVostokConfigurationContext>();
+            sourceCustomization = new Customization<IConfigurationSource>();
+            secretSourceCustomization = new Customization<IConfigurationSource>();
         }
 
         public IVostokConfigurationSourcesBuilder AddSource(IConfigurationSource source)
@@ -59,6 +63,18 @@ namespace Vostok.Hosting.Components.Configuration
         public IVostokConfigurationSourcesBuilder AddSecretSource(IConfigurationSource source)
         {
             secretSources.Add(source ?? throw new ArgumentNullException(nameof(source)));
+            return this;
+        }
+
+        public IVostokConfigurationBuilder CustomizeConfigurationSource(Func<IConfigurationSource, IConfigurationSource> customization)
+        {
+            sourceCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
+            return this;
+        }
+
+        public IVostokConfigurationBuilder CustomizeSecretConfigurationSource(Func<IConfigurationSource, IConfigurationSource> customization)
+        {
+            secretSourceCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
             return this;
         }
 
@@ -105,8 +121,8 @@ namespace Vostok.Hosting.Components.Configuration
         {
             sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
 
-            var source = PrepareCombinedSource(mergeSettingsCustomization, sources);
-            var secretSource = PrepareCombinedSource(mergeSecretSettingsCustomization, secretSources);
+            var source = PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources);
+            var secretSource = PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources);
 
             var providerSettings = new ConfigurationProviderSettings()
                 .WithErrorLogging(context.Log)
@@ -130,14 +146,17 @@ namespace Vostok.Hosting.Components.Configuration
             return (source, secretSource, provider, secretProvider);
         }
 
-        private static IConfigurationSource PrepareCombinedSource(Customization<SettingsMergeOptions> mergeCustomization, IReadOnlyList<IConfigurationSource> sources)
+        private static IConfigurationSource PrepareCombinedSource(
+            Customization<SettingsMergeOptions> mergeCustomization, 
+            Customization<IConfigurationSource> sourceCustomization,
+            IReadOnlyList<IConfigurationSource> sources)
         {
             var mergeOptions = new SettingsMergeOptions();
 
             mergeCustomization.Customize(mergeOptions);
 
             if (sources.Any())
-                return new CombinedSource(sources.ToArray(), mergeOptions);
+                return sourceCustomization.Customize(new CombinedSource(sources.ToArray(), mergeOptions));
 
             return new ConstantSource(null);
         }
