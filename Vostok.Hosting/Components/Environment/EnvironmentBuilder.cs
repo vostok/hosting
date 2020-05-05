@@ -8,6 +8,7 @@ using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Time;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Sources;
 using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
@@ -175,6 +176,13 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceBeacon.ReplicaInfo.TryGetUrl(out var url);
 
+            var configSubstitutions = SubstitutionsProvider.Provide(
+                context.ApplicationIdentity,
+                context.ClusterConfigClient,
+                context.ServiceBeacon,
+                context.Datacenters)
+                .ToArray();
+
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
                 shutdownTimeout,
@@ -185,8 +193,8 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log,
                 context.Tracer,
                 context.HerculesSink ?? new DevNullHerculesSink(),
-                context.ConfigurationSource,
-                context.SecretConfigurationSource,
+                context.ConfigurationSource.Substitute(configSubstitutions),
+                context.SecretConfigurationSource.Substitute(configSubstitutions),
                 context.ConfigurationProvider,
                 context.SecretConfigurationProvider,
                 context.ClusterConfigClient,
