@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Hercules.Client;
+using Vostok.Hercules.Client.Abstractions;
 
 namespace Vostok.Hosting.Setup
 {
@@ -9,6 +10,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHerculesSinkBuilder
     {
         IVostokHerculesSinkBuilder Disable();
+        IVostokHerculesSinkBuilder UseInstance(IHerculesSink instance);
 
         IVostokHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
 

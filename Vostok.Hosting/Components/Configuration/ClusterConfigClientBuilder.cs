@@ -14,12 +14,17 @@ namespace Vostok.Hosting.Components.Configuration
     {
         private readonly Customization<ClusterConfigClientSettings> settingsCustomization;
 
+        private volatile IClusterConfigClient instance;
+
         public ClusterConfigClientBuilder()
             => settingsCustomization = new Customization<ClusterConfigClientSettings>();
 
         [NotNull]
         public IClusterConfigClient Build(BuildContext context)
         {
+            if (instance != null)
+                return instance;
+
             var settings = new ClusterConfigClientSettings
             {
                 Log = context.Log,
@@ -41,9 +46,19 @@ namespace Vostok.Hosting.Components.Configuration
             return new ClusterConfigClient(settings);
         }
 
+        public IVostokClusterConfigClientBuilder UseInstance(IClusterConfigClient instance)
+        {
+            this.instance = instance;
+            
+            return this;
+        }
+
         public IVostokClusterConfigClientBuilder CustomizeSettings(Action<ClusterConfigClientSettings> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+
+            instance = null;
+
             return this;
         }
     }

@@ -20,6 +20,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
         private volatile bool enabled;
+        private volatile IZooKeeperClient instance;
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -36,30 +37,49 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
+        public IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance)
+        {
+            this.instance = instance;
+
+            return this;
+        }
+
         public IVostokZooKeeperClientBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
+            instance = null;
             connectionString = null;
+            
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
+            
             return this;
         }
 
         public IVostokZooKeeperClientBuilder SetClusterConfigTopology(string path)
         {
+            instance = null;
             connectionString = null;
+            
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
+            
             return this;
         }
 
         public IVostokZooKeeperClientBuilder SetConnectionString(string connectionString)
         {
+            instance = null;
             clusterProviderBuilder = null;
+
             this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+            
             return this;
         }
 
         public IVostokZooKeeperClientBuilder CustomizeSettings(Action<ZooKeeperClientSettings> settingsCustomization)
         {
+            instance = null;
+
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            
             return this;
         }
 
@@ -67,6 +87,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
         {
             if (!enabled)
                 return null;
+
+            if (instance != null)
+                return instance;
 
             ZooKeeperClientSettings settings = null;
 
