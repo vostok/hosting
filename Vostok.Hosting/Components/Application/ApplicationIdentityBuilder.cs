@@ -19,6 +19,16 @@ namespace Vostok.Hosting.Components.Application
         public virtual IVostokApplicationIdentity Build(BuildContext context) =>
             new ApplicationIdentity(project, subproject, environment, application, instance);
 
+        public string Project => project;
+        
+        public string Subproject => subproject;
+        
+        public string Environment => environment;
+        
+        public string Application => application;
+        
+        public string Instance => instance;
+
         public IVostokApplicationIdentityBuilder SetProject(string project)
         {
             if (string.IsNullOrWhiteSpace(project))
