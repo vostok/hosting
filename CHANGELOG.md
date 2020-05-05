@@ -1,3 +1,12 @@
+## 0.1.21 (05-05-2020:
+
+- Added extensions on `IVostokHostingEnvironmentBuilder` to quickly setup env/app for ServiceBeacon.
+- Added an option to provide custom external instances of IClusterConfigClient, IHerculesSink and IZooKeeperClient.
+- Added `IsEnabled` property to all builders that are capable of being disabled so that one can apply post-tuning only if respective components are enabled.
+- Added getters for identity components so that one can set missing values without risking to overwrite previous configuration.
+- Added default config placeholder substitutions (identity values, SD env and app, CC zone, local datacenter). 
+- It's now possible to customize config sources with arbitrary wrappers.
+
 ## 0.1.20 (27-04-2020):
 
 Fix `ClusterClientDefaults.ClientApplicationName` filling.
