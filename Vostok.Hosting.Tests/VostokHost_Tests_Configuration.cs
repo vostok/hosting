@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Vostok.Commons.Testing;
+using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Sources.Object;
+using Vostok.Configuration.Sources.Switching;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Models;
@@ -84,17 +88,22 @@ namespace Vostok.Hosting.Tests
             application = new Application(
                 env =>
                 {
-                    var settings = env.ConfigurationProvider.Get<ApplicationSettings>();
-                    var secrets = env.SecretConfigurationProvider.Get<ApplicationSecretSettings>();
+                    Action assertion = () =>
+                    {
+                        var settings = env.ConfigurationProvider.Get<ApplicationSettings>();
+                        var secrets = env.SecretConfigurationProvider.Get<ApplicationSecretSettings>();
 
-                    settings.A.Should().Be("infra");
-                    settings.B.Should().Be("subinfra");
-                    settings.C.Should().Be("vostok");
-                    settings.D.Should().Be("app");
-                    settings.E.Should().Be("1");
+                        settings.A.Should().Be("infra");
+                        settings.B.Should().Be("vostok");
+                        settings.C.Should().Be("app");
+                        settings.D.Should().Be("dev");
+                        settings.E.Should().Be("1");
 
-                    secrets.F.Should().Be("sd-app");
-                    secrets.G.Should().Be("sd-env");
+                        secrets.F.Should().Be("sd-app");
+                        secrets.G.Should().Be("sd-env");
+                    };
+
+                    assertion.ShouldPassIn(10.Seconds(), 100.Milliseconds());
                 });
 
             host = new VostokHost(new TestHostSettings(application,
@@ -103,8 +112,8 @@ namespace Vostok.Hosting.Tests
                     builder.SetupApplicationIdentity(
                         id => id
                             .SetProject("infra")
-                            .SetSubproject("subinfra")
                             .SetSubproject("vostok")
+                            .SetEnvironment("dev")
                             .SetApplication("app")
                             .SetInstance("1"));
 
@@ -130,6 +139,13 @@ namespace Vostok.Hosting.Tests
                                 F = $"#{{{VostokConfigurationPlaceholders.ServiceDiscoveryApplication}}}",
                                 G = $"#{{{VostokConfigurationPlaceholders.ServiceDiscoveryEnvironment}}}",
                             }));
+                        });
+
+                    builder.SetupHerculesSink(
+                        (sink, context) =>
+                        {
+                            context.ConfigurationProvider.Get<ApplicationSettings>();
+                            context.SecretConfigurationProvider.Get<ApplicationSecretSettings>();
                         });
                 }));
 

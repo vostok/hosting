@@ -7,7 +7,8 @@ using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Time;
 using Vostok.Configuration;
-using Vostok.Configuration.Abstractions;
+using Vostok.Configuration.Sources;
+using Vostok.Configuration.Sources.Switching;
 using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
@@ -40,7 +41,7 @@ namespace Vostok.Hosting.Components.Environment
     {
         private readonly VostokHostingEnvironmentFactorySettings settings;
 
-        private readonly CustomizableBuilder<ConfigurationBuilder, (IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)> configurationBuilder;
+        private readonly CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)> configurationBuilder;
         private readonly CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient> clusterConfigClientBuilder;
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
@@ -65,7 +66,7 @@ namespace Vostok.Hosting.Components.Environment
 
             shutdownTokens = new List<CancellationToken>();
             shutdownTimeout = 5.Seconds();
-            configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)>(new ConfigurationBuilder());
+            configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
             clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
@@ -181,6 +182,9 @@ namespace Vostok.Hosting.Components.Environment
                     context.ServiceBeacon,
                     context.Datacenters)
                 .ToArray();
+
+            context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
+            context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
