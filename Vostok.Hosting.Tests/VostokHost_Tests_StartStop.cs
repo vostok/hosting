@@ -22,11 +22,7 @@ namespace Vostok.Hosting.Tests
         public void Start_should_wait_until_given_state_occurs(VostokApplicationState stateToAwait)
         {
             application = new Application();
-            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
-            {
-                WarmupZooKeeper = false,
-                WarmupConfiguration = false
-            });
+            host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
 
             host.Start(stateToAwait);
             host.ApplicationState.Should().Match<VostokApplicationState>(state => state >= stateToAwait);
@@ -39,11 +35,7 @@ namespace Vostok.Hosting.Tests
         public void Start_should_throw_on_initialize_fail()
         {
             application = new BadApplication(true);
-            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
-            {
-                WarmupZooKeeper = false,
-                WarmupConfiguration = false
-            });
+            host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
             
             Action checkStart = () => host.Start(VostokApplicationState.Initialized);
             checkStart.Should().Throw<Exception>().WithMessage("initialize");
@@ -56,11 +48,7 @@ namespace Vostok.Hosting.Tests
         public void Start_should_not_throw_on_run_fail()
         {
             application = new BadApplication(false);
-            host = new VostokHost(new VostokHostSettings(application, SetupEnvironment)
-            {
-                WarmupZooKeeper = false,
-                WarmupConfiguration = false
-            });
+            host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
 
             Action checkStart = () => host.Start(VostokApplicationState.Initialized);
             checkStart.Should().NotThrow();
