@@ -45,9 +45,9 @@ namespace Vostok.Hosting
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <summary>
-        /// If set to <c>true</c> (default), logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>. Requires <see cref="WarmupConfiguration"/>.
+        /// If set to <c>true</c>, logs application configuration after assembling <see cref="IVostokHostingEnvironment"/>. Requires <see cref="WarmupConfiguration"/>.
         /// </summary>
-        public bool LogApplicationConfiguration { get; set; } = true;
+        public bool LogApplicationConfiguration { get; set; }
 
         /// <summary>
         /// If set to <c>true</c>, warms up configuration sources before initializing the application. Required by <see cref="LogApplicationConfiguration"/>.
