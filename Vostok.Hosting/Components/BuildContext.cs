@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Vostok.ClusterConfig.Client.Abstractions;
-using Vostok.Configuration.Abstractions;
+using Vostok.Configuration;
+using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
@@ -35,10 +36,10 @@ namespace Vostok.Hosting.Components
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
-        public IConfigurationSource ConfigurationSource { get; set; }
-        public IConfigurationSource SecretConfigurationSource { get; set; }
-        public IConfigurationProvider ConfigurationProvider { get; set; }
-        public IConfigurationProvider SecretConfigurationProvider { get; set; }
+        public SwitchingSource ConfigurationSource { get; set; }
+        public SwitchingSource SecretConfigurationSource { get; set; }
+        public ConfigurationProvider ConfigurationProvider { get; set; }
+        public ConfigurationProvider SecretConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
