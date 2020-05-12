@@ -11,6 +11,7 @@ using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
 using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
+using Vostok.Configuration.Sources.Switching;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -18,7 +19,7 @@ using Vostok.Hosting.Setup;
 namespace Vostok.Hosting.Components.Configuration
 {
     internal class ConfigurationBuilder : IVostokConfigurationBuilder,
-        IBuilder<(IConfigurationSource source, IConfigurationSource secretSource, IConfigurationProvider provider, IConfigurationProvider secretProvider)>
+        IBuilder<(SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>
     {
         private readonly List<IConfigurationSource> sources;
         private readonly List<IConfigurationSource> secretSources;
@@ -114,15 +115,15 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
-        public (IConfigurationSource source,
-            IConfigurationSource secretSource,
-            IConfigurationProvider provider,
-            IConfigurationProvider secretProvider) Build(BuildContext context)
+        public (SwitchingSource source,
+            SwitchingSource secretSource,
+            ConfigurationProvider provider,
+            ConfigurationProvider secretProvider) Build(BuildContext context)
         {
             sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
 
-            var source = PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources);
-            var secretSource = PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources);
+            var source = new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources));
+            var secretSource = new SwitchingSource(PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources));
 
             var providerSettings = new ConfigurationProviderSettings()
                 .WithErrorLogging(context.Log)
@@ -147,7 +148,7 @@ namespace Vostok.Hosting.Components.Configuration
         }
 
         private static IConfigurationSource PrepareCombinedSource(
-            Customization<SettingsMergeOptions> mergeCustomization, 
+            Customization<SettingsMergeOptions> mergeCustomization,
             Customization<IConfigurationSource> sourceCustomization,
             IReadOnlyList<IConfigurationSource> sources)
         {
