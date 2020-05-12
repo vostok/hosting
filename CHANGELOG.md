@@ -1,3 +1,7 @@
+## 0.1.22 (12-05-2020):
+
+Fix config placeholder substitutions.
+
 ## 0.1.21 (05-05-2020):
 
 - Added extensions on `IVostokHostingEnvironmentBuilder` to quickly setup env/app for ServiceBeacon.
