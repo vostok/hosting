@@ -294,6 +294,7 @@ namespace Vostok.Hosting
         {
             var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var shutdownToken = environment.ShutdownToken;
+            var shutdownTimeout = environment.ShutdownTimeout;
 
             using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
             {
@@ -314,12 +315,12 @@ namespace Vostok.Hosting
 
                 if (shutdownToken.IsCancellationRequested)
                 {
-                    log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", settings.ShutdownTimeout);
+                    log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", shutdownTimeout);
                     ChangeStateTo(VostokApplicationState.Stopping);
 
-                    if (!await task.WaitAsync(settings.ShutdownTimeout).ConfigureAwait(false))
+                    if (!await task.WaitAsync(shutdownTimeout).ConfigureAwait(false))
                     {
-                        log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", settings.ShutdownTimeout);
+                        log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", shutdownTimeout);
                         return ReturnResult(VostokApplicationState.StoppedForcibly);
                     }
 
