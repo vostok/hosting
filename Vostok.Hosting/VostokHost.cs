@@ -16,7 +16,6 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
