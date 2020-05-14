@@ -1,6 +1,10 @@
+## 0.1.23 (14-05-2020):
+
+VostokHost now picks up shutdown timeout specified via environment builder.
+
 ## 0.1.22 (12-05-2020):
 
-Fix config placeholder substitutions.
+Fixed config placeholder substitutions.
 
 ## 0.1.21 (05-05-2020):
 
