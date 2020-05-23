@@ -11,6 +11,8 @@ namespace Vostok.Hosting.Components.Log
     {
         private volatile ILog baseLog = new BufferedLog();
 
+        public bool IsBuffering => baseLog is BufferedLog;
+
         public void Log(LogEvent @event) => baseLog.Log(@event);
 
         public bool IsEnabledFor(LogLevel level) => baseLog.IsEnabledFor(level);
