@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading;
+using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Abstractions.Wrappers;
 
 namespace Vostok.Hosting.Components.Log
 {
+    [PublicAPI]
     internal class SubstitutableLog : ILog
     {
         private volatile ILog baseLog = new BufferedLog();
