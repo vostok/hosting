@@ -1,3 +1,9 @@
+## 0.1.24 (23-05-2020):
+
+- SubstitutableLog is public now.
+- SubstitutableLog: added IsBuffering property.
+- IVostokHostExtensionsBuilder: added non-generic overloads with type to Add method.
+
 ## 0.1.23 (14-05-2020):
 
 VostokHost now picks up shutdown timeout specified via environment builder.
