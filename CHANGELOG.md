@@ -1,4 +1,4 @@
-## 0.1.24 (23-05-2020):
+## 0.1.25 (28-05-2020):
 
 - SubstitutableLog is public now.
 - SubstitutableLog: added IsBuffering property.

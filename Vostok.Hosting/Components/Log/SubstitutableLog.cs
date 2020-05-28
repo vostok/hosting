@@ -7,7 +7,7 @@ using Vostok.Logging.Abstractions.Wrappers;
 namespace Vostok.Hosting.Components.Log
 {
     [PublicAPI]
-    internal class SubstitutableLog : ILog
+    public class SubstitutableLog : ILog
     {
         private volatile ILog baseLog = new BufferedLog();
 
