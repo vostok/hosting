@@ -215,10 +215,8 @@ namespace Vostok.Hosting
             builder.SetupShutdownToken(ShutdownTokenSource.Token);
             builder.SetupShutdownTimeout(settings.ShutdownTimeout);
 
-            var applicationType = settings.Application.GetType();
-
-            RequirementsHelper.EnsurePort(applicationType, builder);
-            RequirementsHelper.EnsureConfigurations(applicationType, builder);
+            RequirementsHelper.EnsurePort(settings.Application, builder);
+            RequirementsHelper.EnsureConfigurations(settings.Application, builder);
 
             settings.EnvironmentSetup(builder);
         }
@@ -262,7 +260,7 @@ namespace Vostok.Hosting
 
             try
             {
-                RequirementsChecker.Check(settings.Application.GetType(), environment);
+                RequirementsChecker.Check(settings.Application, environment);
 
                 return await RunPhaseAsync(true).ConfigureAwait(false);
             }
