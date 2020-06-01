@@ -49,6 +49,9 @@ namespace Vostok.Hosting.Setup
         IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupMetrics([NotNull] Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
+        IVostokHostingEnvironmentBuilder SetupDiagnostics([NotNull] Action<IVostokDiagnosticsBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupDiagnostics([NotNull] Action<IVostokDiagnosticsBuilder, IVostokHostingEnvironmentSetupContext> setup);
+
         IVostokHostingEnvironmentBuilder SetupDatacenters([NotNull] Action<IVostokDatacentersBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupDatacenters([NotNull] Action<IVostokDatacentersBuilder, IVostokHostingEnvironmentSetupContext> setup);
 

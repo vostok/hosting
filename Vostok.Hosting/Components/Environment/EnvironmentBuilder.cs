@@ -16,6 +16,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Datacenters;
+using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
@@ -51,6 +52,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
         private readonly CustomizableBuilder<DatacentersBuilder, IDatacenters> datacentersBuilder;
         private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
+        private readonly CustomizableBuilder<DiagnosticsBuilder, IVostokApplicationDiagnostics> diagnosticsBuilder;
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
@@ -76,6 +78,7 @@ namespace Vostok.Hosting.Components.Environment
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
             datacentersBuilder = new CustomizableBuilder<DatacentersBuilder, IDatacenters>(new DatacentersBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
+            diagnosticsBuilder = new CustomizableBuilder<DiagnosticsBuilder, IVostokApplicationDiagnostics>(new DiagnosticsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
@@ -186,6 +189,8 @@ namespace Vostok.Hosting.Components.Environment
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
+            var diagnostics = diagnosticsBuilder.Build(context);
+
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
                 shutdownTimeout,
@@ -193,6 +198,7 @@ namespace Vostok.Hosting.Components.Environment
                 applicationLimitsBuilder.Build(context),
                 applicationReplicationInfoBuilder.Build(context),
                 context.Metrics,
+                diagnostics,
                 context.Log,
                 context.Tracer,
                 context.HerculesSink ?? new DevNullHerculesSink(),
@@ -322,6 +328,18 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupMetrics(Action<IVostokMetricsBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             metricsBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupDiagnostics(Action<IVostokDiagnosticsBuilder> setup)
+        {
+            diagnosticsBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupDiagnostics(Action<IVostokDiagnosticsBuilder, IVostokHostingEnvironmentSetupContext> setup)
+        {
+            diagnosticsBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 

@@ -15,16 +15,17 @@ namespace Vostok.Hosting.Models
 {
     internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
-        private readonly Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider;
+        private readonly Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
         private readonly Action dispose;
 
         internal VostokHostingEnvironment(
             CancellationToken shutdownToken,
             TimeSpan shutdownTimeout,
-            [NotNull] IVostokApplicationIdentity applicationIdentity,
-            [NotNull] IVostokApplicationLimits applicationLimits,
-            [NotNull] Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider,
+            [NotNull] IVostokApplicationIdentity identity,
+            [NotNull] IVostokApplicationLimits limits,
+            [NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider,
             [NotNull] IVostokApplicationMetrics metrics,
+            [NotNull] IVostokApplicationDiagnostics diagnostics,
             [NotNull] ILog log,
             [NotNull] ITracer tracer,
             [NotNull] IHerculesSink herculesSink,
@@ -43,14 +44,15 @@ namespace Vostok.Hosting.Models
             [NotNull] IVostokHostExtensions hostExtensions,
             [NotNull] Action dispose)
         {
-            this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
+            this.replicationInfoProvider = replicationInfoProvider ?? throw new ArgumentNullException(nameof(replicationInfoProvider));
             this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
 
             ShutdownToken = shutdownToken;
             ShutdownTimeout = shutdownTimeout;
-            ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
-            ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
+            ApplicationIdentity = identity ?? throw new ArgumentNullException(nameof(identity));
+            ApplicationLimits = limits ?? throw new ArgumentNullException(nameof(limits));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+            Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
             HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
@@ -73,8 +75,9 @@ namespace Vostok.Hosting.Models
         public TimeSpan ShutdownTimeout { get; }
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
-        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoProvider();
+        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => replicationInfoProvider();
         public IVostokApplicationMetrics Metrics { get; }
+        public IVostokApplicationDiagnostics Diagnostics { get; }
         public ILog Log { get; }
         public ITracer Tracer { get; }
         public IHerculesSink HerculesSink { get; }
