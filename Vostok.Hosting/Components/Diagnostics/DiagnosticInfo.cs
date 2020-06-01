@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Components.Diagnostics
         public IDisposable RegisterProvider(DiagnosticEntry entry, Func<object> provider)
         {
             if (!providers.TryAdd(entry, provider))
-                throw new KeyNotFoundException($"Provider with entry '{entry}' is already registered.");
+                throw new InvalidOperationException($"Provider with entry '{entry}' is already registered.");
 
             return new ActionDisposable(() => providers.TryRemove(entry, out _));
         }
@@ -45,7 +45,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             }
             catch (Exception error)
             {
-                return $"Info provider failed with {error.GetType().Name}: '{error.Message}'";
+                return $"ERROR: info provider failed with {error.GetType().Name}: '{error.Message}'";
             }
         }
     }

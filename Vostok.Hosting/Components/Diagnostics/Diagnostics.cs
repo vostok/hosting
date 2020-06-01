@@ -1,5 +1,4 @@
-﻿using System;
-using Vostok.Hosting.Abstractions;
+﻿using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Hosting.Components.Diagnostics
@@ -8,9 +7,10 @@ namespace Vostok.Hosting.Components.Diagnostics
     {
         private readonly DiagnosticInfo info = new DiagnosticInfo();
 
+        private readonly HealthTracker healthTracker = new HealthTracker();
+
         public IDiagnosticInfo Info => info;
 
-        public IHealthTracker HealthTracker =>
-            throw new NotImplementedException();
+        public IHealthTracker HealthTracker => healthTracker;
     }
 }
