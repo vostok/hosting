@@ -1,11 +1,15 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
+using Vostok.Hosting.Abstractions.Diagnostics;
+using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Diagnostics
 {
     internal class DiagnosticsBuilder : IVostokDiagnosticsBuilder, IBuilder<DiagnosticsHub>
     {
+        private const string DiagnosticInfoComponent = "hosting";
+
         private readonly Customization<HealthTrackerSettings> healthSettingsCustomization;
         private readonly Customization<DiagnosticInfoSettings> infoSettingsCustomization;
 
@@ -33,8 +37,18 @@ namespace Vostok.Hosting.Components.Diagnostics
         private DiagnosticInfo BuildDiagnosticInfo(BuildContext context)
         {
             var infoSettings = infoSettingsCustomization.Customize(new DiagnosticInfoSettings());
+            var info = new DiagnosticInfo();
 
-            return new DiagnosticInfo();
+            if (infoSettings.AddEnvironmentInfo)
+                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider());
+
+            if (infoSettings.AddSystemMetricsInfo)
+                info.RegisterProvider(CreateEntry("system-metrics"), new SystemMetricsProvider());
+
+            if (infoSettings.AddLoadedAssembliesInfo)
+                info.RegisterProvider(CreateEntry("loaded-assemblies"), new LoadedAssembliesProvider());
+
+            return info;
         }
 
         private HealthTracker BuilderHealthTracker(BuildContext context)
@@ -43,5 +57,8 @@ namespace Vostok.Hosting.Components.Diagnostics
             
             return new HealthTracker(healthSettings.ChecksPeriod, context.Log);
         }
+
+        private static DiagnosticEntry CreateEntry(string name)
+            => new DiagnosticEntry(DiagnosticInfoComponent, name);
     }
 }
