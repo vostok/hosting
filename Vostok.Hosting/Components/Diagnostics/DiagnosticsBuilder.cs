@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions.Diagnostics;
+using Vostok.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Setup;
 
@@ -54,8 +55,12 @@ namespace Vostok.Hosting.Components.Diagnostics
         private HealthTracker BuilderHealthTracker(BuildContext context)
         {
             var healthSettings = healthSettingsCustomization.Customize(new HealthTrackerSettings());
-            
-            return new HealthTracker(healthSettings.ChecksPeriod, context.Log);
+            var healthTracker = new HealthTracker(healthSettings.ChecksPeriod, context.Log);
+
+            if (healthSettings.AddDatacenterWhitelistCheck)
+                healthTracker.RegisterCheck("datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters));
+
+            return healthTracker;
         }
 
         private static DiagnosticEntry CreateEntry(string name)

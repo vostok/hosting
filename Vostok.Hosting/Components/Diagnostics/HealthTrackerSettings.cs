@@ -8,5 +8,7 @@ namespace Vostok.Hosting.Components.Diagnostics
     public class HealthTrackerSettings
     {
         public TimeSpan ChecksPeriod { get; set; } = 30.Seconds();
+
+        public bool AddDatacenterWhitelistCheck { get; set; } = true;
     }
 }
