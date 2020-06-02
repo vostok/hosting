@@ -26,27 +26,15 @@ namespace Vostok.Hosting.Components.Diagnostics
             => providers.Select(pair => pair.Key).ToArray();
 
         public IReadOnlyDictionary<DiagnosticEntry, object> QueryAll()
-            => providers.ToDictionary(pair => pair.Key, pair => QuerySafe(pair.Value));
+            => providers.ToDictionary(pair => pair.Key, pair => pair.Value.QuerySafe());
 
         public bool TryQuery(DiagnosticEntry entry, out object info)
         {
             var foundProvider = providers.TryGetValue(entry, out var provider);
 
-            info = foundProvider ? QuerySafe(provider) : null;
+            info = foundProvider ? provider.QuerySafe() : null;
 
             return foundProvider;
-        }
-
-        private static object QuerySafe(IDiagnosticInfoProvider provider)
-        {
-            try
-            {
-                return provider.Describe();
-            }
-            catch (Exception error)
-            {
-                return $"ERROR: info provider failed with {error.GetType().Name}: '{error.Message}'";
-            }
         }
     }
 }
