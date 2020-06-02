@@ -9,12 +9,12 @@ namespace Vostok.Hosting.Components.Diagnostics
 {
     internal class DiagnosticInfo : IDiagnosticInfo
     {
-        private readonly ConcurrentDictionary<DiagnosticEntry, Func<object>> providers;
+        private readonly ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider> providers;
 
         public DiagnosticInfo()
-            => providers = new ConcurrentDictionary<DiagnosticEntry, Func<object>>();
+            => providers = new ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider>();
 
-        public IDisposable RegisterProvider(DiagnosticEntry entry, Func<object> provider)
+        public IDisposable RegisterProvider(DiagnosticEntry entry, IDiagnosticInfoProvider provider)
         {
             if (!providers.TryAdd(entry, provider))
                 throw new InvalidOperationException($"Provider with entry '{entry}' is already registered.");
@@ -37,11 +37,11 @@ namespace Vostok.Hosting.Components.Diagnostics
             return foundProvider;
         }
 
-        private static object QuerySafe(Func<object> provider)
+        private static object QuerySafe(IDiagnosticInfoProvider provider)
         {
             try
             {
-                return provider();
+                return provider.Describe();
             }
             catch (Exception error)
             {
