@@ -11,6 +11,8 @@ namespace Vostok.Hosting.Components.Diagnostics
 
         public bool AddDatacenterWhitelistCheck { get; set; } = true;
 
-        public bool AddThreadPoolStartvationCheck { get; set; } = true;
+        public bool AddThreadPoolStarvationCheck { get; set; } = true;
+
+        public bool AddZooKeeperConnectionCheck { get; set; } = true;
     }
 }

@@ -4,6 +4,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Setup;
+using Vostok.ZooKeeper.Client;
 
 namespace Vostok.Hosting.Components.Diagnostics
 {
@@ -58,10 +59,13 @@ namespace Vostok.Hosting.Components.Diagnostics
             var healthTracker = new HealthTracker(healthSettings.ChecksPeriod, context.Log);
 
             if (healthSettings.AddDatacenterWhitelistCheck)
-                healthTracker.RegisterCheck("datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters));
+                healthTracker.RegisterCheck("Datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters));
 
-            if (healthSettings.AddThreadPoolStartvationCheck)
-                healthTracker.RegisterCheck("thread pool", new ThreadPoolStarvationCheck());
+            if (healthSettings.AddThreadPoolStarvationCheck)
+                healthTracker.RegisterCheck("Thread pool", new ThreadPoolStarvationCheck());
+
+            if (healthSettings.AddZooKeeperConnectionCheck && context.ZooKeeperClient is ZooKeeperClient realClient)
+                healthTracker.RegisterCheck("ZooKeeper connection", new ZooKeeperConnectionCheck(realClient));
 
             return healthTracker;
         }
