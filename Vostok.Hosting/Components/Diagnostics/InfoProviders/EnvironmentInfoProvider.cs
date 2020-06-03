@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Vostok.Commons.Environment;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
@@ -17,7 +19,8 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
             System.Environment.UserName,
             RuntimeInformation.OSDescription,
             RuntimeInformation.FrameworkDescription,
-            Bitness = System.Environment.Is64BitProcess ? "x64" : "x86"
+            Bitness = System.Environment.Is64BitProcess ? "x64" : "x86",
+            Uptime = DateTime.Now - Process.GetCurrentProcess().StartTime
         };
     }
 }
