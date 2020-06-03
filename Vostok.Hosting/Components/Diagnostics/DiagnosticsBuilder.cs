@@ -60,6 +60,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             if (healthSettings.AddDatacenterWhitelistCheck)
                 healthTracker.RegisterCheck("datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters));
 
+            if (healthSettings.AddThreadPoolStartvationCheck)
+                healthTracker.RegisterCheck("thread pool", new ThreadPoolStarvationCheck());
+
             return healthTracker;
         }
 
