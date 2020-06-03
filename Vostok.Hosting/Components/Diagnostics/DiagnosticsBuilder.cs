@@ -10,8 +10,6 @@ namespace Vostok.Hosting.Components.Diagnostics
 {
     internal class DiagnosticsBuilder : IVostokDiagnosticsBuilder, IBuilder<DiagnosticsHub>
     {
-        private const string DiagnosticInfoComponent = "hosting";
-
         private readonly Customization<HealthTrackerSettings> healthSettingsCustomization;
         private readonly Customization<DiagnosticInfoSettings> infoSettingsCustomization;
 
@@ -34,23 +32,11 @@ namespace Vostok.Hosting.Components.Diagnostics
         }
 
         public DiagnosticsHub Build(BuildContext context)
-            => new DiagnosticsHub(BuildDiagnosticInfo(context), BuilderHealthTracker(context));
-
-        private DiagnosticInfo BuildDiagnosticInfo(BuildContext context)
         {
-            var infoSettings = infoSettingsCustomization.Customize(new DiagnosticInfoSettings());
-            var info = new DiagnosticInfo();
+            var healthTracker = BuilderHealthTracker(context);
+            var diagnosticInfo = BuildDiagnosticInfo(context, healthTracker);
 
-            if (infoSettings.AddEnvironmentInfo)
-                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider());
-
-            if (infoSettings.AddSystemMetricsInfo)
-                info.RegisterProvider(CreateEntry("system-metrics"), new SystemMetricsProvider());
-
-            if (infoSettings.AddLoadedAssembliesInfo)
-                info.RegisterProvider(CreateEntry("loaded-assemblies"), new LoadedAssembliesProvider());
-
-            return info;
+            return new DiagnosticsHub(diagnosticInfo, healthTracker);
         }
 
         private HealthTracker BuilderHealthTracker(BuildContext context)
@@ -70,7 +56,27 @@ namespace Vostok.Hosting.Components.Diagnostics
             return healthTracker;
         }
 
+        private DiagnosticInfo BuildDiagnosticInfo(BuildContext context, IHealthTracker healthTracker)
+        {
+            var infoSettings = infoSettingsCustomization.Customize(new DiagnosticInfoSettings());
+            var info = new DiagnosticInfo();
+
+            if (infoSettings.AddEnvironmentInfo)
+                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider());
+
+            if (infoSettings.AddSystemMetricsInfo)
+                info.RegisterProvider(CreateEntry("system-metrics"), new SystemMetricsProvider());
+
+            if (infoSettings.AddLoadedAssembliesInfo)
+                info.RegisterProvider(CreateEntry("loaded-assemblies"), new LoadedAssembliesProvider());
+
+            if (infoSettings.AddHealthChecksInfo)
+                info.RegisterProvider(CreateEntry("health-checks"), new HealthChecksInfoProvider(healthTracker));
+
+            return info;
+        }
+
         private static DiagnosticEntry CreateEntry(string name)
-            => new DiagnosticEntry(DiagnosticInfoComponent, name);
+            => new DiagnosticEntry("hosting", name);
     }
 }
