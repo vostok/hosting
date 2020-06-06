@@ -11,6 +11,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
             AppDomain.CurrentDomain
                 .GetAssemblies()
                 .Where(assembly => !assembly.IsDynamic)
+                .OrderBy(assembly => assembly.GetName().Name, StringComparer.OrdinalIgnoreCase)
                 .Select(assembly => new
                 {
                     assembly.GetName().Name,
