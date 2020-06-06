@@ -16,7 +16,6 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
                 {
                     assembly.GetName().Name,
                     assembly.GetName().Version,
-                    assembly.Location,
                     CommitHash = AssemblyCommitHashExtractor.ExtractFromAssembly(assembly),
                     BuildTimestamp = AssemblyBuildTimeExtractor.ExtractFromAssembly(assembly)?.ToString("u")
                 })
