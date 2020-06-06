@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
+using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
@@ -33,19 +34,19 @@ namespace Vostok.Hosting.Components.Diagnostics
 
         public DiagnosticsHub Build(BuildContext context)
         {
-            var healthTracker = BuilderHealthTracker(context);
+            var healthTracker = BuildHealthTracker(context);
             var diagnosticInfo = BuildDiagnosticInfo(context, healthTracker);
 
             return new DiagnosticsHub(diagnosticInfo, healthTracker);
         }
 
-        private HealthTracker BuilderHealthTracker(BuildContext context)
+        private HealthTracker BuildHealthTracker(BuildContext context)
         {
             var healthSettings = healthSettingsCustomization.Customize(new HealthTrackerSettings());
             var healthTracker = new HealthTracker(healthSettings.ChecksPeriod, context.Log);
 
             if (healthSettings.AddDatacenterWhitelistCheck)
-                healthTracker.RegisterCheck("Datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters));
+                healthTracker.RegisterCheck("Datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters ?? new EmptyDatacenters()));
 
             if (healthSettings.AddThreadPoolStarvationCheck)
                 healthTracker.RegisterCheck("Thread pool", new ThreadPoolStarvationCheck());
