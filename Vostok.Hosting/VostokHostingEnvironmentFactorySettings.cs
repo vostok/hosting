@@ -11,5 +11,7 @@ namespace Vostok.Hosting
         /// <para>See <see cref="StaticProvidersHelper.Configure"/> for more details.</para>
         /// </summary>
         public bool ConfigureStaticProviders { get; set; } = true;
+
+        internal bool DisconnectShutdownToken { get; set; }
     }
 }

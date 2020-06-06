@@ -198,7 +198,8 @@ namespace Vostok.Hosting
             {
                 var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
                 {
-                    ConfigureStaticProviders = settings.ConfigureStaticProviders
+                    ConfigureStaticProviders = settings.ConfigureStaticProviders,
+                    DisconnectShutdownToken = true
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);

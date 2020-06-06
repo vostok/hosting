@@ -211,6 +211,12 @@ namespace Vostok.Hosting.Components.Environment
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
 
+            if (!settings.DisconnectShutdownToken)
+            {
+                vostokHostingEnvironment.HostShutdownToken.Register(vostokHostingEnvironment.ApplicationShutdownSource.Cancel);
+                vostokHostingEnvironment.HostShutdownToken.Register(vostokHostingEnvironment.ShutdownTimeBudget.Start);
+            }
+
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
 
             if (!hasLogs)
