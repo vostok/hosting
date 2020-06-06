@@ -2,6 +2,7 @@
 using System.Threading;
 using JetBrains.Annotations;
 using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions;
 using Vostok.Context;
 using Vostok.Datacenters;
@@ -46,8 +47,9 @@ namespace Vostok.Hosting.Models
             this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
             this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
 
-            ShutdownToken = shutdownToken;
-            ShutdownTimeout = shutdownTimeout;
+            ShutdownTimeBudget = TimeBudget.CreateNew(shutdownTimeout);
+            HostShutdownToken = shutdownToken;
+            ApplicationShutdownSource = new CancellationTokenSource();
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
             ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
@@ -69,8 +71,31 @@ namespace Vostok.Hosting.Models
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
         }
 
-        public CancellationToken ShutdownToken { get; }
-        public TimeSpan ShutdownTimeout { get; }
+        /// <summary>
+        /// The cancellation source explicitly signaled by host to decouple <see cref="HostShutdownToken"/> and <see cref="ShutdownToken"/>.
+        /// </summary>
+        public CancellationTokenSource ApplicationShutdownSource { get; }
+        
+        /// <summary>
+        /// The cancellation token set up during environment configuration.
+        /// </summary>
+        public CancellationToken HostShutdownToken { get; }
+        
+        /// <summary>
+        /// The cancellation token exposed to the application.
+        /// </summary>
+        public CancellationToken ShutdownToken => ApplicationShutdownSource.Token;
+        
+        /// <summary>
+        /// Shutdown time budget started by the host when <see cref="HostShutdownToken"/> is triggered.
+        /// </summary>
+        public TimeBudget ShutdownTimeBudget { get; }
+
+        /// <summary>
+        /// Shutdown timeout exposed to the application.
+        /// </summary>
+        public TimeSpan ShutdownTimeout => ShutdownTimeBudget.Remaining;
+
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
         public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoProvider();

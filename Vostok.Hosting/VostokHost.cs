@@ -8,6 +8,7 @@ using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
@@ -16,12 +17,14 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
+// ReSharper disable MethodSupportsCancellation
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Vostok.Hosting
@@ -292,34 +295,40 @@ namespace Vostok.Hosting
         private async Task<VostokApplicationRunResult> RunPhaseAsync(bool initialize)
         {
             var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var shutdownToken = environment.ShutdownToken;
-            var shutdownTimeout = environment.ShutdownTimeout;
 
-            using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
+            using (environment.HostShutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
+            using (environment.HostShutdownToken.Register(o => ((TimeBudget)o).Start(), environment.ShutdownTimeBudget))
             {
-                // ReSharper disable MethodSupportsCancellation
-                // Note(kungurtsev): Task.Run needed for synchronous code.
                 var task = initialize
                     ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
                     : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
-                // ReSharper restore MethodSupportsCancellation
 
                 if (!initialize)
                     environment.ServiceBeacon.Start();
 
                 await Task.WhenAny(task, shutdown.Task).ConfigureAwait(false);
 
+                if (environment.HostShutdownToken.IsCancellationRequested)
+                    log.Warn("Host shutdown requested. Timeout = {ShutdownBudget}.", environment.ShutdownTimeout.ToPrettyString());
+
                 if (!initialize)
                     environment.ServiceBeacon.Stop();
 
-                if (shutdownToken.IsCancellationRequested)
+                if (environment.HostShutdownToken.IsCancellationRequested)
                 {
-                    log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", shutdownTimeout);
+                    log.Info("Service beacon has stopped. Remaining shutdown budget = {ShutdownBudget}.", environment.ShutdownTimeBudget.Remaining.ToPrettyString());
+
+                    if (settings.UseGracefulDiscoveryShutdown)
+                        await new DiscoveryShutdownHelper(environment, log).WaitForGracefulShutdown().ConfigureAwait(false);
+
+                    environment.ApplicationShutdownSource.Cancel();
+
+                    log.Info("Application shutdown requested. Waiting for application to complete within remaining budget = {ShutdownBudget}.", environment.ShutdownTimeout.ToPrettyString());
                     ChangeStateTo(VostokApplicationState.Stopping);
 
-                    if (!await task.WaitAsync(shutdownTimeout).ConfigureAwait(false))
+                    if (!await task.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                     {
-                        log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", shutdownTimeout);
+                        log.Warn("Application has not completed within remaining shutdown timeout.");
                         return ReturnResult(VostokApplicationState.StoppedForcibly);
                     }
 

@@ -62,7 +62,12 @@ namespace Vostok.Hosting
         /// <summary>
         /// Timeout for application graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.
         /// </summary>
-        public TimeSpan ShutdownTimeout { get; set; } = 10.Seconds();
+        public TimeSpan ShutdownTimeout { get; set; } = 15.Seconds();
+
+        /// <summary>
+        /// If enabled, <see cref="VostokHost"/> will wait for up to 1/3 of <see cref="ShutdownTimeout"/> (or 5 seconds, whichever is smaller) between stopping <see cref="IVostokHostingEnvironment.ServiceBeacon"/> and initiating app shutdown.
+        /// </summary>
+        public bool UseGracefulDiscoveryShutdown { get; set; } = true;
 
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
