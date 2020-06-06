@@ -318,8 +318,9 @@ namespace Vostok.Hosting
                 {
                     log.Info("Service beacon has stopped. Remaining shutdown budget = {ShutdownBudget}.", environment.ShutdownTimeBudget.Remaining.ToPrettyString());
 
-                    if (settings.UseGracefulDiscoveryShutdown)
-                        await new DiscoveryShutdownHelper(environment, log).WaitForGracefulShutdown().ConfigureAwait(false);
+                    if (settings.GracefulDiscoveryShutdownEnabled)
+                        await new DiscoveryShutdownHelper(environment, log, settings.GracefulDiscoveryShutdownTimeout)
+                            .WaitForGracefulShutdown().ConfigureAwait(false);
 
                     environment.ApplicationShutdownSource.Cancel();
 

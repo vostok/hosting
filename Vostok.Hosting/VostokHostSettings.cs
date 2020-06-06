@@ -65,9 +65,14 @@ namespace Vostok.Hosting
         public TimeSpan ShutdownTimeout { get; set; } = 15.Seconds();
 
         /// <summary>
-        /// If enabled, <see cref="VostokHost"/> will wait for up to 1/3 of <see cref="ShutdownTimeout"/> (or 5 seconds, whichever is smaller) between stopping <see cref="IVostokHostingEnvironment.ServiceBeacon"/> and initiating app shutdown.
+        /// If enabled, <see cref="VostokHost"/> will wait for up to 1/3 of <see cref="ShutdownTimeout"/> (or <see cref="GracefulDiscoveryShutdownTimeout"/>, whichever is smaller) between stopping <see cref="IVostokHostingEnvironment.ServiceBeacon"/> and initiating app shutdown.
         /// </summary>
-        public bool UseGracefulDiscoveryShutdown { get; set; } = true;
+        public bool GracefulDiscoveryShutdownEnabled { get; set; } = true;
+
+        /// <summary>
+        /// Timeout for <see cref="GracefulDiscoveryShutdownEnabled"/> feature.
+        /// </summary>
+        public TimeSpan GracefulDiscoveryShutdownTimeout { get; set; } = 5.Seconds();
 
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.

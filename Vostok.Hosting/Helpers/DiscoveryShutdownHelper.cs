@@ -13,11 +13,13 @@ namespace Vostok.Hosting.Helpers
     {
         private readonly VostokHostingEnvironment environment;
         private readonly ILog log;
+        private readonly TimeSpan maxTimeout;
 
-        public DiscoveryShutdownHelper(VostokHostingEnvironment environment, ILog log)
+        public DiscoveryShutdownHelper(VostokHostingEnvironment environment, ILog log, TimeSpan maxTimeout)
         {
             this.environment = environment;
             this.log = log;
+            this.maxTimeout = maxTimeout;
         }
 
         public Task WaitForGracefulShutdown()
@@ -31,7 +33,7 @@ namespace Vostok.Hosting.Helpers
             if (!(environment.ServiceLocator is ServiceLocator))
                 return Task.CompletedTask;
 
-            var timeout = TimeSpanArithmetics.Min(5.Seconds(), environment.ShutdownTimeBudget.Remaining.Divide(3));
+            var timeout = TimeSpanArithmetics.Min(maxTimeout, environment.ShutdownTimeBudget.Remaining.Divide(3));
 
             log.Info("Service discovery graceful deregistration has been initiated (up to {ShutdownTimeout}).", timeout.ToPrettyString());
 
