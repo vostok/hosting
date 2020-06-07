@@ -74,6 +74,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             if (infoSettings.AddHealthChecksInfo)
                 info.RegisterProvider(CreateEntry("health-checks"), new HealthChecksInfoProvider(healthTracker));
 
+            if (infoSettings.AddConfigurationInfo)
+                info.RegisterProvider(CreateEntry("configuration"), new ConfigurationInfoProvider(context.ConfigurationSource));
+
             return info;
         }
 
