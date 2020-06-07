@@ -31,6 +31,7 @@ namespace Vostok.Hosting.Components.Diagnostics
 
         private volatile HealthReport currentReport;
         private volatile Task checkerTask;
+        private volatile TaskCompletionSource<bool> checkerSignal;
 
         public HealthTracker(TimeSpan checkPeriod, ILog log)
         {
@@ -43,6 +44,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             statusChangesObservable = new CachingObservable<(HealthStatus previous, HealthStatus current)>();
             checks = new ConcurrentDictionary<string, IHealthCheck>(StringComparer.OrdinalIgnoreCase);
             cancellation = new CancellationTokenSource();
+            checkerSignal = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         }
 
         public HealthStatus CurrentStatus => currentReport.Status;
@@ -59,6 +61,8 @@ namespace Vostok.Hosting.Components.Diagnostics
         {
             if (!checks.TryAdd(name, check))
                 throw new InvalidOperationException($"Health check with name '{name}' is already registered.");
+
+            ForceNextIteration();
 
             return new ActionDisposable(() => checks.TryRemove(name, out _));
         }
@@ -84,6 +88,11 @@ namespace Vostok.Hosting.Components.Diagnostics
         IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
 
+        private void ForceNextIteration()
+            => Interlocked
+                .Exchange(ref checkerSignal, new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously))
+                .TrySetResult(true);
+
         private async Task RunPeriodicallyAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -94,7 +103,7 @@ namespace Vostok.Hosting.Components.Diagnostics
 
                 HandleReport(report);
 
-                await Task.Delay(budget.Remaining, cancellationToken);
+                await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), checkerSignal.Task).ConfigureAwait(false);
             }
         }
 
