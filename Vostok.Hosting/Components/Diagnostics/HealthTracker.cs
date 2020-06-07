@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +37,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             this.checkPeriod = checkPeriod;
             this.log = log.ForContext<HealthTracker>();
 
-            currentReport = new HealthReport(HealthStatus.Healthy, new Dictionary<string, HealthCheckResult>());
+            currentReport = new HealthReport(HealthStatus.Healthy, TimeSpan.Zero, DateTimeOffset.UtcNow, new Dictionary<string, HealthCheckResult>());
             statusObservable = new CachingObservable<HealthStatus>(currentReport.Status);
             reportsObservable = new CachingObservable<HealthReport>(currentReport);
             statusChangesObservable = new CachingObservable<(HealthStatus previous, HealthStatus current)>();
@@ -61,6 +63,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             return new ActionDisposable(() => checks.TryRemove(name, out _));
         }
 
+        public IEnumerator<(string name, IHealthCheck check)> GetEnumerator() =>
+            checks.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
+
         public void Dispose()
         {
             cancellation.Cancel();
@@ -75,6 +80,9 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
         }
+
+        IEnumerator IEnumerable.GetEnumerator() =>
+            GetEnumerator();
 
         private async Task RunPeriodicallyAsync(CancellationToken cancellationToken)
         {
@@ -94,6 +102,8 @@ namespace Vostok.Hosting.Components.Diagnostics
         {
             var results = new Dictionary<string, HealthCheckResult>(StringComparer.OrdinalIgnoreCase);
 
+            var watch = Stopwatch.StartNew();
+
             foreach (var pair in checks)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -103,7 +113,7 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             var aggregateStatus = SelectStatus(results.Values);
 
-            return new HealthReport(aggregateStatus, results);
+            return new HealthReport(aggregateStatus, watch.Elapsed, DateTimeOffset.UtcNow, results);
         }
 
         private HealthStatus SelectStatus(IEnumerable<HealthCheckResult> results)
@@ -141,8 +151,11 @@ namespace Vostok.Hosting.Components.Diagnostics
                 if (pair.Value.Status == HealthStatus.Healthy)
                     continue;
 
-                log.Warn("Health check '{HealthCheckName}' yielded '{HealthStatus}' result. Reason: {HealthStatusReason}",
-                    pair.Key, pair.Value.Status, pair.Value.Reason);
+                log.Warn(
+                    "Health check '{HealthCheckName}' yielded '{HealthStatus}' result. Reason: {HealthStatusReason}",
+                    pair.Key,
+                    pair.Value.Status,
+                    pair.Value.Reason);
             }
         }
 
