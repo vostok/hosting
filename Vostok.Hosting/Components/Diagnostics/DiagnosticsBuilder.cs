@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
+using Vostok.Hercules.Client;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.HealthChecks;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
@@ -76,6 +77,9 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             if (infoSettings.AddConfigurationInfo)
                 info.RegisterProvider(CreateEntry("configuration"), new ConfigurationInfoProvider(context.ConfigurationSource));
+
+            if (infoSettings.AddHerculesSinkInfo && context.HerculesSink is HerculesSink realSink)
+                info.RegisterProvider(CreateEntry("hercules-sink"), new HerculesSinkInfoProvider(realSink));
 
             return info;
         }
