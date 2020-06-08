@@ -16,6 +16,7 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
@@ -48,6 +49,7 @@ namespace Vostok.Hosting
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
+        private readonly DelayedCancellationTokenSource delayedShutdownTokenSource;
 
         private volatile Task<VostokApplicationRunResult> workerTask;
         private volatile VostokHostingEnvironment environment;
@@ -57,7 +59,8 @@ namespace Vostok.Hosting
         {
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
-            ShutdownTokenSource = new CancellationTokenSource();
+            delayedShutdownTokenSource = new DelayedCancellationTokenSource();
+            ShutdownTokenSource = delayedShutdownTokenSource;
 
             onApplicationStateChanged = new CachingObservable<VostokApplicationState>();
             ChangeStateTo(VostokApplicationState.NotInitialized);
@@ -212,7 +215,7 @@ namespace Vostok.Hosting
 
         private void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
         {
-            builder.SetupShutdownToken(ShutdownTokenSource.Token);
+            builder.SetupShutdownToken(delayedShutdownTokenSource.DelayedToken);
             builder.SetupShutdownTimeout(settings.ShutdownTimeout);
 
             var applicationType = settings.Application.GetType();
@@ -292,7 +295,7 @@ namespace Vostok.Hosting
         private async Task<VostokApplicationRunResult> RunPhaseAsync(bool initialize)
         {
             var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var shutdownToken = environment.ShutdownToken;
+            var shutdownToken = delayedShutdownTokenSource.Token;
             var shutdownTimeout = environment.ShutdownTimeout;
 
             using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
@@ -311,6 +314,8 @@ namespace Vostok.Hosting
 
                 if (!initialize)
                     environment.ServiceBeacon.Stop();
+
+                // TODO(kungurtsev): sleep here.
 
                 if (shutdownToken.IsCancellationRequested)
                 {
