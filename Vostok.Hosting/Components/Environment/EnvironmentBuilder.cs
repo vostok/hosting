@@ -21,6 +21,7 @@ using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
@@ -65,7 +66,7 @@ namespace Vostok.Hosting.Components.Environment
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             shutdownTokens = new List<CancellationToken>();
-            shutdownTimeout = 5.Seconds();
+            shutdownTimeout = 15.Seconds();
             configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
             clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
@@ -186,9 +187,19 @@ namespace Vostok.Hosting.Components.Environment
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
-            var vostokHostingEnvironment = new VostokHostingEnvironment(
-                shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
+            var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
+                context.ServiceBeacon,
+                context.ServiceLocator,
+                context.Log,
+                url?.Port,
+                shutdownTokens,
                 shutdownTimeout,
+                settings.BeaconShutdownTimeout,
+                settings.BeaconShutdownWaitEnabled);
+
+            var vostokHostingEnvironment = new VostokHostingEnvironment(
+                hostingShutdown,
+                applicationShutdown,
                 context.ApplicationIdentity,
                 applicationLimitsBuilder.Build(context),
                 applicationReplicationInfoBuilder.Build(context),
@@ -210,12 +221,6 @@ namespace Vostok.Hosting.Components.Environment
                 context.Datacenters ?? new EmptyDatacenters(),
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
-
-            if (!settings.DisconnectShutdownToken)
-            {
-                vostokHostingEnvironment.HostShutdownToken.Register(vostokHostingEnvironment.ApplicationShutdownSource.Cancel);
-                vostokHostingEnvironment.HostShutdownToken.Register(vostokHostingEnvironment.ShutdownTimeBudget.Start);
-            }
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
 

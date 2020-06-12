@@ -1,6 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Vostok.Commons.Testing;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Tests
@@ -17,13 +20,15 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public void Should_produce_an_environment_with_linked_cancellation_tokens_by_default()
+        public void Should_produce_an_environment_with_linked_cancellation_tokens()
         {
             var environment = VostokHostingEnvironmentFactory.Create(Setup);
             
             shutdown.Cancel();
 
-            environment.ShutdownToken.IsCancellationRequested.Should().BeTrue();
+            Action assertion = () => environment.ShutdownToken.IsCancellationRequested.Should().BeTrue();
+
+            assertion.ShouldPassIn(10.Seconds());
         }
 
         [Test]

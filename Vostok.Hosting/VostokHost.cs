@@ -8,7 +8,6 @@ using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
-using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
@@ -17,14 +16,12 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
-// ReSharper disable MethodSupportsCancellation
 // ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Vostok.Hosting
@@ -42,7 +39,7 @@ namespace Vostok.Hosting
     public class VostokHost
     {
         /// <summary>
-        /// A cancellation token source which should be used for stopping application.
+        /// The cancellation token source that should be used to stop the application.
         /// </summary>
         public readonly CancellationTokenSource ShutdownTokenSource;
 
@@ -199,7 +196,8 @@ namespace Vostok.Hosting
                 var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
                 {
                     ConfigureStaticProviders = settings.ConfigureStaticProviders,
-                    DisconnectShutdownToken = true
+                    BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
+                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
@@ -295,78 +293,60 @@ namespace Vostok.Hosting
 
         private async Task<VostokApplicationRunResult> RunPhaseAsync(bool initialize)
         {
-            var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var applicationTask = initialize
+                ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
+                : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
 
-            using (environment.HostShutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
-            using (environment.HostShutdownToken.Register(o => ((TimeBudget)o).Start(), environment.ShutdownTimeBudget))
+            if (!initialize)
+                environment.ServiceBeacon.Start();
+
+            await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
+
+            if (!initialize)
+                environment.ServiceBeacon.Stop();
+
+            if (environment.ShutdownTask.IsCompleted)
             {
-                var task = initialize
-                    ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
-                    : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
+                ChangeStateTo(VostokApplicationState.Stopping);
 
-                if (!initialize)
-                    environment.ServiceBeacon.Start();
-
-                await Task.WhenAny(task, shutdown.Task).ConfigureAwait(false);
-
-                if (environment.HostShutdownToken.IsCancellationRequested)
-                    log.Warn("Host shutdown requested. Timeout = {ShutdownBudget}.", environment.ShutdownTimeout.ToPrettyString());
-
-                if (!initialize)
-                    environment.ServiceBeacon.Stop();
-
-                if (environment.HostShutdownToken.IsCancellationRequested)
+                if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                 {
-                    log.Info("Service beacon has stopped. Remaining shutdown budget = {ShutdownBudget}.", environment.ShutdownTimeBudget.Remaining.ToPrettyString());
-
-                    if (settings.GracefulDiscoveryShutdownEnabled)
-                        await new DiscoveryShutdownHelper(environment, log, settings.GracefulDiscoveryShutdownTimeout)
-                            .WaitForGracefulShutdown().ConfigureAwait(false);
-
-                    environment.ApplicationShutdownSource.Cancel();
-
-                    log.Info("Application shutdown requested. Waiting for application to complete within remaining budget = {ShutdownBudget}.", environment.ShutdownTimeout.ToPrettyString());
-                    ChangeStateTo(VostokApplicationState.Stopping);
-
-                    if (!await task.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
-                    {
-                        log.Warn("Application has not completed within remaining shutdown timeout.");
-                        return ReturnResult(VostokApplicationState.StoppedForcibly);
-                    }
-
-                    try
-                    {
-                        await task.ConfigureAwait(false);
-                    }
-                    catch (Exception error)
-                    {
-                        if (error is OperationCanceledException)
-                        {
-                            log.Info("Application has successfully stopped.");
-                            return ReturnResult(VostokApplicationState.Stopped);
-                        }
-
-                        log.Error(error, "Unhandled exception has occurred while stopping application.");
-                        return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
-                    }
-
-                    log.Info("Application has successfully stopped.");
-                    return ReturnResult(VostokApplicationState.Stopped);
+                    log.Warn("Application has not completed within remaining shutdown timeout.");
+                    return ReturnResult(VostokApplicationState.StoppedForcibly);
                 }
 
-                await task.ConfigureAwait(false);
+                try
+                {
+                    await applicationTask.ConfigureAwait(false);
+                }
+                catch (Exception error)
+                {
+                    if (error is OperationCanceledException)
+                    {
+                        log.Info("Application has successfully stopped.");
+                        return ReturnResult(VostokApplicationState.Stopped);
+                    }
 
-                if (initialize)
-                {
-                    log.Info("Application initialization completed successfully.");
-                    return ReturnResult(VostokApplicationState.Initialized);
+                    log.Error(error, "Unhandled exception has occurred while stopping application.");
+                    return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
                 }
-                // ReSharper disable once RedundantIfElseBlock
-                else
-                {
-                    log.Info("Application exited.");
-                    return ReturnResult(VostokApplicationState.Exited);
-                }
+
+                log.Info("Application has successfully stopped.");
+                return ReturnResult(VostokApplicationState.Stopped);
+            }
+
+            await applicationTask.ConfigureAwait(false);
+
+            if (initialize)
+            {
+                log.Info("Application initialization completed successfully.");
+                return ReturnResult(VostokApplicationState.Initialized);
+            }
+            // ReSharper disable once RedundantIfElseBlock
+            else
+            {
+                log.Info("Application exited.");
+                return ReturnResult(VostokApplicationState.Exited);
             }
         }
 
