@@ -141,6 +141,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ClusterConfigClient);
 
             context.Datacenters = datacentersBuilder.Build(context);
+
             if (settings.ConfigureStaticProviders && context.Datacenters != null)
                 DatacentersProvider.Configure(context.Datacenters, true);
 
@@ -162,9 +163,10 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
-            ClusterClientDefaults.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
-            if (context.ServiceBeacon is ServiceBeacon beacon)
-                ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
+            if (settings.ConfigureStaticProviders)
+                ClusterClientDefaults.ClientApplicationName = context.ServiceBeacon is ServiceBeacon beacon 
+                    ? beacon.ReplicaInfo.Application 
+                    : context.ApplicationIdentity.FormatServiceName();
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
