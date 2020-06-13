@@ -25,9 +25,6 @@ namespace Vostok.Hosting.Components.Diagnostics
         public IReadOnlyList<DiagnosticEntry> ListAll() 
             => providers.Select(pair => pair.Key).ToArray();
 
-        public IReadOnlyDictionary<DiagnosticEntry, object> QueryAll()
-            => providers.ToDictionary(pair => pair.Key, pair => pair.Value.QuerySafe());
-
         public bool TryQuery(DiagnosticEntry entry, out object info)
         {
             var foundProvider = providers.TryGetValue(entry, out var provider);
