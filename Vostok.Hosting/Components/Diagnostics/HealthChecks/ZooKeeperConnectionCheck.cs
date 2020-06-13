@@ -9,23 +9,36 @@ namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
     internal class ZooKeeperConnectionCheck : IHealthCheck
     {
         private readonly ZooKeeperClient client;
+        private volatile bool warmedUp;
 
         public ZooKeeperConnectionCheck(ZooKeeperClient client)
             => this.client = client;
 
-        public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
+        public async Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
         {
+            await WarmupIfNeededAsync().ConfigureAwait(false);
+
             var currentConnectionState = client.ConnectionState;
 
             switch (currentConnectionState)
             {
                 case ConnectionState.Connected:
                 case ConnectionState.ConnectedReadonly:
-                    return Task.FromResult(HealthCheckResult.Healthy());
+                    return HealthCheckResult.Healthy();
                 
                 default:
-                    return Task.FromResult(HealthCheckResult.Degraded($"ZooKeeper client is not connected. Current connection state = '{currentConnectionState}'."));
+                    return HealthCheckResult.Degraded($"ZooKeeper client is not connected. Current connection state = '{currentConnectionState}'.");
             }
+        }
+
+        private async Task WarmupIfNeededAsync()
+        {
+            if (warmedUp)
+                return;
+
+            await client.ExistsAsync("/").ConfigureAwait(false);
+
+            warmedUp = true;
         }
     }
 }
