@@ -85,6 +85,24 @@ namespace Vostok.Hosting.Components.Diagnostics
             Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
         }
 
+        public async Task<HealthReport> RunChecksAsync(CancellationToken cancellationToken)
+        {
+            var results = new Dictionary<string, HealthCheckResult>(StringComparer.OrdinalIgnoreCase);
+
+            var watch = Stopwatch.StartNew();
+
+            foreach (var pair in checks)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                results[pair.Key] = await pair.Value.CheckSafeAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            var aggregateStatus = SelectStatus(results.Values);
+
+            return new HealthReport(aggregateStatus, watch.Elapsed, DateTimeOffset.UtcNow, results);
+        }
+
         IEnumerator IEnumerable.GetEnumerator() =>
             GetEnumerator();
 
@@ -105,24 +123,6 @@ namespace Vostok.Hosting.Components.Diagnostics
 
                 await Task.WhenAny(Task.Delay(budget.Remaining, cancellationToken), checkerSignal.Task).ConfigureAwait(false);
             }
-        }
-
-        private async Task<HealthReport> RunChecksAsync(CancellationToken cancellationToken)
-        {
-            var results = new Dictionary<string, HealthCheckResult>(StringComparer.OrdinalIgnoreCase);
-
-            var watch = Stopwatch.StartNew();
-
-            foreach (var pair in checks)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                results[pair.Key] = await pair.Value.CheckSafeAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            var aggregateStatus = SelectStatus(results.Values);
-
-            return new HealthReport(aggregateStatus, watch.Elapsed, DateTimeOffset.UtcNow, results);
         }
 
         private HealthStatus SelectStatus(IEnumerable<HealthCheckResult> results)
