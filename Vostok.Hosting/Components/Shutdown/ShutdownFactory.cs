@@ -27,7 +27,7 @@ namespace Vostok.Hosting.Components.Shutdown
             // (iloktionov): No point in waiting for beacon deregistration for apps without external port or when SD is disabled.
             beaconWaitEnabled &= port.HasValue && hasRealBeacon && hasRealLocator;
 
-            // (iloktionov): No poing in reducing app shutdown timeout right from the start when SD is disabled.
+            // (iloktionov): No point in reducing app shutdown timeout right from the start when SD is disabled.
             beaconTimeout = hasRealBeacon ? TimeSpanArithmetics.Min(beaconTimeout, totalTimeout.Divide(3)) : TimeSpan.Zero;
 
             // (iloktionov): Artificially reduce initial app shutdown timeout by beacon shutdown timeout so that it's value doesn't drop abruptly on shutdown.
