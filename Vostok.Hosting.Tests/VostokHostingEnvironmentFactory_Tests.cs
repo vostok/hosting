@@ -39,15 +39,23 @@ namespace Vostok.Hosting.Tests
         {
             var environment = VostokHostingEnvironmentFactory.Create(Setup);
 
-            shutdown.Cancel();
-
-            var before = environment.ShutdownTimeout;
+            var before1 = environment.ShutdownTimeout;
 
             Thread.Sleep(100);
 
-            var after = environment.ShutdownTimeout;
+            var before2 = environment.ShutdownTimeout;
 
-            after.Should().BeLessThan(before);
+            before2.Should().Be(before1);
+
+            shutdown.Cancel();
+
+            var immediatelyAfter = environment.ShutdownTimeout;
+
+            Thread.Sleep(100);
+
+            var awhileAfter = environment.ShutdownTimeout;
+
+            awhileAfter.Should().BeLessThan(immediatelyAfter);
         }
 
         [Test]
@@ -86,7 +94,7 @@ namespace Vostok.Hosting.Tests
 
             environment.ShutdownToken.WaitHandle.WaitOne(5.Seconds()).Should().BeTrue();
 
-            watch.Elapsed.Should().BeGreaterOrEqualTo(1.Seconds() - ShutdownConstants.CutAmountForBeaconTimeout);
+            watch.Elapsed.Should().BeGreaterOrEqualTo(1.Seconds() - ShutdownConstants.CutAmountForBeaconTimeout - 50.Milliseconds());
         }
 
         [Test]
