@@ -33,6 +33,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             return this;
         }
 
+        public bool NeedsApplicationMetricsProvider
+            => infoSettingsCustomization.Customize(new DiagnosticInfoSettings()).AddApplicationMetricsInfo;
+
         public DiagnosticsHub Build(BuildContext context)
         {
             var healthTracker = BuildHealthTracker(context);
@@ -80,6 +83,9 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             if (infoSettings.AddHerculesSinkInfo && context.HerculesSink is HerculesSink realSink)
                 info.RegisterProvider(CreateEntry("hercules-sink"), new HerculesSinkInfoProvider(realSink));
+
+            if (infoSettings.AddApplicationMetricsInfo && context.MetricsInfoProvider != null)
+                info.RegisterProvider(CreateEntry("application-metrics"), context.MetricsInfoProvider);
 
             return info;
         }

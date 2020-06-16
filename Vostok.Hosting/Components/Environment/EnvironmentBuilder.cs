@@ -17,6 +17,7 @@ using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.Configuration;
 using Vostok.Hosting.Components.Datacenters;
 using Vostok.Hosting.Components.Diagnostics;
+using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Hercules;
 using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
@@ -172,6 +173,12 @@ namespace Vostok.Hosting.Components.Environment
                 ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
 
             context.SubstituteTracer(tracerBuilder.Build(context));
+
+            if (diagnosticsBuilder.Builder.NeedsApplicationMetricsProvider)
+            {
+                context.MetricsInfoProvider = new ApplicationMetricsProvider();
+                metricsBuilder.AddCustomization(metrics => metrics.AddMetricEventSender(context.MetricsInfoProvider));
+            }
 
             context.Metrics = metricsBuilder.Build(context);
 

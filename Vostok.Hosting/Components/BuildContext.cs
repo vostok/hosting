@@ -7,6 +7,7 @@ using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Diagnostics;
+using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Models;
@@ -43,6 +44,7 @@ namespace Vostok.Hosting.Components
         public ConfigurationProvider SecretConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
+        public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
         public DiagnosticsHub DiagnosticsHub { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
