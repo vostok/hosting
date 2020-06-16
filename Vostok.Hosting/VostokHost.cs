@@ -16,13 +16,12 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
-
-// ReSharper disable SuspiciousTypeConversion.Global
 
 namespace Vostok.Hosting
 {
@@ -39,7 +38,7 @@ namespace Vostok.Hosting
     public class VostokHost
     {
         /// <summary>
-        /// A cancellation token source which should be used for stopping application.
+        /// The cancellation token source that should be used to stop the application.
         /// </summary>
         public readonly CancellationTokenSource ShutdownTokenSource;
 
@@ -170,7 +169,7 @@ namespace Vostok.Hosting
                 return result;
 
             using (environment)
-            using (new LogApplicationDispose(settings.Application as IDisposable, log))
+            using (new ApplicationDisposable(settings.Application, environment, log))
             {
                 result = WarmupEnvironment();
 
@@ -195,7 +194,9 @@ namespace Vostok.Hosting
             {
                 var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
                 {
-                    ConfigureStaticProviders = settings.ConfigureStaticProviders
+                    ConfigureStaticProviders = settings.ConfigureStaticProviders,
+                    BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
+                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
@@ -289,71 +290,60 @@ namespace Vostok.Hosting
 
         private async Task<VostokApplicationRunResult> RunPhaseAsync(bool initialize)
         {
-            var shutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var shutdownToken = environment.ShutdownToken;
-            var shutdownTimeout = environment.ShutdownTimeout;
+            var applicationTask = initialize
+                ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
+                : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
 
-            using (shutdownToken.Register(o => ((TaskCompletionSource<bool>)o).TrySetCanceled(), shutdown))
+            if (!initialize)
+                environment.ServiceBeacon.Start();
+
+            await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
+
+            if (!initialize)
+                environment.ServiceBeacon.Stop();
+
+            if (environment.ShutdownTask.IsCompleted)
             {
-                // ReSharper disable MethodSupportsCancellation
-                // Note(kungurtsev): Task.Run needed for synchronous code.
-                var task = initialize
-                    ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
-                    : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
-                // ReSharper restore MethodSupportsCancellation
+                ChangeStateTo(VostokApplicationState.Stopping);
 
-                if (!initialize)
-                    environment.ServiceBeacon.Start();
-
-                await Task.WhenAny(task, shutdown.Task).ConfigureAwait(false);
-
-                if (!initialize)
-                    environment.ServiceBeacon.Stop();
-
-                if (shutdownToken.IsCancellationRequested)
+                if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                 {
-                    log.Info("Cancellation requested, waiting for application to complete within timeout = {Timeout}.", shutdownTimeout);
-                    ChangeStateTo(VostokApplicationState.Stopping);
-
-                    if (!await task.WaitAsync(shutdownTimeout).ConfigureAwait(false))
-                    {
-                        log.Info("Cancellation requested, but application has not exited within {Timeout} timeout.", shutdownTimeout);
-                        return ReturnResult(VostokApplicationState.StoppedForcibly);
-                    }
-
-                    try
-                    {
-                        await task.ConfigureAwait(false);
-                    }
-                    catch (Exception error)
-                    {
-                        if (error is OperationCanceledException)
-                        {
-                            log.Info("Application has successfully stopped.");
-                            return ReturnResult(VostokApplicationState.Stopped);
-                        }
-
-                        log.Error(error, "Unhandled exception has occurred while stopping application.");
-                        return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
-                    }
-
-                    log.Info("Application has successfully stopped.");
-                    return ReturnResult(VostokApplicationState.Stopped);
+                    log.Warn("Application has not completed within remaining shutdown timeout.");
+                    return ReturnResult(VostokApplicationState.StoppedForcibly);
                 }
 
-                await task.ConfigureAwait(false);
+                try
+                {
+                    await applicationTask.ConfigureAwait(false);
+                }
+                catch (Exception error)
+                {
+                    if (error is OperationCanceledException)
+                    {
+                        log.Info("Application has successfully stopped.");
+                        return ReturnResult(VostokApplicationState.Stopped);
+                    }
 
-                if (initialize)
-                {
-                    log.Info("Application initialization completed successfully.");
-                    return ReturnResult(VostokApplicationState.Initialized);
+                    log.Error(error, "Unhandled exception has occurred while stopping application.");
+                    return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
                 }
-                // ReSharper disable once RedundantIfElseBlock
-                else
-                {
-                    log.Info("Application exited.");
-                    return ReturnResult(VostokApplicationState.Exited);
-                }
+
+                log.Info("Application has successfully stopped.");
+                return ReturnResult(VostokApplicationState.Stopped);
+            }
+
+            await applicationTask.ConfigureAwait(false);
+
+            if (initialize)
+            {
+                log.Info("Application initialization completed successfully.");
+                return ReturnResult(VostokApplicationState.Initialized);
+            }
+            // ReSharper disable once RedundantIfElseBlock
+            else
+            {
+                log.Info("Application exited.");
+                return ReturnResult(VostokApplicationState.Exited);
             }
         }
 
@@ -470,27 +460,6 @@ namespace Vostok.Hosting
             var state = ThreadPoolUtility.GetPoolState();
 
             log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
-        }
-
-        private class LogApplicationDispose : IDisposable
-        {
-            private readonly IDisposable disposable;
-            private readonly ILog log;
-
-            public LogApplicationDispose(IDisposable disposable, ILog log)
-            {
-                this.disposable = disposable;
-                this.log = log;
-            }
-
-            public void Dispose()
-            {
-                if (disposable != null)
-                {
-                    log.Info("Disposing of application..");
-                    disposable.Dispose();
-                }
-            }
         }
 
         #endregion

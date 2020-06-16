@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
@@ -7,6 +8,7 @@ using Vostok.Context;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing.Abstractions;
@@ -15,14 +17,16 @@ namespace Vostok.Hosting.Models
 {
     internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
+        private readonly HostingShutdown hostingShutdown;
+        private readonly ApplicationShutdown applicationShutdown;
         private readonly Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
-        private readonly Action dispose;
+        private readonly Action onDispose;
 
         internal VostokHostingEnvironment(
-            CancellationToken shutdownToken,
-            TimeSpan shutdownTimeout,
-            [NotNull] IVostokApplicationIdentity identity,
-            [NotNull] IVostokApplicationLimits limits,
+            [NotNull] HostingShutdown hostingShutdown,
+            [NotNull] ApplicationShutdown applicationShutdown,
+            [NotNull] IVostokApplicationIdentity applicationIdentity,
+            [NotNull] IVostokApplicationLimits applicationLimits,
             [NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider,
             [NotNull] IVostokApplicationMetrics metrics,
             [NotNull] IVostokApplicationDiagnostics diagnostics,
@@ -42,15 +46,15 @@ namespace Vostok.Hosting.Models
             [NotNull] IContextConfiguration contextConfiguration,
             [NotNull] IDatacenters datacenters,
             [NotNull] IVostokHostExtensions hostExtensions,
-            [NotNull] Action dispose)
+            [NotNull] Action onDispose)
         {
+            this.hostingShutdown = hostingShutdown ?? throw new ArgumentNullException(nameof(hostingShutdown));
+            this.applicationShutdown = applicationShutdown ?? throw new ArgumentNullException(nameof(applicationShutdown));
             this.replicationInfoProvider = replicationInfoProvider ?? throw new ArgumentNullException(nameof(replicationInfoProvider));
-            this.dispose = dispose ?? throw new ArgumentNullException(nameof(dispose));
+            this.onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
 
-            ShutdownToken = shutdownToken;
-            ShutdownTimeout = shutdownTimeout;
-            ApplicationIdentity = identity ?? throw new ArgumentNullException(nameof(identity));
-            ApplicationLimits = limits ?? throw new ArgumentNullException(nameof(limits));
+            ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
+            ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
             Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
@@ -70,9 +74,10 @@ namespace Vostok.Hosting.Models
             Datacenters = datacenters ?? throw new ArgumentNullException(nameof(datacenters));
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
         }
-
-        public CancellationToken ShutdownToken { get; }
-        public TimeSpan ShutdownTimeout { get; }
+        
+        public CancellationToken ShutdownToken => applicationShutdown.ShutdownToken;
+        public TimeSpan ShutdownTimeout => applicationShutdown.ShutdownTimeout;
+        public Task ShutdownTask => applicationShutdown.ShutdownTask;
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
         public IVostokApplicationReplicationInfo ApplicationReplicationInfo => replicationInfoProvider();
@@ -87,15 +92,19 @@ namespace Vostok.Hosting.Models
         public IConfigurationProvider SecretConfigurationProvider { get; }
         public IClusterConfigClient ClusterConfigClient { get; }
         public IServiceBeacon ServiceBeacon { get; }
-        public int? Port { get; }
         public IServiceLocator ServiceLocator { get; }
         public IContextGlobals ContextGlobals { get; }
         public IContextProperties ContextProperties { get; }
         public IContextConfiguration ContextConfiguration { get; }
         public IDatacenters Datacenters { get; }
         public IVostokHostExtensions HostExtensions { get; }
+        public int? Port { get; }
 
         public void Dispose()
-            => dispose();
+        {
+            onDispose();
+
+            hostingShutdown.Dispose();
+        }
     }
 }
