@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Components.Shutdown
             // (iloktionov): Task.Run() protects from blocking the caller of relevant CancellationTokenSource.Cancel().
             // (iloktionov): External timeout protects from serviceBeacon.Stop() call taking too long.
             // (iloktionov): Artifical timeout reduction protects solely from false warning logs.
-            return Task.Run(() => ShutdownBeaconAsync(beaconTimeout.Cut(100.Milliseconds(), 0.1)))
+            return Task.Run(() => ShutdownBeaconAsync(beaconTimeout.Cut(ShutdownConstants.CutAmountForBeaconTimeout, ShutdownConstants.CutMaximumRelativeValue)))
                 .WaitAsync(beaconTimeout)
                 .ContinueWith(
                     task =>

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 
@@ -63,14 +63,14 @@ namespace Vostok.Hosting
         /// <para>Total timeout for host's and application's graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.</para>
         /// <para>Note that this includes <see cref="BeaconShutdownTimeout"/> and the application may observe a lower value in environment's <see cref="IVostokHostingEnvironment.ShutdownTimeout"/> property.</para>
         /// </summary>
-        public TimeSpan ShutdownTimeout { get; set; } = 15.Seconds();
+        public TimeSpan ShutdownTimeout { get; set; } = ShutdownConstants.DefaultShutdownTimeout;
 
         /// <summary>
         /// <para>Maximum timeout for <see cref="IVostokHostingEnvironment.ServiceBeacon"/> shutdown.</para>
         /// <para>Included in total <see cref="ShutdownTimeout"/>.</para>
         /// <para>Limited by 1/3 of <see cref="ShutdownTimeout"/>.</para>
         /// </summary>
-        public TimeSpan BeaconShutdownTimeout { get; set; } = 5.Seconds();
+        public TimeSpan BeaconShutdownTimeout { get; set; } = ShutdownConstants.DefaultBeaconShutdownTimeout;
 
         /// <summary>
         /// If enabled, <see cref="VostokHost"/> will wait for up to <see cref="BeaconShutdownTimeout"/> between stopping <see cref="IVostokHostingEnvironment.ServiceBeacon"/> and initiating app shutdown to ensure graceful deregistration.

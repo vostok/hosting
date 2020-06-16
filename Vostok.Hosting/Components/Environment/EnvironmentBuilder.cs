@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Components.Environment
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             shutdownTokens = new List<CancellationToken>();
-            shutdownTimeout = 15.Seconds();
+            shutdownTimeout = ShutdownConstants.DefaultShutdownTimeout;
             configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
             clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
@@ -249,7 +249,10 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
-            this.shutdownTimeout = shutdownTimeout.Cut(500.Milliseconds(), 0.05);
+            this.shutdownTimeout = shutdownTimeout.Cut(
+                ShutdownConstants.CutAmountForExternalTimeout, 
+                ShutdownConstants.CutMaximumRelativeValue);
+
             return this;
         }
 
