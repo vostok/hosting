@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
+using Vostok.Commons.Time;
 using Vostok.Hosting.Helpers;
 
 namespace Vostok.Hosting
@@ -11,5 +13,11 @@ namespace Vostok.Hosting
         /// <para>See <see cref="StaticProvidersHelper.Configure"/> for more details.</para>
         /// </summary>
         public bool ConfigureStaticProviders { get; set; } = true;
+
+        /// <inheritdoc cref="VostokHostSettings.BeaconShutdownTimeout"/>
+        public TimeSpan BeaconShutdownTimeout { get; set; } = 5.Seconds();
+
+        /// <inheritdoc cref="VostokHostSettings.BeaconShutdownWaitEnabled"/>
+        public bool BeaconShutdownWaitEnabled { get; set; } = true;
     }
 }

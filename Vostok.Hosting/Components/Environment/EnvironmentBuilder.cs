@@ -21,6 +21,7 @@ using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
@@ -65,7 +66,7 @@ namespace Vostok.Hosting.Components.Environment
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             shutdownTokens = new List<CancellationToken>();
-            shutdownTimeout = 5.Seconds();
+            shutdownTimeout = ShutdownConstants.DefaultShutdownTimeout;
             configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
             clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
@@ -140,6 +141,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ClusterConfigClient);
 
             context.Datacenters = datacentersBuilder.Build(context);
+
             if (settings.ConfigureStaticProviders && context.Datacenters != null)
                 DatacentersProvider.Configure(context.Datacenters, true);
 
@@ -161,9 +163,10 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
-            ClusterClientDefaults.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
-            if (context.ServiceBeacon is ServiceBeacon beacon)
-                ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
+            if (settings.ConfigureStaticProviders)
+                ClusterClientDefaults.ClientApplicationName = context.ServiceBeacon is ServiceBeacon beacon 
+                    ? beacon.ReplicaInfo.Application 
+                    : context.ApplicationIdentity.FormatServiceName();
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
@@ -186,9 +189,19 @@ namespace Vostok.Hosting.Components.Environment
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
-            var vostokHostingEnvironment = new VostokHostingEnvironment(
-                shutdownTokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(shutdownTokens.ToArray()).Token : default,
+            var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
+                context.ServiceBeacon,
+                context.ServiceLocator,
+                context.Log,
+                url?.Port,
+                shutdownTokens,
                 shutdownTimeout,
+                settings.BeaconShutdownTimeout,
+                settings.BeaconShutdownWaitEnabled);
+
+            var vostokHostingEnvironment = new VostokHostingEnvironment(
+                hostingShutdown,
+                applicationShutdown,
                 context.ApplicationIdentity,
                 applicationLimitsBuilder.Build(context),
                 applicationReplicationInfoBuilder.Build(context),
@@ -236,7 +249,10 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
-            this.shutdownTimeout = shutdownTimeout.Cut(100.Milliseconds(), 0.05);
+            this.shutdownTimeout = shutdownTimeout.Cut(
+                ShutdownConstants.CutAmountForExternalTimeout, 
+                ShutdownConstants.CutMaximumRelativeValue);
+
             return this;
         }
 

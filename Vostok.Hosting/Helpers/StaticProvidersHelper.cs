@@ -36,9 +36,9 @@ namespace Vostok.Hosting.Helpers
             if (environment == null)
                 throw new ArgumentNullException(nameof(environment));
 
-            ClusterClientDefaults.ClientApplicationName = environment.ApplicationIdentity.FormatServiceName();
-            if (environment.ServiceBeacon is ServiceBeacon beacon)
-                ClusterClientDefaults.ClientApplicationName = beacon.ReplicaInfo.Application;
+            ClusterClientDefaults.ClientApplicationName = environment.ServiceBeacon is ServiceBeacon beacon 
+                ? beacon.ReplicaInfo.Application 
+                : environment.ApplicationIdentity.FormatServiceName();
 
             LogProvider.Configure(environment.Log, true);
             TracerProvider.Configure(environment.Tracer, true);
