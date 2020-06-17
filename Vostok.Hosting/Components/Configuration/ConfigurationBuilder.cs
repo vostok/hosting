@@ -127,7 +127,10 @@ namespace Vostok.Hosting.Components.Configuration
 
             var providerSettings = new ConfigurationProviderSettings()
                 .WithErrorLogging(context.Log)
-                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings()));
+                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings()
+                {
+                    InitialIndent = true
+                }));
 
             providerCustomization.Customize(providerSettings);
 
