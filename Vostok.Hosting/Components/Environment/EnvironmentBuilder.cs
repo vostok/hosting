@@ -27,6 +27,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
@@ -168,6 +169,8 @@ namespace Vostok.Hosting.Components.Environment
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             context.Metrics = metricsBuilder.Build(context);
+            if (settings.ConfigureStaticProviders)
+                MetricContextProvider.Configure(context.Metrics.Root, true);
 
             HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
