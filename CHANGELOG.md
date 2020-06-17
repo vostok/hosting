@@ -1,3 +1,7 @@
+## 0.1.26 (16-06-2020)
+
+Fixed https://github.com/vostok/hosting/issues/10
+
 ## 0.1.25 (28-05-2020):
 
 - SubstitutableLog is public now.
