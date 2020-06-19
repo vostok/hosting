@@ -12,6 +12,8 @@ namespace Vostok.Hosting.Components.Diagnostics
         public bool AddSystemMetricsInfo { get; set; } = true;
         
         public bool AddApplicationMetricsInfo { get; set; } = true;
+        
+        public bool AddApplicationInfo { get; set; } = true;
 
         public bool AddHealthChecksInfo { get; set; } = true;
 

@@ -35,6 +35,8 @@ namespace Vostok.Hosting.Components
         }
 
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
+        public IVostokApplicationLimits ApplicationLimits{ get; set; }
+        public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }

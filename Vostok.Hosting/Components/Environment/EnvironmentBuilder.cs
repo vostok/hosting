@@ -151,6 +151,8 @@ namespace Vostok.Hosting.Components.Environment
                 DatacentersProvider.Configure(context.Datacenters, true);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
+            context.ApplicationLimits = applicationLimitsBuilder.Build(context);
+            context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
@@ -219,8 +221,8 @@ namespace Vostok.Hosting.Components.Environment
                 hostingShutdown,
                 applicationShutdown,
                 context.ApplicationIdentity,
-                applicationLimitsBuilder.Build(context),
-                applicationReplicationInfoBuilder.Build(context),
+                context.ApplicationLimits,
+                context.ApplicationReplication,
                 context.Metrics,
                 context.DiagnosticsHub,
                 context.Log,

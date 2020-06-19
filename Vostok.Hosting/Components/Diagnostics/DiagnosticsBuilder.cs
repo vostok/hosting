@@ -67,7 +67,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             var info = new DiagnosticInfo();
 
             if (infoSettings.AddEnvironmentInfo)
-                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider());
+                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider(context.Datacenters));
 
             if (infoSettings.AddSystemMetricsInfo)
                 info.RegisterProvider(CreateEntry("system-metrics"), new SystemMetricsProvider());
@@ -86,6 +86,14 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             if (infoSettings.AddApplicationMetricsInfo && context.MetricsInfoProvider != null)
                 info.RegisterProvider(CreateEntry("application-metrics"), context.MetricsInfoProvider);
+
+            if (infoSettings.AddApplicationInfo)
+                info.RegisterProvider(
+                    CreateEntry("application-info"),
+                    new ApplicationInfoProvider(
+                        context.ApplicationIdentity,
+                        context.ApplicationLimits,
+                        context.ApplicationReplication));
 
             return info;
         }
