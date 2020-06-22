@@ -1,4 +1,9 @@
-## 0.1.28 (16-06-2020)
+## 0.1.27 (16-06-2020)
+
+- Fill `MetricContextProvider`.
+- Fill `ConfigurationProviderSettings.InitialIndent` setting.
+
+## 0.1.26 (16-06-2020)
 
 Fixed https://github.com/vostok/hosting/issues/10
 

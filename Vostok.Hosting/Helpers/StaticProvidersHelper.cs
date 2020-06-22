@@ -10,6 +10,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.Tracing.Abstractions;
+using Vostok.Metrics;
 
 namespace Vostok.Hosting.Helpers
 {
@@ -27,6 +28,7 @@ namespace Vostok.Hosting.Helpers
         ///     <item><description><see cref="TracerProvider"/></description></item>
         ///     <item><description><see cref="HerculesSinkProvider"/></description></item>
         ///     <item><description><see cref="DatacentersProvider"/></description></item>
+        ///     <item><description><see cref="MetricProvider"/></description></item>
         ///     <item><description>ClusterConfigClient.<see cref="ClusterConfigClient.Default"/> (if not configured earlier)</description></item>
         ///     <item><description>ConfigurationProvider.<see cref="ConfigurationProvider.Default"/> (if not configured earlier)</description></item>
         /// </list>
@@ -44,6 +46,7 @@ namespace Vostok.Hosting.Helpers
             TracerProvider.Configure(environment.Tracer, true);
             HerculesSinkProvider.Configure(environment.HerculesSink, true);
             DatacentersProvider.Configure(environment.Datacenters, true);
+            MetricContextProvider.Configure(environment.Metrics.Root, true);
 
             FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => environment.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
 
