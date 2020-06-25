@@ -144,12 +144,11 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             reportsObservable.Next(report);
 
-            statusObservable.Next(report.Status);
-
             if (oldReport.Status != report.Status)
             {
-                statusChangesObservable.Next((oldReport.Status, report.Status));
                 LogChangedHealthStatus(oldReport.Status, report.Status);
+                statusObservable.Next(report.Status);
+                statusChangesObservable.Next((oldReport.Status, report.Status));
             }
         }
 
