@@ -11,6 +11,6 @@ namespace Vostok.Hosting.Setup
         IVostokDiagnosticsBuilder CustomizeInfo([NotNull] Action<DiagnosticInfoSettings> customization);
 
         [NotNull]
-        IVostokDiagnosticsBuilder CustomizeHealth([NotNull] Action<HealthTrackerSettings> customization);
+        IVostokDiagnosticsBuilder CustomizeHealthTracker([NotNull] Action<HealthTrackerSettings> customization);
     }
 }
