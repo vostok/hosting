@@ -27,7 +27,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             return this;
         }
 
-        public IVostokDiagnosticsBuilder CustomizeHealth(Action<HealthTrackerSettings> customization)
+        public IVostokDiagnosticsBuilder CustomizeHealthTracker(Action<HealthTrackerSettings> customization)
         {
             healthSettingsCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
             return this;
