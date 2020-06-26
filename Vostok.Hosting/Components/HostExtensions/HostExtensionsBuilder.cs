@@ -37,6 +37,8 @@ namespace Vostok.Hosting.Components.HostExtensions
             if (context.ZooKeeperClient != null && !(context.ZooKeeperClient is DevNullZooKeeperClient))
                 HostExtensions.Add(context.ZooKeeperClient);
 
+            HostExtensions.Add(context.DiagnosticsHub);
+
             builderCustomization.Customize(this);
 
             context.DisposableHostExtensions = disposable;
