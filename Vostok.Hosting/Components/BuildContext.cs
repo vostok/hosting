@@ -6,6 +6,8 @@ using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Diagnostics;
+using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Models;
@@ -33,6 +35,8 @@ namespace Vostok.Hosting.Components
         }
 
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
+        public IVostokApplicationLimits ApplicationLimits{ get; set; }
+        public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
@@ -42,6 +46,8 @@ namespace Vostok.Hosting.Components
         public ConfigurationProvider SecretConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
+        public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
+        public DiagnosticsHub DiagnosticsHub { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
@@ -78,6 +84,9 @@ namespace Vostok.Hosting.Components
                     LogDisposing($"{hostExtension.GetType().Name} extension");
                     (hostExtension as IDisposable)?.Dispose();
                 }
+
+                LogDisposing("Diagnostics");
+                (DiagnosticsHub as IDisposable)?.Dispose();
 
                 LogDisposing("Metrics");
                 (Metrics?.Root as IDisposable)?.Dispose();

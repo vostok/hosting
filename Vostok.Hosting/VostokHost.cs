@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -216,10 +217,8 @@ namespace Vostok.Hosting
             builder.SetupShutdownToken(ShutdownTokenSource.Token);
             builder.SetupShutdownTimeout(settings.ShutdownTimeout);
 
-            var applicationType = settings.Application.GetType();
-
-            RequirementsHelper.EnsurePort(applicationType, builder);
-            RequirementsHelper.EnsureConfigurations(applicationType, builder);
+            RequirementsHelper.EnsurePort(settings.Application, builder);
+            RequirementsHelper.EnsureConfigurations(settings.Application, builder);
 
             settings.EnvironmentSetup(builder);
         }
@@ -263,7 +262,7 @@ namespace Vostok.Hosting
 
             try
             {
-                RequirementsChecker.Check(settings.Application.GetType(), environment);
+                RequirementsChecker.Check(settings.Application, environment);
 
                 return await RunPhaseAsync(true).ConfigureAwait(false);
             }
@@ -415,6 +414,7 @@ namespace Vostok.Hosting
             log.Info("Application OS = '{OperatingSystem}'.", RuntimeInformation.OSDescription);
             log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
             log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
+            log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
         }
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)

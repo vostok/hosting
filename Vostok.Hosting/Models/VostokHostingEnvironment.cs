@@ -19,8 +19,7 @@ namespace Vostok.Hosting.Models
     {
         private readonly HostingShutdown hostingShutdown;
         private readonly ApplicationShutdown applicationShutdown;
-
-        private readonly Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider;
+        private readonly Func<IVostokApplicationReplicationInfo> replicationInfoProvider;
         private readonly Action onDispose;
 
         internal VostokHostingEnvironment(
@@ -28,8 +27,9 @@ namespace Vostok.Hosting.Models
             [NotNull] ApplicationShutdown applicationShutdown,
             [NotNull] IVostokApplicationIdentity applicationIdentity,
             [NotNull] IVostokApplicationLimits applicationLimits,
-            [NotNull] Func<IVostokApplicationReplicationInfo> applicationReplicationInfoProvider,
+            [NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider,
             [NotNull] IVostokApplicationMetrics metrics,
+            [NotNull] IVostokApplicationDiagnostics diagnostics,
             [NotNull] ILog log,
             [NotNull] ITracer tracer,
             [NotNull] IHerculesSink herculesSink,
@@ -50,12 +50,13 @@ namespace Vostok.Hosting.Models
         {
             this.hostingShutdown = hostingShutdown ?? throw new ArgumentNullException(nameof(hostingShutdown));
             this.applicationShutdown = applicationShutdown ?? throw new ArgumentNullException(nameof(applicationShutdown));
-            this.applicationReplicationInfoProvider = applicationReplicationInfoProvider ?? throw new ArgumentNullException(nameof(applicationReplicationInfoProvider));
+            this.replicationInfoProvider = replicationInfoProvider ?? throw new ArgumentNullException(nameof(replicationInfoProvider));
             this.onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
 
             ApplicationIdentity = applicationIdentity ?? throw new ArgumentNullException(nameof(applicationIdentity));
             ApplicationLimits = applicationLimits ?? throw new ArgumentNullException(nameof(applicationLimits));
             Metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+            Diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
             Log = log ?? throw new ArgumentNullException(nameof(log));
             Tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
             HerculesSink = herculesSink ?? throw new ArgumentNullException(nameof(herculesSink));
@@ -79,8 +80,9 @@ namespace Vostok.Hosting.Models
         public Task ShutdownTask => applicationShutdown.ShutdownTask;
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
-        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => applicationReplicationInfoProvider();
+        public IVostokApplicationReplicationInfo ApplicationReplicationInfo => replicationInfoProvider();
         public IVostokApplicationMetrics Metrics { get; }
+        public IVostokApplicationDiagnostics Diagnostics { get; }
         public ILog Log { get; }
         public ITracer Tracer { get; }
         public IHerculesSink HerculesSink { get; }

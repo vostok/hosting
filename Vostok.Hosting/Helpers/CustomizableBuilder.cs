@@ -20,6 +20,8 @@ namespace Vostok.Hosting.Helpers
             builderCustomization = new Customization<TBuilder>();
         }
 
+        public TBuilder Builder => builder;
+
         public void AddCustomization(Action<TBuilder> setup)
             => builderCustomization.AddCustomization(setup);
 

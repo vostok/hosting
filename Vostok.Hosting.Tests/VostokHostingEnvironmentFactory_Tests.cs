@@ -5,6 +5,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Vostok.Commons.Testing;
+using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
@@ -113,6 +114,18 @@ namespace Vostok.Hosting.Tests
             environment.ShutdownToken.WaitHandle.WaitOne(5.Seconds()).Should().BeTrue();
 
             watch.Elapsed.Should().BeLessThan(1.Seconds());
+        }
+
+        [Test]
+        public void Should_provide_a_diagnostic_extension()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings());
+
+            environment.HostExtensions.TryGet<IVostokApplicationDiagnostics>(out var diagnostics).Should().BeTrue();
+
+            diagnostics.Should().NotBeNull();
+            diagnostics.Info.Should().NotBeNull();
+            diagnostics.HealthTracker.Should().NotBeNull();
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)

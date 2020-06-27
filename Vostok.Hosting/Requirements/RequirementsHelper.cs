@@ -17,13 +17,13 @@ namespace Vostok.Hosting.Requirements
     [PublicAPI]
     public static class RequirementsHelper
     {
-        public static void EnsurePort([NotNull] Type applicationType, [NotNull] IVostokHostingEnvironmentBuilder builder)
+        public static void EnsurePort([NotNull] IVostokApplication application, [NotNull] IVostokHostingEnvironmentBuilder builder)
         {
-            if (RequirementDetector.RequiresPort(applicationType))
+            if (RequirementDetector.RequiresPort(application))
                 builder.SetPort(FreeTcpPortFinder.GetFreePort());
         }
 
-        public static void EnsureConfigurations([NotNull] Type applicationType, [NotNull] IVostokHostingEnvironmentBuilder builder)
+        public static void EnsureConfigurations([NotNull] IVostokApplication application, [NotNull] IVostokHostingEnvironmentBuilder builder)
         {
             void SetupSource(IConfigurationProvider provider, IConfigurationSource source, string[] scope, Type type)
             {
@@ -37,10 +37,10 @@ namespace Vostok.Hosting.Requirements
                 b => b.CustomizeConfigurationContext(
                     context =>
                     {
-                        foreach (var requirement in RequirementDetector.GetRequiredConfigurations(applicationType))
+                        foreach (var requirement in RequirementDetector.GetRequiredConfigurations(application))
                             SetupSource(context.ConfigurationProvider, context.ConfigurationSource, requirement.Scope, requirement.Type);
 
-                        foreach (var requirement in RequirementDetector.GetRequiredSecretConfigurations(applicationType))
+                        foreach (var requirement in RequirementDetector.GetRequiredSecretConfigurations(application))
                             SetupSource(context.SecretConfigurationProvider, context.SecretConfigurationSource, requirement.Scope, requirement.Type);
                     }));
         }

@@ -28,7 +28,7 @@ namespace Vostok.Hosting.Helpers
         ///     <item><description><see cref="TracerProvider"/></description></item>
         ///     <item><description><see cref="HerculesSinkProvider"/></description></item>
         ///     <item><description><see cref="DatacentersProvider"/></description></item>
-        ///     <item><description><see cref="MetricProvider"/></description></item>
+        ///     <item><description><see cref="MetricContextProvider"/></description></item>
         ///     <item><description>ClusterConfigClient.<see cref="ClusterConfigClient.Default"/> (if not configured earlier)</description></item>
         ///     <item><description>ConfigurationProvider.<see cref="ConfigurationProvider.Default"/> (if not configured earlier)</description></item>
         /// </list>
