@@ -1,3 +1,9 @@
+## 0.2.0 (27-06-2020):
+
+- Implemented diagnostic info providers
+- Implemented health checks
+- Now passing app instance instead of type to requirement checker/detector
+
 ## 0.1.27 (16-06-2020)
 
 - Fill `MetricContextProvider`.
