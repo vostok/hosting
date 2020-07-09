@@ -1,3 +1,11 @@
+## 0.2.1 (09-07-2020):
+
+- New host extensions: GarbageCollectionMonitor (only on .NET Core 3.0+), CurrentProcessMonitor.
+- Garbage collection logging enabled by default (for collections longer than 500 ms).
+- Garbage collection metrics enabled by default (total duration, longest duration).
+- Current process system metrics logging enabled default (CPU, memory, GC, threadpool, ...).
+- Current process system metrics reporting can be enabled manually.
+
 ## 0.2.0 (27-06-2020):
 
 - Implemented diagnostic info providers
