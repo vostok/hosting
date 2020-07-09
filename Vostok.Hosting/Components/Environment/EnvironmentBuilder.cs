@@ -24,6 +24,7 @@ using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Shutdown;
+using Vostok.Hosting.Components.SystemMetrics;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
@@ -61,6 +62,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
+        private readonly SystemMetricsBuilder systemMetricsBuilder;
 
         private List<CancellationToken> shutdownTokens;
         private TimeSpan shutdownTimeout;
@@ -87,6 +89,7 @@ namespace Vostok.Hosting.Components.Environment
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
+            systemMetricsBuilder = new SystemMetricsBuilder();
         }
 
         public static VostokHostingEnvironment Build(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
@@ -204,7 +207,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
-
+            
             context.DiagnosticsHub = diagnosticsBuilder.Build(context);
 
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
@@ -244,6 +247,8 @@ namespace Vostok.Hosting.Components.Environment
                 context.Dispose);
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
+
+            systemMetricsBuilder.Build(context);
 
             if (!hasLogs)
             {
@@ -461,6 +466,12 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupConfiguration(Action<IVostokConfigurationBuilder, IVostokConfigurationSetupContext> setup)
         {
             configurationBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupSystemMetrics(Action<SystemMetricsSettings> setup)
+        {
+            systemMetricsBuilder.Customize(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 

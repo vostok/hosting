@@ -52,6 +52,7 @@ namespace Vostok.Hosting.Components
         public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
+        public IVostokHostExtensions HostExtensions { get; set; }
         public List<object> DisposableHostExtensions { get; set; }
 
         public Logs Logs { get; set; }

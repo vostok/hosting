@@ -74,6 +74,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.zookeeper.client.abstractions\Vostok.ZooKeeper.Client.Abstractions\bin\Release\netstandard2.0\Vostok.ZooKeeper.Client.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Metrics.System">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\netstandard2.0\Vostok.Metrics.System.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />

@@ -2,6 +2,7 @@
 using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.SystemMetrics;
 
 namespace Vostok.Hosting.Setup
 {
@@ -66,5 +67,7 @@ namespace Vostok.Hosting.Setup
 
         IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup);
+
+        IVostokHostingEnvironmentBuilder SetupSystemMetrics([NotNull] Action<SystemMetricsSettings> setup);
     }
 }
