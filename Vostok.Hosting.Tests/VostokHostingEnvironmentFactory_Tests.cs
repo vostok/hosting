@@ -4,6 +4,7 @@ using System.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
+using Vostok.Commons.Environment;
 using Vostok.Commons.Testing;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
@@ -135,8 +136,10 @@ namespace Vostok.Hosting.Tests
         {
             var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings());
 
-            environment.HostExtensions.TryGet<GarbageCollectionMonitor>(out var gcMonitor).Should().BeTrue();
-            environment.HostExtensions.TryGet<CurrentProcessMonitor>(out var processMonitor).Should().BeTrue();
+            if (RuntimeDetector.IsDotNetCore30AndNewer)
+                environment.HostExtensions.TryGet<GarbageCollectionMonitor>(out _).Should().BeTrue();
+
+            environment.HostExtensions.TryGet<CurrentProcessMonitor>(out _).Should().BeTrue();
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
