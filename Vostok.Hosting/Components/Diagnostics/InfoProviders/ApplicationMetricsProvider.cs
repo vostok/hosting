@@ -40,7 +40,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
             foreach (var @event in snapshot)
                 result[GetFlatMetricName(@event)] = @event.Value;
 
-            return result;
+            return result.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
         private static string GetFlatMetricName(MetricEvent @event)

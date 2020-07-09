@@ -9,6 +9,8 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
+using Vostok.Metrics.System.Gc;
+using Vostok.Metrics.System.Process;
 
 namespace Vostok.Hosting.Tests
 {
@@ -126,6 +128,15 @@ namespace Vostok.Hosting.Tests
             diagnostics.Should().NotBeNull();
             diagnostics.Info.Should().NotBeNull();
             diagnostics.HealthTracker.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Should_provide_system_metrics_extensions()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings());
+
+            environment.HostExtensions.TryGet<GarbageCollectionMonitor>(out var gcMonitor).Should().BeTrue();
+            environment.HostExtensions.TryGet<CurrentProcessMonitor>(out var processMonitor).Should().BeTrue();
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
