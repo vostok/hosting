@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
@@ -23,20 +24,33 @@ namespace Vostok.Hosting.Components.SystemMetrics
         {
             var settings = settingsCustomization.Customize(new SystemMetricsSettings());
 
+            var metricContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
+
+            if (RuntimeDetector.IsDotNetCore30AndNewer)
+                RegisterGcMonitor(settings, context, metricContext);
+
+            RegisterProcessMonitor(settings, context, metricContext);
+        }
+
+        private void RegisterGcMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
+        {
             var gcMonitor = new GarbageCollectionMonitor();
-            var processMonitor = new CurrentProcessMonitor();
 
             context.HostExtensions.AsMutable().Add(gcMonitor);
-            context.HostExtensions.AsMutable().Add(processMonitor);
             context.DisposableHostExtensions.Add(gcMonitor);
-
-            var metricContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
 
             if (settings.EnableGcEventsLogging)
                 context.DisposableHostExtensions.Add(gcMonitor.LogCollections(context.Log, gc => gc.Duration >= settings.GcMinimumDurationForLogging));
 
             if (settings.EnableGcEventsMetrics)
                 context.DisposableHostExtensions.Add(gcMonitor.ReportMetrics(metricContext));
+        }
+
+        private void RegisterProcessMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
+        {
+            var processMonitor = new CurrentProcessMonitor();
+
+            context.HostExtensions.AsMutable().Add(processMonitor);
 
             if (settings.EnableProcessMetricsLogging)
                 context.DisposableHostExtensions.Add(processMonitor.LogPeriodically(context.Log, settings.ProcessMetricsLoggingPeriod));
