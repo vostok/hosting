@@ -19,7 +19,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
         {
             EnvironmentInfo.Host,
             EnvironmentInfo.FQDN,
-            Datacenter = datacenters.GetLocalDatacenter(),
+            Datacenter = datacenters?.GetLocalDatacenter() ?? "unknown",
             EnvironmentInfo.ProcessId,
             EnvironmentInfo.ProcessName,
             EnvironmentInfo.BaseDirectory,
