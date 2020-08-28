@@ -20,5 +20,7 @@ namespace Vostok.Hosting.Components.Diagnostics
         public bool AddConfigurationInfo { get; set; }
 
         public bool AddHerculesSinkInfo { get; set; } = true;
+
+        public bool AddLogLevelInfo { get; set; } = true;
     }
 }

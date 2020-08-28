@@ -84,6 +84,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             if (infoSettings.AddHerculesSinkInfo && context.HerculesSink is HerculesSink realSink)
                 info.RegisterProvider(CreateEntry("hercules-sink"), new HerculesSinkInfoProvider(realSink));
 
+            if (infoSettings.AddLogLevelInfo)
+                info.RegisterProvider(CreateEntry("log-level"), new LogLevelInfoProvider(context.LogEventLevelCounter));
+
             if (infoSettings.AddApplicationMetricsInfo && context.MetricsInfoProvider != null)
                 info.RegisterProvider(CreateEntry("application-metrics"), context.MetricsInfoProvider);
 
