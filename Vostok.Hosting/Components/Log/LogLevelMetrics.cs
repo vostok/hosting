@@ -16,13 +16,11 @@ namespace Vostok.Hosting.Components.Log
         private readonly MetricTags tags;
         private readonly ILog log;
 
-        private volatile LogLevelStatistics previousStatistics = LogLevelStatistics.Zero;
-
         public LogLevelMetrics(EventLevelCounter counter, IMetricContext context, ILog log)
         {
             this.counter = counter;
             tags = context.Tags;
-            this.log = log;
+            this.log = log.ForContext<LogLevelStatistics>();
 
             context.Register(this, ScrapePeriod);
         }
@@ -40,20 +38,20 @@ namespace Vostok.Hosting.Components.Log
             foreach (var property in typeof(LogLevelStatistics).GetProperties())
                 yield return CreateMetricEvent(
                     timestamp,
-                    property.Name,
-                    (int)property.GetValue(statistics) - (int)property.GetValue(previousStatistics));
+                    property.Name.Replace("PerMinute", string.Empty),
+                    Convert.ToDouble(property.GetValue(statistics)));
 
-            previousStatistics = statistics;
+            log.Info("Successfully sent log level metrics.");
         }
 
-        private MetricEvent CreateMetricEvent(DateTimeOffset timestamp, string name, double value) // TODO: Double check
+        private MetricEvent CreateMetricEvent(DateTimeOffset timestamp, string name, double value)
         {
             return new MetricEvent(
                 value,
                 tags.Append(WellKnownTagKeys.Name, name),
                 timestamp,
+                WellKnownUnits.OpsPerMinute,
                 null,
-                WellKnownAggregationTypes.Counter,
                 null);
         }
     }

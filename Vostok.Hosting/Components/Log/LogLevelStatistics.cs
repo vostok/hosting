@@ -5,31 +5,24 @@ namespace Vostok.Hosting.Components.Log
     [PublicAPI]
     public class LogLevelStatistics
     {
-        public static LogLevelStatistics Zero = new LogLevelStatistics(
-            0,
-            0,
-            0,
-            0,
-            0);
-
         public LogLevelStatistics(
-            int debugLogAttemptsCount,
-            int infoLogAttemptsCount,
-            int warnLogAttemptsCount,
-            int errorLogAttemptsCount,
-            int fatalLogAttemptsCount)
+            int debugLogEventsPerMinute,
+            int infoLogEventsPerMinute,
+            int warnLogEventsPerMinute,
+            int errorLogEventsPerMinute,
+            int fatalLogEventsPerMinute)
         {
-            DebugLogAttemptsCount = debugLogAttemptsCount;
-            InfoLogAttemptsCount = infoLogAttemptsCount;
-            WarnLogAttemptsCount = warnLogAttemptsCount;
-            ErrorLogAttemptsCount = errorLogAttemptsCount;
-            FatalLogAttemptsCount = fatalLogAttemptsCount;
+            DebugLogEventsPerMinute = debugLogEventsPerMinute;
+            InfoLogEventsPerMinute = infoLogEventsPerMinute;
+            WarnLogEventsPerMinute = warnLogEventsPerMinute;
+            ErrorLogEventsPerMinute = errorLogEventsPerMinute;
+            FatalLogEventsPerMinute = fatalLogEventsPerMinute;
         }
 
-        public int DebugLogAttemptsCount { get; }
-        public int InfoLogAttemptsCount { get; }
-        public int WarnLogAttemptsCount { get; }
-        public int ErrorLogAttemptsCount { get; }
-        public int FatalLogAttemptsCount { get; }
+        public int DebugLogEventsPerMinute { get; }
+        public int InfoLogEventsPerMinute { get; }
+        public int WarnLogEventsPerMinute { get; }
+        public int ErrorLogEventsPerMinute { get; }
+        public int FatalLogEventsPerMinute { get; }
     }
 }

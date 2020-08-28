@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
@@ -14,6 +15,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly ConcurrentCounter warnEvents = new ConcurrentCounter();
         private readonly ConcurrentCounter errorEvents = new ConcurrentCounter();
         private readonly ConcurrentCounter fatalEvents = new ConcurrentCounter();
+        private readonly Stopwatch stopwatch = Stopwatch.StartNew();
 
         private readonly TimeCache<LogLevelStatistics> cachedValue;
 
@@ -49,12 +51,15 @@ namespace Vostok.Hosting.Components.Log
 
         private LogLevelStatistics CollectInner()
         {
-            return new LogLevelStatistics(
-                debugEvents.CollectAndReset(),
-                infoEvents.CollectAndReset(),
-                warnEvents.CollectAndReset(),
-                errorEvents.CollectAndReset(),
-                fatalEvents.CollectAndReset());
+            var deltaTime = stopwatch.Elapsed.TotalMinutes;
+            var result = new LogLevelStatistics(
+                (int)(debugEvents.CollectAndReset() / deltaTime),
+                (int)(infoEvents.CollectAndReset() / deltaTime),
+                (int)(warnEvents.CollectAndReset() / deltaTime),
+                (int)(errorEvents.CollectAndReset() / deltaTime),
+                (int)(fatalEvents.CollectAndReset() / deltaTime));
+            stopwatch.Restart();
+            return result;
         }
     }
 }
