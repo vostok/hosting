@@ -54,7 +54,7 @@ namespace Vostok.Hosting.Components
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
         public List<object> DisposableHostExtensions { get; set; }
-        public EventLevelCounter LogEventLevelCounter { get; set; }
+        public EventLevelCounter EventLevelCounter { get; set; }
 
         public Logs Logs { get; set; }
 
