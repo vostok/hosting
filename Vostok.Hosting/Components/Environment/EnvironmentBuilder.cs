@@ -119,6 +119,13 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
+            context.LogEventLevelCounter = new EventLevelCounter();
+            
+            SetupLog(logBuilder =>
+            {
+                logBuilder.CustomizeLog(log => new LevelCountingLog(log, context.LogEventLevelCounter));
+            });
+
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
@@ -256,11 +263,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.PrintBufferedLogs();
                 context.Log = context.Logs.BuildCompositeLog();
             }
-            
-            context.LogEventLevelCounter = new EventLevelCounter();
 
-            context.Log = new LevelCountingLog(context.Log, context.LogEventLevelCounter);
-            
             LogLevelMetrics.Measure(context.LogEventLevelCounter, context.Metrics, context.Log);
 
             if (settings.ConfigureStaticProviders)

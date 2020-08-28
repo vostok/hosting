@@ -52,12 +52,14 @@ namespace Vostok.Hosting.Components.Log
         private LogLevelStatistics CollectInner()
         {
             var deltaTime = stopwatch.Elapsed.TotalMinutes;
+
             var result = new LogLevelStatistics(
                 (int)(debugEvents.CollectAndReset() / deltaTime),
                 (int)(infoEvents.CollectAndReset() / deltaTime),
                 (int)(warnEvents.CollectAndReset() / deltaTime),
                 (int)(errorEvents.CollectAndReset() / deltaTime),
                 (int)(fatalEvents.CollectAndReset() / deltaTime));
+
             stopwatch.Restart();
             return result;
         }
