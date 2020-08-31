@@ -121,6 +121,13 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
+            if (eventLevelCounterBuilder.EventLevelCounterEnabled)
+            {
+                context.EventLevelCounter = eventLevelCounterBuilder.Build(context);
+                
+                SetupLog(builder => builder.CustomizeLog(log => new LevelCountingLog(log, context.EventLevelCounter)));
+            }
+            
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
@@ -258,17 +265,13 @@ namespace Vostok.Hosting.Components.Environment
                 context.PrintBufferedLogs();
                 context.Log = context.Logs.BuildCompositeLog();
             }
-
+            
             if (eventLevelCounterBuilder.EventLevelCounterEnabled)
             {
-                context.EventLevelCounter = eventLevelCounterBuilder.Build(context);
                 context.HostExtensions.AsMutable().Add(context.EventLevelCounter);
-                
-                SetupLog(builder => builder.CustomizeLog(log => new LevelCountingLog(log, context.EventLevelCounter)));
-
                 LogLevelMetrics.Measure(context.EventLevelCounter, context.Metrics, context.Log);
             }
-            
+
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
