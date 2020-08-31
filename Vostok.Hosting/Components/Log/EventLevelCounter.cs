@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Helpers;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class EventLevelCounter
+    [PublicAPI]
+    public class EventLevelCounter
     {
         private static readonly TimeSpan CacheTtl = 1.Minutes();
 
@@ -24,7 +26,7 @@ namespace Vostok.Hosting.Components.Log
             cachedValue = new TimeCache<LogLevelStatistics>(CollectInner, CacheTtl);
         }
 
-        public void HandleEvent(LogEvent @event)
+        internal void HandleEvent(LogEvent @event)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (@event?.Level)
