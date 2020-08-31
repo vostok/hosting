@@ -19,11 +19,11 @@ namespace Vostok.Hosting.Components.Log
         private readonly ConcurrentCounter fatalEvents = new ConcurrentCounter();
         private readonly Stopwatch stopwatch = Stopwatch.StartNew();
 
-        private readonly TimeCache<LogLevelStatistics> cachedValue;
+        private readonly TimeCache<LogEventsMetrics> cachedValue;
 
         public EventLevelCounter()
         {
-            cachedValue = new TimeCache<LogLevelStatistics>(CollectInner, CacheTtl);
+            cachedValue = new TimeCache<LogEventsMetrics>(CollectInner, CacheTtl);
         }
 
         internal void HandleEvent(LogEvent @event)
@@ -49,13 +49,13 @@ namespace Vostok.Hosting.Components.Log
             }
         }
 
-        public LogLevelStatistics CollectStatistics() => cachedValue.GetValue();
+        public LogEventsMetrics CollectStatistics() => cachedValue.GetValue();
 
-        private LogLevelStatistics CollectInner()
+        private LogEventsMetrics CollectInner()
         {
             var deltaTime = stopwatch.Elapsed.TotalMinutes;
 
-            var result = new LogLevelStatistics(
+            var result = new LogEventsMetrics(
                 (int)(debugEvents.CollectAndReset() / deltaTime),
                 (int)(infoEvents.CollectAndReset() / deltaTime),
                 (int)(warnEvents.CollectAndReset() / deltaTime),

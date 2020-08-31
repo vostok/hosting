@@ -3,9 +3,9 @@
 namespace Vostok.Hosting.Components.Log
 {
     [PublicAPI]
-    public class LogLevelStatistics
+    public class LogEventsMetrics
     {
-        public LogLevelStatistics(
+        public LogEventsMetrics(
             int debugLogEventsPerMinute,
             int infoLogEventsPerMinute,
             int warnLogEventsPerMinute,

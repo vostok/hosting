@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Components.Log
         {
             this.counter = counter;
             tags = context.Tags;
-            this.log = log.ForContext<LogLevelStatistics>();
+            this.log = log.ForContext<LogEventsMetrics>();
 
             context.Register(this, ScrapePeriod);
         }
@@ -35,7 +35,7 @@ namespace Vostok.Hosting.Components.Log
         {
             var statistics = counter.CollectStatistics();
 
-            foreach (var property in typeof(LogLevelStatistics).GetProperties())
+            foreach (var property in typeof(LogEventsMetrics).GetProperties())
                 yield return CreateMetricEvent(
                     timestamp,
                     property.Name.Replace("PerMinute", string.Empty),
