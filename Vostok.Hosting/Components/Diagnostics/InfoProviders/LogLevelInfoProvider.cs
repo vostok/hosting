@@ -12,6 +12,6 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
             this.counter = counter;
         }
 
-        public object Query() => counter.CollectStatistics();
+        public object Query() => counter.Collect();
     }
 }

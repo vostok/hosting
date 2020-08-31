@@ -49,7 +49,7 @@ namespace Vostok.Hosting.Components.Log
             }
         }
 
-        public LogEventsMetrics CollectStatistics() => cachedValue.GetValue();
+        public LogEventsMetrics Collect() => cachedValue.GetValue();
 
         private LogEventsMetrics CollectInner()
         {

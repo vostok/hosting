@@ -33,7 +33,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
         {
-            var statistics = counter.CollectStatistics();
+            var statistics = counter.Collect();
 
             foreach (var property in typeof(LogEventsMetrics).GetProperties())
                 yield return CreateMetricEvent(
