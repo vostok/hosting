@@ -246,8 +246,6 @@ namespace Vostok.Hosting.Components.Environment
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
 
-            hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
-
             systemMetricsBuilder.Build(context);
 
             if (!hasLogs)
@@ -256,6 +254,8 @@ namespace Vostok.Hosting.Components.Environment
                 context.PrintBufferedLogs();
                 context.Log = context.Logs.BuildCompositeLog();
             }
+            
+            hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
             
             LogLevelMetrics.Measure(context.Logs.EventLevelCounter, context.Metrics, context.Log);
 
