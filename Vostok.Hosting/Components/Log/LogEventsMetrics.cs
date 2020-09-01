@@ -6,23 +6,23 @@ namespace Vostok.Hosting.Components.Log
     public class LogEventsMetrics
     {
         public LogEventsMetrics(
-            int debugLogEventsPerMinute,
-            int infoLogEventsPerMinute,
-            int warnLogEventsPerMinute,
-            int errorLogEventsPerMinute,
-            int fatalLogEventsPerMinute)
+            int debugLogEvents,
+            int infoLogEvents,
+            int warnLogEvents,
+            int errorLogEvents,
+            int fatalLogEvents)
         {
-            DebugLogEventsPerMinute = debugLogEventsPerMinute;
-            InfoLogEventsPerMinute = infoLogEventsPerMinute;
-            WarnLogEventsPerMinute = warnLogEventsPerMinute;
-            ErrorLogEventsPerMinute = errorLogEventsPerMinute;
-            FatalLogEventsPerMinute = fatalLogEventsPerMinute;
+            DebugLogEvents = debugLogEvents;
+            InfoLogEvents = infoLogEvents;
+            WarnLogEvents = warnLogEvents;
+            ErrorLogEvents = errorLogEvents;
+            FatalLogEvents = fatalLogEvents;
         }
 
-        public int DebugLogEventsPerMinute { get; }
-        public int InfoLogEventsPerMinute { get; }
-        public int WarnLogEventsPerMinute { get; }
-        public int ErrorLogEventsPerMinute { get; }
-        public int FatalLogEventsPerMinute { get; }
+        public int DebugLogEvents { get; }
+        public int InfoLogEvents { get; }
+        public int WarnLogEvents { get; }
+        public int ErrorLogEvents { get; }
+        public int FatalLogEvents { get; }
     }
 }
