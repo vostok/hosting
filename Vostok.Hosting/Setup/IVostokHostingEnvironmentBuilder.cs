@@ -70,7 +70,5 @@ namespace Vostok.Hosting.Setup
         IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup);
 
         IVostokHostingEnvironmentBuilder SetupSystemMetrics([NotNull] Action<SystemMetricsSettings> setup);
-
-        IVostokHostingEnvironmentBuilder SetupEventLevelMetrics([NotNull] Action<EventLevelCounterSettings> setup);
     }
 }

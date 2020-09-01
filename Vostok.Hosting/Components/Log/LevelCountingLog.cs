@@ -1,4 +1,5 @@
-﻿using Vostok.Logging.Abstractions;
+﻿using System.Threading;
+using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Log
 {
@@ -23,5 +24,12 @@ namespace Vostok.Hosting.Components.Log
         public bool IsEnabledFor(LogLevel level) => baseLog.IsEnabledFor(level);
 
         public ILog ForContext(string context) => new LevelCountingLog(baseLog.ForContext(context), eventLevelCounter);
+
+        internal void AddCounter(EventLevelCounter newCounter)
+        {
+            var newBaseLog = new LevelCountingLog(baseLog, newCounter);
+
+            Interlocked.Exchange(ref baseLog, newBaseLog);
+        }
     }
 }
