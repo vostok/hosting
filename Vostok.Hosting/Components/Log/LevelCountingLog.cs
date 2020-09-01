@@ -5,8 +5,13 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LevelCountingLog : ILog
     {
-        private readonly EventLevelCounter eventLevelCounter;
+        private EventLevelCounter eventLevelCounter;
         private volatile ILog baseLog;
+
+        public LevelCountingLog(ILog baseLog)
+        {
+            this.baseLog = baseLog;
+        }
 
         public LevelCountingLog(ILog baseLog, EventLevelCounter parentCounter)
         {
@@ -16,7 +21,7 @@ namespace Vostok.Hosting.Components.Log
 
         public void Log(LogEvent @event)
         {
-            eventLevelCounter.HandleEvent(@event);
+            eventLevelCounter?.HandleEvent(@event);
 
             baseLog.Log(@event);
         }
@@ -27,9 +32,10 @@ namespace Vostok.Hosting.Components.Log
 
         internal void AddCounter(EventLevelCounter newCounter)
         {
-            var newBaseLog = new LevelCountingLog(baseLog, newCounter);
-
-            Interlocked.Exchange(ref baseLog, newBaseLog);
+            if (eventLevelCounter == null)
+                eventLevelCounter = newCounter;
+            else
+                Interlocked.Exchange(ref baseLog, new LevelCountingLog(baseLog, newCounter));
         }
     }
 }

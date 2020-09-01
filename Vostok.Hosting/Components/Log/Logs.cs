@@ -14,7 +14,6 @@ namespace Vostok.Hosting.Components.Log
         private readonly Func<ILog, ILog> customization;
         private readonly IObservable<LogConfigurationRule[]> rules;
         public EventLevelCounterFactory EventLevelCounterFactory;
-        public readonly EventLevelCounter EventLevelCounter;
 
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
@@ -34,7 +33,6 @@ namespace Vostok.Hosting.Components.Log
             this.herculesLog = herculesLog;
             this.rules = rules;
             this.customization = customization;
-            EventLevelCounter = new EventLevelCounter();
         }
 
         public int Count(bool withoutHercules = false)
@@ -67,7 +65,7 @@ namespace Vostok.Hosting.Components.Log
 
         private ILog WrapAndCreateFactory(ILog baseLog)
         {
-            var levelCountingLog = new LevelCountingLog(baseLog, EventLevelCounter);
+            var levelCountingLog = new LevelCountingLog(baseLog);
             
             EventLevelCounterFactory = new EventLevelCounterFactory(levelCountingLog);
             
