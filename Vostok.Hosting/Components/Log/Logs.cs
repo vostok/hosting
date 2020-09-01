@@ -13,7 +13,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly List<(string name, ILog log)> userLogs;
         private readonly Func<ILog, ILog> customization;
         private readonly IObservable<LogConfigurationRule[]> rules;
-        public EventLevelCounterFactory EventLevelCounterFactory;
+        public EventLevelCounterFactory EventLevelCounterFactory { get; private set; }
 
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
