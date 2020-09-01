@@ -5,54 +5,40 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
-using Vostok.Metrics.Scraping;
+using Vostok.Metrics.Primitives.Gauge;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class LogLevelMetrics : IScrapableMetric
+    internal class LogLevelMetrics
     {
         private static readonly TimeSpan ScrapePeriod = 1.Minutes();
         private readonly EventLevelCounter counter;
-        private readonly MetricTags tags;
         private readonly ILog log;
 
         public LogLevelMetrics(EventLevelCounter counter, IMetricContext context, ILog log)
         {
-            this.counter = counter;
-            tags = context.Tags;
-            this.log = log.ForContext<LogEventsMetrics>();
+            context.CreateMultiFuncGauge(ProvideMetrics, new FuncGaugeConfig {ScrapePeriod = ScrapePeriod});
 
-            context.Register(this, ScrapePeriod);
+            this.counter = counter;
+            this.log = log.ForContext<LogEventsMetrics>();
         }
 
         public static void Measure(EventLevelCounter counter, IVostokApplicationMetrics context, ILog log)
         {
             // ReSharper disable once ObjectCreationAsStatement
-            new LogLevelMetrics(counter, context.Application.WithTag(WellKnownTagKeys.Component, "LogLevel"), log);
+            new LogLevelMetrics(counter, context.Instance.WithTag(WellKnownTagKeys.Component, "LogLevel"), log);
         }
 
-        public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
+        private IEnumerable<MetricDataPoint> ProvideMetrics()
         {
-            var statistics = counter.Collect();
+            var metrics = counter.Collect();
 
             foreach (var property in typeof(LogEventsMetrics).GetProperties())
-                yield return CreateMetricEvent(
-                    timestamp,
-                    property.Name.Replace("PerMinute", string.Empty),
-                    Convert.ToDouble(property.GetValue(statistics)));
+                yield return new MetricDataPoint(
+                    Convert.ToDouble(property.GetValue(metrics)),
+                    (WellKnownTagKeys.Name, property.Name));
 
             log.Info("Successfully sent log level metrics.");
-        }
-
-        private MetricEvent CreateMetricEvent(DateTimeOffset timestamp, string name, double value)
-        {
-            return new MetricEvent(
-                value,
-                tags.Append(WellKnownTagKeys.Name, name),
-                timestamp,
-                WellKnownUnits.OpsPerMinute,
-                null,
-                null);
         }
     }
 }
