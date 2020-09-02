@@ -59,7 +59,8 @@ namespace Vostok.Hosting.Components.Log
         {
             (fileLog as IDisposable)?.Dispose();
             
-            ConsoleLog.Flush();
+            if(consoleLog != null)
+                ConsoleLog.Flush();
         }
 
         private IEnumerable<(string name, ILog log)> SelectLogs(bool withoutHercules)
