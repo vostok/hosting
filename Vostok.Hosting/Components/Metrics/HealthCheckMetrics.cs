@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics;
@@ -29,11 +30,11 @@ namespace Vostok.Hosting.Components.Metrics
 
         public void OnNext(HealthReport value)
         {
-            foreach (var keyValuePair in value.Checks)
+            foreach (var keyValuePair in value.Checks.Where(x => x.Value.Status != HealthStatus.Healthy))
             {
                 context.Send(
                     new MetricDataPoint(
-                        Convert.ToDouble(keyValuePair.Value.Reason),
+                        Convert.ToDouble(keyValuePair.Value.Status),
                         (WellKnownTagKeys.Name, keyValuePair.Key)
                     ));
             }
