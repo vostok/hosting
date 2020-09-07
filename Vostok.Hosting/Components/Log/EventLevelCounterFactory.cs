@@ -18,9 +18,6 @@ namespace Vostok.Hosting.Components.Log
             return counter;
         }
 
-        internal IEnumerable<EventLevelCounter> GetCounters()
-        {
-            return counters;
-        }
+        internal IEnumerable<EventLevelCounter> GetCounters() => counters;
     }
 }
