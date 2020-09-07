@@ -245,9 +245,9 @@ namespace Vostok.Hosting.Components.Environment
                 context.Datacenters ?? new EmptyDatacenters(),
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
-            
+
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
-            
+
             systemMetricsBuilder.Build(context);
 
             if (!hasLogs)
