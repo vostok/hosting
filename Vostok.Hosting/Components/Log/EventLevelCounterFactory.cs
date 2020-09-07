@@ -1,22 +1,23 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Vostok.Hosting.Components.Log
 {
     [PublicAPI]
     public class EventLevelCounterFactory
     {
-        private readonly LevelCountingLog baseLog;
-
-        internal EventLevelCounterFactory(LevelCountingLog baseLog)
-        {
-            this.baseLog = baseLog;
-        }
+        private readonly List<EventLevelCounter> counters = new List<EventLevelCounter>();
 
         public EventLevelCounter CreateCounter()
         {
             var counter = new EventLevelCounter();
-            baseLog.AddCounter(counter);
+            counters.Add(counter);
             return counter;
+        }
+
+        internal IEnumerable<EventLevelCounter> GetCounters()
+        {
+            return counters;
         }
     }
 }
