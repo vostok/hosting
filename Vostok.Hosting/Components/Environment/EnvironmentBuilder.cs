@@ -262,7 +262,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
             
-            HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics, context.Log);
+            HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
             return vostokHostingEnvironment;
         }
