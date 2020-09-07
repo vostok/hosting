@@ -245,7 +245,10 @@ namespace Vostok.Hosting.Components.Environment
                 context.Datacenters ?? new EmptyDatacenters(),
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
-
+            
+            hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
+            
+            systemMetricsBuilder.Build(context);
 
             if (!hasLogs)
             {
@@ -253,10 +256,6 @@ namespace Vostok.Hosting.Components.Environment
                 context.PrintBufferedLogs();
                 context.Log = context.Logs.BuildCompositeLog();
             }
-            
-            hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
-            
-            systemMetricsBuilder.Build(context);
 
             LogLevelMetrics.Measure(context.Logs.EventLevelCounterFactory.CreateCounter(), context.Metrics);
 

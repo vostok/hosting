@@ -7,7 +7,7 @@ namespace Vostok.Hosting.Components.Log
     internal class LevelCountingLog : ILog
     {
         private readonly Func<IEnumerable<EventLevelCounter>> provider;
-        private volatile ILog baseLog;
+        private readonly ILog baseLog;
         
         public LevelCountingLog(ILog baseLog, Func<IEnumerable<EventLevelCounter>> countersProvider)
         {
