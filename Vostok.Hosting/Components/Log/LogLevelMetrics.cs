@@ -11,22 +11,19 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LogLevelMetrics
     {
-        private static readonly TimeSpan ScrapePeriod = 1.Minutes();
         private readonly EventLevelCounter counter;
-        private readonly ILog log;
 
-        public LogLevelMetrics(EventLevelCounter counter, IMetricContext context, ILog log)
+        public LogLevelMetrics(EventLevelCounter counter, IMetricContext context)
         {
-            context.CreateMultiFuncGauge(ProvideMetrics, new FuncGaugeConfig {ScrapePeriod = ScrapePeriod});
-
             this.counter = counter;
-            this.log = log.ForContext<LogEventsMetrics>();
+            
+            context.CreateMultiFuncGauge(ProvideMetrics);
         }
 
-        public static void Measure(EventLevelCounter counter, IVostokApplicationMetrics context, ILog log)
+        public static void Measure(EventLevelCounter counter, IVostokApplicationMetrics context)
         {
             // ReSharper disable once ObjectCreationAsStatement
-            new LogLevelMetrics(counter, context.Instance.WithTag(WellKnownTagKeys.Component, "LogLevel"), log);
+            new LogLevelMetrics(counter, context.Instance.WithTag(WellKnownTagKeys.Component, "LogLevel"));
         }
 
         private IEnumerable<MetricDataPoint> ProvideMetrics()
@@ -37,8 +34,6 @@ namespace Vostok.Hosting.Components.Log
                 yield return new MetricDataPoint(
                     Convert.ToDouble(property.GetValue(metrics)),
                     (WellKnownTagKeys.Name, property.Name));
-
-            log.Info("Successfully sent log level metrics.");
         }
     }
 }

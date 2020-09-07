@@ -258,7 +258,7 @@ namespace Vostok.Hosting.Components.Environment
             
             systemMetricsBuilder.Build(context);
 
-            LogLevelMetrics.Measure(context.Logs.EventLevelCounterFactory.CreateCounter(), context.Metrics, context.Log);
+            LogLevelMetrics.Measure(context.Logs.EventLevelCounterFactory.CreateCounter(), context.Metrics);
 
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
