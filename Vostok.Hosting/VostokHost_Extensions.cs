@@ -47,5 +47,23 @@ namespace Vostok.Hosting
 
             return vostokHost;
         }
+        
+        /// <summary>
+        /// Listen <see cref="AppDomain.CurrentDomain.ProcessExit"/> and shutdown vostok if SIGTERM received.
+        /// </summary>
+        public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost)
+        {
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+            {
+                vostokHost.ShutdownTokenSource.Cancel();
+                
+                // NOTE: ProcessExit doesn't have flag similar to CancelKeyPress to disable process killing.
+                // NOTE: We have to wait until everything is shut down.
+                // NOTE: We can't use application state there because it is changed before disposing of environment.
+                while(!vostokHost.ApplicationClosed) {}
+            };
+
+            return vostokHost;
+        }
     }
 }
