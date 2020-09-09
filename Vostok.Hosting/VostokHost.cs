@@ -43,8 +43,6 @@ namespace Vostok.Hosting
         /// </summary>
         public readonly CancellationTokenSource ShutdownTokenSource;
 
-        internal bool ApplicationClosed => workerTask.IsCompleted;
-
         protected readonly VostokHostSettings settings;
 
         private readonly CachingObservable<VostokApplicationState> onApplicationStateChanged;

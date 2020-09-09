@@ -55,12 +55,7 @@ namespace Vostok.Hosting
         {
             AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
-                vostokHost.ShutdownTokenSource.Cancel();
-                
-                // NOTE: ProcessExit doesn't have flag similar to CancelKeyPress to disable process killing.
-                // NOTE: We have to wait until everything is shut down.
-                // NOTE: We can't use application state there because it is changed before disposing of environment.
-                while(!vostokHost.ApplicationClosed) {}
+                vostokHost.StopAsync().GetAwaiter().GetResult();
             };
 
             return vostokHost;
