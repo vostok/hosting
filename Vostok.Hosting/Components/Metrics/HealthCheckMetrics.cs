@@ -30,13 +30,27 @@ namespace Vostok.Hosting.Components.Metrics
 
         public void OnNext(HealthReport value)
         {
-            foreach (var keyValuePair in value.Checks.Where(x => x.Value.Status != HealthStatus.Healthy))
+            if (value.Status != HealthStatus.Healthy)
             {
                 context.Send(
                     new MetricDataPoint(
-                        Convert.ToDouble(keyValuePair.Value.Status),
-                        (WellKnownTagKeys.Name, keyValuePair.Key)
-                    ));
+                        1d,
+                        (WellKnownTagKeys.Name, "HealthStatus"),
+                        (nameof(HealthCheckResult.Status), value.Status.ToString())
+                    )
+                );
+
+                foreach (var keyValuePair in value.Checks.Where(x => x.Value.Status != HealthStatus.Healthy))
+                {
+                    context.Send(
+                        new MetricDataPoint(
+                            1d,
+                            (WellKnownTagKeys.Name, "HealthChecks"),
+                            ("HealthCheckName", keyValuePair.Key),
+                            (nameof(HealthCheckResult.Status), keyValuePair.Value.Status.ToString())
+                        )
+                    );
+                }
             }
         }
     }
