@@ -1,6 +1,6 @@
 ## 0.2.2 (14-09-2020):
 
-- Fix `Console.Flush()` bug when `ConsoleLog` hasn't actually been configured. 
+- Do not call `Console.Flush()` when `ConsoleLog` hasn't actually been configured. 
 
 ## 0.2.1 (09-07-2020):
 
