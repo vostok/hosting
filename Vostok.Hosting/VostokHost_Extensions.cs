@@ -55,7 +55,7 @@ namespace Vostok.Hosting
         {
             AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
-                vostokHost.StopAsync().GetAwaiter().GetResult();
+                vostokHost.Stop();
             };
 
             return vostokHost;
