@@ -6,10 +6,10 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LevelCountingLog : ILog
     {
-        private readonly Func<IEnumerable<EventLevelCounter>> provider;
+        private readonly Func<IEnumerable<LogEventLevelCounter>> provider;
         private readonly ILog baseLog;
         
-        public LevelCountingLog(ILog baseLog, Func<IEnumerable<EventLevelCounter>> countersProvider)
+        public LevelCountingLog(ILog baseLog, Func<IEnumerable<LogEventLevelCounter>> countersProvider)
         {
             this.baseLog = baseLog;
             provider = countersProvider;

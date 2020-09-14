@@ -5,7 +5,7 @@ using Vostok.Logging.Abstractions;
 namespace Vostok.Hosting.Components.Log
 {
     [PublicAPI]
-    public class EventLevelCounter
+    public class LogEventLevelCounter
     {
         private readonly ConcurrentCounter debugEvents = new ConcurrentCounter();
         private readonly ConcurrentCounter infoEvents = new ConcurrentCounter();

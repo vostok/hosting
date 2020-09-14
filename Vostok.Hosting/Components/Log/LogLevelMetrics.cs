@@ -11,16 +11,16 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LogLevelMetrics
     {
-        private readonly EventLevelCounter counter;
+        private readonly LogEventLevelCounter counter;
 
-        public LogLevelMetrics(EventLevelCounter counter, IMetricContext context)
+        public LogLevelMetrics(LogEventLevelCounter counter, IMetricContext context)
         {
             this.counter = counter;
             
             context.CreateMultiFuncGauge(ProvideMetrics);
         }
 
-        public static void Measure(EventLevelCounter counter, IVostokApplicationMetrics context)
+        public static void Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
         {
             // ReSharper disable once ObjectCreationAsStatement
             new LogLevelMetrics(counter, context.Instance.WithTag(WellKnownTagKeys.Component, "LogLevel"));
