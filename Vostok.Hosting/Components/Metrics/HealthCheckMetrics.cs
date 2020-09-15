@@ -21,7 +21,7 @@ namespace Vostok.Hosting.Components.Metrics
         public static void Measure(IHealthTracker healthTracker, IVostokApplicationMetrics context)
         {
             // ReSharper disable once ObjectCreationAsStatement
-            new HealthCheckMetrics(healthTracker, context.Instance.WithTag(WellKnownTagKeys.Component, "HealthCheck"));
+            new HealthCheckMetrics(healthTracker, context.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks"));
         }
 
         public void OnCompleted() {}
@@ -35,9 +35,8 @@ namespace Vostok.Hosting.Components.Metrics
                 context.Send(
                     new MetricDataPoint(
                         Convert.ToDouble(keyValuePair.Value.Status),
-                        (WellKnownTagKeys.Name, "HealthChecks"),
-                        ("HealthCheckName", keyValuePair.Key),
-                        (nameof(HealthCheckResult.Status), keyValuePair.Value.Status.ToString())
+                        (WellKnownTagKeys.Name, "HealthCheckStatus"),
+                        ("HealthCheckName", keyValuePair.Key)
                     )
                 );
             }
