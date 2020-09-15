@@ -1,3 +1,7 @@
+## 0.2.2 (14-09-2020):
+
+- Do not call `Console.Flush()` when `ConsoleLog` hasn't actually been configured. 
+
 ## 0.2.1 (09-07-2020):
 
 - New host extensions: GarbageCollectionMonitor (only on .NET Core 3.0+), CurrentProcessMonitor.

@@ -62,7 +62,8 @@ namespace Vostok.Hosting.Components.Log
         {
             (fileLog as IDisposable)?.Dispose();
             
-            ConsoleLog.Flush();
+            if(consoleLog != null)
+                ConsoleLog.Flush();
         }
 
         private ILog WrapAndAttachCounters(ILog baseLog) => new LevelCountingLog(baseLog, LogEventLevelCounterFactory.GetCounters);
