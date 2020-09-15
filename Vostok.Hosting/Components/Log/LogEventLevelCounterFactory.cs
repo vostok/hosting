@@ -6,6 +6,7 @@ namespace Vostok.Hosting.Components.Log
     [PublicAPI]
     public class LogEventLevelCounterFactory
     {
+        private readonly object counterLock = new object();
         private volatile List<LogEventLevelCounter> counters = new List<LogEventLevelCounter>();
 
         public LogEventLevelCounter CreateCounter()
@@ -13,7 +14,7 @@ namespace Vostok.Hosting.Components.Log
             var counter = new LogEventLevelCounter();
             var newList = new List<LogEventLevelCounter>();
 
-            lock (counters)
+            lock (counterLock)
             {
                 newList.AddRange(counters);
                 newList.Add(counter);
