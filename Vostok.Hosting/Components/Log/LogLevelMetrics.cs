@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
-using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
 using Vostok.Metrics.Primitives.Gauge;
@@ -16,14 +14,18 @@ namespace Vostok.Hosting.Components.Log
         public LogLevelMetrics(LogEventLevelCounter counter, IMetricContext context)
         {
             this.counter = counter;
-            
+
             context.CreateMultiFuncGauge(ProvideMetrics);
         }
 
         public static void Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
         {
             // ReSharper disable once ObjectCreationAsStatement
-            new LogLevelMetrics(counter, context.Instance.WithTag(WellKnownTagKeys.Component, "LogLevel"));
+            new LogLevelMetrics(
+                counter,
+                context.Instance
+                   .WithTag(WellKnownTagKeys.Component, "VostokLog")
+                   .WithTag(WellKnownTagKeys.Name, "EventsByLevel"));
         }
 
         private IEnumerable<MetricDataPoint> ProvideMetrics()
@@ -33,7 +35,7 @@ namespace Vostok.Hosting.Components.Log
             foreach (var property in typeof(LogEventsMetrics).GetProperties())
                 yield return new MetricDataPoint(
                     Convert.ToDouble(property.GetValue(metrics)),
-                    (WellKnownTagKeys.Name, property.Name));
+                    ("LogLevel", property.Name.Replace("LogEvents", string.Empty)));
         }
     }
 }
