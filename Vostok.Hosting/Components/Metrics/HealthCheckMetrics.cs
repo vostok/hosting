@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Metrics;
