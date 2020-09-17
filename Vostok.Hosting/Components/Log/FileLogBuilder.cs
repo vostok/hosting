@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
@@ -69,7 +70,22 @@ namespace Vostok.Hosting.Components.Log
                 settingsProvider = () => settings;
             }
 
+            context.LogsDirectory = GetLogsDirectory();
+
             return logCustomization.Customize(new FileLog(settingsProvider));
+        }
+
+        private string GetLogsDirectory()
+        {
+            try
+            {
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, settingsProvider().FilePath);
+                return Path.GetDirectoryName(path);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
