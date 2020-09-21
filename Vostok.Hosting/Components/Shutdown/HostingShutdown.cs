@@ -129,7 +129,7 @@ namespace Vostok.Hosting.Components.Shutdown
                         break;
                     }
 
-                    await Task.Delay(TimeSpanArithmetics.Min(budget.Remaining, 100.Milliseconds()));
+                    await Task.Delay(TimeSpanArithmetics.Min(budget.Remaining, 100.Milliseconds())).ConfigureAwait(false);
                 }
 
                 // (iloktionov): The rest of the wait is a safety net (other applications may receive SD notifications significantly later).
