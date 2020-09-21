@@ -56,6 +56,7 @@ namespace Vostok.Hosting.Components
         public List<object> DisposableHostExtensions { get; set; }
 
         public Logs Logs { get; set; }
+        public string LogsDirectory { get; set; }
 
         public ILog Log
         {
