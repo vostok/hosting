@@ -1,3 +1,8 @@
+## 0.2.3 (17-09-2020):
+
+- Added `logsDirectory` property to `ServiceBeacon`.
+
+
 ## 0.2.2 (14-09-2020):
 
 - Do not call `Console.Flush()` when `ConsoleLog` hasn't actually been configured. 
