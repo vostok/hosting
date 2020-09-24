@@ -1,3 +1,7 @@
+## 0.2.4 (21-09-2020):
+
+- Added Sigterm handling via `WithSigtermCancellation` extension method.
+
 ## 0.2.3 (17-09-2020):
 
 - Added `logsDirectory` property to `ServiceBeacon`.

@@ -17,6 +17,8 @@ namespace Vostok.Hosting.Components.Log
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
         private readonly ILog herculesLog;
+        
+        public LogEventLevelCounterFactory LogEventLevelCounterFactory { get; }
 
         public Logs(
             List<(string name, ILog log)> userLogs, 
@@ -32,6 +34,7 @@ namespace Vostok.Hosting.Components.Log
             this.herculesLog = herculesLog;
             this.rules = rules;
             this.customization = customization;
+            LogEventLevelCounterFactory = new LogEventLevelCounterFactory();
         }
 
         public int Count(bool withoutHercules = false)
@@ -52,7 +55,7 @@ namespace Vostok.Hosting.Components.Log
 
             LogConfiguredLoggers(configurableLog);
 
-            return customization(configurableLog);
+            return customization(WrapAndAttachCounters(configurableLog));
         }
 
         public void Dispose()
@@ -62,6 +65,8 @@ namespace Vostok.Hosting.Components.Log
             if(consoleLog != null)
                 ConsoleLog.Flush();
         }
+
+        private ILog WrapAndAttachCounters(ILog baseLog) => new LevelCountingLog(baseLog, LogEventLevelCounterFactory.GetCounters);
 
         private IEnumerable<(string name, ILog log)> SelectLogs(bool withoutHercules)
         {
