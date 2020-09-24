@@ -1,3 +1,8 @@
+## 0.2.5 (24-09-2020):
+
+- Added log level metrics (Amount of log events by level).
+- Added health check metrics.
+
 ## 0.2.4 (21-09-2020):
 
 - Added Sigterm handling via `WithSigtermCancellation` extension method.
