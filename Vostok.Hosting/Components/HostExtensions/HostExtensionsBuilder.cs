@@ -38,6 +38,7 @@ namespace Vostok.Hosting.Components.HostExtensions
                 HostExtensions.Add(context.ZooKeeperClient);
 
             HostExtensions.Add<IVostokApplicationDiagnostics>(context.DiagnosticsHub);
+            HostExtensions.Add(context.Logs.LogEventLevelCounterFactory);
 
             builderCustomization.Customize(this);
 
