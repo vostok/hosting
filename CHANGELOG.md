@@ -1,3 +1,7 @@
+## 0.2.6 (28-09-2020):
+
+IVostokHostingEnvironmentBuilder: added an overload of SetupSystemMetrics with IVostokHostingEnvironment parameter.
+
 ## 0.2.5 (24-09-2020):
 
 - Added log level metrics (Amount of log events by level).
@@ -10,7 +14,6 @@
 ## 0.2.3 (17-09-2020):
 
 - Added `logsDirectory` property to `ServiceBeacon`.
-
 
 ## 0.2.2 (14-09-2020):
 
