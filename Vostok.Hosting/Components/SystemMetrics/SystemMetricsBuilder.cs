@@ -7,6 +7,8 @@ using Vostok.Metrics;
 using Vostok.Metrics.System.Gc;
 using Vostok.Metrics.System.Process;
 
+// ReSharper disable ParameterHidesMember
+
 namespace Vostok.Hosting.Components.SystemMetrics
 {
     internal class SystemMetricsBuilder : IVostokSystemMetricsBuilder
@@ -14,14 +16,21 @@ namespace Vostok.Hosting.Components.SystemMetrics
         private readonly Customization<SystemMetricsSettings> settingsCustomization 
             = new Customization<SystemMetricsSettings>();
 
+        private volatile IVostokHostingEnvironment environment;
+
         public IVostokSystemMetricsBuilder Customize(Action<SystemMetricsSettings> customization)
         {
             settingsCustomization.AddCustomization(customization);
             return this;
         }
 
-        public void Build(BuildContext context)
+        public void Customize(Action<SystemMetricsSettings, IVostokHostingEnvironment> customization)
+            => Customize(settings => customization(settings, environment));
+
+        public void Build(BuildContext context, IVostokHostingEnvironment environment)
         {
+            this.environment = environment;
+
             var settings = settingsCustomization.Customize(new SystemMetricsSettings());
 
             var metricContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");

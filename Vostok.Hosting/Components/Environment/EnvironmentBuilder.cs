@@ -248,7 +248,7 @@ namespace Vostok.Hosting.Components.Environment
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
 
-            systemMetricsBuilder.Build(context);
+            systemMetricsBuilder.Build(context, vostokHostingEnvironment);
 
             if (!hasLogs)
             {
@@ -474,6 +474,12 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         public IVostokHostingEnvironmentBuilder SetupSystemMetrics(Action<SystemMetricsSettings> setup)
+        {
+            systemMetricsBuilder.Customize(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupSystemMetrics(Action<SystemMetricsSettings, IVostokHostingEnvironment> setup) 
         {
             systemMetricsBuilder.Customize(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
