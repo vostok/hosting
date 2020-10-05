@@ -5,6 +5,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 using Vostok.Metrics;
 using Vostok.Metrics.System.Gc;
+using Vostok.Metrics.System.Host;
 using Vostok.Metrics.System.Process;
 
 // ReSharper disable ParameterHidesMember
@@ -33,12 +34,15 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
             var settings = settingsCustomization.Customize(new SystemMetricsSettings());
 
-            var metricContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
+            var processMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
+            var hostMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Host");
 
             if (RuntimeDetector.IsDotNetCore30AndNewer)
-                RegisterGcMonitor(settings, context, metricContext);
+                RegisterGcMonitor(settings, context, processMetricsContext);
 
-            RegisterProcessMonitor(settings, context, metricContext);
+            RegisterProcessMonitor(settings, context, processMetricsContext);
+
+            RegisterHostMonitor(settings, context, hostMetricsContext);
         }
 
         private void RegisterGcMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
@@ -76,6 +80,19 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 
                 collector.ReportMetrics(metricContext);
             }
+        }
+
+        private void RegisterHostMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
+        {
+            var hostMonitor = new HostMonitor();
+
+            context.HostExtensions.AsMutable().Add(hostMonitor);
+
+            if (settings.EnableHostMetricsLogging)
+                context.DisposableHostExtensions.Add(hostMonitor.LogPeriodically(context.Log, settings.HostMetricsLoggingPeriod));
+
+            if (settings.EnableHostMetricsReporting)
+                new HostMetricsCollector().ReportMetrics(metricContext);
         }
     }
 }
