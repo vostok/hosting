@@ -13,7 +13,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
         public bool EnableProcessMetricsLogging { get; set; } = true;
 
-        public bool EnableProcessMetricsReporting { get; set; }
+        public bool EnableProcessMetricsReporting { get; set; } = true;
 
         public TimeSpan GcMinimumDurationForLogging { get; set; } = 500.Milliseconds();
 
