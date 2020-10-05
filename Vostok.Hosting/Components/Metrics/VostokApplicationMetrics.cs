@@ -1,9 +1,11 @@
-﻿using Vostok.Hosting.Abstractions;
+﻿using JetBrains.Annotations;
+using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class VostokApplicationMetrics : IVostokApplicationMetrics
+    [PublicAPI]
+    public class VostokApplicationMetrics : IVostokApplicationMetrics
     {
         public VostokApplicationMetrics(IMetricContext root, IVostokApplicationIdentity identity)
         {
