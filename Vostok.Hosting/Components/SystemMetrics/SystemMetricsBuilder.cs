@@ -65,7 +65,17 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 context.DisposableHostExtensions.Add(processMonitor.LogPeriodically(context.Log, settings.ProcessMetricsLoggingPeriod));
 
             if (settings.EnableProcessMetricsReporting)
-                new CurrentProcessMetricsCollector().ReportMetrics(metricContext);
+            {
+                var collectorSettings = new CurrentProcessMetricsSettings
+                {
+                    CpuCoresLimitProvider = () => context.ApplicationLimits.CpuUnits,
+                    MemoryBytesLimitProvider = () => context.ApplicationLimits.MemoryBytes
+                };
+
+                var collector = new CurrentProcessMetricsCollector(collectorSettings);
+                
+                collector.ReportMetrics(metricContext);
+            }
         }
     }
 }
