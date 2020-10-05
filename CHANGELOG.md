@@ -1,3 +1,9 @@
+## 0.2.7 (05-10-2020):
+
+- Enabled reporting of process metrics by default;
+- Added limit-based process system metrics;
+- Added optional logging/reporting of host system metrics;
+
 ## 0.2.6 (28-09-2020):
 
 IVostokHostingEnvironmentBuilder: added an overload of SetupSystemMetrics with IVostokHostingEnvironment parameter.
