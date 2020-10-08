@@ -75,7 +75,15 @@ namespace Vostok.Hosting.Components.Metrics
 
         private void ConfigureStreams(BuildContext context, HerculesMetricSenderSettings settings, IHerculesSink herculesSink)
         {
-            var allStreams = new[] {settings.FallbackStream, settings.FinalStream, settings.CountersStream, settings.TimersStream, settings.HistogramsStream};
+            var allStreams = new[]
+            {
+                settings.FallbackStream, 
+                settings.FinalStream, 
+                settings.CountersStream, 
+                settings.TimersStream, 
+                settings.HistogramsStream,
+                settings.AnnotationsStream
+            };
 
             foreach (var (stream, apiKeyProvider) in apiKeyProviderBuilders)
             {
