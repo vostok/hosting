@@ -4,14 +4,13 @@ using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hercules.Client.Abstractions.Models;
 using Vostok.Hosting.Setup;
-using Vostok.Metrics;
 using Vostok.Metrics.Hercules;
 
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<IMetricEventSender>
+    internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<HerculesMetricSender>
     {
         private readonly Customization<HerculesMetricSenderSettings> settingsCustomization;
         private readonly List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
@@ -49,7 +48,7 @@ namespace Vostok.Hosting.Components.Metrics
             return this;
         }
 
-        public IMetricEventSender Build(BuildContext context)
+        public HerculesMetricSender Build(BuildContext context)
         {
             if (!enabled)
             {

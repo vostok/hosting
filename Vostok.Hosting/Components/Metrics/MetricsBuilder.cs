@@ -7,6 +7,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
+using Vostok.Metrics.Hercules;
 using Vostok.Metrics.Senders;
 
 // ReSharper disable ParameterHidesMember
@@ -62,13 +63,15 @@ namespace Vostok.Hosting.Components.Metrics
 
         public IVostokApplicationMetrics Build(BuildContext context)
         {
-            var sender = BuildCompositeMetricEventSender(context);
+            var sender = BuildCompositeMetricEventSender(context, out var senders);
             if (sender == null)
                 return new VostokApplicationMetrics(new DevNullMetricContext(), context.ApplicationIdentity);
 
             var settings = new MetricContextConfig(sender)
             {
-                ErrorCallback = e => context.Log.ForContext<MetricContext>().Error(e, "Failed to send metrics.")
+                ErrorCallback = e => context.Log.ForContext<MetricContext>().Error(e, "Failed to send metrics."),
+
+                AnnotationSender = senders.OfType<HerculesMetricSender>().FirstOrDefault()
             };
 
             settingsCustomization.Customize(settings);
@@ -78,24 +81,24 @@ namespace Vostok.Hosting.Components.Metrics
             return new VostokApplicationMetrics(root, context.ApplicationIdentity);
         }
 
-        private IMetricEventSender BuildCompositeMetricEventSender(BuildContext context)
+        private IMetricEventSender BuildCompositeMetricEventSender(BuildContext context, out List<IMetricEventSender> senders)
         {
-            var metricEventSenders = metricEventSenderBuilders
+            senders = metricEventSenderBuilders
                 .Select(b => b.Build(context))
                 .Where(s => s != null)
                 .ToList();
 
             if (addLoggingSender)
-                metricEventSenders.Add(new LoggingMetricEventSender(context.Log));
+                senders.Add(new LoggingMetricEventSender(context.Log));
 
-            switch (metricEventSenders.Count)
+            switch (senders.Count)
             {
                 case 0:
                     return null;
                 case 1:
-                    return metricEventSenders.Single();
+                    return senders.Single();
                 default:
-                    return new CompositeMetricEventSender(metricEventSenders.ToArray());
+                    return new CompositeMetricEventSender(senders.ToArray());
             }
         }
     }
