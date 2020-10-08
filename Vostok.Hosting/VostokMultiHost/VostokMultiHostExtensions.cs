@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Vostok.Hosting.Models;
 
@@ -7,54 +7,44 @@ namespace Vostok.Hosting.VostokMultiHost
 {
     public static class VostokMultiHostExtensions
     {
-        public static Task<VostokApplicationRunResult> RunApp(this Hosting.VostokMultiHost.VostokMultiHost host, VostokApplicationSettings settings)
+        public static Task<VostokApplicationRunResult> RunApp(this VostokMultiHost host, VostokApplicationSettings settings)
         {
-            // Can be ran only after VostokMultiHost start.
             return host.AddApp(settings).RunAsync();
         }
-        
-        public static Task StartApp(this Hosting.VostokMultiHost.VostokMultiHost host, VostokApplicationSettings settings)
+
+        public static Task StartApp(this VostokMultiHost host, VostokApplicationSettings settings)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return host.AddApp(settings).StartAsync();
         }
-        
-        public static Task RestartApp(this Hosting.VostokMultiHost.VostokMultiHost host, string appName)
+
+        public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, string appName)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return host.GetApp(appName).StopAsync();
         }
-        
-        public static Task<VostokApplicationRunResult> StopApp(this Hosting.VostokMultiHost.VostokMultiHost host, string appName)
+
+        public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return Task.Run(
+                () =>
+                {
+                    foreach (var app in apps)
+                        host.StartApp(app).GetAwaiter().GetResult();
+                });
         }
-        
-        public static Task StartSequentially(this Hosting.VostokMultiHost.VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+
+        public static Task StartSequentially(this VostokMultiHost host, params VostokApplicationSettings[] apps)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return StartSequentially(host, (IEnumerable<VostokApplicationSettings>)apps);
         }
-        
-        public static Task StartSequentially(this Hosting.VostokMultiHost.VostokMultiHost host, params VostokApplicationSettings[] apps)
+
+        public static Task StartInParallel(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return Task.WhenAll(apps.Select(app => StartApp(host, app)));
         }
-        
-        public static Task StartInParallel(this Hosting.VostokMultiHost.VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+
+        public static Task StartInParallel(this VostokMultiHost host, params VostokApplicationSettings[] apps)
         {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
+            return StartInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
         }
-        
-        public static Task StartInParallel(this Hosting.VostokMultiHost.VostokMultiHost host, params VostokApplicationSettings[] apps)
-        {
-            // Can be ran only after VostokMultiHost start.
-            throw new NotImplementedException();
-        }
-        
-        // ...
     }
 }
