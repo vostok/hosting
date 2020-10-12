@@ -7,7 +7,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
-using Vostok.Metrics.Hercules;
 using Vostok.Metrics.Senders;
 
 // ReSharper disable ParameterHidesMember
@@ -63,15 +62,17 @@ namespace Vostok.Hosting.Components.Metrics
 
         public IVostokApplicationMetrics Build(BuildContext context)
         {
-            var sender = BuildCompositeMetricEventSender(context, out var senders);
-            if (sender == null)
+            var metricSender = BuildCompositeMetricEventSender(context, out var senders);
+            if (metricSender == null)
                 return new VostokApplicationMetrics(new DevNullMetricContext(), context.ApplicationIdentity);
 
-            var settings = new MetricContextConfig(sender)
+            var annotationSender = BuildCompositeAnnotationEventSender(senders);
+
+            var settings = new MetricContextConfig(metricSender)
             {
                 ErrorCallback = e => context.Log.ForContext<MetricContext>().Error(e, "Failed to send metrics."),
 
-                AnnotationSender = senders.OfType<HerculesMetricSender>().FirstOrDefault()
+                AnnotationSender = annotationSender
             };
 
             settingsCustomization.Customize(settings);
@@ -99,6 +100,21 @@ namespace Vostok.Hosting.Components.Metrics
                     return senders.Single();
                 default:
                     return new CompositeMetricEventSender(senders.ToArray());
+            }
+        }
+
+        private IAnnotationEventSender BuildCompositeAnnotationEventSender(IEnumerable<IMetricEventSender> metricSenders)
+        {
+            var senders = metricSenders.OfType<IAnnotationEventSender>().ToArray();
+
+            switch (senders.Length)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return senders.Single();
+                default:
+                    return new CompositeAnnotationEventSender(senders);
             }
         }
     }
