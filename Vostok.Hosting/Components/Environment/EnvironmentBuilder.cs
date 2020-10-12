@@ -99,13 +99,46 @@ namespace Vostok.Hosting.Components.Environment
             return builder.Build();
         }
 
-        private VostokHostingEnvironment Build()
+        public static VostokHostingEnvironment Build(
+            VostokHostingEnvironmentSetup vostokMultiHostSetup, 
+            VostokHostingEnvironmentSetup vostokApplicationSetup,
+            VostokHostingEnvironmentFactorySettings settings,
+            BuildContext commonContext)
         {
+            var builder = new EnvironmentBuilder(settings);
+            vostokMultiHostSetup(builder);
+            vostokApplicationSetup(builder);
+            return builder.Build(commonContext);
+        }
+
+        public static BuildContext BuildCommonContext(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
+        {
+            var builder = new EnvironmentBuilder(settings);
+            setup(builder);
             var context = new BuildContext();
             
             try
             {
-                return BuildInner(BuildCommonComponents(context));
+                return builder.BuildCommonComponents(context);
+            }
+            catch (Exception error)
+            {
+                context.Log.ForContext<BuildContext>().Error(error, "Failed to create common build context.");
+                context.PrintBufferedLogs();
+                context.Dispose();
+
+                throw;
+            }
+        }
+
+        private VostokHostingEnvironment Build(BuildContext context = null)
+        {
+            if(context == null)
+                context = BuildCommonComponents(new BuildContext());
+            
+            try
+            {
+                return BuildInner(context);
             }
             catch (Exception error)
             {
