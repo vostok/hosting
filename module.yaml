@@ -56,8 +56,8 @@ notests *default:
     - vostok.logging.file
     - vostok.logging.hercules
     - vostok.logging.tracing
-    - vostok.metrics@annotations
-    - vostok.metrics.hercules@annotations
+    - vostok.metrics
+    - vostok.metrics.hercules
     - vostok.metrics.system
     - vostok.servicediscovery
     - vostok.servicediscovery.abstractions
