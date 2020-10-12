@@ -21,7 +21,7 @@ namespace Vostok.Hosting.VostokMultiHost
         }
 
         // Get added applications. 
-        public IEnumerable<(string appName, IVostokMultiHostApplication)> Applications => applications.Select(x => (x.Key, x.Value)).ToList();
+        public IEnumerable<(string appName, IVostokMultiHostApplication)> Applications => applications.Select(x => (x.Key, x.Value)).ToArray();
 
         // Initialize environment, run ALL added applications, stop on all apps stopped. You can't run twice.
         public Task<Dictionary<string, VostokApplicationRunResult>> RunAsync() => throw new NotImplementedException();
@@ -44,7 +44,7 @@ namespace Vostok.Hosting.VostokMultiHost
             throw new NotImplementedException();
         }
 
-        public void RemoveApp(string appName) => throw new NotImplementedException();
+        public void RemoveApp(string appName) => applications.TryRemove(appName, out var _);
 
         protected VostokMultiHostSettings settings { get; set; }
     }

@@ -102,10 +102,10 @@ namespace Vostok.Hosting.Components.Environment
         private VostokHostingEnvironment Build()
         {
             var context = new BuildContext();
-
+            
             try
             {
-                return BuildInner(context);
+                return BuildInner(BuildCommonComponents(context));
             }
             catch (Exception error)
             {
@@ -117,21 +117,40 @@ namespace Vostok.Hosting.Components.Environment
             }
         }
 
-        private VostokHostingEnvironment BuildInner(BuildContext context)
+        private BuildContext BuildCommonComponents(BuildContext context)
         {
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
                 TracerProvider.Configure(context.Tracer, true);
             }
-
-            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
-
+            
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
-
+            
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
                 ClusterConfigClient.TrySetDefaultClient(ccClient);
+            
+            context.Datacenters = datacentersBuilder.Build(context);
+            
+            if (settings.ConfigureStaticProviders && context.Datacenters != null)
+                DatacentersProvider.Configure(context.Datacenters, true);
 
+            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+
+            context.ServiceLocator = serviceLocatorBuilder.Build(context);
+
+            context.HerculesSink = herculesSinkBuilder.Build(context);
+
+            if (settings.ConfigureStaticProviders && context.HerculesSink != null)
+                HerculesSinkProvider.Configure(context.HerculesSink, true);
+
+            return context;
+        }
+
+        private VostokHostingEnvironment BuildInner(BuildContext context)
+        {
+            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
+            
             (context.ConfigurationSource,
                 context.SecretConfigurationSource,
                 context.ConfigurationProvider,
@@ -148,24 +167,10 @@ namespace Vostok.Hosting.Components.Environment
                 context.SecretConfigurationProvider,
                 context.ClusterConfigClient);
 
-            context.Datacenters = datacentersBuilder.Build(context);
-
-            if (settings.ConfigureStaticProviders && context.Datacenters != null)
-                DatacentersProvider.Configure(context.Datacenters, true);
-
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
             context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
-
-            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
-
-            context.ServiceLocator = serviceLocatorBuilder.Build(context);
-
-            context.HerculesSink = herculesSinkBuilder.Build(context);
-
-            if (settings.ConfigureStaticProviders && context.HerculesSink != null)
-                HerculesSinkProvider.Configure(context.HerculesSink, true);
-
+            
             context.Logs = compositeLogBuilder.Build(context);
             
             var hasLogs = context.Logs.Count() > 0;
