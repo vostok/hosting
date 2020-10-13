@@ -1,4 +1,4 @@
-## 0.2.9 (13-10-2020):
+## 0.2.10 (13-10-2020):
 
 Added annotations for app lifecycle events: launching, initialized, stopping.
 
