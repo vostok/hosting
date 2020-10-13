@@ -192,7 +192,7 @@ namespace Vostok.Hosting.Components.Environment
                 MetricContextProvider.Configure(context.Metrics.Root, true);
 
             if (settings.SendAnnotations)
-                AnnotationsHelper.ReportLaunching(context.Metrics.Instance);
+                AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance);
 
             HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
@@ -216,6 +216,7 @@ namespace Vostok.Hosting.Components.Environment
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
                 context.ServiceLocator,
+                context.ApplicationIdentity,
                 context.Metrics.Instance,
                 context.Log,
                 url?.Port,

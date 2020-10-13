@@ -283,7 +283,7 @@ namespace Vostok.Hosting
             try
             {
                 if (settings.SendAnnotations)
-                    AnnotationsHelper.ReportInitialized(environment.Metrics.Instance);
+                    AnnotationsHelper.ReportInitialized(environment.ApplicationIdentity, environment.Metrics.Instance);
 
                 return await RunPhaseAsync(false).ConfigureAwait(false);
             }

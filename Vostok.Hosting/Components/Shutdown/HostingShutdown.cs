@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Time;
+using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
@@ -19,6 +20,7 @@ namespace Vostok.Hosting.Components.Shutdown
         private readonly ApplicationShutdown appShutdown;
         private readonly IServiceBeacon serviceBeacon;
         private readonly IServiceLocator serviceLocator;
+        private readonly IVostokApplicationIdentity identity;
         private readonly IMetricContext instanceMetrics;
         private readonly ILog log;
 
@@ -34,6 +36,7 @@ namespace Vostok.Hosting.Components.Shutdown
             ApplicationShutdown appShutdown,
             IServiceBeacon serviceBeacon,
             IServiceLocator serviceLocator,
+            IVostokApplicationIdentity identity,
             IMetricContext instanceMetrics,
             ILog log,
             CancellationToken token,
@@ -45,6 +48,7 @@ namespace Vostok.Hosting.Components.Shutdown
             this.appShutdown = appShutdown;
             this.serviceBeacon = serviceBeacon;
             this.serviceLocator = serviceLocator;
+            this.identity = identity;
             this.instanceMetrics = instanceMetrics;
             this.log = log.ForContext<HostingShutdown>();
 
@@ -65,7 +69,7 @@ namespace Vostok.Hosting.Components.Shutdown
             log.Info("Hosting shutdown has been initiated. Timeout = {HostingShutdownTimeout}.", totalTimeout);
 
             if (sendAnnotation)
-                AnnotationsHelper.ReportStopping(instanceMetrics);
+                AnnotationsHelper.ReportStopping(identity, instanceMetrics);
 
             hostShutdownBudget.Start();
 

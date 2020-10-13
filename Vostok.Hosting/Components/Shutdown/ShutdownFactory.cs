@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Vostok.Commons.Time;
+using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
@@ -15,6 +16,7 @@ namespace Vostok.Hosting.Components.Shutdown
         public static (HostingShutdown hosting, ApplicationShutdown application) Create(
             IServiceBeacon serviceBeacon,
             IServiceLocator serviceLocator,
+            IVostokApplicationIdentity identity,
             IMetricContext instanceMetrics,
             ILog log,
             int? port,
@@ -42,6 +44,7 @@ namespace Vostok.Hosting.Components.Shutdown
                 applicationShutdown, 
                 serviceBeacon, 
                 serviceLocator,
+                identity,
                 instanceMetrics,
                 log,
                 hostingToken,
