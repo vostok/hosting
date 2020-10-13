@@ -1,4 +1,6 @@
-﻿using Vostok.Hosting.Setup;
+﻿using System.Threading.Tasks;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
@@ -6,8 +8,15 @@ namespace Vostok.Hosting.VostokMultiHost
     {
         // ReSharper disable once AssignNullToNotNullAttribute
         public VostokMultiHostSettings(VostokHostingEnvironmentSetup builder)
-            : base(null, builder)
+            : base(new StubApplication(), builder)
         {
         }
+    }
+
+    internal class StubApplication : IVostokApplication
+    {
+        public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
+
+        public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
     }
 }

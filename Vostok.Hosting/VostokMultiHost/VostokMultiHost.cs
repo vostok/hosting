@@ -9,11 +9,12 @@ using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
+    // TODO: Dispose after stop.
     public class VostokMultiHost
     {
         // TODO: Add state. 
         private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> applications;
-        private BuildContext commonContext { get; set; }
+        private CommonBuildContext CommonContext { get; } = new CommonBuildContext();
 
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokApplicationSettings[] apps)
         {
@@ -40,7 +41,7 @@ namespace Vostok.Hosting.VostokMultiHost
         // Returns after environment initialization and configuration. You can't start twice (even after being stopped).
         public Task StartAsync()
         {
-            // TODO: Check state and set state afterwards
+            // TODO: Check state and set state afterwards    
             BuildCommonContext();
             
             return Task.CompletedTask;
@@ -51,14 +52,13 @@ namespace Vostok.Hosting.VostokMultiHost
 
         // Get app or null.
         public IVostokMultiHostApplication GetApp(string appName) => applications.ContainsKey(appName) ? applications[appName] : null;
-
+        
         public IVostokMultiHostApplication AddApp(VostokApplicationSettings vostokApplicationSettings)
         {
             if (applications.ContainsKey(vostokApplicationSettings.ApplicationName))
                 throw new ArgumentException("Application with this name has already been added.");
             
-            // application[vostokApplicationSettings.ApplicationName];
-            throw new NotImplementedException();
+            return applications[vostokApplicationSettings.ApplicationName] = new VostokMultiHostApplication(vostokApplicationSettings, CommonContext);
         }
 
         public void RemoveApp(string appName) => applications.TryRemove(appName, out var _);
@@ -74,7 +74,7 @@ namespace Vostok.Hosting.VostokMultiHost
 
             try
             {
-                commonContext = EnvironmentBuilder.BuildCommonContext(settings.EnvironmentSetup, environmentFactorySettings);
+                EnvironmentBuilder.BuildCommonContext(CommonContext, settings.EnvironmentSetup, environmentFactorySettings);
             }
             catch (Exception error)
             {

@@ -170,8 +170,7 @@ namespace Vostok.Hosting
             var result = BuildEnvironment();
             if (result != null)
                 return result;
-
-            // TODO: Does this dispose common elements?
+            
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -203,7 +202,9 @@ namespace Vostok.Hosting
                     BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
                 };
 
-                environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
+                environment = settings.CommonBuildContext != null 
+                    ? EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings, settings.CommonBuildContext) 
+                    : EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
 
                 log = environment.Log.ForContext<VostokHost>();
 
