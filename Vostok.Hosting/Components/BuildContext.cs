@@ -214,5 +214,10 @@ namespace Vostok.Hosting.Components
                 throw;
             }
         }
+
+        public CommonBuildContext Clone()
+        {
+            return MemberwiseClone() as CommonBuildContext;
+        }
     }
 }

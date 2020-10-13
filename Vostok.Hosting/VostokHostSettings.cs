@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
@@ -87,5 +88,8 @@ namespace Vostok.Hosting
         /// </summary>
         [NotNull]
         public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; } = new List<Action<IVostokHostingEnvironment>>();
+
+        // TODO: Inspect other ways of propagating this context inside VostokHost.
+        internal CommonBuildContext CommonBuildContext { get; set; }
     }
 }

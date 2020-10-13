@@ -100,26 +100,24 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         public static VostokHostingEnvironment Build(
-            VostokHostingEnvironmentSetup vostokMultiHostSetup, 
-            VostokHostingEnvironmentSetup vostokApplicationSetup,
+            VostokHostingEnvironmentSetup setup,
             VostokHostingEnvironmentFactorySettings settings,
             BuildContext commonContext)
         {
             var builder = new EnvironmentBuilder(settings);
-            vostokMultiHostSetup(builder);
-            vostokApplicationSetup(builder);
+            setup(builder);
             return builder.Build(commonContext);
         }
 
-        public static CommonBuildContext BuildCommonContext(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
+        public static void BuildCommonContext(CommonBuildContext context, VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
         {
             var builder = new EnvironmentBuilder(settings);
             setup(builder);
-            var context = new CommonBuildContext();
             
             try
             {
-                return builder.BuildCommonComponents(context) as CommonBuildContext;
+                // TODO: Inspect other ways of propagating common elements to common context.
+                builder.BuildCommonComponents(context);
             }
             catch (Exception error)
             {
