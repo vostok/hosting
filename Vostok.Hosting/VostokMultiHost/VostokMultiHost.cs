@@ -3,13 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Vostok.Hosting.Components;
+using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
     public class VostokMultiHost
     {
+        // TODO: Add state. 
         private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> applications;
+        private BuildContext commonContext { get; set; }
 
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokApplicationSettings[] apps)
         {
@@ -24,10 +28,23 @@ namespace Vostok.Hosting.VostokMultiHost
         public IEnumerable<(string appName, IVostokMultiHostApplication)> Applications => applications.Select(x => (x.Key, x.Value)).ToArray();
 
         // Initialize environment, run ALL added applications, stop on all apps stopped. You can't run twice.
-        public Task<Dictionary<string, VostokApplicationRunResult>> RunAsync() => throw new NotImplementedException();
+        public Task<Dictionary<string, VostokApplicationRunResult>> RunAsync()
+        {
+            // TODO: Check state and set state afterwards
+            
+            BuildCommonContext();
+            
+            throw new NotImplementedException();
+        }
 
         // Returns after environment initialization and configuration. You can't start twice (even after being stopped).
-        public Task StartAsync() => throw new NotImplementedException();
+        public Task StartAsync()
+        {
+            // TODO: Check state and set state afterwards
+            BuildCommonContext();
+            
+            return Task.CompletedTask;
+        }
 
         // Stop all applications and dispose yourself.
         public Task<Dictionary<string, VostokApplicationRunResult>> StopAsync() => throw new NotImplementedException();
@@ -45,6 +62,26 @@ namespace Vostok.Hosting.VostokMultiHost
         }
 
         public void RemoveApp(string appName) => applications.TryRemove(appName, out var _);
+
+        private void BuildCommonContext()
+        {
+            var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
+            {
+                ConfigureStaticProviders = settings.ConfigureStaticProviders,
+                BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
+                BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
+            };
+
+            try
+            {
+                commonContext = EnvironmentBuilder.BuildCommonContext(settings.EnvironmentSetup, environmentFactorySettings);
+            }
+            catch (Exception error)
+            {
+                // TODO: Log event and set state. 
+                throw;
+            }
+        }
 
         protected VostokMultiHostSettings settings { get; set; }
     }
