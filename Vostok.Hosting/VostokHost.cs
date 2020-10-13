@@ -35,6 +35,7 @@ namespace Vostok.Hosting
     ///     <item><description>Running the application by calling <see cref="IVostokApplication.InitializeAsync"/> and then <see cref="IVostokApplication.RunAsync"/>.</description></item>
     /// </list>
     /// </summary>
+    
     [PublicAPI]
     public class VostokHost
     {
@@ -162,6 +163,7 @@ namespace Vostok.Hosting
 
         private async Task<VostokApplicationRunResult> RunInternalAsync()
         {
+            // TODO: Move it somewhere... (Or override this setting and set it each time an application is launched...)
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
@@ -169,6 +171,7 @@ namespace Vostok.Hosting
             if (result != null)
                 return result;
 
+            // TODO: Does this dispose common elements?
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -228,6 +231,7 @@ namespace Vostok.Hosting
         {
             ChangeStateTo(VostokApplicationState.EnvironmentWarmup);
 
+            // TODO: Warmup? 
             try
             {
                 LogEnvironmentInfo();

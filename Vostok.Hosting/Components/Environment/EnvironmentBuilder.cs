@@ -111,15 +111,15 @@ namespace Vostok.Hosting.Components.Environment
             return builder.Build(commonContext);
         }
 
-        public static BuildContext BuildCommonContext(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
+        public static CommonBuildContext BuildCommonContext(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
         {
             var builder = new EnvironmentBuilder(settings);
             setup(builder);
-            var context = new BuildContext();
+            var context = new CommonBuildContext();
             
             try
             {
-                return builder.BuildCommonComponents(context);
+                return builder.BuildCommonComponents(context) as CommonBuildContext;
             }
             catch (Exception error)
             {
@@ -131,20 +131,20 @@ namespace Vostok.Hosting.Components.Environment
             }
         }
 
-        private VostokHostingEnvironment Build(BuildContext context = null)
+        private VostokHostingEnvironment Build(BuildContext commonContext = null)
         {
-            if(context == null)
-                context = BuildCommonComponents(new BuildContext());
+            if(commonContext == null)
+                commonContext = BuildCommonComponents(new BuildContext());
             
             try
             {
-                return BuildInner(context);
+                return BuildIndividualComponents(commonContext);
             }
             catch (Exception error)
             {
-                context.Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to build hosting environment.");
-                context.PrintBufferedLogs();
-                context.Dispose();
+                commonContext.Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to build hosting environment.");
+                commonContext.PrintBufferedLogs();
+                commonContext.Dispose();
 
                 throw;
             }
@@ -180,7 +180,7 @@ namespace Vostok.Hosting.Components.Environment
             return context;
         }
 
-        private VostokHostingEnvironment BuildInner(BuildContext context)
+        private VostokHostingEnvironment BuildIndividualComponents(BuildContext context)
         {
             context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
             

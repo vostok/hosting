@@ -75,7 +75,7 @@ namespace Vostok.Hosting.Components
             Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             try
             {
@@ -139,7 +139,80 @@ namespace Vostok.Hosting.Components
         public void LogDisabled(string name, string reason) =>
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
-        private void LogDisposing(string componentName) =>
+        protected void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
+    }
+
+    internal class CommonBuildContext : BuildContext
+    {
+        public void DisposeCommonComponents()
+        {
+            try
+            {
+                LogDisposing("HerculesSink");
+                (HerculesSink as IDisposable)?.Dispose();
+            
+                LogDisposing("ServiceLocator");
+                (ServiceLocator as IDisposable)?.Dispose();
+
+                LogDisposing("ZooKeeperClient");
+                (ZooKeeperClient as IDisposable)?.Dispose();
+
+                LogDisposing("Datacenters");
+                (Datacenters as IDisposable)?.Dispose();
+            
+                LogDisposing("ClusterConfigClient");
+                (ClusterConfigClient as IDisposable)?.Dispose();
+            }
+            catch (Exception error)
+            {
+                Log.ForContext<CommonBuildContext>().Error(error, "Failed to dispose common environment components.");
+
+                throw;
+            }
+        }
+
+        public override void Dispose()
+        {
+            try
+            {
+                LogDisposing("VostokHostingEnvironment");
+
+                foreach (var hostExtension in DisposableHostExtensions ?? new List<object>())
+                {
+                    LogDisposing($"{hostExtension.GetType().Name} extension");
+                    (hostExtension as IDisposable)?.Dispose();
+                }
+
+                LogDisposing("Diagnostics");
+                (DiagnosticsHub as IDisposable)?.Dispose();
+
+                LogDisposing("Metrics");
+                (Metrics?.Root as IDisposable)?.Dispose();
+
+                LogDisposing("ServiceBeacon");
+                (ServiceBeacon as IDisposable)?.Dispose();
+
+                Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
+                SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
+                
+                LogDisposing("ConfigurationProvider");
+                (ConfigurationProvider as IDisposable)?.Dispose();
+
+                LogDisposing("SecretConfigurationProvider");
+                (SecretConfigurationProvider as IDisposable)?.Dispose();
+
+                LogDisposing("Log");
+                Log = new SilentLog();
+
+                Logs?.Dispose();
+            }
+            catch (Exception error)
+            {
+                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose of the hosting environment.");
+
+                throw;
+            }
+        }
     }
 }
