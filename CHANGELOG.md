@@ -1,3 +1,7 @@
+## 0.2.9 (13-10-2020):
+
+Added annotations for app lifecycle events: launching, initialized, stopping.
+
 ## 0.2.8 (12-10-2020):
 
 Support for annotation event senders.
