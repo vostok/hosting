@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
+using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
 
@@ -14,12 +15,14 @@ namespace Vostok.Hosting.Components.Shutdown
         public static (HostingShutdown hosting, ApplicationShutdown application) Create(
             IServiceBeacon serviceBeacon,
             IServiceLocator serviceLocator,
+            IMetricContext instanceMetrics,
             ILog log,
             int? port,
             IReadOnlyList<CancellationToken> tokens,
             TimeSpan totalTimeout,
             TimeSpan beaconTimeout,
-            bool beaconWaitEnabled)
+            bool beaconWaitEnabled,
+            bool sendAnnotation)
         {
             var hasRealBeacon = serviceBeacon is ServiceBeacon;
             var hasRealLocator = serviceLocator is ServiceLocator;
@@ -39,11 +42,13 @@ namespace Vostok.Hosting.Components.Shutdown
                 applicationShutdown, 
                 serviceBeacon, 
                 serviceLocator,
+                instanceMetrics,
                 log,
                 hostingToken,
                 totalTimeout,
                 beaconTimeout, 
-                beaconWaitEnabled);
+                beaconWaitEnabled,
+                sendAnnotation);
 
             return (hostingShutdown, applicationShutdown);
         }

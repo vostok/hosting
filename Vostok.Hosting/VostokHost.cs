@@ -17,6 +17,7 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
@@ -197,7 +198,8 @@ namespace Vostok.Hosting
                 {
                     ConfigureStaticProviders = settings.ConfigureStaticProviders,
                     BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
-                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
+                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
+                    SendAnnotations = settings.SendAnnotations
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
@@ -280,6 +282,9 @@ namespace Vostok.Hosting
 
             try
             {
+                if (settings.SendAnnotations)
+                    AnnotationsHelper.ReportInitialized(environment.Metrics.Instance);
+
                 return await RunPhaseAsync(false).ConfigureAwait(false);
             }
             catch (Exception error)

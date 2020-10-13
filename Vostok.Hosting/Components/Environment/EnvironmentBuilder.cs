@@ -191,6 +191,9 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders)
                 MetricContextProvider.Configure(context.Metrics.Root, true);
 
+            if (settings.SendAnnotations)
+                AnnotationsHelper.ReportLaunching(context.Metrics.Instance);
+
             HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
             if (settings.ConfigureStaticProviders)
@@ -213,12 +216,14 @@ namespace Vostok.Hosting.Components.Environment
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
                 context.ServiceLocator,
+                context.Metrics.Instance,
                 context.Log,
                 url?.Port,
                 shutdownTokens,
                 shutdownTimeout,
                 settings.BeaconShutdownTimeout,
-                settings.BeaconShutdownWaitEnabled);
+                settings.BeaconShutdownWaitEnabled,
+                settings.SendAnnotations);
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 hostingShutdown,
