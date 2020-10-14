@@ -109,15 +109,16 @@ namespace Vostok.Hosting.Components.Environment
             return builder.Build(commonContext);
         }
 
-        public static void BuildCommonContext(CommonBuildContext context, VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
+        public static CommonBuildContext BuildCommonContext(VostokHostingEnvironmentSetup setup, VostokHostingEnvironmentFactorySettings settings)
         {
             var builder = new EnvironmentBuilder(settings);
             setup(builder);
+            var context = new CommonBuildContext();
             
             try
             {
                 // TODO: Inspect other ways of propagating common elements to common context.
-                builder.BuildCommonComponents(context);
+                return builder.BuildCommonComponents(context) as CommonBuildContext;
             }
             catch (Exception error)
             {

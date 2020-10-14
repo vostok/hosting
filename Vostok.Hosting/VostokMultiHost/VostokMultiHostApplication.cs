@@ -8,10 +8,10 @@ namespace Vostok.Hosting.VostokMultiHost
     // TODO: Inspect this class one more time
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
-        public VostokMultiHostApplication(VostokApplicationSettings settings, CommonBuildContext commonContext)
+        public VostokMultiHostApplication(VostokApplicationSettings settings, VostokMultiHost parentMultiHost)
         {
             this.settings = settings;
-            this.commonContext = commonContext;
+            this.parentMultiHost = parentMultiHost;
         }
 
         public string Name => settings.ApplicationName;
@@ -32,8 +32,8 @@ namespace Vostok.Hosting.VostokMultiHost
         public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true) => vostokHost.StopAsync(ensureSuccess);
 
         protected VostokApplicationSettings settings { get; }
-        protected CommonBuildContext commonContext { get; }
         private VostokHost vostokHost { get; set; }
+        private VostokMultiHost parentMultiHost { get; }
 
         private void CreateVostokHost()
         {
@@ -41,7 +41,7 @@ namespace Vostok.Hosting.VostokMultiHost
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,
-                CommonBuildContext = commonContext.Clone()
+                CommonBuildContext = parentMultiHost.CommonContext
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
