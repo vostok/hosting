@@ -10,7 +10,6 @@ using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
-    // TODO: Dispose after stop.
     public class VostokMultiHost
     {
         // TODO: Add state. 
@@ -41,11 +40,20 @@ namespace Vostok.Hosting.VostokMultiHost
         }
 
         // Returns after environment initialization and configuration. You can't start twice (even after being stopped).
-        public Task StartAsync()
+        public async Task StartAsync()
         {
-            BuildCommonContext();
+            var initializationTask = Task.Run(
+                async () =>
+                {
+                    while (CommonContext == null)
+                        await Task.Delay(50);    
+                });
 
-            return Task.CompletedTask;
+            var runnerTask = RunAsync().ContinueWith(task => task.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+            var completedTask = Task.WhenAny(runnerTask, initializationTask);
+
+            await completedTask.ConfigureAwait(false);
         }
 
         // Stop all applications and dispose yourself.
@@ -74,7 +82,6 @@ namespace Vostok.Hosting.VostokMultiHost
         public void RemoveApp(string appName) => applications.TryRemove(appName, out var _);
 
         protected VostokMultiHostSettings settings { get; set; }
-        // TODO: Handle case when StartAsync not called. (It could either be try/catch or just another way or propagating common build context).
         internal CommonBuildContext CommonContext { get; set; }
 
         private async Task<Dictionary<string, VostokApplicationRunResult>> RunInternalAsync()
