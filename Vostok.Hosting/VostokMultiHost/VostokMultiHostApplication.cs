@@ -41,7 +41,7 @@ namespace Vostok.Hosting.VostokMultiHost
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,
-                CommonBuildContext = parentMultiHost.CommonContext
+                CommonBuildContext = (parentMultiHost.CommonContext ?? throw new InvalidOperationException("VostokMultiHost should be started to run applications.")).Clone()
             };
 
             vostokHost = new VostokHost(vostokHostSettings);

@@ -117,7 +117,6 @@ namespace Vostok.Hosting.Components.Environment
             
             try
             {
-                // TODO: Inspect other ways of propagating common elements to common context.
                 return builder.BuildCommonComponents(context) as CommonBuildContext;
             }
             catch (Exception error)
