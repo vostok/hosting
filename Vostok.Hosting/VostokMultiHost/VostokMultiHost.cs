@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Environment;
@@ -23,14 +24,20 @@ namespace Vostok.Hosting.VostokMultiHost
 
             foreach (var app in apps)
                 AddApp(app);
+            
+            onHostStateChanged = new CachingObservable<VostokMultiHostState>();
         }
 
+        public VostokMultiHostState HostState { get; private set; }
+
+        private readonly CachingObservable<VostokMultiHostState> onHostStateChanged;
+        
         // Get added applications. 
-        public IEnumerable<(string appName, IVostokMultiHostApplication)> Applications => applications.Select(x => (x.Key, x.Value)).ToArray();
+        public IEnumerable<(string appName, IVostokMultiHostApplication)> Applications => applications.Select(x => (x.Key, x.Value));
 
         // TODO: Wrap Dictionary in some kind of VostokMultiHostRunResult. (In order to handle crashes and errors.)
-        // Initialize environment, run ALL added applications, stop on all apps stopped. You can't run twice.
-        public Task<Dictionary<string, VostokApplicationRunResult>> RunAsync()
+        // Initialize environment, run ALL added applications, stop when apps have stopped. You can't run twice.
+        public Task<VostokMultiHostRunResult> RunAsync()
         {
             // TODO: Check state and set state afterwards
             if (!launchedOnce.TrySetTrue())
@@ -42,6 +49,7 @@ namespace Vostok.Hosting.VostokMultiHost
         // Returns after environment initialization and configuration. You can't start twice (even after being stopped).
         public async Task StartAsync()
         {
+            // TODO: Add state and subscription. Then make this similar to VostokHost.
             var initializationTask = Task.Run(
                 async () =>
                 {
@@ -49,7 +57,7 @@ namespace Vostok.Hosting.VostokMultiHost
                         await Task.Delay(50);    
                 });
 
-            var runnerTask = RunAsync().ContinueWith(task => task.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
+            var runnerTask = RunAsync().ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
 
             var completedTask = Task.WhenAny(runnerTask, initializationTask);
 
@@ -58,7 +66,7 @@ namespace Vostok.Hosting.VostokMultiHost
 
         // Stop all applications and dispose yourself.
         // TODO: Make parallel.
-        public async Task<Dictionary<string, VostokApplicationRunResult>> StopAsync()
+        public async Task<VostokMultiHostRunResult> StopAsync()
         {
             // TODO: Add lock and inspect Tasks.
             var resultDict = new Dictionary<string, VostokApplicationRunResult>();
@@ -69,7 +77,7 @@ namespace Vostok.Hosting.VostokMultiHost
         }
 
         // Get app or null.
-        public IVostokMultiHostApplication GetApp(string appName) => applications.ContainsKey(appName) ? applications[appName] : null;
+        public IVostokMultiHostApplication GetApp(string appName) => applications.TryGetValue(appName, out var app) ? app : null;
 
         public IVostokMultiHostApplication AddApp(VostokApplicationSettings vostokApplicationSettings)
         {
@@ -110,6 +118,24 @@ namespace Vostok.Hosting.VostokMultiHost
                 // TODO: Log event and set state. 
                 throw;
             }
+        }
+        
+        private VostokMultiHostRunResult ReturnResult(VostokMultiHostState newState, Exception error = null)
+        {
+            ChangeStateTo(newState, error);
+            return new VostokMultiHostRunResult(newState, error);
+        }
+
+        private void ChangeStateTo(VostokMultiHostState newState, Exception error = null)
+        {
+            HostState = newState;
+
+            onHostStateChanged.Next(newState);
+
+            if (error != null)
+                onHostStateChanged.Error(error);
+            else if (newState.IsTerminal())
+                onHostStateChanged.Complete();
         }
     }
 }
