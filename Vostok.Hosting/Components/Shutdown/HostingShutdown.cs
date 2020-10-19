@@ -6,6 +6,7 @@ using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Metrics;
+using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -104,6 +105,9 @@ namespace Vostok.Hosting.Components.Shutdown
 
         private bool StopServiceBeacon(TimeBudget budget)
         {
+            if (serviceBeacon is DevNullServiceBeacon)
+                return true;
+            
             var elapsedBefore = budget.Elapsed;
 
             log.Info("Stopping service beacon..");
