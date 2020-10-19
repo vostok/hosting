@@ -371,6 +371,7 @@ namespace Vostok.Hosting
                 onApplicationStateChanged.Complete();
         }
 
+        // TODO: Configure?
         private void ConfigureHostBeforeRun()
         {
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
