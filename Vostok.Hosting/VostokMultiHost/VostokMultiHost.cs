@@ -121,7 +121,6 @@ namespace Vostok.Hosting.VostokMultiHost
             onRunningApplicationsCountChanged.Next(runningApplications.Count);
         }
         
-        // TODO: Also I should add RunSequentially and RunInParallel extension methods.
         private async Task<VostokMultiHostRunResult> RunInternalAsync(bool stopAndDispose = true)
         {
             var contextBuildResult = BuildCommonContext();

@@ -22,15 +22,11 @@ namespace Vostok.Hosting.VostokMultiHost
             return host.GetApp(appName).StopAsync();
         }
 
-        // TODO: Fix
         public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
         {
-            return Task.Run(
-                () =>
-                {
-                    foreach (var app in apps)
-                        host.StartApp(app).GetAwaiter().GetResult();
-                });
+            foreach (var app in apps)
+                host.StartApp(app).GetAwaiter().GetResult();
+            return Task.CompletedTask;
         }
 
         public static Task StartSequentially(this VostokMultiHost host, params VostokApplicationSettings[] apps)
@@ -47,7 +43,27 @@ namespace Vostok.Hosting.VostokMultiHost
         {
             return StartInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
         }
-        
-        // TODO: Add RunInParallel analogs.
+
+        public static Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        {
+            foreach (var app in apps)
+                host.StartApp(app).GetAwaiter().GetResult();
+            return Task.CompletedTask;
+        }
+
+        public static Task RunSequentially(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        {
+            return RunSequentially(host, (IEnumerable<VostokApplicationSettings>)apps);
+        }
+
+        public static Task RunInParallel(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        {
+            return Task.WhenAll(apps.Select(app => RunApp(host, app)));
+        }
+
+        public static Task RunInParallel(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        {
+            return RunInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
+        }
     }
 }
