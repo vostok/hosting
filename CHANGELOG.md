@@ -1,3 +1,11 @@
+## 0.2.10 (13-10-2020):
+
+Added annotations for app lifecycle events: launching, initialized, stopping.
+
+## 0.2.8 (12-10-2020):
+
+Support for annotation event senders.
+
 ## 0.2.7 (05-10-2020):
 
 - Enabled reporting of process metrics by default;

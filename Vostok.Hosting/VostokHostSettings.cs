@@ -61,6 +61,11 @@ namespace Vostok.Hosting
         public bool WarmupZooKeeper { get; set; } = true;
 
         /// <summary>
+        /// If set to <c>true</c>, sends annotations with application lifecycle events (launching, initialized, stopping).
+        /// </summary>
+        public bool SendAnnotations { get; set; } = true;
+
+        /// <summary>
         /// <para>Total timeout for host's and application's graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.</para>
         /// <para>Note that this includes <see cref="BeaconShutdownTimeout"/> and the application may observe a lower value in environment's <see cref="IVostokHostingEnvironment.ShutdownTimeout"/> property.</para>
         /// </summary>
