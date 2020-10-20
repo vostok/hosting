@@ -22,6 +22,7 @@ namespace Vostok.Hosting.VostokMultiHost
             return host.GetApp(appName).StopAsync();
         }
 
+        // TODO: Fix
         public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
         {
             return Task.Run(
@@ -46,5 +47,7 @@ namespace Vostok.Hosting.VostokMultiHost
         {
             return StartInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
         }
+        
+        // TODO: Add RunInParallel analogs.
     }
 }

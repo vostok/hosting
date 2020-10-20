@@ -21,9 +21,10 @@ namespace Vostok.Hosting.VostokMultiHost
             Error = error;
         }
 
-        public VostokMultiHostRunResult(VostokMultiHostState state, Dictionary<string, VostokApplicationRunResult> applicationRunResults)
+        public VostokMultiHostRunResult(VostokMultiHostState state, Dictionary<string, VostokApplicationRunResult> applicationRunResults, [CanBeNull] Exception error = null)
         {
             State = state;
+            Error = error;
             ApplicationRunResults = applicationRunResults;
         }
         
