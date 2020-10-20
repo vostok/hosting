@@ -20,18 +20,24 @@ namespace Vostok.Hosting.VostokMultiHost
         public Task<VostokApplicationRunResult> RunAsync()
         {
             CreateVostokHost();
+            parentMultiHost.AddRunningApp(Name, this);
             return vostokHost.RunAsync();
         }
 
         public Task StartAsync(VostokApplicationState? stateToAwait)
         {
             CreateVostokHost();
+            parentMultiHost.AddRunningApp(Name, this);
             return vostokHost.StartAsync(stateToAwait);
         }
 
-        public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true) => vostokHost.StopAsync(ensureSuccess);
+        public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
+        {
+            parentMultiHost.RemoveRunningApp(Name);
+            return vostokHost.StopAsync(ensureSuccess);
+        }
 
-        protected VostokApplicationSettings settings { get; }
+        private VostokApplicationSettings settings { get; }
         private VostokHost vostokHost { get; set; }
         private VostokMultiHost parentMultiHost { get; }
 
