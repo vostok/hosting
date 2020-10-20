@@ -42,7 +42,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
                 metrics.ActiveTimersCount,
                 AllocationRate = metrics.GcAllocatedBytes.Bytes() / ObservationPeriod,
                 ContentionsPerSecond = (metrics.LockContentionCount / ObservationPeriod.TotalSeconds).ToString("0.00"),
-                ExceptionsPerSecond = (metrics.LockContentionCount / ObservationPeriod.TotalSeconds).ToString("0.00")
+                ExceptionsPerSecond = (metrics.ExceptionsCount / ObservationPeriod.TotalSeconds).ToString("0.00")
             };
         }
 

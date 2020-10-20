@@ -4,7 +4,7 @@ using Vostok.Metrics.Models;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class LoggingMetricEventSender : IMetricEventSender
+    internal class LoggingMetricEventSender : IMetricEventSender, IAnnotationEventSender
     {
         private readonly ILog log;
 
@@ -13,5 +13,8 @@ namespace Vostok.Hosting.Components.Metrics
 
         public void Send(MetricEvent @event)
             => log.Debug("Metric event: {MetricEvent}", @event);
+
+        public void Send(AnnotationEvent @event)
+            => log.Debug("Annotation event: {AnnotationEvent}", @event);
     }
 }

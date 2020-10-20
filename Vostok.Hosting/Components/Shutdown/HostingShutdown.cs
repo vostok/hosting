@@ -4,7 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Time;
+using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Metrics;
+using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Logging.Abstractions;
+using Vostok.Metrics;
 using Vostok.ServiceDiscovery.Abstractions;
 
 // ReSharper disable MethodSupportsCancellation
@@ -17,12 +21,15 @@ namespace Vostok.Hosting.Components.Shutdown
         private readonly ApplicationShutdown appShutdown;
         private readonly IServiceBeacon serviceBeacon;
         private readonly IServiceLocator serviceLocator;
+        private readonly IVostokApplicationIdentity identity;
+        private readonly IMetricContext instanceMetrics;
         private readonly ILog log;
 
         private readonly CancellationTokenRegistration tokenRegistration;
         private readonly TimeSpan totalTimeout;
         private readonly TimeSpan beaconTimeout;
         private readonly bool beaconWaitEnabled;
+        private readonly bool sendAnnotation;
 
         private readonly TimeBudget hostShutdownBudget;
 
@@ -30,20 +37,26 @@ namespace Vostok.Hosting.Components.Shutdown
             ApplicationShutdown appShutdown,
             IServiceBeacon serviceBeacon,
             IServiceLocator serviceLocator,
+            IVostokApplicationIdentity identity,
+            IMetricContext instanceMetrics,
             ILog log,
             CancellationToken token,
             TimeSpan totalTimeout,
             TimeSpan beaconTimeout,
-            bool beaconWaitEnabled)
+            bool beaconWaitEnabled,
+            bool sendAnnotation)
         {
             this.appShutdown = appShutdown;
             this.serviceBeacon = serviceBeacon;
             this.serviceLocator = serviceLocator;
+            this.identity = identity;
+            this.instanceMetrics = instanceMetrics;
             this.log = log.ForContext<HostingShutdown>();
 
             this.totalTimeout = totalTimeout;
             this.beaconTimeout = beaconTimeout;
             this.beaconWaitEnabled = beaconWaitEnabled;
+            this.sendAnnotation = sendAnnotation;
 
             hostShutdownBudget = TimeBudget.CreateNew(totalTimeout);
             tokenRegistration = token.Register(OnHostShutdownTriggered);
@@ -55,6 +68,9 @@ namespace Vostok.Hosting.Components.Shutdown
         private void OnHostShutdownTriggered()
         {
             log.Info("Hosting shutdown has been initiated. Timeout = {HostingShutdownTimeout}.", totalTimeout);
+
+            if (sendAnnotation)
+                AnnotationsHelper.ReportStopping(identity, instanceMetrics);
 
             hostShutdownBudget.Start();
 
@@ -89,6 +105,9 @@ namespace Vostok.Hosting.Components.Shutdown
 
         private bool StopServiceBeacon(TimeBudget budget)
         {
+            if (serviceBeacon is DevNullServiceBeacon)
+                return true;
+            
             var elapsedBefore = budget.Elapsed;
 
             log.Info("Stopping service beacon..");
