@@ -10,6 +10,7 @@ using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
@@ -91,6 +92,14 @@ namespace Vostok.Hosting.VostokMultiHost
             if (applications.ContainsKey(vostokApplicationSettings.ApplicationName))
                 throw new ArgumentException("Application with this name has already been added.");
 
+            var previousAppSetup = vostokApplicationSettings.EnvironmentSetup;
+
+            vostokApplicationSettings.EnvironmentSetup = builder =>
+            {
+                settings.EnvironmentSetup(builder);
+                previousAppSetup(builder);
+            };
+
             return applications[vostokApplicationSettings.ApplicationName] = new VostokMultiHostApplication(vostokApplicationSettings, this);
         }
 
@@ -115,9 +124,9 @@ namespace Vostok.Hosting.VostokMultiHost
 
         internal void RemoveRunningApp(string appName)
         {
-            if (!applications.TryRemove(appName, out var app))
+            if (!runningApplications.TryRemove(appName, out var app))
                 throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
-
+            
             onRunningApplicationsCountChanged.Next(runningApplications.Count);
         }
         
@@ -132,7 +141,7 @@ namespace Vostok.Hosting.VostokMultiHost
 
             if (applications.Count > 0)
             {
-                await Task.WhenAll(applications.Select(x => x.Value.StartAsync()));
+                await Task.WhenAll(Applications.Select(x => x.app.StartAsync()));
 
                 var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -165,7 +174,7 @@ namespace Vostok.Hosting.VostokMultiHost
             await Task.WhenAll(
                 Applications.Select(
                     x => Task.Run(
-                        async () => resultDict[x.appName] = await x.app.StopAsync()
+                        async () => resultDict[x.appName] = await x.app.StopAsync(false)
                     )
                 )
             );

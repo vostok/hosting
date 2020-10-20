@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Vostok.Hosting.Components;
+using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.VostokMultiHost
@@ -21,20 +21,19 @@ namespace Vostok.Hosting.VostokMultiHost
         {
             CreateVostokHost();
             parentMultiHost.AddRunningApp(Name, this);
-            return vostokHost.RunAsync();
+            return Task.WhenAny(vostokHost.RunAsync(), RemoveRunningApp()).Result as Task<VostokApplicationRunResult>;
         }
 
         public Task StartAsync(VostokApplicationState? stateToAwait)
         {
             CreateVostokHost();
             parentMultiHost.AddRunningApp(Name, this);
-            return vostokHost.StartAsync(stateToAwait);
+            return Task.WhenAny(vostokHost.StartAsync(), RemoveRunningApp());
         }
 
         public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
         {
-            parentMultiHost.RemoveRunningApp(Name);
-            return vostokHost.StopAsync(ensureSuccess);
+            return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
         private VostokApplicationSettings settings { get; }
@@ -51,6 +50,24 @@ namespace Vostok.Hosting.VostokMultiHost
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
+        }
+
+        private async Task RemoveRunningApp()
+        {
+            var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            var subscription = vostokHost.OnApplicationStateChanged.Subscribe(
+                state =>
+                {
+                    if (state.IsTerminal())
+                    {
+                        parentMultiHost.RemoveRunningApp(Name);
+                        stateCompletionSource.TrySetResult(true);
+                    }
+                });
+
+            using (subscription)
+                await stateCompletionSource.Task;
         }
     }
 }
