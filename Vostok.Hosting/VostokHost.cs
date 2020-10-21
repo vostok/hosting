@@ -164,7 +164,7 @@ namespace Vostok.Hosting
 
         private async Task<VostokApplicationRunResult> RunInternalAsync()
         {
-            // TODO: Move it somewhere... (Or override this setting and set it each time an application is launched...)
+            // TODO: Override this setting in VostokMultiHost and set it each time an application is launched
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
@@ -234,7 +234,7 @@ namespace Vostok.Hosting
         {
             ChangeStateTo(VostokApplicationState.EnvironmentWarmup);
 
-            // TODO: Warmup? 
+            // TODO: Should VostokMultiHost do something with warmup?
             try
             {
                 LogEnvironmentInfo();
@@ -376,7 +376,7 @@ namespace Vostok.Hosting
                 onApplicationStateChanged.Complete();
         }
 
-        // TODO: Configure?
+        // TODO: Think about this and VostokMultiHost
         private void ConfigureHostBeforeRun()
         {
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
