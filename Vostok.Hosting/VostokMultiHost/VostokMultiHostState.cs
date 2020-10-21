@@ -1,5 +1,11 @@
-﻿namespace Vostok.Hosting.VostokMultiHost
+﻿using JetBrains.Annotations;
+
+namespace Vostok.Hosting.VostokMultiHost
 {
+    /// <summary>
+    /// Represents a state of <see cref="VostokMultiHost"/> lifecycle.
+    /// </summary>
+    [PublicAPI]
     public enum VostokMultiHostState
     {
         /// <summary>

@@ -10,21 +10,20 @@ using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
-using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.VostokMultiHost
 {
+    /// <summary>
+    /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
+    /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
+    /// <para>Shares common environment components between applications.</para>
+    /// </summary>
+    [PublicAPI]
     public class VostokMultiHost
     {
-        private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> applications;
-        private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> runningApplications;
-        private readonly AtomicBoolean launchedOnce = false;
-        private readonly CachingObservable<VostokMultiHostState> onHostStateChanged;
-        private readonly CachingObservable<int> onRunningApplicationsCountChanged;
-
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokApplicationSettings[] apps)
         {
-            this.settings = settings;
+            this.Settings = settings;
             applications = new ConcurrentDictionary<string, IVostokMultiHostApplication>();
             runningApplications = new ConcurrentDictionary<string, IVostokMultiHostApplication>();
 
@@ -35,14 +34,30 @@ namespace Vostok.Hosting.VostokMultiHost
             onRunningApplicationsCountChanged = new CachingObservable<int>();
         }
 
+        /// <summary>
+        /// Returns current <see cref="VostokMultiHostState"/>.
+        /// </summary>
         public VostokMultiHostState HostState { get; private set; }
 
+        /// <summary>
+        /// <para>Returns an observable sequence of host states.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnNext"/> notifications every time current <see cref="HostState"/> changes.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnError"/> if host crashes.</para>
+        /// <para>This sequence produces <see cref="IObserver{T}.OnCompleted"/> notification when host execution completes.</para>
+        /// <para>Note that terminal notifications (<see cref="IObserver{T}.OnError"/> and <see cref="IObserver{T}.OnCompleted"/>)
+        /// do not guarantee full completion of the task returned by <see cref="RunAsync"/> (the host may run its own cleanup after those).
+        /// These notifications merely signify the final, terminal nature of the last reported status.</para>
+        /// </summary>
         public IObservable<VostokMultiHostState> OnHostStateChanged => onHostStateChanged;
 
-        // Get added applications. 
+        /// <summary>
+        /// Returns an enumerable of added <see cref="IVostokMultiHostApplication"/>.
+        /// </summary>
         public IEnumerable<(string appName, IVostokMultiHostApplication app)> Applications => applications.Select(x => (x.Key, x.Value));
 
-        // Initialize environment, run ALL added applications, return when apps have stopped. You can't run twice.
+        /// <summary>
+        /// <para>Initializes itself and launches added apps.</para>
+        /// </summary>
         public Task<VostokMultiHostRunResult> RunAsync()
         {
             if (!launchedOnce.TrySetTrue())
@@ -51,7 +66,9 @@ namespace Vostok.Hosting.VostokMultiHost
             return Task.Run(() => RunInternalAsync());
         }
 
-        // Returns after environment initialization and configuration. You can't start twice (even after being stopped).
+        /// <summary>
+        /// <para>Initializes itself and launches added apps, but returns just after the initialization. (Fire-and-forget style)</para>
+        /// </summary>
         public async Task StartAsync()
         {
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -73,7 +90,9 @@ namespace Vostok.Hosting.VostokMultiHost
             }
         }
 
-        // Stop all applications and dispose yourself.
+        /// <summary>
+        /// <para>Stops all running applications and dispose itself.</para>
+        /// </summary>
         public async Task<VostokMultiHostRunResult> StopAsync()
         {
             if (HostState != VostokMultiHostState.Running)
@@ -84,9 +103,14 @@ namespace Vostok.Hosting.VostokMultiHost
             return DisposeCommonEnvironment() ?? ReturnResult(VostokMultiHostState.Stopped, appDict);
         }
 
-        // Get app or null.
+        /// <summary>
+        /// <para>Returns added application by name or null if it doesn't exist.</para>
+        /// </summary>
         public IVostokMultiHostApplication GetApp(string appName) => applications.TryGetValue(appName, out var app) ? app : null;
 
+        /// <summary>
+        /// <para>Adds an application by providing its settings and returns created application.</para>
+        /// </summary>
         public IVostokMultiHostApplication AddApp(VostokApplicationSettings vostokApplicationSettings)
         {
             if (applications.ContainsKey(vostokApplicationSettings.ApplicationName))
@@ -96,13 +120,16 @@ namespace Vostok.Hosting.VostokMultiHost
 
             vostokApplicationSettings.EnvironmentSetup = builder =>
             {
-                settings.EnvironmentSetup(builder);
+                Settings.EnvironmentSetup(builder);
                 previousAppSetup(builder);
             };
 
             return applications[vostokApplicationSettings.ApplicationName] = new VostokMultiHostApplication(vostokApplicationSettings, this);
         }
 
+        /// <summary>
+        /// <para>Removes an application (stops it if it's necessary).</para>
+        /// </summary>
         public async Task<VostokApplicationRunResult> RemoveAppAsync(string appName)
         {
             if (applications.TryRemove(appName, out var app))
@@ -110,26 +137,32 @@ namespace Vostok.Hosting.VostokMultiHost
             throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
         }
 
-        protected VostokMultiHostSettings settings { get; set; }
         internal CommonBuildContext CommonContext { get; set; }
+        private VostokMultiHostSettings Settings { get; set; }
+        private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> applications;
+        private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> runningApplications;
+        private readonly AtomicBoolean launchedOnce = false;
+        private readonly CachingObservable<VostokMultiHostState> onHostStateChanged;
+        private readonly CachingObservable<int> onRunningApplicationsCountChanged;
+
 
         internal void AddRunningApp(string appName, IVostokMultiHostApplication app)
         {
-            if(runningApplications.ContainsKey(appName))
+            if (runningApplications.ContainsKey(appName))
                 throw new ArgumentException("Application with this name has already been added.");
-            
+
             runningApplications[appName] = app;
             onRunningApplicationsCountChanged.Next(runningApplications.Count);
         }
 
         internal void RemoveRunningApp(string appName)
         {
-            if (!runningApplications.TryRemove(appName, out var app))
+            if (!runningApplications.TryRemove(appName, out _))
                 throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
-            
+
             onRunningApplicationsCountChanged.Next(runningApplications.Count);
         }
-        
+
         private async Task<VostokMultiHostRunResult> RunInternalAsync(bool stopAndDispose = true)
         {
             var contextBuildResult = BuildCommonContext();
@@ -190,13 +223,13 @@ namespace Vostok.Hosting.VostokMultiHost
             try
             {
                 CommonContext.DisposeCommonComponents();
+                
+                return null;
             }
             catch (Exception error)
             {
                 return ReturnResult(VostokMultiHostState.CrashedDuringStopping, error);
             }
-
-            return null;
         }
 
         [CanBeNull]
@@ -208,12 +241,12 @@ namespace Vostok.Hosting.VostokMultiHost
             {
                 var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
                 {
-                    ConfigureStaticProviders = settings.ConfigureStaticProviders,
-                    BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
-                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled
+                    ConfigureStaticProviders = Settings.ConfigureStaticProviders,
+                    BeaconShutdownTimeout = Settings.BeaconShutdownTimeout,
+                    BeaconShutdownWaitEnabled = Settings.BeaconShutdownWaitEnabled
                 };
 
-                CommonContext = EnvironmentBuilder.BuildCommonContext(settings.EnvironmentSetup, environmentFactorySettings);
+                CommonContext = EnvironmentBuilder.BuildCommonContext(Settings.EnvironmentSetup, environmentFactorySettings);
                 return null;
             }
             catch (Exception error)
