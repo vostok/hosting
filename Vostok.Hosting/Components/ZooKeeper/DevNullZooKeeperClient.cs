@@ -17,7 +17,12 @@ namespace Vostok.Hosting.Components.ZooKeeper
         public ConnectionState ConnectionState =>
             ConnectionState.Disconnected;
 
+        public TimeSpan SessionTimeout => TimeSpan.Zero;
+
         public long SessionId => 0L;
+
+        public Task<bool> ConnectAsync() =>
+            throw new NotSupportedException();
 
         public Task<CreateResult> CreateAsync(CreateRequest request) =>
             throw new NotSupportedException();
