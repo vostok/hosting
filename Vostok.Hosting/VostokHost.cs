@@ -222,6 +222,7 @@ namespace Vostok.Hosting
         {
             builder.SetupShutdownToken(ShutdownTokenSource.Token);
             builder.SetupShutdownTimeout(settings.ShutdownTimeout);
+            builder.SetupHostExtensions(extensions => extensions.Add(new VostokHostShutdown(ShutdownTokenSource)));
 
             RequirementsHelper.EnsurePort(settings.Application, builder);
             RequirementsHelper.EnsureConfigurations(settings.Application, builder);

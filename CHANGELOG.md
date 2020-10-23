@@ -1,3 +1,7 @@
+## 0.2.11 (23-10-2020):
+
+Implemented https://github.com/vostok/hosting/issues/32.
+
 ## 0.2.10 (13-10-2020):
 
 Added annotations for app lifecycle events: launching, initialized, stopping.
