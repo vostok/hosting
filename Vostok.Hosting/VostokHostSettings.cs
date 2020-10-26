@@ -93,8 +93,5 @@ namespace Vostok.Hosting
         /// </summary>
         [NotNull]
         public List<Action<IVostokHostingEnvironment>> BeforeInitializeApplication { get; set; } = new List<Action<IVostokHostingEnvironment>>();
-
-        [CanBeNull]
-        internal CommonBuildContext CommonBuildContext { get; set; }
     }
 }

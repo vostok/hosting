@@ -204,9 +204,7 @@ namespace Vostok.Hosting
                     SendAnnotations = settings.SendAnnotations
                 };
 
-                environment = settings.CommonBuildContext != null 
-                    ? EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings, settings.CommonBuildContext) 
-                    : EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
+                environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
 
                 log = environment.Log.ForContext<VostokHost>();
 
