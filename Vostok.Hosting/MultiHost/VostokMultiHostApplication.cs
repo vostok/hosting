@@ -8,7 +8,7 @@ namespace Vostok.Hosting.MultiHost
     // TODO: Inspect this class one more time
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
-        public VostokMultiHostApplication(VostokApplicationSettings settings, VostokMultiHost parentMultiHost)
+        public VostokMultiHostApplication(VostokApplicationSettings settings)
         {
             this.settings = settings;
             this.parentMultiHost = parentMultiHost;
@@ -45,8 +45,7 @@ namespace Vostok.Hosting.MultiHost
             // TODO: Propagate settings from VostokApplicationSettings
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
-                ConfigureThreadPool = false,
-                CommonBuildContext = (parentMultiHost.CommonContext ?? throw new InvalidOperationException("VostokMultiHost should be started to run applications.")).Clone()
+                ConfigureThreadPool = false
             };
 
             vostokHost = new VostokHost(vostokHostSettings);

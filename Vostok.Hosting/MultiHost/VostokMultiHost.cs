@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
+using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
@@ -67,7 +68,7 @@ namespace Vostok.Hosting.MultiHost
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("VostokMultiHost can't be launched multiple times.");
 
-            return Task.Run(() => RunInternalAsync());
+            return RunInternalAsync();
         }
 
         /// <summary>
@@ -121,6 +122,8 @@ namespace Vostok.Hosting.MultiHost
                 throw new ArgumentException("Application with this name has already been added.");
 
             var previousAppSetup = vostokApplicationSettings.EnvironmentSetup;
+            
+            // TODO: Setup common things such as HerculesSink, CC, ZK
 
             vostokApplicationSettings.EnvironmentSetup = builder =>
             {
@@ -128,7 +131,7 @@ namespace Vostok.Hosting.MultiHost
                 previousAppSetup(builder);
             };
 
-            return applications[vostokApplicationSettings.ApplicationName] = new VostokMultiHostApplication(vostokApplicationSettings, this);
+            return applications[vostokApplicationSettings.ApplicationName] = new VostokMultiHostApplication(vostokApplicationSettings);
         }
 
         /// <summary>
@@ -140,8 +143,8 @@ namespace Vostok.Hosting.MultiHost
                 return await app.StopAsync();
             throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
         }
-
-        internal CommonBuildContext CommonContext { get; set; }
+        
+        private VostokHostingEnvironment commonEnvironment { get; set; }
         private VostokMultiHostSettings Settings { get; set; }
         private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> applications;
         private readonly ConcurrentDictionary<string, IVostokMultiHostApplication> runningApplications;
@@ -226,7 +229,7 @@ namespace Vostok.Hosting.MultiHost
         {
             try
             {
-                CommonContext.DisposeCommonComponents();
+                commonEnvironment.Dispose();
                 
                 return null;
             }
@@ -250,7 +253,8 @@ namespace Vostok.Hosting.MultiHost
                     BeaconShutdownWaitEnabled = Settings.BeaconShutdownWaitEnabled
                 };
 
-                CommonContext = EnvironmentBuilder.BuildCommonContext(Settings.EnvironmentSetup, environmentFactorySettings);
+                // TODO: Remove unnecessary things such as tracer, metrics etc...
+                commonEnvironment = EnvironmentBuilder.Build(Settings.EnvironmentSetup, environmentFactorySettings);
                 return null;
             }
             catch (Exception error)
