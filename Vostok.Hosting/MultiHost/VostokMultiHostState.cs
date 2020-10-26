@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
     /// <summary>
     /// Represents a state of <see cref="VostokMultiHost"/> lifecycle.

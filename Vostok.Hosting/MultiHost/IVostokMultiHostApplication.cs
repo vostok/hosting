@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Vostok.Hosting.Models;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
     public interface IVostokMultiHostApplication
     {

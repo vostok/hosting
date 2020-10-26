@@ -5,8 +5,9 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Setup;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
+    [PublicAPI]
     public class VostokApplicationSettings
     {
         public VostokApplicationSettings([NotNull] IVostokApplication application, [NotNull] string applicationName, [NotNull] VostokHostingEnvironmentSetup environmentSetup)
@@ -16,12 +17,13 @@ namespace Vostok.Hosting.VostokMultiHost
             EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
         }
 
-        public IVostokApplication Application { get; set; }
+        public IVostokApplication Application { get; }
 
-        public string ApplicationName { get; set; }
+        public string ApplicationName { get; }
 
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; set; }
 
+        // CR(iloktionov): Remove these settings (we haven't come up with sensible scenarios for them so far).
         public bool LogApplicationConfiguration { get; set; }
 
         public bool WarmupConfiguration { get; set; } = true;

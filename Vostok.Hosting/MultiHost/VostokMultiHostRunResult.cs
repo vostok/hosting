@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Hosting.Models;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
     public class VostokMultiHostRunResult
     {

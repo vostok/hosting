@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Models;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
     // TODO: Inspect this class one more time
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
