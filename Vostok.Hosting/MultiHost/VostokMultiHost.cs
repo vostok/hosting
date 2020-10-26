@@ -11,8 +11,11 @@ using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
+    // CR(iloktionov): 1. Idea: override Dispose in child environments instead of using CommonBuildContext + utilize UseInstance for CC client, ZK client and HerculesSink
+    // CR(iloktionov): 2. Idea: implement Run using Start, stop tracking statuses (Run can just wait for RunAsync tasks of the apps with double-checking), break the cyclic dependency between VostokMultiHost and VostokMultiHostApplication
+
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
     /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
@@ -50,6 +53,7 @@ namespace Vostok.Hosting.VostokMultiHost
         /// </summary>
         public IObservable<VostokMultiHostState> OnHostStateChanged => onHostStateChanged;
 
+        // CR(iloktionov): VostokMultiHost: IEnumerable<IVostokMultiHostApplication>
         /// <summary>
         /// Returns an enumerable of added <see cref="IVostokMultiHostApplication"/>.
         /// </summary>

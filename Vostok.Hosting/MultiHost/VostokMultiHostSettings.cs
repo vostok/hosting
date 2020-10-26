@@ -2,7 +2,7 @@
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 
-namespace Vostok.Hosting.VostokMultiHost
+namespace Vostok.Hosting.MultiHost
 {
     public class VostokMultiHostSettings : VostokHostSettings
     {
