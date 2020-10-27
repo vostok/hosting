@@ -9,7 +9,7 @@ using Vostok.ZooKeeper.Client.Abstractions.Model.Result;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class DevNullZooKeeperClient : IZooKeeperClient, IAuthZooKeeperClient
+    internal class DevNullZooKeeperClient : IZooKeeperClient, IZooKeeperAuthClient
     {
         public IObservable<ConnectionState> OnConnectionStateChanged =>
             new CachingObservable<ConnectionState>(ConnectionState.Disconnected);
