@@ -21,6 +21,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile string connectionString;
         private volatile bool enabled;
         private volatile IZooKeeperClient instance;
+        private volatile string ServiceDiscoveryLogin;
+        private volatile string ServiceDiscoveryApiKey;
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -50,9 +52,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
         {
             instance = null;
             connectionString = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
-            
+
             return this;
         }
 
@@ -60,9 +62,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
         {
             instance = null;
             connectionString = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
-            
+
             return this;
         }
 
@@ -72,7 +74,15 @@ namespace Vostok.Hosting.Components.ZooKeeper
             clusterProviderBuilder = null;
 
             this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            
+
+            return this;
+        }
+
+        public IVostokZooKeeperClientBuilder SetServiceDiscoveryAuthentication(string login, string apiKey)
+        {
+            ServiceDiscoveryLogin = login;
+            ServiceDiscoveryApiKey = apiKey;
+
             return this;
         }
 
@@ -81,7 +91,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
             instance = null;
 
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
-            
+
             return this;
         }
 
@@ -110,9 +120,12 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
             settingsCustomization.Customize(settings);
 
-            return new ZooKeeperClient(
+            var zkClient = new ZooKeeperClient(
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
+
+            zkClient.SetupServiceDiscoveryApiKey(ServiceDiscoveryLogin, ServiceDiscoveryApiKey);
+            return zkClient;
         }
 
         private bool IsDataChangedLog(IReadOnlyDictionary<string, object> properties)
