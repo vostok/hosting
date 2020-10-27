@@ -21,8 +21,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile string connectionString;
         private volatile bool enabled;
         private volatile IZooKeeperClient instance;
-        private volatile string ServiceDiscoveryLogin;
-        private volatile string ServiceDiscoveryApiKey;
+        private volatile string authenticationLogin;
+        private volatile string authenticationApiKey;
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -78,10 +78,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
-        public IVostokZooKeeperClientBuilder SetServiceDiscoveryAuthentication(string login, string apiKey)
+        public IVostokZooKeeperClientBuilder SetAuthentication(string login, string apiKey)
         {
-            ServiceDiscoveryLogin = login;
-            ServiceDiscoveryApiKey = apiKey;
+            authenticationLogin = login;
+            authenticationApiKey = apiKey;
 
             return this;
         }
@@ -124,7 +124,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            zkClient.SetupServiceDiscoveryApiKey(ServiceDiscoveryLogin, ServiceDiscoveryApiKey);
+            zkClient.AddAuthenticationInfo(authenticationLogin, authenticationApiKey);
             return zkClient;
         }
 
