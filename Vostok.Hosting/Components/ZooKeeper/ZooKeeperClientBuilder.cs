@@ -21,8 +21,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile string connectionString;
         private volatile bool enabled;
         private volatile IZooKeeperClient instance;
-        private volatile string authenticationLogin;
-        private volatile string authenticationApiKey;
+        private volatile List<(string login, string apiKey)> authSettings = new List<(string, string)>();
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -80,8 +79,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
         public IVostokZooKeeperClientBuilder SetAuthentication(string login, string apiKey)
         {
-            authenticationLogin = login;
-            authenticationApiKey = apiKey;
+            lock (authSettings)
+            {
+                authSettings.Add((login, apiKey));
+            }
 
             return this;
         }
@@ -124,7 +125,12 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            zkClient.AddAuthenticationInfo(authenticationLogin, authenticationApiKey);
+            lock (authSettings)
+            {
+                foreach (var (login, apiKey) in authSettings)
+                    zkClient.AddAuthenticationInfo(login, apiKey);
+            }
+
             return zkClient;
         }
 
