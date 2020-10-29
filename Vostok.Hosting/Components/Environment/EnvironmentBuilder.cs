@@ -57,7 +57,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<DatacentersBuilder, IDatacenters> datacentersBuilder;
         private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
         private readonly CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub> diagnosticsBuilder;
-        private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
+        private readonly CustomizableBuilder<ZooKeeperClientBuilder, (IZooKeeperClient client, bool external)> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
@@ -84,7 +84,7 @@ namespace Vostok.Hosting.Components.Environment
             datacentersBuilder = new CustomizableBuilder<DatacentersBuilder, IDatacenters>(new DatacentersBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
             diagnosticsBuilder = new CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub>(new DiagnosticsBuilder());
-            zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
+            zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, (IZooKeeperClient client, bool external)>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
@@ -157,7 +157,7 @@ namespace Vostok.Hosting.Components.Environment
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
             context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
 
-            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+            (context.ZooKeeperClient, context.ExternalZooKeeperClient) = zooKeeperClientBuilder.Build(context);
 
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
