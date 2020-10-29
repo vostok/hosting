@@ -13,7 +13,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<(IHerculesSink sink, bool external)>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
@@ -29,22 +29,22 @@ namespace Vostok.Hosting.Components.Hercules
 
         public bool IsEnabled => enabled;
 
-        public IHerculesSink Build(BuildContext context)
+        public (IHerculesSink sink, bool external) Build(BuildContext context)
         {
             if (!enabled)
             {
                 context.LogDisabled("HerculesSink");
-                return null;
+                return (null, false);
             }
 
             if (instance != null)
-                return instance;
+                return (instance, true);
 
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
             {
                 context.LogDisabled("HerculesSink", "unconfigured cluster provider");
-                return null;
+                return (null, false);
             }
 
             var log = context.Log;
@@ -65,7 +65,7 @@ namespace Vostok.Hosting.Components.Hercules
 
             settingsCustomization.Customize(settings);
 
-            return new HerculesSink(settings, log);
+            return (new HerculesSink(settings, log), false);
         }
 
         public IVostokHerculesSinkBuilder Enable()

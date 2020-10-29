@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
@@ -10,7 +9,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Configuration
 {
-    internal class ClusterConfigClientBuilder : IVostokClusterConfigClientBuilder, IBuilder<IClusterConfigClient>
+    internal class ClusterConfigClientBuilder : IVostokClusterConfigClientBuilder, IBuilder<(IClusterConfigClient client, bool external)>
     {
         private readonly Customization<ClusterConfigClientSettings> settingsCustomization;
 
@@ -19,11 +18,10 @@ namespace Vostok.Hosting.Components.Configuration
         public ClusterConfigClientBuilder()
             => settingsCustomization = new Customization<ClusterConfigClientSettings>();
 
-        [NotNull]
-        public IClusterConfigClient Build(BuildContext context)
+        public (IClusterConfigClient client, bool external) Build(BuildContext context)
         {
             if (instance != null)
-                return instance;
+                return (instance, true);
 
             var settings = new ClusterConfigClientSettings
             {
@@ -39,11 +37,11 @@ namespace Vostok.Hosting.Components.Configuration
 
             if (!settings.EnableLocalSettings && !settings.EnableClusterSettings)
             {
-                context.LogDisabled("ClusterConfigClient", "explicit configuration");
-                return new DisabledClusterConfigClient();
+                context.LogDisabled("ClusterConfigClient");
+                return (new DisabledClusterConfigClient(), false);
             }
 
-            return new ClusterConfigClient(settings);
+            return (new ClusterConfigClient(settings), false);
         }
 
         public IVostokClusterConfigClientBuilder UseInstance(IClusterConfigClient instance)
