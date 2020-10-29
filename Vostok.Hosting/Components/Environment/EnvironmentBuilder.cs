@@ -47,14 +47,14 @@ namespace Vostok.Hosting.Components.Environment
         private readonly VostokHostingEnvironmentFactorySettings settings;
 
         private readonly CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)> configurationBuilder;
-        private readonly CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient> clusterConfigClientBuilder;
+        private readonly CustomizableBuilder<ClusterConfigClientBuilder, (IClusterConfigClient client, bool external)> clusterConfigClientBuilder;
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
         private readonly CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits> applicationLimitsBuilder;
         private readonly CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<IVostokApplicationReplicationInfo>> applicationReplicationInfoBuilder;
-        private readonly CustomizableBuilder<HerculesSinkBuilder, IHerculesSink> herculesSinkBuilder;
+        private readonly CustomizableBuilder<HerculesSinkBuilder, (IHerculesSink sink, bool external)> herculesSinkBuilder;
         private readonly CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)> tracerBuilder;
-        private readonly CustomizableBuilder<DatacentersBuilder, IDatacenters> datacentersBuilder;
+        private readonly CustomizableBuilder<DatacentersBuilder, (IDatacenters datacenters, bool external)> datacentersBuilder;
         private readonly CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics> metricsBuilder;
         private readonly CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub> diagnosticsBuilder;
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, (IZooKeeperClient client, bool external)> zooKeeperClientBuilder;
@@ -74,14 +74,14 @@ namespace Vostok.Hosting.Components.Environment
             shutdownTokens = new List<CancellationToken>();
             shutdownTimeout = ShutdownConstants.DefaultShutdownTimeout;
             configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
-            clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
+            clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, (IClusterConfigClient client, bool external)>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
             applicationLimitsBuilder = new CustomizableBuilder<ApplicationLimitsBuilder, IVostokApplicationLimits>(new ApplicationLimitsBuilder());
             applicationReplicationInfoBuilder = new CustomizableBuilder<ApplicationReplicationInfoBuilder, Func<IVostokApplicationReplicationInfo>>(new ApplicationReplicationInfoBuilder());
-            herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, IHerculesSink>(new HerculesSinkBuilder());
+            herculesSinkBuilder = new CustomizableBuilder<HerculesSinkBuilder, (IHerculesSink sink, bool external)>(new HerculesSinkBuilder());
             tracerBuilder = new CustomizableBuilder<TracerBuilder, (ITracer, TracerSettings)>(new TracerBuilder());
-            datacentersBuilder = new CustomizableBuilder<DatacentersBuilder, IDatacenters>(new DatacentersBuilder());
+            datacentersBuilder = new CustomizableBuilder<DatacentersBuilder, (IDatacenters datacenters, bool external)>(new DatacentersBuilder());
             metricsBuilder = new CustomizableBuilder<MetricsBuilder, IVostokApplicationMetrics>(new MetricsBuilder());
             diagnosticsBuilder = new CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub>(new DiagnosticsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, (IZooKeeperClient client, bool external)>(new ZooKeeperClientBuilder());
@@ -127,7 +127,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
 
-            context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
+            (context.ClusterConfigClient, context.ExternalClusterConfigClient) = clusterConfigClientBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
                 ClusterConfigClient.TrySetDefaultClient(ccClient);
@@ -148,7 +148,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.SecretConfigurationProvider,
                 context.ClusterConfigClient);
 
-            context.Datacenters = datacentersBuilder.Build(context);
+            (context.Datacenters, context.ExternalDatacenters) = datacentersBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.Datacenters != null)
                 DatacentersProvider.Configure(context.Datacenters, true);
@@ -161,7 +161,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
-            context.HerculesSink = herculesSinkBuilder.Build(context);
+            (context.HerculesSink, context.ExternalHerculesSink) = herculesSinkBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.HerculesSink != null)
                 HerculesSinkProvider.Configure(context.HerculesSink, true);

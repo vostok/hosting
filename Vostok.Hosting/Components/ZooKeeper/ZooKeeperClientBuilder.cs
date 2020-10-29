@@ -88,7 +88,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
         public (IZooKeeperClient client, bool external) Build(BuildContext context)
         {
             if (!enabled)
+            {
+                context.LogDisabled("ZooKeeperClient");
                 return (null, false);
+            }
 
             if (instance != null)
                 return (instance, true);
