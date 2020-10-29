@@ -35,7 +35,7 @@ namespace Vostok.Hosting.Components
         }
 
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
-        public IVostokApplicationLimits ApplicationLimits{ get; set; }
+        public IVostokApplicationLimits ApplicationLimits { get; set; }
         public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
@@ -83,50 +83,33 @@ namespace Vostok.Hosting.Components
                 LogDisposing("VostokHostingEnvironment");
 
                 foreach (var hostExtension in DisposableHostExtensions ?? new List<object>())
-                {
-                    LogDisposing($"{hostExtension.GetType().Name} extension");
-                    (hostExtension as IDisposable)?.Dispose();
-                }
+                    TryDispose(hostExtension, $"{hostExtension.GetType().Name} extension");
 
-                LogDisposing("Diagnostics");
-                (DiagnosticsHub as IDisposable)?.Dispose();
+                TryDispose(DiagnosticsHub, "Diagnostics");
 
-                LogDisposing("Metrics");
-                (Metrics?.Root as IDisposable)?.Dispose();
+                TryDispose(Metrics?.Root, "Metrics");
 
-                LogDisposing("ServiceBeacon");
-                (ServiceBeacon as IDisposable)?.Dispose();
+                TryDispose(ServiceBeacon, "ServiceBeacon");
 
                 Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
-                SubstituteTracer((new DevNullTracer(), new TracerSettings(new DevNullSpanSender())));
+                SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
+                TryDispose(HerculesSink, "HerculesSink");
 
-                LogDisposing("HerculesSink");
-                (HerculesSink as IDisposable)?.Dispose();
-
-                LogDisposing("ServiceLocator");
-                (ServiceLocator as IDisposable)?.Dispose();
+                TryDispose(ServiceLocator, "ServiceLocator");
 
                 if (!ExternalZooKeeperClient)
-                {
-                    LogDisposing("ZooKeeperClient");
-                    (ZooKeeperClient as IDisposable)?.Dispose();
-                }
+                    TryDispose(ZooKeeperClient, "ZooKeeperClient");
 
-                LogDisposing("Datacenters");
-                (Datacenters as IDisposable)?.Dispose();
+                TryDispose(Datacenters, "Datacenters");
 
-                LogDisposing("ConfigurationProvider");
-                (ConfigurationProvider as IDisposable)?.Dispose();
+                TryDispose(ConfigurationProvider, "ConfigurationProvider");
 
-                LogDisposing("SecretConfigurationProvider");
-                (SecretConfigurationProvider as IDisposable)?.Dispose();
+                TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
 
-                LogDisposing("ClusterConfigClient");
-                (ClusterConfigClient as IDisposable)?.Dispose();
+                TryDispose(ClusterConfigClient, "ClusterConfigClient");
 
                 LogDisposing("Log");
                 Log = new SilentLog();
-
                 Logs?.Dispose();
             }
             catch (Exception error)
@@ -145,5 +128,15 @@ namespace Vostok.Hosting.Components
 
         private void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
+
+        private void TryDispose(object component, string componentName)
+        {
+            var disposable = component as IDisposable;
+            if (disposable == null)
+                return;
+
+            LogDisposing(componentName);
+            disposable.Dispose();
+        }
     }
 }
