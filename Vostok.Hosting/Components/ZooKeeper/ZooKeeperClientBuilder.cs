@@ -9,6 +9,7 @@ using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 // ReSharper disable ParameterHidesMember
 
@@ -21,7 +22,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile string connectionString;
         private volatile bool enabled;
         private volatile IZooKeeperClient instance;
-        private volatile List<(string login, string password)> authSettings = new List<(string, string)>();
+        private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -77,9 +78,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
-        public IVostokZooKeeperClientBuilder AddAuthenticationInfo(string login, string password)
+        public IVostokZooKeeperClientBuilder AddAuthenticationInfo(AuthenticationInfo authenticationInfo)
         {
-            authSettings.Add((login, password));
+            authenticationInfos.Add(authenticationInfo);
 
             return this;
         }
@@ -122,8 +123,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            foreach (var (login, password) in authSettings)
-                zkClient.AddAuthenticationInfo(login, password);
+            foreach (var authenticationInfo in authenticationInfos)
+                zkClient.AddAuthenticationInfo(authenticationInfo);
 
             return zkClient;
         }
