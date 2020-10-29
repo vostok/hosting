@@ -3,13 +3,12 @@ using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
-using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 using Vostok.ZooKeeper.Client.Abstractions.Model.Request;
 using Vostok.ZooKeeper.Client.Abstractions.Model.Result;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class DevNullZooKeeperClient : IZooKeeperClient, IZooKeeperAuthClient
+    internal class DevNullZooKeeperClient : IZooKeeperClient
     {
         public IObservable<ConnectionState> OnConnectionStateChanged =>
             new CachingObservable<ConnectionState>(ConnectionState.Disconnected);
@@ -35,15 +34,6 @@ namespace Vostok.Hosting.Components.ZooKeeper
             throw new NotSupportedException();
 
         public Task<GetDataResult> GetDataAsync(GetDataRequest request) =>
-            throw new NotSupportedException();
-
-        public Task<GetAclResult> GetAclAsync(GetAclRequest request) =>
-            throw new NotSupportedException();
-
-        public Task<SetAclResult> SetAclAsync(SetAclRequest request) =>
-            throw new NotSupportedException();
-
-        public void AddAuthenticationInfo(AuthenticationInfo authenticationInfo) =>
             throw new NotSupportedException();
     }
 }
