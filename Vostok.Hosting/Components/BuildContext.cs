@@ -48,6 +48,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
         public DiagnosticsHub DiagnosticsHub { get; set; }
+        public bool ExternalZooKeeperClient { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
@@ -105,8 +106,11 @@ namespace Vostok.Hosting.Components
                 LogDisposing("ServiceLocator");
                 (ServiceLocator as IDisposable)?.Dispose();
 
-                LogDisposing("ZooKeeperClient");
-                (ZooKeeperClient as IDisposable)?.Dispose();
+                if (!ExternalZooKeeperClient)
+                {
+                    LogDisposing("ZooKeeperClient");
+                    (ZooKeeperClient as IDisposable)?.Dispose();
+                }
 
                 LogDisposing("Datacenters");
                 (Datacenters as IDisposable)?.Dispose();
