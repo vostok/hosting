@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Setup
         IVostokZooKeeperClientBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);
         IVostokZooKeeperClientBuilder SetClusterConfigTopology([NotNull] string path);
         IVostokZooKeeperClientBuilder SetConnectionString([NotNull] string connectionString);
-        IVostokZooKeeperClientBuilder SetAuthentication(string login, string apiKey);
+        IVostokZooKeeperClientBuilder AddAuthenticationInfo(string login, string password);
         IVostokZooKeeperClientBuilder CustomizeSettings([NotNull] Action<ZooKeeperClientSettings> settingsCustomization);
     }
 }
