@@ -23,7 +23,10 @@ namespace Vostok.Hosting.Components.Configuration
         public IClusterConfigClient Build(BuildContext context)
         {
             if (instance != null)
+            {
+                context.ExternalComponents.Add(instance);
                 return instance;
+            }
 
             var settings = new ClusterConfigClientSettings
             {

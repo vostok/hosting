@@ -38,7 +38,10 @@ namespace Vostok.Hosting.Components.Hercules
             }
 
             if (instance != null)
+            {
+                context.ExternalComponents.Add(instance);
                 return instance;
+            }
 
             var cluster = clusterProviderBuilder?.Build(context);
             if (cluster == null)
