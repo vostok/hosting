@@ -1,4 +1,4 @@
-## 0.2.12 (29-10-2020):
+## 0.2.12 (30-10-2020):
 
 - Do not dispose external components.
 - Not log dispose on non-disposable components.
