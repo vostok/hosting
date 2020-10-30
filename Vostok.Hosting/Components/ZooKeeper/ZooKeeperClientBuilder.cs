@@ -14,7 +14,7 @@ using Vostok.ZooKeeper.Client.Abstractions.Model;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<(IZooKeeperClient client, bool external)>
+    internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
@@ -85,16 +85,16 @@ namespace Vostok.Hosting.Components.ZooKeeper
             return this;
         }
 
-        public (IZooKeeperClient client, bool external) Build(BuildContext context)
+        public IZooKeeperClient Build(BuildContext context)
         {
             if (!enabled)
-            {
-                context.LogDisabled("ZooKeeperClient");
-                return (null, false);
-            }
+                return null;
 
             if (instance != null)
-                return (instance, true);
+            {
+                context.ExternalComponents.Add(instance);
+                return instance;
+            }
 
             ZooKeeperClientSettings settings = null;
 
@@ -108,12 +108,14 @@ namespace Vostok.Hosting.Components.ZooKeeper
             if (settings == null)
             {
                 context.LogDisabled("ZooKeeperClient", "unconfigured ZooKeeper topology");
-                return (null, false);
+                return null;
             }
 
             settingsCustomization.Customize(settings);
 
-            return (new ZooKeeperClient(settings, context.Log.WithEventsDroppedByProperties(IsDataChangedLog)), false);
+            return new ZooKeeperClient(
+                settings,
+                context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
         }
 
         private bool IsDataChangedLog(IReadOnlyDictionary<string, object> properties)

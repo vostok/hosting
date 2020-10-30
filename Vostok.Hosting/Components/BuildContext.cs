@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Commons.Collections;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
@@ -32,6 +33,7 @@ namespace Vostok.Hosting.Components
         {
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
+            ExternalComponents = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
         }
 
         public IVostokApplicationIdentity ApplicationIdentity { get; set; }
@@ -39,25 +41,22 @@ namespace Vostok.Hosting.Components
         public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
-        public bool ExternalClusterConfigClient { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public SwitchingSource ConfigurationSource { get; set; }
         public SwitchingSource SecretConfigurationSource { get; set; }
         public ConfigurationProvider ConfigurationProvider { get; set; }
         public ConfigurationProvider SecretConfigurationProvider { get; set; }
-        public bool ExternalHerculesSink { get; set; }
         public IHerculesSink HerculesSink { get; set; }
         public IVostokApplicationMetrics Metrics { get; set; }
         public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
         public DiagnosticsHub DiagnosticsHub { get; set; }
-        public bool ExternalZooKeeperClient { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
-        public bool ExternalDatacenters { get; set; }
         public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
         public List<object> DisposableHostExtensions { get; set; }
+        public HashSet<object> ExternalComponents { get; }
 
         public Logs Logs { get; set; }
         public string LogsDirectory { get; set; }
@@ -96,19 +95,19 @@ namespace Vostok.Hosting.Components
 
                 Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
                 SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
-                TryDispose(HerculesSink, "HerculesSink", ExternalHerculesSink);
+                TryDispose(HerculesSink, "HerculesSink");
 
                 TryDispose(ServiceLocator, "ServiceLocator");
 
-                TryDispose(ZooKeeperClient, "ZooKeeperClient", ExternalZooKeeperClient);
+                TryDispose(ZooKeeperClient, "ZooKeeperClient");
 
-                TryDispose(Datacenters, "Datacenters", ExternalDatacenters);
+                TryDispose(Datacenters, "Datacenters");
 
                 TryDispose(ConfigurationProvider, "ConfigurationProvider");
 
                 TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
 
-                TryDispose(ClusterConfigClient, "ClusterConfigClient", ExternalClusterConfigClient);
+                TryDispose(ClusterConfigClient, "ClusterConfigClient");
 
                 LogDisposing("Log");
                 Log = new SilentLog();
@@ -131,9 +130,9 @@ namespace Vostok.Hosting.Components
         private void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
 
-        private void TryDispose(object component, string componentName, bool external = false)
+        private void TryDispose(object component, string componentName)
         {
-            if (external)
+            if (ExternalComponents.Contains(component))
                 return;
 
             var disposable = component as IDisposable;

@@ -9,7 +9,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Components.Datacenters
 {
-    internal class DatacentersBuilder : IVostokDatacentersBuilder, IBuilder<(IDatacenters datacenters, bool external)>
+    internal class DatacentersBuilder : IVostokDatacentersBuilder, IBuilder<IDatacenters>
     {
         private readonly Customization<DatacentersSettings> settingsCustomization;
         private volatile Func<IPAddress, string> datacenterMapping;
@@ -19,28 +19,31 @@ namespace Vostok.Hosting.Components.Datacenters
         public DatacentersBuilder() =>
             settingsCustomization = new Customization<DatacentersSettings>();
 
-        public (IDatacenters datacenters, bool external) Build(BuildContext context)
+        public IDatacenters Build(BuildContext context)
         {
             if (instance != null)
-                return (instance, true);
+            {
+                context.ExternalComponents.Add(instance);
+                return instance;
+            }
 
             if (datacenterMapping == null)
             {
                 context.LogDisabled("Datacenters", "unconfigured mapping");
-                return (null, false);
+                return null;
             }
 
             if (activeDatacentersProvider == null)
             {
                 context.LogDisabled("Datacenters", "unconfigured active datacenters provider");
-                return (null, false);
+                return null;
             }
 
             var settings = new DatacentersSettings(datacenterMapping, activeDatacentersProvider);
 
             settingsCustomization.Customize(settings);
 
-            return (new Vostok.Datacenters.Datacenters(settings), false);
+            return new Vostok.Datacenters.Datacenters(settings);
         }
 
         public IVostokDatacentersBuilder UseInstance(IDatacenters datacenters)
