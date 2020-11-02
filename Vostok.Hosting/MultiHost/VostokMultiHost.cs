@@ -110,7 +110,8 @@ namespace Vostok.Hosting.MultiHost
 
             var updatedSettings = UpdateAppSettings(vostokMultiHostApplicationSettings);
 
-            return applications[vostokMultiHostApplicationSettings.ApplicationName] = new VostokMultiHostApplication(updatedSettings);
+            return applications[vostokMultiHostApplicationSettings.ApplicationName] = 
+                new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null);
         }
 
         /// <summary>

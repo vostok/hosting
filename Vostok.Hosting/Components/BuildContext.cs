@@ -128,7 +128,7 @@ namespace Vostok.Hosting.Components
         public void LogDisabled(string name, string reason) =>
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
-        protected void LogDisposing(string componentName) =>
+        private void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
 
         private void TryDispose(object component, string componentName)
