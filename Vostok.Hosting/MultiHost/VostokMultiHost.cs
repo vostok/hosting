@@ -149,7 +149,7 @@ namespace Vostok.Hosting.MultiHost
 
             while (appTasks.Any() && !CommonEnvironment.ShutdownToken.IsCancellationRequested)
             {
-                await Task.WhenAny(Task.WhenAll(appTasks), CommonEnvironment.ShutdownTask);
+                await Task.WhenAny(Task.WhenAll(appTasks), CommonEnvironment.ShutdownTask).ConfigureAwait(false);
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications.Values
@@ -167,7 +167,7 @@ namespace Vostok.Hosting.MultiHost
         {
             var resultDict = new ConcurrentDictionary<string, VostokApplicationRunResult>();
 
-            await Task.WhenAll(Applications.Select(x => StopApplication(x, resultDict)));
+            await Task.WhenAll(Applications.Select(x => StopApplication(x, resultDict))).ConfigureAwait(false);
 
             return resultDict.ToDictionary(
                 x => x.Key,
@@ -176,7 +176,7 @@ namespace Vostok.Hosting.MultiHost
 
         private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<string, VostokApplicationRunResult> dict)
         {
-            dict[app.Name] = await app.StopAsync(false);
+            dict[app.Name] = await app.StopAsync(false).ConfigureAwait(false);
         }
 
         [CanBeNull]
