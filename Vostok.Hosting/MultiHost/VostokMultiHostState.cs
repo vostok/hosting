@@ -14,24 +14,14 @@ namespace Vostok.Hosting.MultiHost
         NotInitialized,
 
         /// <summary>
-        /// Common environment components are being constructed.
-        /// </summary>
-        EnvironmentSetup,
-
-        /// <summary>
-        /// <see cref="VostokMultiHost.RunAsync"/> has been called.
+        /// <see cref="VostokMultiHost"/> has started and ready to work.
         /// </summary>
         Running,
 
         /// <summary>
-        /// <see cref="VostokMultiHost.StopAsync"/> has been called.
+        /// <see cref="VostokMultiHost"/> successfully finished it's work.
         /// </summary>
-        Stopping,
-
-        /// <summary>
-        /// <see cref="VostokMultiHost"/> successfully stopped after <see cref="VostokMultiHost.StopAsync"/> had been called.
-        /// </summary>
-        Stopped,
+        Exited,
 
         /// <summary>
         /// Construction of common environment components has failed with an exception.
