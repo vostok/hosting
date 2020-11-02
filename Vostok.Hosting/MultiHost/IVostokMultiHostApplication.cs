@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.MultiHost
 {
+    [PublicAPI]
     public interface IVostokMultiHostApplication
     {
         string Name { get; }

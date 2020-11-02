@@ -13,6 +13,13 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.MultiHost
 {
+    // TODO: Problems: 
+    // 1) Logging
+    // 2) Configuring thread pool
+    // 3) Application identity in VostokMultiHost
+    // 4) What to disable in VostokMultiHost common environment?
+    // 5) How to shutdown in given time? Is it even possible?
+
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
     /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
@@ -193,7 +200,6 @@ namespace Vostok.Hosting.MultiHost
         {
             try
             {
-                // TODO: Logging?
                 CommonEnvironment.Dispose();
 
                 return null;
@@ -231,7 +237,6 @@ namespace Vostok.Hosting.MultiHost
                 {
                     Settings.EnvironmentSetup(builder);
 
-                    // TODO: Application identity?
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
                            .SetProject("Infrastructure")
@@ -253,8 +258,6 @@ namespace Vostok.Hosting.MultiHost
                             settings.EnableHostMetricsLogging = false;
                             settings.EnableHostMetricsReporting = false;
                         });
-
-                    // TODO: Anything else to disable?
                 },
                 environmentFactorySettings);
         }

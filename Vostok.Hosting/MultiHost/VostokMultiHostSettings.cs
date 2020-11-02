@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
 {
+    [PublicAPI]
     public class VostokMultiHostSettings : VostokHostSettings
     {
-        // ReSharper disable once AssignNullToNotNullAttribute
         public VostokMultiHostSettings(VostokHostingEnvironmentSetup builder)
             : base(new StubApplication(), builder)
         {
