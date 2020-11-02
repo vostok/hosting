@@ -45,7 +45,6 @@ namespace Vostok.Hosting.MultiHost
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("VostokHost can't be launched more than once!");
 
-            // TODO: Propagate settings from VostokApplicationSettings
             var vostokHostSettings = new VostokHostSettings(Settings.Application, Settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,

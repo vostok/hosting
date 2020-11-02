@@ -16,11 +16,20 @@ namespace Vostok.Hosting.MultiHost
             ApplicationName = applicationName ?? throw new ArgumentNullException(nameof(applicationName));
             EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
         }
-
+        
+        /// <summary>
+        /// An application which will be run.
+        /// </summary>
         public IVostokApplication Application { get; }
 
+        /// <summary>
+        /// An application unique identifier.
+        /// </summary>
         public string ApplicationName { get; }
 
+        /// <summary>
+        /// A delegate which will be used to configure <see cref="IVostokHostingEnvironment"/>.
+        /// </summary>
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; }
     }
 }

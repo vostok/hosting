@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -33,7 +34,12 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, string appName)
         {
-            return host.GetApp(appName).StopAsync();
+            var application = host.GetApp(appName);
+
+            if (application == null)
+                throw new InvalidOperationException("Application with this name doesn't exist.");
+
+            return application.StopAsync();
         }
 
         /// <summary>
@@ -44,6 +50,7 @@ namespace Vostok.Hosting.MultiHost
         {
             foreach (var app in apps)
                 host.StartApp(app).GetAwaiter().GetResult();
+
             return Task.CompletedTask;
         }
 
@@ -82,6 +89,7 @@ namespace Vostok.Hosting.MultiHost
         {
             foreach (var app in apps)
                 host.StartApp(app).GetAwaiter().GetResult();
+
             return Task.CompletedTask;
         }
 
