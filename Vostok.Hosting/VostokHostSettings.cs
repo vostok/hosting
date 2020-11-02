@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;

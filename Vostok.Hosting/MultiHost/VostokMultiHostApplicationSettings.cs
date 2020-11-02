@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
