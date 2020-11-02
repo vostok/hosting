@@ -37,7 +37,7 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        internal Task<VostokApplicationRunResult> workerTask => vostokHost?.workerTask;
+        internal Task<VostokApplicationRunResult> WorkerTask => vostokHost?.workerTask;
         private VostokMultiHostApplicationSettings Settings { get; }
 
         private void CreateVostokHost()
@@ -48,7 +48,8 @@ namespace Vostok.Hosting.MultiHost
             // TODO: Propagate settings from VostokApplicationSettings
             var vostokHostSettings = new VostokHostSettings(Settings.Application, Settings.EnvironmentSetup)
             {
-                ConfigureThreadPool = false
+                ConfigureThreadPool = false,
+                ConfigureStaticProviders = false
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
