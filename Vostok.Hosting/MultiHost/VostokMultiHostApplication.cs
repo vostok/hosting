@@ -8,11 +8,13 @@ namespace Vostok.Hosting.MultiHost
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
         private readonly AtomicBoolean launchedOnce = false;
+        private readonly Func<bool> isReadyToStart;
         private volatile VostokHost vostokHost;
 
-        public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings)
+        public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
             Settings = settings;
+            this.isReadyToStart = isReadyToStart;
         }
 
         public string Name => Settings.ApplicationName;
@@ -42,8 +44,11 @@ namespace Vostok.Hosting.MultiHost
 
         private void CreateVostokHost()
         {
+            if (!isReadyToStart())
+                throw new InvalidOperationException("VostokMultiHost should be running to launch applications!");
+
             if (!launchedOnce.TrySetTrue())
-                throw new InvalidOperationException("VostokHost can't be launched more than once!");
+                throw new InvalidOperationException("IVostokMultiHostApplication can't be launched more than once!");
 
             var vostokHostSettings = new VostokHostSettings(Settings.Application, Settings.EnvironmentSetup)
             {
