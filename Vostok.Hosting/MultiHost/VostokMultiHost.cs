@@ -9,12 +9,11 @@ using Vostok.Commons.Threading;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
+using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.MultiHost
 {
-    // TODO: Logging, improved configuration
-
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
     /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
@@ -27,11 +26,15 @@ namespace Vostok.Hosting.MultiHost
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
         private readonly CancellationTokenSource shutdownTokenSource;
+        private readonly VostokMultiHostSettings settings;
+
         private volatile Task<VostokMultiHostRunResult> workerTask;
+        private volatile ILog log;
+        private volatile VostokHostingEnvironment commonEnvironment;
 
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokMultiHostApplicationSettings[] apps)
         {
-            Settings = settings;
+            this.settings = settings;
             applications = new ConcurrentDictionary<string, VostokMultiHostApplication>();
             shutdownTokenSource = new CancellationTokenSource();
 
@@ -121,14 +124,11 @@ namespace Vostok.Hosting.MultiHost
             throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
         }
 
-        private VostokHostingEnvironment CommonEnvironment { get; set; }
-        private VostokMultiHostSettings Settings { get; set; }
-
         private Task<VostokMultiHostRunResult> StartInternalAsync()
         {
             // NOTE: Configure thread pool once there if necessary.
-            if (Settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup(Settings.ThreadPoolTuningMultiplier);
+            if (settings.ConfigureThreadPool)
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
             var environmentBuildResult = BuildCommonEnvironment();
 
@@ -146,10 +146,12 @@ namespace Vostok.Hosting.MultiHost
             var appTasks = Applications
                .Select(x => x.RunAsync())
                .ToArray();
+            
+            log.Info("Starting {Count} applications.", appTasks.Length);
 
-            while (appTasks.Any() && !CommonEnvironment.ShutdownToken.IsCancellationRequested)
+            while (appTasks.Any() && !commonEnvironment.ShutdownToken.IsCancellationRequested)
             {
-                await Task.WhenAny(Task.WhenAll(appTasks), CommonEnvironment.ShutdownTask).ConfigureAwait(false);
+                await Task.WhenAny(Task.WhenAll(appTasks), commonEnvironment.ShutdownTask).ConfigureAwait(false);
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications.Values
@@ -159,6 +161,8 @@ namespace Vostok.Hosting.MultiHost
             }
 
             var appDict = await StopInternalAsync().ConfigureAwait(false);
+            
+            log.Info("Applications have stopped.");
 
             return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, appDict);
         }
@@ -166,6 +170,8 @@ namespace Vostok.Hosting.MultiHost
         private async Task<Dictionary<string, VostokApplicationRunResult>> StopInternalAsync()
         {
             var resultDict = new ConcurrentDictionary<string, VostokApplicationRunResult>();
+            
+            log.Info("Stopping applications..");
 
             await Task.WhenAll(Applications.Select(x => StopApplication(x, resultDict))).ConfigureAwait(false);
 
@@ -184,8 +190,10 @@ namespace Vostok.Hosting.MultiHost
         {
             try
             {
-                CommonEnvironment.Dispose();
+                log.Info("Disposing common environment..");
 
+                commonEnvironment.Dispose();
+                
                 return null;
             }
             catch (Exception error)
@@ -199,7 +207,9 @@ namespace Vostok.Hosting.MultiHost
         {
             try
             {
-                CommonEnvironment = SetupEnvironment();
+                commonEnvironment = SetupEnvironment();
+
+                log = commonEnvironment.Log.ForContext<VostokMultiHost>();
 
                 return null;
             }
@@ -213,13 +223,13 @@ namespace Vostok.Hosting.MultiHost
         {
             var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
             {
-                ConfigureStaticProviders = Settings.ConfigureStaticProviders
+                ConfigureStaticProviders = settings.ConfigureStaticProviders
             };
 
             return EnvironmentBuilder.Build(
                 builder =>
                 {
-                    Settings.EnvironmentSetup(builder);
+                    settings.EnvironmentSetup(builder);
 
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
@@ -231,14 +241,14 @@ namespace Vostok.Hosting.MultiHost
                     builder.DisableServiceBeacon();
 
                     builder.SetupSystemMetrics(
-                        settings =>
+                        systemMetricsSettings =>
                         {
-                            settings.EnableGcEventsLogging = false;
-                            settings.EnableGcEventsMetrics = false;
-                            settings.EnableProcessMetricsLogging = false;
-                            settings.EnableProcessMetricsReporting = false;
-                            settings.EnableHostMetricsLogging = false;
-                            settings.EnableHostMetricsReporting = false;
+                            systemMetricsSettings.EnableGcEventsLogging = false;
+                            systemMetricsSettings.EnableGcEventsMetrics = false;
+                            systemMetricsSettings.EnableProcessMetricsLogging = false;
+                            systemMetricsSettings.EnableProcessMetricsReporting = false;
+                            systemMetricsSettings.EnableHostMetricsLogging = false;
+                            systemMetricsSettings.EnableHostMetricsReporting = false;
                         });
                 },
                 environmentFactorySettings
@@ -252,7 +262,7 @@ namespace Vostok.Hosting.MultiHost
                 vostokMultiHostApplicationSettings.ApplicationName,
                 builder =>
                 {
-                    Settings.EnvironmentSetup(builder);
+                    settings.EnvironmentSetup(builder);
 
                     // NOTE: Disable logging so users will be forced to setup logging. This was made to avoid complete mess when multiple apps write to the same place.
                     // NOTE: Another reason for this is that we use log from Common Environment to log VostokMultiHost events.
@@ -269,11 +279,11 @@ namespace Vostok.Hosting.MultiHost
 
                     vostokMultiHostApplicationSettings.EnvironmentSetup(builder);
 
-                    builder.SetupClusterConfigClient(clientBuilder => clientBuilder.UseInstance(CommonEnvironment.ClusterConfigClient));
+                    builder.SetupClusterConfigClient(clientBuilder => clientBuilder.UseInstance(commonEnvironment.ClusterConfigClient));
 
-                    builder.SetupHerculesSink(sinkBuilder => sinkBuilder.UseInstance(CommonEnvironment.HerculesSink));
+                    builder.SetupHerculesSink(sinkBuilder => sinkBuilder.UseInstance(commonEnvironment.HerculesSink));
 
-                    if (CommonEnvironment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
+                    if (commonEnvironment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
                         builder.SetupZooKeeperClient(clientBuilder => clientBuilder.UseInstance(zooKeeperClient));
                 }
             );
