@@ -51,7 +51,7 @@ namespace Vostok.Hosting
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
 
-        private volatile Task<VostokApplicationRunResult> workerTask;
+        internal volatile Task<VostokApplicationRunResult> workerTask;
         private volatile VostokHostingEnvironment environment;
         private volatile ILog log;
 

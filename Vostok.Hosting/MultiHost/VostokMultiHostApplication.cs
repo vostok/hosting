@@ -1,34 +1,35 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Vostok.Configuration.Abstractions.Extensions.Observable;
+using Vostok.Commons.Threading;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.MultiHost
 {
-    // TODO: Inspect this class one more time
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
-        public VostokMultiHostApplication(VostokApplicationSettings settings)
+        private readonly AtomicBoolean launchedOnce = false;
+        private volatile VostokHost vostokHost;
+
+        public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings)
         {
-            this.settings = settings;
-            this.parentMultiHost = parentMultiHost;
+            Settings = settings;
         }
 
-        public string Name => settings.ApplicationName;
+        public string Name => Settings.ApplicationName;
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
 
         public Task<VostokApplicationRunResult> RunAsync()
         {
             CreateVostokHost();
-            parentMultiHost.AddRunningApp(Name, this);
-            return Task.WhenAny(vostokHost.RunAsync(), RemoveRunningApp()).Result as Task<VostokApplicationRunResult>;
+
+            return vostokHost.RunAsync();
         }
 
         public Task StartAsync(VostokApplicationState? stateToAwait)
         {
             CreateVostokHost();
-            parentMultiHost.AddRunningApp(Name, this);
-            return Task.WhenAny(vostokHost.StartAsync(), RemoveRunningApp());
+
+            return vostokHost.StartAsync(stateToAwait);
         }
 
         public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
@@ -36,37 +37,21 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        private VostokApplicationSettings settings { get; }
-        private VostokHost vostokHost { get; set; }
-        private VostokMultiHost parentMultiHost { get; }
+        internal Task<VostokApplicationRunResult> workerTask => vostokHost?.workerTask;
+        private VostokMultiHostApplicationSettings Settings { get; }
 
         private void CreateVostokHost()
         {
+            if (!launchedOnce.TrySetTrue())
+                throw new InvalidOperationException("VostokHost can't be launched more than once!");
+
             // TODO: Propagate settings from VostokApplicationSettings
-            var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
+            var vostokHostSettings = new VostokHostSettings(Settings.Application, Settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
-        }
-
-        private async Task RemoveRunningApp()
-        {
-            var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-            var subscription = vostokHost.OnApplicationStateChanged.Subscribe(
-                state =>
-                {
-                    if (state.IsTerminal())
-                    {
-                        parentMultiHost.RemoveRunningApp(Name);
-                        stateCompletionSource.TrySetResult(true);
-                    }
-                });
-
-            using (subscription)
-                await stateCompletionSource.Task;
         }
     }
 }
