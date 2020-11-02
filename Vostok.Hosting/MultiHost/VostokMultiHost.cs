@@ -13,12 +13,7 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.MultiHost
 {
-    // TODO: Problems: 
-    // 1) Logging
-    // 2) Configuring thread pool
-    // 3) Application identity in VostokMultiHost
-    // 4) What to disable in VostokMultiHost common environment?
-    // 5) How to shutdown in given time? Is it even possible?
+    // TODO: Logging, improved configuration
 
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
@@ -110,22 +105,7 @@ namespace Vostok.Hosting.MultiHost
             if (applications.ContainsKey(vostokMultiHostApplicationSettings.ApplicationName))
                 throw new ArgumentException("Application with this name has already been added.");
 
-            var updatedSettings = new VostokMultiHostApplicationSettings(
-                vostokMultiHostApplicationSettings.Application,
-                vostokMultiHostApplicationSettings.ApplicationName,
-                builder =>
-                {
-                    Settings.EnvironmentSetup(builder);
-
-                    vostokMultiHostApplicationSettings.EnvironmentSetup(builder);
-
-                    builder.SetupClusterConfigClient(clientBuilder => clientBuilder.UseInstance(CommonEnvironment.ClusterConfigClient));
-
-                    builder.SetupHerculesSink(sinkBuilder => sinkBuilder.UseInstance(CommonEnvironment.HerculesSink));
-
-                    if (CommonEnvironment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
-                        builder.SetupZooKeeperClient(clientBuilder => clientBuilder.UseInstance(zooKeeperClient));
-                });
+            var updatedSettings = UpdateAppSettings(vostokMultiHostApplicationSettings);
 
             return applications[vostokMultiHostApplicationSettings.ApplicationName] = new VostokMultiHostApplication(updatedSettings);
         }
@@ -146,6 +126,10 @@ namespace Vostok.Hosting.MultiHost
 
         private Task<VostokMultiHostRunResult> StartInternalAsync()
         {
+            // NOTE: Configure thread pool once there if necessary.
+            if (Settings.ConfigureThreadPool)
+                ThreadPoolUtility.Setup(Settings.ThreadPoolTuningMultiplier);
+
             var environmentBuildResult = BuildCommonEnvironment();
 
             if (environmentBuildResult != null)
@@ -244,8 +228,6 @@ namespace Vostok.Hosting.MultiHost
                            .SetApplication("VostokMultiHost")
                            .SetInstance("1"));
 
-                    builder.SetupShutdownToken(shutdownTokenSource.Token);
-
                     builder.DisableServiceBeacon();
 
                     builder.SetupSystemMetrics(
@@ -259,7 +241,42 @@ namespace Vostok.Hosting.MultiHost
                             settings.EnableHostMetricsReporting = false;
                         });
                 },
-                environmentFactorySettings);
+                environmentFactorySettings
+            );
+        }
+
+        private VostokMultiHostApplicationSettings UpdateAppSettings(VostokMultiHostApplicationSettings vostokMultiHostApplicationSettings)
+        {
+            return new VostokMultiHostApplicationSettings(
+                vostokMultiHostApplicationSettings.Application,
+                vostokMultiHostApplicationSettings.ApplicationName,
+                builder =>
+                {
+                    Settings.EnvironmentSetup(builder);
+
+                    // NOTE: Disable logging so users will be forced to setup logging. This was made to avoid complete mess when multiple apps write to the same place.
+                    // NOTE: Another reason for this is that we use log from Common Environment to log VostokMultiHost events.
+                    builder.SetupLog(
+                        logBuilder =>
+                        {
+                            logBuilder.SetupConsoleLog(consoleLogBuilder => consoleLogBuilder.Disable());
+                            logBuilder.SetupFileLog(fileLogBuilder => fileLogBuilder.Disable());
+                            logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
+                        });
+
+                    // NOTE: We use AppName as default instance name.
+                    builder.SetupApplicationIdentity(identityBuilder => identityBuilder.SetInstance(vostokMultiHostApplicationSettings.ApplicationName));
+
+                    vostokMultiHostApplicationSettings.EnvironmentSetup(builder);
+
+                    builder.SetupClusterConfigClient(clientBuilder => clientBuilder.UseInstance(CommonEnvironment.ClusterConfigClient));
+
+                    builder.SetupHerculesSink(sinkBuilder => sinkBuilder.UseInstance(CommonEnvironment.HerculesSink));
+
+                    if (CommonEnvironment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
+                        builder.SetupZooKeeperClient(clientBuilder => clientBuilder.UseInstance(zooKeeperClient));
+                }
+            );
         }
     }
 }
