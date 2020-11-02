@@ -13,7 +13,7 @@ namespace Vostok.Hosting.MultiHost
         /// Runs provided application.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> RunApp(this VostokMultiHost host, VostokApplicationSettings settings)
+        public static Task<VostokApplicationRunResult> RunApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApp(settings).RunAsync();
         }
@@ -22,7 +22,7 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided application.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartApp(this VostokMultiHost host, VostokApplicationSettings settings)
+        public static Task StartApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApp(settings).StartAsync();
         }
@@ -40,7 +40,7 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             foreach (var app in apps)
                 host.StartApp(app).GetAwaiter().GetResult();
@@ -51,16 +51,16 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartSequentially(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        public static Task StartSequentially(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return StartSequentially(host, (IEnumerable<VostokApplicationSettings>)apps);
+            return StartSequentially(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
         /// Starts provided applications in parallel.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartInParallel(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        public static Task StartInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             return Task.WhenAll(apps.Select(app => StartApp(host, app)));
         }
@@ -69,16 +69,16 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided applications in parallel.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartInParallel(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        public static Task StartInParallel(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return StartInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
+            return StartInParallel(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
         /// Runs provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        public static Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             foreach (var app in apps)
                 host.StartApp(app).GetAwaiter().GetResult();
@@ -89,16 +89,16 @@ namespace Vostok.Hosting.MultiHost
         /// Runs provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task RunSequentially(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        public static Task RunSequentially(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return RunSequentially(host, (IEnumerable<VostokApplicationSettings>)apps);
+            return RunSequentially(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
         /// Runs provided applications in parallel.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task RunInParallel(this VostokMultiHost host, IEnumerable<VostokApplicationSettings> apps)
+        public static Task RunInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             return Task.WhenAll(apps.Select(app => RunApp(host, app)));
         }
@@ -107,9 +107,9 @@ namespace Vostok.Hosting.MultiHost
         /// Runs provided applications in parallel.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task RunInParallel(this VostokMultiHost host, params VostokApplicationSettings[] apps)
+        public static Task RunInParallel(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return RunInParallel(host, (IEnumerable<VostokApplicationSettings>)apps);
+            return RunInParallel(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
     }
 }

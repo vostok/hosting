@@ -75,7 +75,7 @@ namespace Vostok.Hosting.Components
             Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             try
             {
