@@ -64,8 +64,8 @@ notests *default:
     - vostok.tracing
     - vostok.tracing.abstractions
     - vostok.tracing.hercules
-    - vostok.zookeeper.client@acl
-    - vostok.zookeeper.client.abstractions@acl
+    - vostok.zookeeper.client
+    - vostok.zookeeper.client.abstractions
 
 full-build > notests:
   deps:
