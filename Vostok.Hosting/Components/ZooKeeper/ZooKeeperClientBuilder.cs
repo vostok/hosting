@@ -100,7 +100,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 return null;
 
             if (instance != null)
+            {
+                context.ExternalComponents.Add(instance);
                 return instance;
+            }
 
             ZooKeeperClientSettings settings = null;
 

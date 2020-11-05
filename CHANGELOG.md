@@ -1,3 +1,12 @@
+## 0.2.12 (30-10-2020):
+
+- Do not dispose external components.
+- Not log dispose on non-disposable components.
+
+## 0.2.11 (23-10-2020):
+
+Implemented https://github.com/vostok/hosting/issues/32.
+
 ## 0.2.10 (13-10-2020):
 
 Added annotations for app lifecycle events: launching, initialized, stopping.

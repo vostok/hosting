@@ -22,7 +22,10 @@ namespace Vostok.Hosting.Components.Datacenters
         public IDatacenters Build(BuildContext context)
         {
             if (instance != null)
+            {
+                context.ExternalComponents.Add(instance);
                 return instance;
+            }
 
             if (datacenterMapping == null)
             {
