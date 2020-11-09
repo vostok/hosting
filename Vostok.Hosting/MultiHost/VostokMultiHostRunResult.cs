@@ -11,6 +11,7 @@ namespace Vostok.Hosting.MultiHost
     [PublicAPI]
     public class VostokMultiHostRunResult
     {
+        // CR(iloktionov): StopAsync can return a result with 'NotInitialized' state which is not listed among terminal ones here. Who's actually wrong about this?)
         /// <summary>
         /// <para>Final state of <see cref="VostokMultiHost"/>.</para>
         /// <para>Possible final states:</para>
