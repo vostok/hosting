@@ -18,8 +18,10 @@ namespace Vostok.Hosting.MultiHost
         }
 
         public string Name => Settings.ApplicationName;
+
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
 
+        // CR(iloktionov): RunAsync should be idempotent!
         public Task<VostokApplicationRunResult> RunAsync()
         {
             CreateVostokHost();
@@ -39,7 +41,10 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
+        // CR(iloktionov): Oooh boy, this is ugly :) Why not just reuse the task from RunAsync unless current status is NotInitialized (use Task.CompletedTask then)?
         internal Task<VostokApplicationRunResult> WorkerTask => vostokHost?.workerTask;
+
+        // CR(iloktionov): Reformat with code style? And maybe convert to a private readonly field?
         private VostokMultiHostApplicationSettings Settings { get; }
 
         private void CreateVostokHost()

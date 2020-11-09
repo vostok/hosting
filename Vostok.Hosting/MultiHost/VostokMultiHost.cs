@@ -42,6 +42,7 @@ namespace Vostok.Hosting.MultiHost
                 AddApp(app);
         }
 
+        // CR(iloktionov): Why doesn't VostokMultiHost implement IEnumerable<IVostokMultiHostApplication>?
         /// <summary>
         /// Returns an enumerable of added <see cref="IVostokMultiHostApplication"/>.
         /// </summary>
@@ -52,6 +53,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
+            // CR(iloktionov): Why do we ignore the result of StartInternalAsync here?
             if (launchedOnce.TrySetTrue())
                 await StartInternalAsync().ConfigureAwait(false);
 
@@ -74,6 +76,8 @@ namespace Vostok.Hosting.MultiHost
             if (!launchedOnce.TrySetTrue())
                 return;
 
+            // CR(iloktionov): 1. Useless await?
+            // CR(iloktionov): 2. Shouldn't this throw if StartInternalAsync returns a failed result?
             await StartInternalAsync().ConfigureAwait(false);
         }
 
@@ -90,27 +94,35 @@ namespace Vostok.Hosting.MultiHost
             if (resultTask == null)
                 return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.NotInitialized));
 
+            // CR(iloktionov): This may execute callbacks synchronously, so it's best to offload this call with Task.Run.
             shutdownTokenSource.Cancel();
 
             return resultTask;
         }
 
+        // CR(iloktionov): App --> Application? These names are short enough to avoid abbreviations :)
+        // CR(iloktionov): [CanBeNull]?
         /// <summary>
         /// <para>Returns added application by name or returns null if it doesn't exist.</para>
         /// </summary>
-        public IVostokMultiHostApplication GetApp(string appName) => applications.TryGetValue(appName, out var app) ? app : null;
+        public IVostokMultiHostApplication GetApp(string appName)
+            => applications.TryGetValue(appName, out var app) ? app : null;
 
         /// <summary>
         /// <para>Adds an application and returns created application.</para>
         /// </summary>
-        public IVostokMultiHostApplication AddApp(VostokMultiHostApplicationSettings vostokMultiHostApplicationSettings)
+        public IVostokMultiHostApplication AddApp(VostokMultiHostApplicationSettings applicationSettings)
         {
-            if (applications.ContainsKey(vostokMultiHostApplicationSettings.ApplicationName))
+            // CR(iloktionov): Should this still work once the multihost has stopped and common environment has been disposed? Or, rather, when the shutdown has been initiated.
+            // CR(iloktionov): The same question stands for starting the applications directly.
+
+            // CR(iloktionov): Please include the name in the error message :)
+            if (applications.ContainsKey(applicationSettings.ApplicationName))
                 throw new ArgumentException("Application with this name has already been added.");
 
-            var updatedSettings = UpdateAppSettings(vostokMultiHostApplicationSettings);
+            var updatedSettings = UpdateAppSettings(applicationSettings);
 
-            return applications[vostokMultiHostApplicationSettings.ApplicationName] = 
+            return applications[applicationSettings.ApplicationName] = 
                 new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null);
         }
 
@@ -122,6 +134,7 @@ namespace Vostok.Hosting.MultiHost
             if (applications.TryRemove(appName, out var app))
                 return app.StopAsync();
 
+            // CR(iloktionov): KeyNotFoundException? Also please include the name in the error message :)
             throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
         }
 
@@ -147,8 +160,9 @@ namespace Vostok.Hosting.MultiHost
             var appTasks = Applications
                .Select(x => x.RunAsync())
                .ToArray();
-            
-            log.Info("Starting {Count} applications.", appTasks.Length);
+
+            // CR(iloktionov): Better log this before they actually get started :)
+            log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
 
             while (appTasks.Any() && !commonEnvironment.ShutdownToken.IsCancellationRequested)
             {
@@ -161,30 +175,28 @@ namespace Vostok.Hosting.MultiHost
                    .ToArray();
             }
 
-            var appDict = await StopInternalAsync().ConfigureAwait(false);
+            var applicationRunResults = await StopInternalAsync().ConfigureAwait(false);
             
             log.Info("Applications have stopped.");
 
-            return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, appDict);
+            return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, applicationRunResults);
         }
 
         private async Task<Dictionary<string, VostokApplicationRunResult>> StopInternalAsync()
         {
-            var resultDict = new ConcurrentDictionary<string, VostokApplicationRunResult>();
+            var results = new ConcurrentDictionary<string, VostokApplicationRunResult>();
             
             log.Info("Stopping applications..");
 
-            await Task.WhenAll(Applications.Select(x => StopApplication(x, resultDict))).ConfigureAwait(false);
+            await Task.WhenAll(Applications.Select(x => StopApplication(x, results))).ConfigureAwait(false);
 
-            return resultDict.ToDictionary(
+            return results.ToDictionary(
                 x => x.Key,
                 y => y.Value);
         }
 
-        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<string, VostokApplicationRunResult> dict)
-        {
-            dict[app.Name] = await app.StopAsync(false).ConfigureAwait(false);
-        }
+        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<string, VostokApplicationRunResult> results)
+            => results[app.Name] = await app.StopAsync(false).ConfigureAwait(false);
 
         [CanBeNull]
         private VostokMultiHostRunResult DisposeCommonEnvironment()
@@ -232,6 +244,7 @@ namespace Vostok.Hosting.MultiHost
                 {
                     settings.EnvironmentSetup(builder);
 
+                    // CR(iloktionov): Project = Infrastructure would likely cause our Sentry to be overrun with test junk :)
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
                            .SetProject("Infrastructure")
@@ -256,11 +269,11 @@ namespace Vostok.Hosting.MultiHost
             );
         }
 
-        private VostokMultiHostApplicationSettings UpdateAppSettings(VostokMultiHostApplicationSettings vostokMultiHostApplicationSettings)
+        private VostokMultiHostApplicationSettings UpdateAppSettings(VostokMultiHostApplicationSettings applicationSettings)
         {
             return new VostokMultiHostApplicationSettings(
-                vostokMultiHostApplicationSettings.Application,
-                vostokMultiHostApplicationSettings.ApplicationName,
+                applicationSettings.Application,
+                applicationSettings.ApplicationName,
                 builder =>
                 {
                     settings.EnvironmentSetup(builder);
@@ -275,10 +288,12 @@ namespace Vostok.Hosting.MultiHost
                             logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
                         });
 
-                    // NOTE: We use AppName as default instance name.
-                    builder.SetupApplicationIdentity(identityBuilder => identityBuilder.SetInstance(vostokMultiHostApplicationSettings.ApplicationName));
+                    // CR(iloktionov): Why do we use app name as instance name instead of, well, application?
 
-                    vostokMultiHostApplicationSettings.EnvironmentSetup(builder);
+                    // NOTE: We use AppName as default instance name.
+                    builder.SetupApplicationIdentity(identityBuilder => identityBuilder.SetInstance(applicationSettings.ApplicationName));
+
+                    applicationSettings.EnvironmentSetup(builder);
 
                     builder.SetupClusterConfigClient(clientBuilder => clientBuilder.UseInstance(commonEnvironment.ClusterConfigClient));
 
