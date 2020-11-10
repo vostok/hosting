@@ -52,7 +52,7 @@ namespace Vostok.Hosting.MultiHost
         {
             if (launchedOnce.TrySetTrue())
                 await StartInternalAsync()
-                   .ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion)
+                   .ContinueWith(task => task.Result.EnsureSuccess())
                    .ConfigureAwait(false);
 
             Task<VostokMultiHostRunResult> runTask;
@@ -113,7 +113,7 @@ namespace Vostok.Hosting.MultiHost
             var updatedSettings = UpdateAppSettings(applicationSettings);
 
             return applications[applicationSettings.ApplicationName] =
-                new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null);
+                new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null && !shutdownTokenSource.IsCancellationRequested);
         }
 
         /// <summary>
