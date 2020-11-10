@@ -28,19 +28,21 @@ namespace Vostok.Hosting.MultiHost
 
         /// <summary>
         /// <para>Launches the provided <see cref="IVostokApplication"/>.</para>
-        /// <para>Throws exception if parent <see cref="VostokMultiHost"/> was not started.</para>
-        /// <para>Performs following operations:</para>
+        /// <para>If called for the first time, performs following operations:</para>
         /// <list type="bullet">
         ///     <item><description>Creates an instance of <see cref="IVostokHostingEnvironment"/> using <see cref="VostokMultiHostApplicationSettings.EnvironmentSetup"/>.</description></item>
         ///     <item><description>Calls <see cref="IVostokApplication.InitializeAsync"/>.</description></item>
         ///     <item><description>Calls <see cref="IVostokApplication.RunAsync"/>.</description></item>
         /// </list>
+        /// <para>Returns the same cached task on next calls.</para>
+        /// <para>Throws exception if parent <see cref="VostokMultiHost"/> was not started.</para>
         /// <para>Does not rethrow exceptions from <see cref="IVostokApplication"/>, stores them in result's <see cref="VostokApplicationRunResult.Error"/> property.</para>
         /// </summary>
         Task<VostokApplicationRunResult> RunAsync();
 
         /// <summary>
-        /// <para>Starts the execution of the application and optionally waits for given state to occur.</para>
+        /// <para>If called for the first time, starts the execution of the application and optionally waits for given state to occur.</para>
+        /// <para>Waits for given state on next calls.</para>
         /// <para>Throws exception if parent <see cref="VostokMultiHost"/> was not started.</para>
         /// <para>If not given a <paramref name="stateToAwait"/>, acts in a fire-and-forget fashion.</para>
         /// <para>If given <paramref name="stateToAwait"/> is not reached before the task returned by
