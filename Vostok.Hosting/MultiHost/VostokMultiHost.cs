@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Vostok.Hosting.MultiHost
     /// <para>Shares common environment components between applications.</para>
     /// </summary>
     [PublicAPI]
-    public class VostokMultiHost
+    public class VostokMultiHost : IEnumerable<IVostokMultiHostApplication>
     {
         private readonly ConcurrentDictionary<string, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
@@ -39,25 +40,20 @@ namespace Vostok.Hosting.MultiHost
             shutdownTokenSource = new CancellationTokenSource();
 
             foreach (var app in apps)
-                AddApp(app);
+                AddApplication(app);
         }
-
-        // TODO: Implement IEnumerable
-        // CR(iloktionov): Why doesn't VostokMultiHost implement IEnumerable<IVostokMultiHostApplication>?
-        /// <summary>
-        /// Returns an enumerable of added <see cref="IVostokMultiHostApplication"/>.
-        /// </summary>
-        public IEnumerable<IVostokMultiHostApplication> Applications => applications.Values;
 
         /// <summary>
         /// <para>Initializes itself (if it wasn't initialized before) and runs added apps.</para>
+        /// <para>May throw an exception if an error occurs during environment creation.</para>
+        /// <para>Does not rethrow exceptions, stores them in result's <see cref="VostokMultiHostRunResult.Error"/> property.</para>
         /// </summary>
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
-            // TODO: Throw if failed.
-            // CR(iloktionov): Why do we ignore the result of StartInternalAsync here?
             if (launchedOnce.TrySetTrue())
-                await StartInternalAsync().ConfigureAwait(false);
+                await StartInternalAsync()
+                   .ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion)
+                   .ConfigureAwait(false);
 
             Task<VostokMultiHostRunResult> runTask;
 
@@ -72,17 +68,11 @@ namespace Vostok.Hosting.MultiHost
 
         /// <summary>
         /// <para>Initializes itself and launches added apps.</para>
+        /// <para>May throw an exception if an error occurs during environment creation.</para>
         /// </summary>
-        public async Task StartAsync()
-        {
-            if (!launchedOnce.TrySetTrue())
-                return;
-
-            // TODO: The same as in run.
-            // CR(iloktionov): 1. Useless await?
-            // CR(iloktionov): 2. Shouldn't this throw if StartInternalAsync returns a failed result?
-            await StartInternalAsync().ConfigureAwait(false);
-        }
+        public Task StartAsync() => !launchedOnce.TrySetTrue()
+            ? Task.CompletedTask
+            : StartInternalAsync().ContinueWith(task => task.Result.EnsureSuccess());
 
         /// <summary>
         /// <para>Stops all running applications and disposes itself.</para>
@@ -97,51 +87,47 @@ namespace Vostok.Hosting.MultiHost
             if (resultTask == null)
                 return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.NotInitialized));
 
-            // TODO: To Task.Run
-            // CR(iloktionov): This may execute callbacks synchronously, so it's best to offload this call with Task.Run.
-            shutdownTokenSource.Cancel();
+            Task.Run(() => shutdownTokenSource.Cancel());
 
             return resultTask;
         }
 
-        // CR(iloktionov): App --> Application? These names are short enough to avoid abbreviations :)
-        // CR(iloktionov): [CanBeNull]?
         /// <summary>
         /// <para>Returns added application by name or returns null if it doesn't exist.</para>
         /// </summary>
-        public IVostokMultiHostApplication GetApp(string appName)
+        [CanBeNull]
+        public IVostokMultiHostApplication GetApplication(string appName)
             => applications.TryGetValue(appName, out var app) ? app : null;
 
         /// <summary>
         /// <para>Adds an application and returns created application.</para>
         /// </summary>
-        public IVostokMultiHostApplication AddApp(VostokMultiHostApplicationSettings applicationSettings)
+        public IVostokMultiHostApplication AddApplication(VostokMultiHostApplicationSettings applicationSettings)
         {
-            // TODO: Check if cancellation has been called.
-            // CR(iloktionov): Should this still work once the multihost has stopped and common environment has been disposed? Or, rather, when the shutdown has been initiated.
-            // CR(iloktionov): The same question stands for starting the applications directly.
+            if (shutdownTokenSource.IsCancellationRequested)
+                throw new InvalidOperationException($"Unable to add application {applicationSettings.ApplicationName} because VostokMultiHost is shutting down.");
 
-            // CR(iloktionov): Please include the name in the error message :)
             if (applications.ContainsKey(applicationSettings.ApplicationName))
-                throw new ArgumentException("Application with this name has already been added.");
+                throw new ArgumentException($"Application {applicationSettings.ApplicationName} has already been added.");
 
             var updatedSettings = UpdateAppSettings(applicationSettings);
 
-            return applications[applicationSettings.ApplicationName] = 
+            return applications[applicationSettings.ApplicationName] =
                 new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null);
         }
 
         /// <summary>
         /// <para>Removes an application (And stops it if necessary).</para>
         /// </summary>
-        public Task<VostokApplicationRunResult> RemoveAppAsync(string appName)
+        public Task<VostokApplicationRunResult> RemoveApplicationAsync(string appName)
         {
             if (applications.TryRemove(appName, out var app))
                 return app.StopAsync();
 
-            // CR(iloktionov): KeyNotFoundException? Also please include the name in the error message :)
-            throw new InvalidOperationException("VostokMultiHost doesn't contain application with this name.");
+            throw new KeyNotFoundException($"VostokMultiHost doesn't contain application {appName}.");
         }
+
+        public IEnumerator<IVostokMultiHostApplication> GetEnumerator() => applications.Values.GetEnumerator();
 
         private Task<VostokMultiHostRunResult> StartInternalAsync()
         {
@@ -162,11 +148,10 @@ namespace Vostok.Hosting.MultiHost
 
         private async Task<VostokMultiHostRunResult> RunAllApplications()
         {
-            var appTasks = Applications
+            var appTasks = this
                .Select(x => x.RunAsync())
                .ToArray();
 
-            // CR(iloktionov): Better log this before they actually get started :)
             log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
 
             while (appTasks.Any() && !commonEnvironment.ShutdownToken.IsCancellationRequested)
@@ -181,7 +166,7 @@ namespace Vostok.Hosting.MultiHost
             }
 
             var applicationRunResults = await StopInternalAsync().ConfigureAwait(false);
-            
+
             log.Info("Applications have stopped.");
 
             return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, applicationRunResults);
@@ -190,10 +175,10 @@ namespace Vostok.Hosting.MultiHost
         private async Task<Dictionary<string, VostokApplicationRunResult>> StopInternalAsync()
         {
             var results = new ConcurrentDictionary<string, VostokApplicationRunResult>();
-            
+
             log.Info("Stopping applications..");
 
-            await Task.WhenAll(Applications.Select(x => StopApplication(x, results))).ConfigureAwait(false);
+            await Task.WhenAll(this.Select(x => StopApplication(x, results))).ConfigureAwait(false);
 
             return results.ToDictionary(
                 x => x.Key,
@@ -211,7 +196,7 @@ namespace Vostok.Hosting.MultiHost
                 log.Info("Disposing common environment..");
 
                 commonEnvironment.Dispose();
-                
+
                 return null;
             }
             catch (Exception error)
@@ -249,13 +234,11 @@ namespace Vostok.Hosting.MultiHost
                 {
                     settings.EnvironmentSetup(builder);
 
-                    // TODO: Fill with some trash
-                    // CR(iloktionov): Project = Infrastructure would likely cause our Sentry to be overrun with test junk :)
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
-                           .SetProject("Infrastructure")
-                           .SetEnvironment("Local")
-                           .SetApplication("VostokMultiHost")
+                           .SetProject("VostokMultiHost")
+                           .SetEnvironment("Common")
+                           .SetApplication("Anything")
                            .SetInstance("1"));
 
                     builder.DisableServiceBeacon();
@@ -311,5 +294,7 @@ namespace Vostok.Hosting.MultiHost
                 }
             );
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
