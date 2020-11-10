@@ -42,6 +42,7 @@ namespace Vostok.Hosting.MultiHost
                 AddApp(app);
         }
 
+        // TODO: Implement IEnumerable
         // CR(iloktionov): Why doesn't VostokMultiHost implement IEnumerable<IVostokMultiHostApplication>?
         /// <summary>
         /// Returns an enumerable of added <see cref="IVostokMultiHostApplication"/>.
@@ -53,6 +54,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
+            // TODO: Throw if failed.
             // CR(iloktionov): Why do we ignore the result of StartInternalAsync here?
             if (launchedOnce.TrySetTrue())
                 await StartInternalAsync().ConfigureAwait(false);
@@ -76,6 +78,7 @@ namespace Vostok.Hosting.MultiHost
             if (!launchedOnce.TrySetTrue())
                 return;
 
+            // TODO: The same as in run.
             // CR(iloktionov): 1. Useless await?
             // CR(iloktionov): 2. Shouldn't this throw if StartInternalAsync returns a failed result?
             await StartInternalAsync().ConfigureAwait(false);
@@ -94,6 +97,7 @@ namespace Vostok.Hosting.MultiHost
             if (resultTask == null)
                 return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.NotInitialized));
 
+            // TODO: To Task.Run
             // CR(iloktionov): This may execute callbacks synchronously, so it's best to offload this call with Task.Run.
             shutdownTokenSource.Cancel();
 
@@ -113,6 +117,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public IVostokMultiHostApplication AddApp(VostokMultiHostApplicationSettings applicationSettings)
         {
+            // TODO: Check if cancellation has been called.
             // CR(iloktionov): Should this still work once the multihost has stopped and common environment has been disposed? Or, rather, when the shutdown has been initiated.
             // CR(iloktionov): The same question stands for starting the applications directly.
 
@@ -244,6 +249,7 @@ namespace Vostok.Hosting.MultiHost
                 {
                     settings.EnvironmentSetup(builder);
 
+                    // TODO: Fill with some trash
                     // CR(iloktionov): Project = Infrastructure would likely cause our Sentry to be overrun with test junk :)
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
@@ -288,6 +294,7 @@ namespace Vostok.Hosting.MultiHost
                             logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
                         });
 
+                    // TODO: ApplicationName should probably be a union of Application and Instance from ApplicationIdentity.
                     // CR(iloktionov): Why do we use app name as instance name instead of, well, application?
 
                     // NOTE: We use AppName as default instance name.
