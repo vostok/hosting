@@ -16,7 +16,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task<VostokApplicationRunResult> RunApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
-            return host.AddApp(settings).RunAsync();
+            return host.AddApplication(settings).RunAsync();
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task StartApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
-            return host.AddApp(settings).StartAsync();
+            return host.AddApplication(settings).StartAsync();
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, string appName)
         {
-            var application = host.GetApp(appName);
+            var application = host.GetApplication(appName);
 
             if (application == null)
                 throw new InvalidOperationException("Application with this name doesn't exist.");
