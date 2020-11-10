@@ -10,17 +10,19 @@ namespace Vostok.Hosting.MultiHost
         private readonly AtomicBoolean launchedOnce = false;
         private readonly Func<bool> isReadyToStart;
         private volatile VostokHost vostokHost;
+        private readonly VostokMultiHostApplicationSettings settings;
 
         public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
-            Settings = settings;
+            this.settings = settings;
             this.isReadyToStart = isReadyToStart;
         }
 
-        public string Name => Settings.ApplicationName;
+        public string Name => settings.ApplicationName;
 
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
 
+        // TODO: Make run idempotent?
         // CR(iloktionov): RunAsync should be idempotent!
         public Task<VostokApplicationRunResult> RunAsync()
         {
@@ -41,11 +43,9 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        // CR(iloktionov): Oooh boy, this is ugly :) Why not just reuse the task from RunAsync unless current status is NotInitialized (use Task.CompletedTask then)?
         internal Task<VostokApplicationRunResult> WorkerTask => vostokHost?.workerTask;
 
         // CR(iloktionov): Reformat with code style? And maybe convert to a private readonly field?
-        private VostokMultiHostApplicationSettings Settings { get; }
 
         private void CreateVostokHost()
         {
@@ -55,7 +55,7 @@ namespace Vostok.Hosting.MultiHost
             if (!launchedOnce.TrySetTrue())
                 throw new InvalidOperationException("IVostokMultiHostApplication can't be launched more than once!");
 
-            var vostokHostSettings = new VostokHostSettings(Settings.Application, Settings.EnvironmentSetup)
+            var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,
                 ConfigureStaticProviders = false
