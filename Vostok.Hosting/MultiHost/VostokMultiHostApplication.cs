@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Models;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace Vostok.Hosting.MultiHost
 {
@@ -20,7 +21,6 @@ namespace Vostok.Hosting.MultiHost
             this.isReadyToStart = isReadyToStart;
         }
 
-        // ReSharper disable once InconsistentlySynchronizedField
         public string Name => settings.ApplicationName;
 
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
