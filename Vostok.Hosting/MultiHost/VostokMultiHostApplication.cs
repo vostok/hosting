@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Vostok.Commons.Threading;
+using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Models;
 
 namespace Vostok.Hosting.MultiHost
@@ -8,9 +9,10 @@ namespace Vostok.Hosting.MultiHost
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
         private readonly AtomicBoolean launchedOnce = false;
+        private readonly object launchGate = new object();
         private readonly Func<bool> isReadyToStart;
-        private volatile VostokHost vostokHost;
         private readonly VostokMultiHostApplicationSettings settings;
+        private volatile VostokHost vostokHost;
 
         public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
@@ -18,24 +20,44 @@ namespace Vostok.Hosting.MultiHost
             this.isReadyToStart = isReadyToStart;
         }
 
+        // ReSharper disable once InconsistentlySynchronizedField
         public string Name => settings.ApplicationName;
 
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
 
-        // TODO: Make run idempotent?
-        // CR(iloktionov): RunAsync should be idempotent!
         public Task<VostokApplicationRunResult> RunAsync()
         {
-            CreateVostokHost();
+            lock (launchGate)
+                CreateVostokHost();
 
-            return vostokHost.RunAsync();
+            return WorkerTask;
         }
 
-        public Task StartAsync(VostokApplicationState? stateToAwait)
+        public async Task StartAsync(VostokApplicationState? stateToAwait)
         {
-            CreateVostokHost();
+            lock(launchGate)
+                CreateVostokHost();
+            
+            var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            return vostokHost.StartAsync(stateToAwait);
+            var subscription = vostokHost.OnApplicationStateChanged.Subscribe(
+                state =>
+                {
+                    if (state == stateToAwait)
+                        stateCompletionSource.TrySetResult(true);
+                });
+
+            using (subscription)
+            {
+                var runnerTask = WorkerTask.ContinueWith(task => task.Result.EnsureSuccess(), TaskContinuationOptions.OnlyOnRanToCompletion);
+
+                if (stateToAwait == null)
+                    return;
+
+                var completedTask = await Task.WhenAny(runnerTask, stateCompletionSource.Task).ConfigureAwait(false);
+
+                await completedTask.ConfigureAwait(false);
+            }
         }
 
         public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
@@ -43,17 +65,15 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        internal Task<VostokApplicationRunResult> WorkerTask => vostokHost?.workerTask;
-
-        // CR(iloktionov): Reformat with code style? And maybe convert to a private readonly field?
+        internal volatile Task<VostokApplicationRunResult> WorkerTask;
 
         private void CreateVostokHost()
         {
-            if (!isReadyToStart())
-                throw new InvalidOperationException("VostokMultiHost should be running to launch applications!");
-
             if (!launchedOnce.TrySetTrue())
-                throw new InvalidOperationException("IVostokMultiHostApplication can't be launched more than once!");
+                return;
+            
+            if (!isReadyToStart())
+                throw new InvalidOperationException("VostokMultiHost should be running to launch applications.");
 
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
@@ -62,6 +82,8 @@ namespace Vostok.Hosting.MultiHost
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
+
+            WorkerTask = Task.Run(vostokHost.RunAsync);
         }
     }
 }
