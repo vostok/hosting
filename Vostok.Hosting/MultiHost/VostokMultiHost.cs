@@ -24,7 +24,7 @@ namespace Vostok.Hosting.MultiHost
     [PublicAPI]
     public class VostokMultiHost : IEnumerable<IVostokMultiHostApplication>
     {
-        private readonly ConcurrentDictionary<ApplicationIdentifier, VostokMultiHostApplication> applications;
+        private readonly ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
         private readonly CancellationTokenSource shutdownTokenSource;
@@ -37,7 +37,7 @@ namespace Vostok.Hosting.MultiHost
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokMultiHostApplicationSettings[] apps)
         {
             this.settings = settings;
-            applications = new ConcurrentDictionary<ApplicationIdentifier, VostokMultiHostApplication>();
+            applications = new ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication>();
             shutdownTokenSource = new CancellationTokenSource();
 
             foreach (var app in apps)
@@ -97,7 +97,7 @@ namespace Vostok.Hosting.MultiHost
         /// <para>Returns added application by name or returns null if it doesn't exist.</para>
         /// </summary>
         [CanBeNull]
-        public IVostokMultiHostApplication GetApplication(ApplicationIdentifier identifier)
+        public IVostokMultiHostApplication GetApplication(VostokMultiHostApplicationIdentifier identifier)
             => applications.TryGetValue(identifier, out var app) ? app : null;
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Vostok.Hosting.MultiHost
         /// <summary>
         /// <para>Removes an application (And stops it if necessary).</para>
         /// </summary>
-        public Task<VostokApplicationRunResult> RemoveApplicationAsync(ApplicationIdentifier identifier)
+        public Task<VostokApplicationRunResult> RemoveApplicationAsync(VostokMultiHostApplicationIdentifier identifier)
         {
             if (applications.TryRemove(identifier, out var app))
                 return app.StopAsync();
@@ -173,9 +173,9 @@ namespace Vostok.Hosting.MultiHost
             return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, applicationRunResults);
         }
 
-        private async Task<Dictionary<ApplicationIdentifier, VostokApplicationRunResult>> StopInternalAsync()
+        private async Task<Dictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult>> StopInternalAsync()
         {
-            var results = new ConcurrentDictionary<ApplicationIdentifier, VostokApplicationRunResult>();
+            var results = new ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult>();
 
             log.Info("Stopping applications..");
 
@@ -186,7 +186,7 @@ namespace Vostok.Hosting.MultiHost
                 y => y.Value);
         }
 
-        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<ApplicationIdentifier, VostokApplicationRunResult> results)
+        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult> results)
             => results[app.Identifier] = await app.StopAsync(false).ConfigureAwait(false);
 
         [CanBeNull]
