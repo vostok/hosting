@@ -32,7 +32,7 @@ namespace Vostok.Hosting.MultiHost
         /// Stops provided application if it was added before.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, ApplicationIdentifier identifier)
+        public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, VostokMultiHostApplicationIdentifier identifier)
         {
             var application = host.GetApplication(identifier);
 

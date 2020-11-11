@@ -17,9 +17,9 @@ namespace Vostok.Hosting.MultiHost
     public interface IVostokMultiHostApplication
     {
         /// <summary>
-        /// An application unique identifier. Used as default for 'Application' and 'Instance' in <see cref="IVostokApplicationIdentity"/>.
+        /// An application unique identifier. Used as default for <see cref="IVostokApplicationIdentity.Application"/> and <see cref="IVostokApplicationIdentity.Instance"/>.;
         /// </summary>
-        ApplicationIdentifier Identifier { get; }
+        VostokMultiHostApplicationIdentifier Identifier { get; }
 
         /// <summary>
         /// <inheritdoc cref="VostokHost.ApplicationState"/>

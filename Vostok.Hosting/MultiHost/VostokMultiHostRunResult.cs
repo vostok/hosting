@@ -33,7 +33,7 @@ namespace Vostok.Hosting.MultiHost
         /// Contains information about <see cref="VostokApplicationRunResult"/> of applications that were added to <see cref="VostokMultiHost"/>.
         /// </summary>
         [CanBeNull]
-        public readonly Dictionary<ApplicationIdentifier, VostokApplicationRunResult> ApplicationRunResults;
+        public readonly Dictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult> ApplicationRunResults;
 
         public VostokMultiHostRunResult(VostokMultiHostState state, [CanBeNull] Exception error = null)
         {
@@ -41,7 +41,7 @@ namespace Vostok.Hosting.MultiHost
             Error = error;
         }
 
-        public VostokMultiHostRunResult(VostokMultiHostState state, Dictionary<ApplicationIdentifier, VostokApplicationRunResult> applicationRunResults, [CanBeNull] Exception error = null)
+        public VostokMultiHostRunResult(VostokMultiHostState state, Dictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult> applicationRunResults, [CanBeNull] Exception error = null)
         {
             State = state;
             Error = error;
