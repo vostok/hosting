@@ -12,12 +12,12 @@ namespace Vostok.Hosting.MultiHost
             : base(new StubApplication(), builder)
         {
         }
-    }
 
-    internal class StubApplication : IVostokApplication
-    {
-        public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
+        private class StubApplication : IVostokApplication
+        {
+            public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
 
-        public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
+            public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
+        }
     }
 }

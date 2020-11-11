@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Threading;
+using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
@@ -23,7 +24,7 @@ namespace Vostok.Hosting.MultiHost
     [PublicAPI]
     public class VostokMultiHost : IEnumerable<IVostokMultiHostApplication>
     {
-        private readonly ConcurrentDictionary<string, VostokMultiHostApplication> applications;
+        private readonly ConcurrentDictionary<ApplicationIdentifier, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
         private readonly CancellationTokenSource shutdownTokenSource;
@@ -36,7 +37,7 @@ namespace Vostok.Hosting.MultiHost
         public VostokMultiHost(VostokMultiHostSettings settings, params VostokMultiHostApplicationSettings[] apps)
         {
             this.settings = settings;
-            applications = new ConcurrentDictionary<string, VostokMultiHostApplication>();
+            applications = new ConcurrentDictionary<ApplicationIdentifier, VostokMultiHostApplication>();
             shutdownTokenSource = new CancellationTokenSource();
 
             foreach (var app in apps)
@@ -96,8 +97,8 @@ namespace Vostok.Hosting.MultiHost
         /// <para>Returns added application by name or returns null if it doesn't exist.</para>
         /// </summary>
         [CanBeNull]
-        public IVostokMultiHostApplication GetApplication(string appName)
-            => applications.TryGetValue(appName, out var app) ? app : null;
+        public IVostokMultiHostApplication GetApplication(ApplicationIdentifier identifier)
+            => applications.TryGetValue(identifier, out var app) ? app : null;
 
         /// <summary>
         /// <para>Adds an application and returns created application.</para>
@@ -105,26 +106,26 @@ namespace Vostok.Hosting.MultiHost
         public IVostokMultiHostApplication AddApplication(VostokMultiHostApplicationSettings applicationSettings)
         {
             if (shutdownTokenSource.IsCancellationRequested)
-                throw new InvalidOperationException($"Unable to add application {applicationSettings.ApplicationName} because VostokMultiHost is shutting down.");
+                throw new InvalidOperationException($"Unable to add application {applicationSettings.Identifier} because VostokMultiHost is shutting down.");
 
-            if (applications.ContainsKey(applicationSettings.ApplicationName))
-                throw new ArgumentException($"Application {applicationSettings.ApplicationName} has already been added.");
+            if (applications.ContainsKey(applicationSettings.Identifier))
+                throw new ArgumentException($"{applicationSettings.Identifier} has already been added.");
 
             var updatedSettings = UpdateAppSettings(applicationSettings);
 
-            return applications[applicationSettings.ApplicationName] =
+            return applications[applicationSettings.Identifier] =
                 new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null && !shutdownTokenSource.IsCancellationRequested);
         }
 
         /// <summary>
         /// <para>Removes an application (And stops it if necessary).</para>
         /// </summary>
-        public Task<VostokApplicationRunResult> RemoveApplicationAsync(string appName)
+        public Task<VostokApplicationRunResult> RemoveApplicationAsync(ApplicationIdentifier identifier)
         {
-            if (applications.TryRemove(appName, out var app))
+            if (applications.TryRemove(identifier, out var app))
                 return app.StopAsync();
 
-            throw new KeyNotFoundException($"VostokMultiHost doesn't contain application {appName}.");
+            throw new KeyNotFoundException($"VostokMultiHost doesn't contain {identifier}.");
         }
 
         public IEnumerator<IVostokMultiHostApplication> GetEnumerator() => applications.Values.GetEnumerator();
@@ -172,9 +173,9 @@ namespace Vostok.Hosting.MultiHost
             return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, applicationRunResults);
         }
 
-        private async Task<Dictionary<string, VostokApplicationRunResult>> StopInternalAsync()
+        private async Task<Dictionary<ApplicationIdentifier, VostokApplicationRunResult>> StopInternalAsync()
         {
-            var results = new ConcurrentDictionary<string, VostokApplicationRunResult>();
+            var results = new ConcurrentDictionary<ApplicationIdentifier, VostokApplicationRunResult>();
 
             log.Info("Stopping applications..");
 
@@ -185,8 +186,8 @@ namespace Vostok.Hosting.MultiHost
                 y => y.Value);
         }
 
-        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<string, VostokApplicationRunResult> results)
-            => results[app.Name] = await app.StopAsync(false).ConfigureAwait(false);
+        private async Task StopApplication(IVostokMultiHostApplication app, ConcurrentDictionary<ApplicationIdentifier, VostokApplicationRunResult> results)
+            => results[app.Identifier] = await app.StopAsync(false).ConfigureAwait(false);
 
         [CanBeNull]
         private VostokMultiHostRunResult DisposeCommonEnvironment()
@@ -212,7 +213,7 @@ namespace Vostok.Hosting.MultiHost
             {
                 commonEnvironment = SetupEnvironment();
 
-                log = commonEnvironment.Log.ForContext<VostokMultiHost>();
+                log = commonEnvironment.Log;
 
                 return null;
             }
@@ -233,6 +234,8 @@ namespace Vostok.Hosting.MultiHost
                 builder =>
                 {
                     settings.EnvironmentSetup(builder);
+
+                    builder.SetupLog(logBuilder => logBuilder.CustomizeLog(toCustomize => toCustomize.ForContext<VostokMultiHost>()));
 
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
@@ -262,7 +265,7 @@ namespace Vostok.Hosting.MultiHost
         {
             return new VostokMultiHostApplicationSettings(
                 applicationSettings.Application,
-                applicationSettings.ApplicationName,
+                applicationSettings.Identifier,
                 builder =>
                 {
                     settings.EnvironmentSetup(builder);
@@ -277,11 +280,12 @@ namespace Vostok.Hosting.MultiHost
                             logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
                         });
 
-                    // TODO: ApplicationName should probably be a union of Application and Instance from ApplicationIdentity.
-                    // CR(iloktionov): Why do we use app name as instance name instead of, well, application?
-
-                    // NOTE: We use AppName as default instance name.
-                    builder.SetupApplicationIdentity(identityBuilder => identityBuilder.SetInstance(applicationSettings.ApplicationName));
+                    builder.SetupApplicationIdentity(identityBuilder =>
+                    {
+                        identityBuilder
+                           .SetApplication(applicationSettings.Identifier.ApplicationName)
+                           .SetInstance(applicationSettings.Identifier.InstanceName);
+                    });
 
                     applicationSettings.EnvironmentSetup(builder);
 
