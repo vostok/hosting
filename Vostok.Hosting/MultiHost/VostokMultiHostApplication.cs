@@ -21,7 +21,7 @@ namespace Vostok.Hosting.MultiHost
             this.isReadyToStart = isReadyToStart;
         }
 
-        public string Name => settings.ApplicationName;
+        public ApplicationIdentifier Identifier => settings.Identifier;
 
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
 
