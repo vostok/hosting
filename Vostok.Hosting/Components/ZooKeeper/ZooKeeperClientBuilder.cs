@@ -102,6 +102,8 @@ namespace Vostok.Hosting.Components.ZooKeeper
             if (instance != null)
             {
                 context.ExternalComponents.Add(instance);
+
+                context.Log.Info("Return configured instance");
                 return instance;
             }
 
@@ -126,7 +128,10 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            foreach (var authenticationInfo in authenticationInfos)
+            context.Log.Info("Add auth settings for zk client");
+
+
+            foreach(var authenticationInfo in authenticationInfos)
                 zkClient.AddAuthenticationInfo(authenticationInfo);
 
             return zkClient;
