@@ -1,3 +1,7 @@
+## 0.2.13 (13-11-2020):
+
+Fixed configured loggers log timestamp and context.
+
 ## 0.2.12 (30-10-2020):
 
 - Do not dispose external components.

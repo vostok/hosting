@@ -17,13 +17,11 @@ namespace Vostok.Hosting.Components.Log
         private readonly ILog fileLog;
         private readonly ILog consoleLog;
         private readonly ILog herculesLog;
-        
-        public LogEventLevelCounterFactory LogEventLevelCounterFactory { get; }
 
         public Logs(
-            List<(string name, ILog log)> userLogs, 
-            ILog fileLog, 
-            ILog consoleLog, 
+            List<(string name, ILog log)> userLogs,
+            ILog fileLog,
+            ILog consoleLog,
             ILog herculesLog,
             IObservable<LogConfigurationRule[]> rules,
             Func<ILog, ILog> customization)
@@ -37,10 +35,12 @@ namespace Vostok.Hosting.Components.Log
             LogEventLevelCounterFactory = new LogEventLevelCounterFactory();
         }
 
+        public LogEventLevelCounterFactory LogEventLevelCounterFactory { get; }
+
         public int Count(bool withoutHercules = false)
             => SelectLogs(withoutHercules).Count();
 
-        public ILog BuildCompositeLog(bool withoutHercules = false)
+        public ILog BuildCompositeLog(out string[] configuredLoggers, bool withoutHercules = false)
         {
             var builder = new ConfigurableLogBuilder();
 
@@ -53,7 +53,7 @@ namespace Vostok.Hosting.Components.Log
 
             configurableLog.WaitForRulesInitialization(1.Seconds());
 
-            LogConfiguredLoggers(configurableLog);
+            configuredLoggers = configurableLog.BaseLogs.Keys.ToArray();
 
             return customization(WrapAndAttachCounters(configurableLog));
         }
@@ -61,8 +61,8 @@ namespace Vostok.Hosting.Components.Log
         public void Dispose()
         {
             (fileLog as IDisposable)?.Dispose();
-            
-            if(consoleLog != null)
+
+            if (consoleLog != null)
                 ConsoleLog.Flush();
         }
 
@@ -83,8 +83,5 @@ namespace Vostok.Hosting.Components.Log
             if (herculesLog != null && !withoutHercules)
                 yield return ("Hercules", herculesLog);
         }
-
-        private void LogConfiguredLoggers(ConfigurableLog log)
-            => log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", log.BaseLogs.Keys.ToArray());
     }
 }
