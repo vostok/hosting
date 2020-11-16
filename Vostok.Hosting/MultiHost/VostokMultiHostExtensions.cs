@@ -16,7 +16,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task<VostokApplicationRunResult> RunApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
-            return host.AddApplication(settings).RunAsync();
+            return (host.GetApplication(settings.Identifier) ?? host.AddApplication(settings)).RunAsync();
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task StartApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
-            return host.AddApplication(settings).StartAsync();
+            return (host.GetApplication(settings.Identifier) ?? host.AddApplication(settings)).StartAsync();
         }
 
         /// <summary>
