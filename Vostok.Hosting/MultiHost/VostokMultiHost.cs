@@ -54,17 +54,17 @@ namespace Vostok.Hosting.MultiHost
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
             if (launchedOnce.TrySetTrue())
-                await StartInternalAsync()
-                   .ContinueWith(task => task.Result.EnsureSuccess())
-                   .ConfigureAwait(false);
+            {
+                var environmentInitializationResult = await StartInternalAsync().ConfigureAwait(false);
+
+                if (environmentInitializationResult.Crashed)
+                    return environmentInitializationResult;
+            }
 
             Task<VostokMultiHostRunResult> runTask;
 
             lock (launchGate)
                 runTask = workerTask;
-
-            if (runTask == null)
-                return new VostokMultiHostRunResult(VostokMultiHostState.Exited);
 
             return await runTask.ConfigureAwait(false);
         }
@@ -154,7 +154,7 @@ namespace Vostok.Hosting.MultiHost
         {
             var appTasks = this
                .Select(x => x.RunAsync())
-               .Append(new Task(() => initializationFinish.TrySetResult(true)))
+               .Append<Task>(new Task(() => initializationFinish.TrySetResult(true)))
                .ToArray();
 
             log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
