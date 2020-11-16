@@ -12,10 +12,10 @@ namespace Vostok.Hosting.MultiHost
     {
         public VostokMultiHostApplicationIdentifier([NotNull] string applicationName, [NotNull] string instanceName)
         {
-            if (string.IsNullOrWhiteSpace(ApplicationName))
+            if (string.IsNullOrWhiteSpace(applicationName))
                 throw new ArgumentException("Application name have not been specified.");
 
-            if (string.IsNullOrWhiteSpace(InstanceName))
+            if (string.IsNullOrWhiteSpace(instanceName))
                 throw new ArgumentException("Instance name have not been specified.");
 
             ApplicationName = applicationName;

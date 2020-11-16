@@ -14,7 +14,7 @@ namespace Vostok.Hosting.MultiHost
         /// Runs provided application.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> RunApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
+        public static Task<VostokApplicationRunResult> RunApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApplication(settings).RunAsync();
         }
@@ -23,7 +23,7 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided application.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task StartApp(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
+        public static Task StartApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApplication(settings).StartAsync();
         }
@@ -32,12 +32,12 @@ namespace Vostok.Hosting.MultiHost
         /// Stops provided application if it was added before.
         /// <see cref="VostokMultiHost"/> should be started to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> StopApp(this VostokMultiHost host, VostokMultiHostApplicationIdentifier identifier)
+        public static Task<VostokApplicationRunResult> StopApplication(this VostokMultiHost host, VostokMultiHostApplicationIdentifier identifier)
         {
             var application = host.GetApplication(identifier);
 
             if (application == null)
-                throw new InvalidOperationException("Application with this name doesn't exist.");
+                throw new InvalidOperationException($"{identifier} doesn't exist.");
 
             return application.StopAsync();
         }
@@ -49,7 +49,7 @@ namespace Vostok.Hosting.MultiHost
         public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             foreach (var app in apps)
-                host.StartApp(app).GetAwaiter().GetResult();
+                host.StartApplication(app).GetAwaiter().GetResult();
 
             return Task.CompletedTask;
         }
@@ -69,7 +69,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task StartInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
-            return Task.WhenAll(apps.Select(app => StartApp(host, app)));
+            return Task.WhenAll(apps.Select(app => StartApplication(host, app)));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Vostok.Hosting.MultiHost
         public static Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             foreach (var app in apps)
-                host.StartApp(app).GetAwaiter().GetResult();
+                host.StartApplication(app).GetAwaiter().GetResult();
 
             return Task.CompletedTask;
         }
@@ -108,7 +108,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public static Task RunInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
-            return Task.WhenAll(apps.Select(app => RunApp(host, app)));
+            return Task.WhenAll(apps.Select(app => RunApplication(host, app)));
         }
 
         /// <summary>

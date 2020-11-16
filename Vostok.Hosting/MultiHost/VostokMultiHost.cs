@@ -27,7 +27,8 @@ namespace Vostok.Hosting.MultiHost
         private readonly ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
-        private readonly CancellationTokenSource shutdownTokenSource;
+        private readonly TaskCompletionSource<bool> initializationFinish;
+        private readonly TaskCompletionSource<bool> initiateShutdown;
         private readonly VostokMultiHostSettings settings;
 
         private volatile Task<VostokMultiHostRunResult> workerTask;
@@ -38,7 +39,8 @@ namespace Vostok.Hosting.MultiHost
         {
             this.settings = settings;
             applications = new ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication>();
-            shutdownTokenSource = new CancellationTokenSource();
+            initiateShutdown = new TaskCompletionSource<bool>();
+            initializationFinish = new TaskCompletionSource<bool>();
 
             foreach (var app in apps)
                 AddApplication(app);
@@ -88,7 +90,7 @@ namespace Vostok.Hosting.MultiHost
             if (resultTask == null)
                 return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.NotInitialized));
 
-            Task.Run(() => shutdownTokenSource.Cancel());
+            initiateShutdown.TrySetResult(true);
 
             return resultTask;
         }
@@ -105,7 +107,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public IVostokMultiHostApplication AddApplication(VostokMultiHostApplicationSettings applicationSettings)
         {
-            if (shutdownTokenSource.IsCancellationRequested)
+            if (initiateShutdown.Task.IsCompleted)
                 throw new InvalidOperationException($"Unable to add application {applicationSettings.Identifier} because VostokMultiHost is shutting down.");
 
             if (applications.ContainsKey(applicationSettings.Identifier))
@@ -114,7 +116,8 @@ namespace Vostok.Hosting.MultiHost
             var updatedSettings = UpdateAppSettings(applicationSettings);
 
             return applications[applicationSettings.Identifier] =
-                new VostokMultiHostApplication(updatedSettings, () => commonEnvironment != null && !shutdownTokenSource.IsCancellationRequested);
+                new VostokMultiHostApplication(updatedSettings, 
+                    () => commonEnvironment != null && (!initiateShutdown.Task.IsCompleted || !initializationFinish.Task.IsCompleted));
         }
 
         /// <summary>
@@ -151,13 +154,14 @@ namespace Vostok.Hosting.MultiHost
         {
             var appTasks = this
                .Select(x => x.RunAsync())
+               .Append(new Task(() => initializationFinish.TrySetResult(true)))
                .ToArray();
 
             log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
 
-            while (appTasks.Any() && !commonEnvironment.ShutdownToken.IsCancellationRequested)
+            while (appTasks.Any() && !initiateShutdown.Task.IsCompleted)
             {
-                await Task.WhenAny(Task.WhenAll(appTasks), commonEnvironment.ShutdownTask).ConfigureAwait(false);
+                await Task.WhenAny(Task.WhenAll(appTasks), initiateShutdown.Task).ConfigureAwait(false);
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications.Values
