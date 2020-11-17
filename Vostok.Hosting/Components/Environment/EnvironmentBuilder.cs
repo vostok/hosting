@@ -170,7 +170,10 @@ namespace Vostok.Hosting.Components.Environment
             
             var hasLogs = context.Logs.Count() > 0;
             if (hasLogs)
-                context.Log = context.Logs.BuildCompositeLog();
+            {
+                context.Log = context.Logs.BuildCompositeLog(out var configuredLoggers);
+                context.LogConfiguredLoggers(configuredLoggers);
+            }
 
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
@@ -260,7 +263,7 @@ namespace Vostok.Hosting.Components.Environment
             {
                 context.LogDisabled("All logs");
                 context.PrintBufferedLogs();
-                context.Log = context.Logs.BuildCompositeLog();
+                context.Log = context.Logs.BuildCompositeLog(out _);
             }
 
             LogLevelMetrics.Measure(context.Logs.LogEventLevelCounterFactory.CreateCounter(), context.Metrics);
