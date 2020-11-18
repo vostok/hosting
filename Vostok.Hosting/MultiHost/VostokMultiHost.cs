@@ -37,7 +37,7 @@ namespace Vostok.Hosting.MultiHost
         {
             this.settings = settings;
             applications = new ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication>();
-            initiateShutdown = new TaskCompletionSource<bool>();
+            initiateShutdown = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             foreach (var app in apps)
                 AddApplication(app);
