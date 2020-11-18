@@ -14,7 +14,7 @@ namespace Vostok.Hosting.Tests
         private VostokMultiHost vostokMultiHost;
 
         [Test]
-        public void Should_return_CrashedDuringEnvironmentInitialization()
+        public void Should_return_CrashedDuringEnvironmentSetup()
         {
             vostokMultiHost = new VostokMultiHost(
                 new VostokMultiHostSettings(
@@ -25,13 +25,11 @@ namespace Vostok.Hosting.Tests
                     })
             );
 
-            var result = vostokMultiHost.RunAsync().Result;
-
-            result.State.Should().Be(VostokMultiHostState.CrashedDuringEnvironmentSetup);
-
-            Action error = () => result.EnsureSuccess();
+            Action error = () => vostokMultiHost.RunAsync().GetAwaiter().GetResult();
 
             error.Should().Throw<Exception>().WithMessage("Failed!");
+            
+            vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.CrashedDuringEnvironmentSetup);
         }
 
         [Test]
@@ -63,6 +61,8 @@ namespace Vostok.Hosting.Tests
             Action error = () => result.EnsureSuccess();
 
             error.Should().Throw<Exception>().WithMessage("HAHA! FAILED!");
+            
+            vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.CrashedDuringStopping);
         }
 
         [Test]
@@ -77,6 +77,8 @@ namespace Vostok.Hosting.Tests
             result.State.Should().Be(VostokMultiHostState.Exited);
 
             result.Error.Should().Be(null);
+            
+            vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.Exited);
         }
         
         [Test]
