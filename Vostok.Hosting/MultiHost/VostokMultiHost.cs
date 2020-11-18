@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Threading;
-using Vostok.Hosting.Components.Application;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
@@ -26,8 +24,8 @@ namespace Vostok.Hosting.MultiHost
     {
         private readonly ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
+        private readonly AtomicBoolean isInitialized = false;
         private readonly object launchGate = new object();
-        private readonly TaskCompletionSource<bool> initializationFinish;
         private readonly TaskCompletionSource<bool> initiateShutdown;
         private readonly VostokMultiHostSettings settings;
 
@@ -40,7 +38,6 @@ namespace Vostok.Hosting.MultiHost
             this.settings = settings;
             applications = new ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication>();
             initiateShutdown = new TaskCompletionSource<bool>();
-            initializationFinish = new TaskCompletionSource<bool>();
 
             foreach (var app in apps)
                 AddApplication(app);
@@ -116,8 +113,9 @@ namespace Vostok.Hosting.MultiHost
             var updatedSettings = UpdateAppSettings(applicationSettings);
 
             return applications[applicationSettings.Identifier] =
-                new VostokMultiHostApplication(updatedSettings, 
-                    () => commonEnvironment != null && (!initiateShutdown.Task.IsCompleted || !initializationFinish.Task.IsCompleted));
+                new VostokMultiHostApplication(
+                    updatedSettings,
+                    () => commonEnvironment != null && (!initiateShutdown.Task.IsCompleted || !isInitialized));
         }
 
         /// <summary>
@@ -154,14 +152,19 @@ namespace Vostok.Hosting.MultiHost
         {
             var appTasks = this
                .Select(x => x.RunAsync())
-               .Append<Task>(new Task(() => initializationFinish.TrySetResult(true)))
                .ToArray();
 
             log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
 
-            while (appTasks.Any() && !initiateShutdown.Task.IsCompleted)
+            while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
-                await Task.WhenAny(Task.WhenAll(appTasks), initiateShutdown.Task).ConfigureAwait(false);
+                await Task.WhenAny(
+                        Task.WhenAll(appTasks.Where(x => x != null)),
+                        initiateShutdown.Task)
+                   .ConfigureAwait(false);
+
+                if (!isInitialized && appTasks.Any())
+                    isInitialized.TrySetTrue();
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications.Values
@@ -284,12 +287,13 @@ namespace Vostok.Hosting.MultiHost
                             logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
                         });
 
-                    builder.SetupApplicationIdentity(identityBuilder =>
-                    {
-                        identityBuilder
-                           .SetApplication(applicationSettings.Identifier.ApplicationName)
-                           .SetInstance(applicationSettings.Identifier.InstanceName);
-                    });
+                    builder.SetupApplicationIdentity(
+                        identityBuilder =>
+                        {
+                            identityBuilder
+                               .SetApplication(applicationSettings.Identifier.ApplicationName)
+                               .SetInstance(applicationSettings.Identifier.InstanceName);
+                        });
 
                     applicationSettings.EnvironmentSetup(builder);
 
