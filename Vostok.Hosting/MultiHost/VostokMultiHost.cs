@@ -44,6 +44,11 @@ namespace Vostok.Hosting.MultiHost
         }
 
         /// <summary>
+        /// Returns current <see cref="VostokMultiHostState"/>.
+        /// </summary>
+        public VostokMultiHostState MultiHostState { get; private set; }
+
+        /// <summary>
         /// <para>Initializes itself (if it wasn't initialized before) and runs added apps.</para>
         /// <para>May throw an exception if an error occurs during environment creation.</para>
         /// <para>Does not rethrow exceptions, stores them in result's <see cref="VostokMultiHostRunResult.Error"/> property.</para>
@@ -51,12 +56,9 @@ namespace Vostok.Hosting.MultiHost
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
             if (launchedOnce.TrySetTrue())
-            {
-                var environmentInitializationResult = await StartInternalAsync().ConfigureAwait(false);
-
-                if (environmentInitializationResult.Crashed)
-                    return environmentInitializationResult;
-            }
+                await StartInternalAsync()
+                   .ContinueWith(x => x.Result.EnsureSuccess())
+                   .ConfigureAwait(false);
 
             Task<VostokMultiHostRunResult> runTask;
 
@@ -85,7 +87,7 @@ namespace Vostok.Hosting.MultiHost
                 resultTask = workerTask;
 
             if (resultTask == null)
-                return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.NotInitialized));
+                return Task.FromResult(ReturnResult(VostokMultiHostState.NotInitialized));
 
             initiateShutdown.TrySetResult(true);
 
@@ -145,7 +147,7 @@ namespace Vostok.Hosting.MultiHost
             lock (launchGate)
                 workerTask = Task.Run(RunAllApplications);
 
-            return Task.FromResult(new VostokMultiHostRunResult(VostokMultiHostState.Running));
+            return Task.FromResult(ReturnResult(VostokMultiHostState.Running));
         }
 
         private async Task<VostokMultiHostRunResult> RunAllApplications()
@@ -155,15 +157,13 @@ namespace Vostok.Hosting.MultiHost
             var appTasks = this
                .Select(x => x.RunAsync())
                .ToArray();
-            
+
             while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
                 await Task.WhenAny(
                         Task.WhenAll(appTasks.Where(task => task != null)),
                         initiateShutdown.Task)
                    .ConfigureAwait(false);
-                
-                log.Info("HERE");
 
                 // NOTE: Host becomes initialized when he launches at least one app.
                 if (!isInitialized && appTasks.Any(task => task != null))
@@ -180,7 +180,7 @@ namespace Vostok.Hosting.MultiHost
 
             log.Info("Applications have stopped.");
 
-            return DisposeCommonEnvironment() ?? new VostokMultiHostRunResult(VostokMultiHostState.Exited, applicationRunResults);
+            return DisposeCommonEnvironment() ?? ReturnResult(VostokMultiHostState.Exited, applicationRunResults);
         }
 
         private async Task<Dictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult>> StopInternalAsync()
@@ -212,7 +212,7 @@ namespace Vostok.Hosting.MultiHost
             }
             catch (Exception error)
             {
-                return new VostokMultiHostRunResult(VostokMultiHostState.CrashedDuringStopping, error);
+                return ReturnResult(VostokMultiHostState.CrashedDuringStopping, error);
             }
         }
 
@@ -229,7 +229,7 @@ namespace Vostok.Hosting.MultiHost
             }
             catch (Exception error)
             {
-                return new VostokMultiHostRunResult(VostokMultiHostState.CrashedDuringEnvironmentSetup, error);
+                return ReturnResult(VostokMultiHostState.CrashedDuringEnvironmentSetup, error);
             }
         }
 
@@ -308,6 +308,29 @@ namespace Vostok.Hosting.MultiHost
                         builder.SetupZooKeeperClient(clientBuilder => clientBuilder.UseInstance(zooKeeperClient));
                 }
             );
+        }
+
+        private VostokMultiHostRunResult ReturnResult(VostokMultiHostState newState)
+        {
+            MultiHostState = newState;
+
+            return new VostokMultiHostRunResult(newState);
+        }
+
+        private VostokMultiHostRunResult ReturnResult(VostokMultiHostState newState, Exception error)
+        {
+            MultiHostState = newState;
+
+            return new VostokMultiHostRunResult(newState, error);
+        }
+
+        private VostokMultiHostRunResult ReturnResult(
+            VostokMultiHostState newState,
+            Dictionary<VostokMultiHostApplicationIdentifier, VostokApplicationRunResult> runResults)
+        {
+            MultiHostState = newState;
+
+            return new VostokMultiHostRunResult(newState, runResults);
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
