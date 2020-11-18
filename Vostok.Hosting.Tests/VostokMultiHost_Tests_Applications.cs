@@ -255,12 +255,7 @@ namespace Vostok.Hosting.Tests
 
         private async Task SetupAndStartMultiHost()
         {
-            var workerApplication = new VostokMultiHostApplicationSettings(
-                new TestApplication(),
-                new VostokMultiHostApplicationIdentifier("nevermind", "blabla"),
-                SetupMultiHostApplication);
-
-            vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost), workerApplication);
+            vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost));
 
             await vostokMultiHost.StartAsync();
         }

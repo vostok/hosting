@@ -46,6 +46,8 @@ namespace Vostok.Hosting.Tests
                 new VostokMultiHostSettings(
                     builder =>
                     {
+                        // By the way, it's just irrational to use AddDisposable in VostokMultiHost :(
+                        
                         builder.SetupHostExtensions(extensionsBuilder => extensionsBuilder.AddDisposable(new BadDisposable()));
                         builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog());
                     }),

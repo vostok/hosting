@@ -150,20 +150,23 @@ namespace Vostok.Hosting.MultiHost
 
         private async Task<VostokMultiHostRunResult> RunAllApplications()
         {
+            log.Info("Starting {ApplicationCount} applications.", applications.Count);
+
             var appTasks = this
                .Select(x => x.RunAsync())
                .ToArray();
-
-            log.Info("Starting {ApplicationCount} applications.", appTasks.Length);
-
+            
             while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
                 await Task.WhenAny(
-                        Task.WhenAll(appTasks.Where(x => x != null)),
+                        Task.WhenAll(appTasks.Where(task => task != null)),
                         initiateShutdown.Task)
                    .ConfigureAwait(false);
+                
+                log.Info("HERE");
 
-                if (!isInitialized && appTasks.Any())
+                // NOTE: Host becomes initialized when he launches at least one app.
+                if (!isInitialized && appTasks.Any(task => task != null))
                     isInitialized.TrySetTrue();
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
