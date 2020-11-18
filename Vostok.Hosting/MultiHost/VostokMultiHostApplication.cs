@@ -78,7 +78,9 @@ namespace Vostok.Hosting.MultiHost
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,
-                ConfigureStaticProviders = false
+                ConfigureStaticProviders = false,
+                WarmupConfiguration = false,
+                WarmupZooKeeper = false
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
