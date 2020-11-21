@@ -23,6 +23,8 @@ using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.ServiceDiscovery;
+using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting
@@ -302,7 +304,15 @@ namespace Vostok.Hosting
                 : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
 
             if (!initialize)
+            {
                 environment.ServiceBeacon.Start();
+                var beaconStarted = await WaitForServiceBeaconInitializationOfNeeded(environment.ServiceBeacon);
+                if (!beaconStarted)
+                {
+                    log.Error("Service beacon hasn't started in '{BeaconStartTimeout'}.", settings.BeaconStartTimeout);
+                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconStart);
+                }
+            }
 
             await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
 
@@ -352,6 +362,21 @@ namespace Vostok.Hosting
                 log.Info("Application exited.");
                 return ReturnResult(VostokApplicationState.Exited);
             }
+        }
+
+        private async Task<bool> WaitForServiceBeaconInitializationOfNeeded(IServiceBeacon beacon)
+        {
+            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconStartWaitEnabled)
+                return true;
+
+            if (beacon is ServiceBeacon convertedBeacon)
+            {
+                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconStartTimeout);
+                if (!isStarted)
+                    return false;
+            }
+
+            return true;
         }
 
         private VostokApplicationRunResult ReturnResult(VostokApplicationState newState, Exception error = null)

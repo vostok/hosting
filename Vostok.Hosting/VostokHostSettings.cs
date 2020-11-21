@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
+using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -63,6 +65,16 @@ namespace Vostok.Hosting
         /// If set to <c>true</c>, sends annotations with application lifecycle events (launching, initialized, stopping).
         /// </summary>
         public bool SendAnnotations { get; set; } = true;
+
+        /// <summary>
+        /// If enabled, <see cref="VostokHost"/> will wait for <see cref="IServiceBeacon"/> start.
+        /// </summary>
+        public bool BeaconStartWaitEnabled { get; set; } = true;
+
+        /// <summary>
+        /// <para>Maximum timeout for <see cref="IServiceBeacon"/> start.</para>
+        /// </summary>
+        public TimeSpan BeaconStartTimeout { get; set; } = 5.Seconds();
 
         /// <summary>
         /// <para>Total timeout for host's and application's graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.</para>
