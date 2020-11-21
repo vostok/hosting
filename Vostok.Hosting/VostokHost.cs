@@ -306,7 +306,7 @@ namespace Vostok.Hosting
             if (!initialize)
             {
                 environment.ServiceBeacon.Start();
-                var beaconStarted = await WaitForServiceBeaconInitializationOfNeeded(environment.ServiceBeacon);
+                var beaconStarted = await WaitForServiceBeaconInitializationOfNeeded(environment.ServiceBeacon).ConfigureAwait(false);
                 if (!beaconStarted)
                 {
                     log.Error("Service beacon hasn't started in '{BeaconStartTimeout'}.", settings.BeaconStartTimeout);
@@ -371,7 +371,7 @@ namespace Vostok.Hosting
 
             if (beacon is ServiceBeacon convertedBeacon)
             {
-                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconStartTimeout);
+                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconStartTimeout).ConfigureAwait(false);
                 if (!isStarted)
                     return false;
             }
