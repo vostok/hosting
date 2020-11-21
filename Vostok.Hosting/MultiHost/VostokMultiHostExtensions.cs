@@ -49,7 +49,8 @@ namespace Vostok.Hosting.MultiHost
         public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             var addedApps = apps.Select(host.AddApplication).ToArray();
-            
+
+            // CR(iloktionov): await?
             foreach (var app in addedApps)
                 app.StartAsync().GetAwaiter().GetResult();
 

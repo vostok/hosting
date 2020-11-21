@@ -14,6 +14,8 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.MultiHost
 {
+    // CR(iloktionov): Decouple AddApplication from isInitialized. Stop() should affect added apps immediately.
+
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
     /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
@@ -46,12 +48,12 @@ namespace Vostok.Hosting.MultiHost
         /// <summary>
         /// Returns current <see cref="VostokMultiHostState"/>.
         /// </summary>
-        public VostokMultiHostState MultiHostState { get; private set; }
+        public VostokMultiHostState MultiHostState { get; private set; } = VostokMultiHostState.NotInitialized;
 
         /// <summary>
         /// <para>Initializes itself (if it wasn't initialized before) and runs added apps.</para>
         /// <para>May throw an exception if an error occurs during environment creation.</para>
-        /// <para>Does not rethrow exceptions, stores them in result's <see cref="VostokMultiHostRunResult.Error"/> property.</para>
+        /// <para>Does not rethrow exceptions from applications, stores them in result's <see cref="VostokMultiHostRunResult.Error"/> property.</para>
         /// </summary>
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
@@ -131,8 +133,10 @@ namespace Vostok.Hosting.MultiHost
             throw new KeyNotFoundException($"VostokMultiHost doesn't contain {identifier}.");
         }
 
-        public IEnumerator<IVostokMultiHostApplication> GetEnumerator() => applications.Values.GetEnumerator();
+        public IEnumerator<IVostokMultiHostApplication> GetEnumerator() 
+            => applications.Select(pair => pair.Value).GetEnumerator();
 
+        // CR(iloktionov): This is always followed by EnsureSuccess.
         private Task<VostokMultiHostRunResult> StartInternalAsync()
         {
             // NOTE: Configure thread pool once there if necessary.
@@ -160,12 +164,13 @@ namespace Vostok.Hosting.MultiHost
 
             while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
+                // CR(iloktionov): This will busy-spin if there are only apps that have not been started yet.
                 await Task.WhenAny(
                         Task.WhenAll(appTasks.Where(task => task != null)),
                         initiateShutdown.Task)
                    .ConfigureAwait(false);
 
-                // NOTE: Host becomes initialized when he launches at least one app.
+                // NOTE: Host becomes initialized when it launches at least one app.
                 if (!isInitialized && appTasks.Any(task => task != null))
                     isInitialized.TrySetTrue();
 
