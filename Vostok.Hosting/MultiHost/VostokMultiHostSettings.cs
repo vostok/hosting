@@ -5,6 +5,7 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
 {
+    // CR(iloktionov): Remove inheritance.
     [PublicAPI]
     public class VostokMultiHostSettings : VostokHostSettings
     {

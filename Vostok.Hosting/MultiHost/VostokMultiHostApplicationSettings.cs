@@ -25,6 +25,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public VostokMultiHostApplicationIdentifier Identifier { get; }
 
+        // CR(iloktionov): Let's make this one optional.
         /// <summary>
         /// A delegate which will be used to configure <see cref="IVostokHostingEnvironment"/>.
         /// </summary>

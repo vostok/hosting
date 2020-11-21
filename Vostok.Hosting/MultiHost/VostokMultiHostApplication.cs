@@ -80,7 +80,7 @@ namespace Vostok.Hosting.MultiHost
                 ConfigureThreadPool = false,
                 ConfigureStaticProviders = false,
                 WarmupConfiguration = false,
-                WarmupZooKeeper = false
+                WarmupZooKeeper = false,
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
