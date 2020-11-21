@@ -306,11 +306,11 @@ namespace Vostok.Hosting
             if (!initialize)
             {
                 environment.ServiceBeacon.Start();
-                var beaconStarted = await WaitForServiceBeaconInitializationOfNeeded(environment.ServiceBeacon).ConfigureAwait(false);
+                var beaconStarted = await WaitForServiceBeaconRegistrationIfNeeded(environment.ServiceBeacon).ConfigureAwait(false);
                 if (!beaconStarted)
                 {
-                    log.Error("Service beacon hasn't started in '{BeaconStartTimeout'}.", settings.BeaconStartTimeout);
-                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconStart);
+                    log.Error("Service beacon hasn't registered in '{BeaconStartTimeout'}.", settings.BeaconRegistrationTimeout);
+                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconRegistration);
                 }
             }
 
@@ -364,14 +364,14 @@ namespace Vostok.Hosting
             }
         }
 
-        private async Task<bool> WaitForServiceBeaconInitializationOfNeeded(IServiceBeacon beacon)
+        private async Task<bool> WaitForServiceBeaconRegistrationIfNeeded(IServiceBeacon beacon)
         {
-            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconStartWaitEnabled)
+            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconRegistrationWaitEnabled)
                 return true;
 
             if (beacon is ServiceBeacon convertedBeacon)
             {
-                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconStartTimeout).ConfigureAwait(false);
+                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconRegistrationTimeout).ConfigureAwait(false);
                 if (!isStarted)
                     return false;
             }
