@@ -54,7 +54,7 @@ namespace Vostok.Hosting.MultiHost
             var addedApps = apps.Select(host.AddApplication).ToArray();
 
             foreach (var app in addedApps)
-                await app.StartAsync();
+                await app.StartAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Vostok.Hosting.MultiHost
             var addedApps = apps.Select(host.AddApplication).ToArray();
 
             foreach (var app in addedApps)
-                await app.RunAsync();
+                await app.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
