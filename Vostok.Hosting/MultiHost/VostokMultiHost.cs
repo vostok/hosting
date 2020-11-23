@@ -138,24 +138,29 @@ namespace Vostok.Hosting.MultiHost
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
             BuildCommonEnvironment()?.EnsureSuccess();
-
-            lock (launchGate)
-                workerTask = Task.Run(RunAllApplications);
+            
+            StartAddedApplications();
 
             return Task.FromResult(ReturnResult(VostokMultiHostState.Running));
         }
 
-        private async Task<VostokMultiHostRunResult> RunAllApplications()
+        private void StartAddedApplications()
+        {
+            log.Info("Starting {ApplicationCount} applications.", applications.Count);
+
+            foreach (var application in applications.Select(x => x.Value))
+                application.InternalStartApplication();
+            
+            lock (launchGate)
+                workerTask = Task.Run(RunAddedApplications);
+        }
+
+        private async Task<VostokMultiHostRunResult> RunAddedApplications()
         {
             IEnumerable<Task<VostokApplicationRunResult>> GetLaunchedApplications(IEnumerable<Task<VostokApplicationRunResult>> apps) =>
                 apps.Where(x => x != null);
 
-            log.Info("Starting {ApplicationCount} applications.", applications.Count);
-
-            var appTasks = applications
-               .Select(x => x.Value)
-               .Select(x => x.InternalRunAsync())
-               .ToArray();
+            var appTasks = new Task<VostokApplicationRunResult>[0];
 
             var isInitialized = false;
 
