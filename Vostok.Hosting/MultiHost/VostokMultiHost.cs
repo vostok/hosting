@@ -24,7 +24,6 @@ namespace Vostok.Hosting.MultiHost
     {
         private readonly ConcurrentDictionary<VostokMultiHostApplicationIdentifier, VostokMultiHostApplication> applications;
         private readonly AtomicBoolean launchedOnce = false;
-        private readonly AtomicBoolean isInitialized = false;
         private readonly object launchGate = new object();
         private readonly TaskCompletionSource<bool> initiateShutdown;
         private readonly VostokMultiHostSettings settings;
@@ -56,9 +55,7 @@ namespace Vostok.Hosting.MultiHost
         public async Task<VostokMultiHostRunResult> RunAsync()
         {
             if (launchedOnce.TrySetTrue())
-                await StartInternalAsync()
-                   .ContinueWith(x => x.Result.EnsureSuccess())
-                   .ConfigureAwait(false);
+                await StartInternalAsync().ConfigureAwait(false);
 
             Task<VostokMultiHostRunResult> runTask;
 
@@ -74,7 +71,7 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public Task StartAsync() => !launchedOnce.TrySetTrue()
             ? Task.CompletedTask
-            : StartInternalAsync().ContinueWith(task => task.Result.EnsureSuccess());
+            : StartInternalAsync();
 
         /// <summary>
         /// <para>Stops all running applications and disposes itself.</para>
@@ -150,24 +147,29 @@ namespace Vostok.Hosting.MultiHost
 
         private async Task<VostokMultiHostRunResult> RunAllApplications()
         {
+            IEnumerable<Task<VostokApplicationRunResult>> GetLaunchedApplications(IEnumerable<Task<VostokApplicationRunResult>> apps) =>
+                apps.Where(x => x != null);
+
             log.Info("Starting {ApplicationCount} applications.", applications.Count);
 
-            var appTasks = this
-               .Select(x => x.RunAsync())
+            var appTasks = applications
+               .Select(x => x.Value)
+               .Select(x => x.InternalRunAsync())
                .ToArray();
+
+            var isInitialized = false;
 
             while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
-                // NOTE: Task may be null if child application hasn't been launched yet. 
                 await Task.WhenAll(
-                        Task.WhenAny(Task.WhenAll(appTasks.Where(task => task != null)), initiateShutdown.Task),
+                        Task.WhenAny(Task.WhenAll(GetLaunchedApplications(appTasks)), initiateShutdown.Task),
                         Task.Delay(20)
                     )
                    .ConfigureAwait(false);
 
                 // NOTE: MultiHost becomes initialized when it launches at least one app.
-                if (!isInitialized && appTasks.Any(task => task != null))
-                    isInitialized.TrySetTrue();
+                if (!isInitialized && GetLaunchedApplications(appTasks).Any())
+                    isInitialized = true;
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications

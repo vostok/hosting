@@ -52,5 +52,8 @@ namespace Vostok.Hosting.MultiHost
         }
 
         public override string ToString() => $"{ApplicationName}.{InstanceName}";
+
+        public static implicit operator VostokMultiHostApplicationIdentifier((string appName, string instanceName) appId) =>
+            new VostokMultiHostApplicationIdentifier(appId.appName, appId.instanceName);
     }
 }

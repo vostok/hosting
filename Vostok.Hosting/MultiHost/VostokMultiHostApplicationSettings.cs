@@ -14,7 +14,7 @@ namespace Vostok.Hosting.MultiHost
             Identifier = vostokMultiHostApplicationName ?? throw new ArgumentNullException(nameof(vostokMultiHostApplicationName));
             EnvironmentSetup = environmentSetup ?? (builder => {});
         }
-        
+
         /// <summary>
         /// An application which will be run.
         /// </summary>

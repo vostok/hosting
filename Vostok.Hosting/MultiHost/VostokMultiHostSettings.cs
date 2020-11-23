@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
@@ -11,7 +10,7 @@ namespace Vostok.Hosting.MultiHost
         {
             EnvironmentSetup = builder;
         }
-        
+
         /// <summary>
         /// A delegate which will be used:
         ///  <list type="bullet">
@@ -21,10 +20,10 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         [NotNull]
         public VostokHostingEnvironmentSetup EnvironmentSetup { get; set; }
-        
+
         /// <inheritdoc cref="VostokHostSettings.ConfigureStaticProviders"/>
         public bool ConfigureStaticProviders { get; set; } = true;
-        
+
         /// <inheritdoc cref="VostokHostSettings.ConfigureThreadPool"/>
         public bool ConfigureThreadPool { get; set; } = true;
 

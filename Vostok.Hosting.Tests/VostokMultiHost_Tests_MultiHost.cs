@@ -18,7 +18,7 @@ namespace Vostok.Hosting.Tests
         {
             var application = new VostokMultiHostApplicationSettings(
                 new DelayApplication(),
-                new VostokMultiHostApplicationIdentifier("test", "test"),
+                ("test", "test"),
                 SetupMultiHostApplication);
 
             var vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost), application);
@@ -35,12 +35,12 @@ namespace Vostok.Hosting.Tests
         {
             var application = new VostokMultiHostApplicationSettings(
                 new DelayApplication(),
-                new VostokMultiHostApplicationIdentifier("test", "test"),
+                ("test", "test"),
                 SetupMultiHostApplication);
-            
+
             var newApplication = new VostokMultiHostApplicationSettings(
                 new NeverEndingApplication(),
-                new VostokMultiHostApplicationIdentifier("nevermind", "delay"),
+                ("nevermind", "delay"),
                 SetupMultiHostApplication);
 
             var vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost), application);

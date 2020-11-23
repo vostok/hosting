@@ -28,7 +28,7 @@ namespace Vostok.Hosting.Tests
             Action error = () => vostokMultiHost.RunAsync().GetAwaiter().GetResult();
 
             error.Should().Throw<Exception>().WithMessage("Failed!");
-            
+
             vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.CrashedDuringEnvironmentSetup);
         }
 
@@ -37,15 +37,15 @@ namespace Vostok.Hosting.Tests
         {
             var workerApplication = new VostokMultiHostApplicationSettings(
                 new TestApplication(),
-                new VostokMultiHostApplicationIdentifier("test", "test"),
+                ("test", "test"),
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
-            
+
             vostokMultiHost = new VostokMultiHost(
                 new VostokMultiHostSettings(
                     builder =>
                     {
                         // By the way, it's just irrational to use AddDisposable in VostokMultiHost :(
-                        
+
                         builder.SetupHostExtensions(extensionsBuilder => extensionsBuilder.AddDisposable(new BadDisposable()));
                         builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog());
                     }),
@@ -61,7 +61,7 @@ namespace Vostok.Hosting.Tests
             Action error = () => result.EnsureSuccess();
 
             error.Should().Throw<Exception>().WithMessage("HAHA! FAILED!");
-            
+
             vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.CrashedDuringStopping);
         }
 
@@ -71,26 +71,26 @@ namespace Vostok.Hosting.Tests
             SetupMultiHost();
 
             await vostokMultiHost.StartAsync();
-            
+
             var result = await vostokMultiHost.StopAsync();
 
             result.State.Should().Be(VostokMultiHostState.Exited);
 
             result.Error.Should().Be(null);
-            
+
             vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.Exited);
         }
-        
+
         [Test]
         public async Task Should_return_NotInitialized_on_stop_before_start()
         {
             SetupMultiHost();
 
             var result = await vostokMultiHost.StopAsync();
-            
+
             result.State.Should().Be(VostokMultiHostState.NotInitialized);
         }
-        
+
         [Test]
         public async Task Should_not_throw_on_second_launch()
         {
@@ -126,7 +126,7 @@ namespace Vostok.Hosting.Tests
         {
             var workerApplication = new VostokMultiHostApplicationSettings(
                 new TestApplication(),
-                new VostokMultiHostApplicationIdentifier("nevermind", "blabla"),
+                ("nevermind", "blabla"),
                 MultiHostApplicationBuilder);
 
             vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(MultiHostBuilder), workerApplication);

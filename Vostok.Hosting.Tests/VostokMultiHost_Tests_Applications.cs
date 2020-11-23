@@ -26,7 +26,7 @@ namespace Vostok.Hosting.Tests
         [TestCase(VostokApplicationState.Running)]
         public async Task Start_should_wait_until_given_state_occurs(VostokApplicationState stateToAwait)
         {
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
             var workerApplication = new VostokMultiHostApplicationSettings(new NeverEndingApplication(), identifier, SetupMultiHostApplication);
 
             vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost), workerApplication);
@@ -49,7 +49,7 @@ namespace Vostok.Hosting.Tests
         {
             await SetupAndStartMultiHost();
 
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(true), identifier, SetupMultiHostApplication);
 
@@ -65,7 +65,7 @@ namespace Vostok.Hosting.Tests
         {
             await SetupAndStartMultiHost();
 
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
@@ -81,7 +81,7 @@ namespace Vostok.Hosting.Tests
         {
             await SetupAndStartMultiHost();
 
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
@@ -92,7 +92,7 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_throw_on_add_if_VostokMultiHost_not_launched()
         {
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
@@ -109,7 +109,7 @@ namespace Vostok.Hosting.Tests
 
             await vostokMultiHost.StopAsync();
 
-            var identifier = new VostokMultiHostApplicationIdentifier("test", "test");
+            var identifier = ("test", "test");
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
@@ -136,7 +136,7 @@ namespace Vostok.Hosting.Tests
                 appList.Add(
                     new VostokMultiHostApplicationSettings(
                         new SequentialCheckerApplication(GetIndex, SetIndex, i),
-                        new VostokMultiHostApplicationIdentifier("test", $"{i}"),
+                        ("test", i.ToString()),
                         SetupMultiHostApplication)
                 );
             }
@@ -156,7 +156,7 @@ namespace Vostok.Hosting.Tests
                 appList.Add(
                     new VostokMultiHostApplicationSettings(
                         new DelayApplication(),
-                        new VostokMultiHostApplicationIdentifier("test", i.ToString()),
+                        ("test", i.ToString()),
                         SetupMultiHostApplication)
                 );
             }
@@ -171,7 +171,7 @@ namespace Vostok.Hosting.Tests
         {
             await SetupAndStartMultiHost();
 
-            var workerIdentifier = new VostokMultiHostApplicationIdentifier("nevermind", "delay");
+            var workerIdentifier = ("nevermind", "delay");
 
             var workerApplication = new VostokMultiHostApplicationSettings(
                 new DelayApplication(),
@@ -190,7 +190,7 @@ namespace Vostok.Hosting.Tests
         {
             await SetupAndStartMultiHost();
 
-            var workerIdentifier = new VostokMultiHostApplicationIdentifier("nevermind", "delay");
+            var workerIdentifier = ("nevermind", "delay");
 
             var workerApplication = new VostokMultiHostApplicationSettings(
                 new DelayApplication(),
@@ -216,7 +216,7 @@ namespace Vostok.Hosting.Tests
                 applications.Add(
                     new VostokMultiHostApplicationSettings(
                         new NeverEndingApplication(),
-                        new VostokMultiHostApplicationIdentifier("test", i.ToString()),
+                        ("test", i.ToString()),
                         SetupMultiHostApplication));
             }
 
