@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.MultiHost;
 using Vostok.Hosting.Setup;
@@ -120,6 +121,8 @@ namespace Vostok.Hosting.Tests
                 });
 
             builder.SetupLog(log => log.SetupConsoleLog());
+
+            builder.SetupShutdownTimeout(1.Milliseconds());
         }
 
         private void SetupMultiHost()

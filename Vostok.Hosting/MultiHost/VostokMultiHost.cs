@@ -160,7 +160,9 @@ namespace Vostok.Hosting.MultiHost
             IEnumerable<Task<VostokApplicationRunResult>> GetLaunchedApplications(IEnumerable<Task<VostokApplicationRunResult>> apps) =>
                 apps.Where(x => x != null);
 
-            var appTasks = new Task<VostokApplicationRunResult>[0];
+            var appTasks = applications
+               .Select(x => x.Value.WorkerTask)
+               .ToArray();
 
             var isInitialized = false;
 
