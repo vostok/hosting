@@ -46,15 +46,12 @@ namespace Vostok.Hosting.MultiHost
         /// Starts provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static async Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             var addedApps = apps.Select(host.AddApplication).ToArray();
 
-            // CR(iloktionov): await?
             foreach (var app in addedApps)
-                app.StartAsync().GetAwaiter().GetResult();
-
-            return Task.CompletedTask;
+                await app.StartAsync();
         }
 
         /// <summary>
@@ -88,14 +85,12 @@ namespace Vostok.Hosting.MultiHost
         /// Runs provided applications one by one.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static async Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             var addedApps = apps.Select(host.AddApplication).ToArray();
             
             foreach (var app in addedApps)
-                app.RunAsync().GetAwaiter().GetResult();
-
-            return Task.CompletedTask;
+                await app.RunAsync();
         }
 
         /// <summary>

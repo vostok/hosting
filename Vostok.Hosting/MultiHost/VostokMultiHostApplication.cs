@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Models;
+
 // ReSharper disable InconsistentlySynchronizedField
 
 namespace Vostok.Hosting.MultiHost
 {
     internal class VostokMultiHostApplication : IVostokMultiHostApplication
     {
+        internal volatile Task<VostokApplicationRunResult> WorkerTask;
         private readonly AtomicBoolean launchedOnce = false;
         private readonly object launchGate = new object();
         private readonly Func<bool> isReadyToStart;
@@ -35,9 +37,9 @@ namespace Vostok.Hosting.MultiHost
 
         public async Task StartAsync(VostokApplicationState? stateToAwait)
         {
-            lock(launchGate)
+            lock (launchGate)
                 CreateVostokHost();
-            
+
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             var subscription = vostokHost.OnApplicationStateChanged.Subscribe(
@@ -65,15 +67,25 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        internal volatile Task<VostokApplicationRunResult> WorkerTask;
+        internal Task<VostokApplicationRunResult> RunAsyncInternal()
+        {
+            lock (launchGate)
+                CreateVostokHost(false);
 
-        private void CreateVostokHost()
+            return WorkerTask;
+        }
+
+        private void CreateVostokHost(bool throwsException = true)
         {
             if (!launchedOnce.TrySetTrue())
                 return;
-            
+
             if (!isReadyToStart())
-                throw new InvalidOperationException("VostokMultiHost should be running to launch applications.");
+            {
+                if (throwsException)
+                    throw new InvalidOperationException("VostokMultiHost should be running to launch applications.");
+                return;
+            }
 
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {

@@ -8,11 +8,11 @@ namespace Vostok.Hosting.MultiHost
     [PublicAPI]
     public class VostokMultiHostApplicationSettings
     {
-        public VostokMultiHostApplicationSettings([NotNull] IVostokApplication application, [NotNull] VostokMultiHostApplicationIdentifier vostokMultiHostApplicationName, [NotNull] VostokHostingEnvironmentSetup environmentSetup)
+        public VostokMultiHostApplicationSettings([NotNull] IVostokApplication application, [NotNull] VostokMultiHostApplicationIdentifier vostokMultiHostApplicationName, VostokHostingEnvironmentSetup environmentSetup = null)
         {
             Application = application ?? throw new ArgumentNullException(nameof(application));
             Identifier = vostokMultiHostApplicationName ?? throw new ArgumentNullException(nameof(vostokMultiHostApplicationName));
-            EnvironmentSetup = environmentSetup ?? throw new ArgumentNullException(nameof(environmentSetup));
+            EnvironmentSetup = environmentSetup ?? (builder => {});
         }
         
         /// <summary>
@@ -25,7 +25,6 @@ namespace Vostok.Hosting.MultiHost
         /// </summary>
         public VostokMultiHostApplicationIdentifier Identifier { get; }
 
-        // CR(iloktionov): Let's make this one optional.
         /// <summary>
         /// A delegate which will be used to configure <see cref="IVostokHostingEnvironment"/>.
         /// </summary>

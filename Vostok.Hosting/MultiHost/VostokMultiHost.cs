@@ -14,8 +14,6 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.MultiHost
 {
-    // CR(iloktionov): Decouple AddApplication from isInitialized. Stop() should affect added apps immediately.
-
     /// <summary>
     /// <para>An <see cref="IVostokMultiHostApplication"/> launcher.</para>
     /// <para>It was designed to launch multiple <see cref="IVostokMultiHostApplication"/> at a time.</para>
@@ -119,7 +117,7 @@ namespace Vostok.Hosting.MultiHost
             return applications[applicationSettings.Identifier] =
                 new VostokMultiHostApplication(
                     updatedSettings,
-                    () => commonEnvironment != null && (!initiateShutdown.Task.IsCompleted || !isInitialized));
+                    () => commonEnvironment != null && !initiateShutdown.Task.IsCompleted);
         }
 
         /// <summary>
@@ -133,20 +131,16 @@ namespace Vostok.Hosting.MultiHost
             throw new KeyNotFoundException($"VostokMultiHost doesn't contain {identifier}.");
         }
 
-        public IEnumerator<IVostokMultiHostApplication> GetEnumerator() 
+        public IEnumerator<IVostokMultiHostApplication> GetEnumerator()
             => applications.Select(pair => pair.Value).GetEnumerator();
 
-        // CR(iloktionov): This is always followed by EnsureSuccess.
         private Task<VostokMultiHostRunResult> StartInternalAsync()
         {
             // NOTE: Configure thread pool once there if necessary.
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
-            var environmentBuildResult = BuildCommonEnvironment();
-
-            if (environmentBuildResult != null)
-                return Task.FromResult(environmentBuildResult);
+            BuildCommonEnvironment()?.EnsureSuccess();
 
             lock (launchGate)
                 workerTask = Task.Run(RunAllApplications);
@@ -164,18 +158,20 @@ namespace Vostok.Hosting.MultiHost
 
             while ((appTasks.Any() || !isInitialized) && !initiateShutdown.Task.IsCompleted)
             {
-                // CR(iloktionov): This will busy-spin if there are only apps that have not been started yet.
-                await Task.WhenAny(
-                        Task.WhenAll(appTasks.Where(task => task != null)),
-                        initiateShutdown.Task)
+                // NOTE: Task may be null if child application hasn't been launched yet. 
+                await Task.WhenAll(
+                        Task.WhenAny(Task.WhenAll(appTasks.Where(task => task != null)), initiateShutdown.Task),
+                        Task.Delay(20)
+                    )
                    .ConfigureAwait(false);
 
-                // NOTE: Host becomes initialized when it launches at least one app.
+                // NOTE: MultiHost becomes initialized when it launches at least one app.
                 if (!isInitialized && appTasks.Any(task => task != null))
                     isInitialized.TrySetTrue();
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
-                appTasks = applications.Values
+                appTasks = applications
+                   .Select(x => x.Value)
                    .Where(x => !x.ApplicationState.IsTerminal())
                    .Select(x => x.WorkerTask)
                    .ToArray();
