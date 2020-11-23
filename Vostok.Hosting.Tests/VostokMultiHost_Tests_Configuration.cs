@@ -27,7 +27,7 @@ namespace Vostok.Hosting.Tests
 
             var application = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Assertion),
-                new VostokMultiHostApplicationIdentifier("test", "test"),
+                ("test", "test"),
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
 
             vostokMultiHost.AddApplication(application);
@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Tests
 
             var application = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Assertion),
-                new VostokMultiHostApplicationIdentifier("testApplication", "testInstance"),
+                ("testApplication", "testInstance"),
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
 
             vostokMultiHost.AddApplication(application);
@@ -90,7 +90,7 @@ namespace Vostok.Hosting.Tests
 
             var application = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Assertion),
-                new VostokMultiHostApplicationIdentifier("testApplication", "testInstance"),
+                ("testApplication", "testInstance"),
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
 
             vostokMultiHost.AddApplication(application);
@@ -123,14 +123,14 @@ namespace Vostok.Hosting.Tests
                         builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog());
                     }));
 
-            var extractIdentifier = new VostokMultiHostApplicationIdentifier("testApplication", "testInstance");
+            var extractIdentifier = ("testApplication", "testInstance");
 
             var extractApplication = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Extract),
                 extractIdentifier,
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
 
-            var assertIdentifier = new VostokMultiHostApplicationIdentifier("testApplication", "testInstance2");
+            var assertIdentifier = ("testApplication", "testInstance2");
 
             var assertApplication = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Assert),
@@ -173,14 +173,14 @@ namespace Vostok.Hosting.Tests
                         builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog());
                     }));
 
-            var extractIdentifier = new VostokMultiHostApplicationIdentifier("testApplication", "testInstance");
+            var extractIdentifier = ("testApplication", "testInstance");
 
             var extractApplication = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Extract),
                 extractIdentifier,
                 builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
 
-            var assertIdentifier = new VostokMultiHostApplicationIdentifier("testApplication", "testInstance2");
+            var assertIdentifier = ("testApplication", "testInstance2");
 
             var assertApplication = new VostokMultiHostApplicationSettings(
                 new TesterApplication(Assert),
