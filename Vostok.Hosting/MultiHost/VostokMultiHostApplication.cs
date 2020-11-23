@@ -67,12 +67,10 @@ namespace Vostok.Hosting.MultiHost
             return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
         }
 
-        internal Task<VostokApplicationRunResult> InternalRunAsync()
+        internal void InternalStartApplication()
         {
             lock (launchGate)
                 CreateVostokHost(false);
-
-            return WorkerTask;
         }
 
         private void CreateVostokHost(bool throwsException = true)
