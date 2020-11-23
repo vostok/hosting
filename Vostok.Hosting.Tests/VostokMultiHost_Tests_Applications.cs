@@ -251,6 +251,8 @@ namespace Vostok.Hosting.Tests
                 });
 
             builder.SetupLog(log => log.SetupConsoleLog());
+
+            builder.SetupShutdownTimeout(1.Milliseconds());
         }
 
         private async Task SetupAndStartMultiHost()
