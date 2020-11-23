@@ -1,24 +1,34 @@
-﻿using System.Threading.Tasks;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
 {
-    // CR(iloktionov): Remove inheritance.
     [PublicAPI]
-    public class VostokMultiHostSettings : VostokHostSettings
+    public class VostokMultiHostSettings
     {
         public VostokMultiHostSettings(VostokHostingEnvironmentSetup builder)
-            : base(new StubApplication(), builder)
         {
+            EnvironmentSetup = builder;
         }
+        
+        /// <summary>
+        /// A delegate which will be used:
+        ///  <list type="bullet">
+        ///     <item><description>To configure common environment in <see cref="VostokMultiHost"/>.</description></item>
+        ///     <item><description>As default settings in child applications.</description></item>
+        /// </list>
+        /// </summary>
+        [NotNull]
+        public VostokHostingEnvironmentSetup EnvironmentSetup { get; set; }
+        
+        /// <inheritdoc cref="VostokHostSettings.ConfigureStaticProviders"/>
+        public bool ConfigureStaticProviders { get; set; } = true;
+        
+        /// <inheritdoc cref="VostokHostSettings.ConfigureThreadPool"/>
+        public bool ConfigureThreadPool { get; set; } = true;
 
-        private class StubApplication : IVostokApplication
-        {
-            public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
-
-            public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
-        }
+        /// <inheritdoc cref="VostokHostSettings.ThreadPoolTuningMultiplier"/>
+        public int ThreadPoolTuningMultiplier { get; set; } = 32;
     }
 }
