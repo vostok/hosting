@@ -14,6 +14,7 @@ using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
@@ -93,7 +94,7 @@ namespace Vostok.Hosting.Components
 
                 TryDispose(ServiceBeacon, "ServiceBeacon");
 
-                Log = Logs?.BuildCompositeLog(true) ?? new SilentLog();
+                Log = Logs?.BuildCompositeLog(out _, true) ?? new SilentLog();
                 SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
                 
                 TryDispose(HerculesSink, "HerculesSink");
@@ -121,6 +122,9 @@ namespace Vostok.Hosting.Components
                 throw;
             }
         }
+
+        public void LogConfiguredLoggers(string[] configuredLoggers) =>
+            Log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", configuredLoggers);
 
         public void LogDisabled(string name) =>
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled.", name);
