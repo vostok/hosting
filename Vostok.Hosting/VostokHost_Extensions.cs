@@ -35,7 +35,7 @@ namespace Vostok.Hosting
             vostokHost.StopAsync(ensureSuccess).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Listen <see cref="Console.CancelKeyPress"/> and shutdown vostok host if called.
+        /// Listen <see cref="Console.CancelKeyPress"/> and shutdown VostokHost if called.
         /// </summary>
         public static VostokHost WithConsoleCancellation([NotNull] this VostokHost vostokHost)
         {
@@ -49,7 +49,7 @@ namespace Vostok.Hosting
         }
         
         /// <summary>
-        /// Listen <see cref="AppDomain.CurrentDomain.ProcessExit"/> and shutdown vostok if SIGTERM received.
+        /// Listen <see cref="AppDomain.ProcessExit"/> and shutdown VostokHost if SIGTERM received.
         /// </summary>
         public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost)
         {

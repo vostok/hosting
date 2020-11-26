@@ -11,7 +11,8 @@ namespace Vostok.Hosting.Models
     public class VostokApplicationRunResult
     {
         /// <summary>
-        /// <para>Returns final state of application after <see cref="IVostokApplication.InitializeAsync"/> and <see cref="IVostokApplication.RunAsync"/> had been called. </para>
+        /// <para>Returns final state of application after <see cref="IVostokApplication.InitializeAsync"/> and <see cref="IVostokApplication.RunAsync"/> had been called.</para>
+        /// <para>May return <see cref="VostokApplicationState.NotInitialized"/> if <see cref="VostokHost"/> was not launched.</para>
         /// <para>Possible final states:</para>
         /// <list type="bullet">
         ///     <item><description><see cref="VostokApplicationState.Exited"/></description></item>
