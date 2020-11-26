@@ -282,7 +282,6 @@ namespace Vostok.Hosting
         private async Task<VostokApplicationRunResult> RunApplicationAsync()
         {
             log.Info("Running application.");
-            ChangeStateTo(VostokApplicationState.Running);
 
             try
             {
