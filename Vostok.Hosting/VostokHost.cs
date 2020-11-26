@@ -310,8 +310,8 @@ namespace Vostok.Hosting
                 var beaconStarted = await WaitForServiceBeaconRegistrationIfNeeded(environment.ServiceBeacon).ConfigureAwait(false);
                 if (!beaconStarted)
                 {
-                    log.Error("Service beacon hasn't registered in '{BeaconStartTimeout'}.", settings.BeaconRegistrationTimeout);
-                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconRegistration);
+                    log.Error("Service beacon hasn't registered in '{BeaconStartTimeout}'.", settings.BeaconRegistrationTimeout);
+                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconRegistration, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
                 }
             }
 
