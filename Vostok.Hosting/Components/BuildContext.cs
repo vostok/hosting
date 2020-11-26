@@ -96,6 +96,7 @@ namespace Vostok.Hosting.Components
 
                 Log = Logs?.BuildCompositeLog(out _, true) ?? new SilentLog();
                 SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
+                
                 TryDispose(HerculesSink, "HerculesSink");
 
                 TryDispose(ServiceLocator, "ServiceLocator");
@@ -139,8 +140,7 @@ namespace Vostok.Hosting.Components
             if (ExternalComponents.Contains(component))
                 return;
 
-            var disposable = component as IDisposable;
-            if (disposable == null)
+            if (!(component is IDisposable disposable))
                 return;
 
             LogDisposing(componentName);

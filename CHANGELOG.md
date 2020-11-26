@@ -1,3 +1,11 @@
+## 0.3.1 (26-11-2020):
+
+IZooKeeperCientBuilder: set ZK logins and passwords
+
+## 0.3.0 (25-11-2020):
+
+Added `VostokMultiHost`.
+
 ## 0.2.13 (13-11-2020):
 
 Fixed configured loggers log timestamp and context.

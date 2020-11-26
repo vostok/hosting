@@ -9,6 +9,7 @@ using Vostok.ServiceDiscovery;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 // ReSharper disable ParameterHidesMember
 
@@ -21,6 +22,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
         private volatile string connectionString;
         private volatile bool enabled;
         private volatile IZooKeeperClient instance;
+        private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
@@ -50,9 +52,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
         {
             instance = null;
             connectionString = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
-            
+
             return this;
         }
 
@@ -60,9 +62,9 @@ namespace Vostok.Hosting.Components.ZooKeeper
         {
             instance = null;
             connectionString = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
-            
+
             return this;
         }
 
@@ -72,7 +74,14 @@ namespace Vostok.Hosting.Components.ZooKeeper
             clusterProviderBuilder = null;
 
             this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            
+
+            return this;
+        }
+
+        public IVostokZooKeeperClientBuilder AddAuthenticationInfo(AuthenticationInfo authenticationInfo)
+        {
+            authenticationInfos.Add(authenticationInfo);
+
             return this;
         }
 
@@ -81,7 +90,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
             instance = null;
 
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
-            
+
             return this;
         }
 
@@ -93,6 +102,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
             if (instance != null)
             {
                 context.ExternalComponents.Add(instance);
+
                 return instance;
             }
 
@@ -113,9 +123,14 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
             settingsCustomization.Customize(settings);
 
-            return new ZooKeeperClient(
+            var zkClient = new ZooKeeperClient(
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
+
+            foreach(var authenticationInfo in authenticationInfos)
+                zkClient.AddAuthenticationInfo(authenticationInfo);
+
+            return zkClient;
         }
 
         private bool IsDataChangedLog(IReadOnlyDictionary<string, object> properties)
