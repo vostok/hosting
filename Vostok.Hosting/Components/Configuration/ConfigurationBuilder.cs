@@ -34,6 +34,8 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<IConfigurationSource> sourceCustomization;
         private readonly Customization<IConfigurationSource> secretSourceCustomization;
 
+        private bool combineSecretSettingsSourceWithPublicSettingsSource;
+
         public ConfigurationBuilder()
         {
             sources = new List<IConfigurationSource>();
@@ -115,19 +117,27 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
+        public IVostokConfigurationBuilder CombineSecretSettingsSourceWithPublicSettingsSource()
+        {
+            combineSecretSettingsSourceWithPublicSettingsSource = true;
+            return this;
+        }
+
         public (SwitchingSource source,
             SwitchingSource secretSource,
             ConfigurationProvider provider,
             ConfigurationProvider secretProvider) Build(BuildContext context)
         {
-            sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
-
-            var source = new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources));
             var secretSource = new SwitchingSource(PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources));
+
+            if (combineSecretSettingsSourceWithPublicSettingsSource)
+                sources.Insert(0, secretSource);
+            sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
+            var source = new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources));
 
             var providerSettings = new ConfigurationProviderSettings()
                 .WithErrorLogging(context.Log)
-                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings()
+                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings
                 {
                     InitialIndent = true
                 }));
