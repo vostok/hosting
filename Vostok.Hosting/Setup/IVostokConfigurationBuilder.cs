@@ -22,5 +22,7 @@ namespace Vostok.Hosting.Setup
         IVostokConfigurationBuilder CustomizeSecretConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
 
         IVostokConfigurationBuilder CustomizePrintSettings([NotNull] Action<PrintSettings> settingsCustomization);
+
+        IVostokConfigurationBuilder CombineSecretSettingsSourceWithPublicSettingsSource();
     }
 }
