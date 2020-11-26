@@ -1,3 +1,7 @@
+## 0.3.1 (26-11-2020):
+
+IZooKeeperCientBuilder: set ZK logins and passwords
+
 ## 0.3.0 (25-11-2020):
 
 Added `VostokMultiHost`.
