@@ -36,6 +36,7 @@ namespace Vostok.Hosting
     ///     <item><description>Running the application by calling <see cref="IVostokApplication.InitializeAsync"/> and then <see cref="IVostokApplication.RunAsync"/>.</description></item>
     /// </list>
     /// </summary>
+    
     [PublicAPI]
     public class VostokHost
     {
@@ -169,7 +170,7 @@ namespace Vostok.Hosting
             var result = BuildEnvironment();
             if (result != null)
                 return result;
-
+            
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
