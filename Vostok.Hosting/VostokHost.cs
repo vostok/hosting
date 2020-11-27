@@ -376,7 +376,8 @@ namespace Vostok.Hosting
 
             if (beacon is ServiceBeacon convertedBeacon)
             {
-                var isStarted = await convertedBeacon.WaitForInitialRegistrationAsync(settings.BeaconRegistrationTimeout).ConfigureAwait(false);
+                var waitTask = convertedBeacon.WaitForInitialRegistrationAsync();
+                var isStarted = await waitTask.WaitAsync(settings.BeaconRegistrationTimeout).ConfigureAwait(false);
                 if (!isStarted)
                     return false;
             }
