@@ -311,6 +311,9 @@ namespace Vostok.Hosting
                 if (!beaconStarted)
                 {
                     log.Error("Service beacon hasn't registered in '{BeaconRegistrationTimeout}'.", settings.BeaconRegistrationTimeout);
+
+                    ShutdownTokenSource.Cancel();
+
                     return ReturnResult(VostokApplicationState.CrashedDuringRunning, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
                 }
 
