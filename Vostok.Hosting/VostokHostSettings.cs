@@ -69,12 +69,12 @@ namespace Vostok.Hosting
         /// <summary>
         /// If enabled, <see cref="VostokHost"/> will wait for <see cref="IServiceBeacon"/> start.
         /// </summary>
-        public bool BeaconRegistrationWaitEnabled { get; set; } = true;
+        public bool BeaconRegistrationWaitEnabled { get; set; }
 
         /// <summary>
         /// <para>Maximum timeout for <see cref="IServiceBeacon"/> start.</para>
         /// </summary>
-        public TimeSpan BeaconRegistrationTimeout { get; set; } = 5.Seconds();
+        public TimeSpan BeaconRegistrationTimeout { get; set; } = 15.Seconds();
 
         /// <summary>
         /// <para>Total timeout for host's and application's graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.</para>
