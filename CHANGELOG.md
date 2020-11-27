@@ -1,6 +1,10 @@
+## 0.3.2 (27-11-2020):
+
+Setup sources for `RequiresMergedConfiguration`.
+
 ## 0.3.1 (26-11-2020):
 
-IZooKeeperCientBuilder: set ZK logins and passwords
+IZooKeeperCientBuilder: setup ZooKeeperClient logins and passwords
 
 ## 0.3.0 (25-11-2020):
 
