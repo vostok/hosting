@@ -76,12 +76,8 @@ namespace Vostok.Hosting.Models
         CrashedDuringInitialization,
 
         /// <summary>
-        /// <see cref="IServiceBeacon"/> has not registered in <see cref="VostokHostSettings.BeaconRegistrationTimeout"/>.
-        /// </summary>
-        CrashedDuringBeaconRegistration,
-
-        /// <summary>
-        /// <see cref="IVostokApplication.RunAsync"/> has failed with an exception.
+        /// <see cref="IVostokApplication.RunAsync"/> has failed with an exception
+        /// or <see cref="IServiceBeacon"/> has not registered in <see cref="VostokHostSettings.BeaconRegistrationTimeout"/>.
         /// </summary>
         CrashedDuringRunning,
 

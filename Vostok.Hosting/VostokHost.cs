@@ -282,6 +282,7 @@ namespace Vostok.Hosting
         private async Task<VostokApplicationRunResult> RunApplicationAsync()
         {
             log.Info("Running application.");
+            ChangeStateTo(VostokApplicationState.Running);
 
             try
             {
@@ -310,10 +311,9 @@ namespace Vostok.Hosting
                 if (!beaconStarted)
                 {
                     log.Error("Service beacon hasn't registered in '{BeaconRegistrationTimeout}'.", settings.BeaconRegistrationTimeout);
-                    return ReturnResult(VostokApplicationState.CrashedDuringBeaconRegistration, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
+                    return ReturnResult(VostokApplicationState.CrashedDuringRunning, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
                 }
 
-                ChangeStateTo(VostokApplicationState.Running);
             }
 
             await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
