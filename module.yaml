@@ -59,7 +59,7 @@ notests *default:
     - vostok.metrics
     - vostok.metrics.hercules
     - vostok.metrics.system
-    - vostok.servicediscovery@WaitForInitialRegistration-with-timeout
+    - vostok.servicediscovery
     - vostok.servicediscovery.abstractions
     - vostok.tracing
     - vostok.tracing.abstractions
