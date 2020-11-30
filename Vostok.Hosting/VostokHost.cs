@@ -38,7 +38,6 @@ namespace Vostok.Hosting
     ///     <item><description>Running the application by calling <see cref="IVostokApplication.InitializeAsync"/> and then <see cref="IVostokApplication.RunAsync"/>.</description></item>
     /// </list>
     /// </summary>
-    
     [PublicAPI]
     public class VostokHost
     {
@@ -172,7 +171,7 @@ namespace Vostok.Hosting
             var result = BuildEnvironment();
             if (result != null)
                 return result;
-            
+
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -310,11 +309,13 @@ namespace Vostok.Hosting
                 var beaconStarted = await WaitForServiceBeaconRegistrationIfNeededAsync(environment.ServiceBeacon).ConfigureAwait(false);
                 if (!beaconStarted)
                 {
+                    ChangeStateTo(VostokApplicationState.CrashedDuringRunning);
+                    
                     log.Error("Service beacon hasn't registered in '{BeaconRegistrationTimeout}'.", settings.BeaconRegistrationTimeout);
-
                     ShutdownTokenSource.Cancel();
-                    if(!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
-                        log.Warn("Application has not completed within remaining shutdown timeout.");
+
+                    if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
+                        LogApplicationHasNotCompletedWithinTimeout();
 
                     return ReturnResult(VostokApplicationState.CrashedDuringRunning, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
                 }
@@ -331,7 +332,7 @@ namespace Vostok.Hosting
 
                 if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                 {
-                    log.Warn("Application has not completed within remaining shutdown timeout.");
+                    LogApplicationHasNotCompletedWithinTimeout();
                     return ReturnResult(VostokApplicationState.StoppedForcibly);
                 }
 
@@ -502,6 +503,10 @@ namespace Vostok.Hosting
             log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
         }
 
+        private void LogApplicationHasNotCompletedWithinTimeout()
+        {
+            log.Warn("Application has not completed within remaining shutdown timeout.");
+        }
         #endregion
     }
 }
