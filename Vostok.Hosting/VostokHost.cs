@@ -313,10 +313,11 @@ namespace Vostok.Hosting
                     log.Error("Service beacon hasn't registered in '{BeaconRegistrationTimeout}'.", settings.BeaconRegistrationTimeout);
 
                     ShutdownTokenSource.Cancel();
+                    if(!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
+                        log.Warn("Application has not completed within remaining shutdown timeout.");
 
                     return ReturnResult(VostokApplicationState.CrashedDuringRunning, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
                 }
-
             }
 
             await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
