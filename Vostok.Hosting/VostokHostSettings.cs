@@ -74,7 +74,7 @@ namespace Vostok.Hosting
         /// <summary>
         /// <para>Maximum timeout for <see cref="IServiceBeacon"/> start.</para>
         /// </summary>
-        public TimeSpan BeaconRegistrationTimeout { get; set; } = 15.Seconds();
+        public TimeSpan BeaconRegistrationTimeout { get; set; } = 10.Seconds();
 
         /// <summary>
         /// <para>Total timeout for host's and application's graceful shutdown after <see cref="IVostokHostingEnvironment.ShutdownToken"/> has been canceled.</para>
