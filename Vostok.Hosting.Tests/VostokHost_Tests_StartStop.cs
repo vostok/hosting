@@ -1,10 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
+using Vostok.Logging.Abstractions;
+using Vostok.ZooKeeper.Client;
+using Vostok.ZooKeeper.Client.Abstractions;
+using Vostok.ZooKeeper.Client.Abstractions.Model;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Request;
+using Vostok.ZooKeeper.LocalEnsemble;
 
 namespace Vostok.Hosting.Tests
 {
@@ -36,7 +46,7 @@ namespace Vostok.Hosting.Tests
         {
             application = new BadApplication(true);
             host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
-            
+
             Action checkStart = () => host.Start(VostokApplicationState.Initialized);
             checkStart.Should().Throw<Exception>().WithMessage("initialize");
 
@@ -44,22 +54,53 @@ namespace Vostok.Hosting.Tests
             checkStop.Should().Throw<Exception>().WithMessage("initialize");
         }
 
-        [Test]
-        public void Start_should_not_throw_on_run_fail()
+        [TestCase("badLogin", "password", VostokApplicationState.CrashedDuringRunning)]
+        [TestCase("login", "password", VostokApplicationState.Exited)]
+        public void Start_should_check_that_beacon_has_started(string zkLogin, string zkPassword, VostokApplicationState result)
         {
-            application = new BadApplication(false);
-            host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
+            var appPath = "/service-discovery/v2/dev/auth-test";
+            var log = new SilentLog();
 
-            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
-            checkStart.Should().NotThrow();
+            using (var zk = ZooKeeperEnsemble.DeployNew(new ZooKeeperEnsembleSettings(), log))
+            {
+                var zkClient = new ZooKeeperClient(new ZooKeeperClientSettings(zk.ConnectionString), log);
+                zkClient.Create(new CreateRequest(appPath, CreateMode.Persistent)).EnsureSuccess();
+                zkClient.SetAcl(
+                        new SetAclRequest(
+                            appPath,
+                            new List<Acl>
+                            {
+                                Acl.Digest(AclPermissions.All, "login", "password"),
+                                Acl.ReadUnsafe
+                            }))
+                    .EnsureSuccess();
 
-            Action checkStop = () => host.Stop();
-            checkStop.Should().Throw<Exception>().WithMessage("run");
+                zkClient.AddAuthenticationInfo(zkLogin, zkPassword);
+
+                application = new PortRequiresApplication();
+                host = new VostokHost(
+                    new TestHostSettings(
+                        application,
+                        s =>
+                        {
+                            SetupEnvironment(s);
+                            s.SetupZooKeeperClient(zkSetup => zkSetup.UseInstance(zkClient));
+                            s.SetupServiceBeacon(
+                                beaconSetup => beaconSetup.SetupReplicaInfo(
+                                    replicaInfoSetup => { replicaInfoSetup.SetApplication("auth-test"); }));
+                        })
+                    {
+                        BeaconRegistrationWaitEnabled = true,
+                        BeaconRegistrationTimeout = 2.Seconds()
+                    });
+                host.Start(VostokApplicationState.CrashedDuringRunning);
+                host.ApplicationState.Should().Be(result);
+            }
         }
 
         private class Application : IVostokApplication
         {
-            public Task InitializeAsync(IVostokHostingEnvironment environment) 
+            public Task InitializeAsync(IVostokHostingEnvironment environment)
                 => Task.Delay(150);
 
             public Task RunAsync(IVostokHostingEnvironment environment)
@@ -84,6 +125,14 @@ namespace Vostok.Hosting.Tests
 
             public Task RunAsync(IVostokHostingEnvironment environment)
                 => throw new Exception("run");
+        }
+
+        [RequiresPort]
+        private class PortRequiresApplication : IVostokApplication
+        {
+            public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
+
+            public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
         }
 
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
