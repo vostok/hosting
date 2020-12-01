@@ -64,6 +64,9 @@ namespace Vostok.Hosting.Setup
 
         IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> setup);
+        
+        IVostokHostingEnvironmentBuilder SetupServiceDiscoveryManager([NotNull] Action<IVostokServiceDiscoveryManagerBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupServiceDiscoveryManager([NotNull] Action<IVostokServiceDiscoveryManagerBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
         IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupHostExtensions([NotNull] Action<IVostokHostExtensionsBuilder, IVostokHostingEnvironment> setup);
