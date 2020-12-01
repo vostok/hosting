@@ -1,3 +1,7 @@
+## 0.3.3 (01-12-2020):
+
+Fixed bug with log level metrics.
+
 ## 0.3.2 (27-11-2020):
 
 Setup sources for `RequiresMergedConfiguration`.
