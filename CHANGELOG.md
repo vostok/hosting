@@ -1,3 +1,7 @@
+## 0.3.4 (01-12-2020):
+
+Changed child log behaviour in `VostokMultiHost`.
+
 ## 0.3.3 (01-12-2020):
 
 Fixed bug with log level metrics.
