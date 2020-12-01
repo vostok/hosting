@@ -41,6 +41,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationLimits ApplicationLimits { get; set; }
         public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
+        public IServiceDiscoveryManager ServiceDiscoveryManager { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public SwitchingSource ConfigurationSource { get; set; }
@@ -100,6 +101,8 @@ namespace Vostok.Hosting.Components
                 TryDispose(HerculesSink, "HerculesSink");
 
                 TryDispose(ServiceLocator, "ServiceLocator");
+                
+                TryDispose(ServiceDiscoveryManager, "ServiceDiscoveryManager");
 
                 TryDispose(ZooKeeperClient, "ZooKeeperClient");
 

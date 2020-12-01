@@ -60,6 +60,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
+        private readonly CustomizableBuilder<ServiceDiscoveryManagerBuilder, IServiceDiscoveryManager> serviceDiscoveryManagerBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
         private readonly SystemMetricsBuilder systemMetricsBuilder;
@@ -87,6 +88,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
+            serviceDiscoveryManagerBuilder = new CustomizableBuilder<ServiceDiscoveryManagerBuilder, IServiceDiscoveryManager>(new ServiceDiscoveryManagerBuilder());
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
             systemMetricsBuilder = new SystemMetricsBuilder();
@@ -159,6 +161,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
+            context.ServiceDiscoveryManager = serviceDiscoveryManagerBuilder.Build(context);
             context.ServiceLocator = serviceLocatorBuilder.Build(context);
 
             context.HerculesSink = herculesSinkBuilder.Build(context);
@@ -455,6 +458,18 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupServiceLocator(Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
             serviceLocatorBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupServiceDiscoveryManager(Action<IVostokServiceDiscoveryManagerBuilder> setup)
+        {
+            serviceDiscoveryManagerBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupServiceDiscoveryManager(Action<IVostokServiceDiscoveryManagerBuilder, IVostokHostingEnvironmentSetupContext> setup)
+        {
+            serviceDiscoveryManagerBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
