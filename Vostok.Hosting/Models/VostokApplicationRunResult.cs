@@ -21,7 +21,6 @@ namespace Vostok.Hosting.Models
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringEnvironmentSetup"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringEnvironmentWarmup"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringInitialization"/></description></item>
-        ///     <item><description><see cref="VostokApplicationState.CrashedDuringBeaconRegistration"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringRunning"/></description></item>
         ///     <item><description><see cref="VostokApplicationState.CrashedDuringStopping"/></description></item>
         /// </list>
