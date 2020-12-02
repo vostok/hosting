@@ -47,15 +47,17 @@ namespace Vostok.Hosting.Components.Log
             foreach (var (name, log) in SelectLogs(withoutHercules))
                 builder.AddLog(name, log);
 
+            builder.AddLog("_CounterLog", WrapAndAttachCounters(new SilentLog()));
+
             builder.SetRules(rules);
 
             var configurableLog = builder.Build();
 
             configurableLog.WaitForRulesInitialization(1.Seconds());
 
-            configuredLoggers = configurableLog.BaseLogs.Keys.ToArray();
+            configuredLoggers = configurableLog.BaseLogs.Keys.Where(x => x != "_CounterLog").ToArray();
 
-            return customization(WrapAndAttachCounters(configurableLog));
+            return customization(configurableLog);
         }
 
         public void Dispose()
@@ -70,9 +72,8 @@ namespace Vostok.Hosting.Components.Log
 
         private IEnumerable<(string name, ILog log)> SelectLogs(bool withoutHercules)
         {
-            foreach (var pair in userLogs)
-                if (pair.log != null)
-                    yield return pair;
+            foreach (var pair in userLogs.Where(pair => pair.log != null))
+                yield return pair;
 
             if (fileLog != null)
                 yield return ("File", fileLog);

@@ -139,10 +139,11 @@ namespace Vostok.Hosting.Tests
         {
             public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.Delay(150);
 
-            public Task RunAsync(IVostokHostingEnvironment environment)
+            public async Task RunAsync(IVostokHostingEnvironment environment)
             {
                 while (true)
                 {
+                    await Task.Delay(60 * 1000);
                 }
 
                 // ReSharper disable once FunctionNeverReturns

@@ -25,6 +25,9 @@ namespace Vostok.Hosting.Setup
         public static IVostokConfigurationSourcesBuilder AddInMemoryObject([NotNull] this IVostokConfigurationSourcesBuilder builder, [NotNull] object @object)
             => builder.AddSource(new ObjectSource(@object));
 
+        public static IVostokConfigurationSourcesBuilder AddSecretInMemoryObject([NotNull] this IVostokConfigurationSourcesBuilder builder, [NotNull] object @object)
+            => builder.AddSecretSource(new ObjectSource(@object));
+
         public static IVostokConfigurationSourcesBuilder AddJsonFile([NotNull] this IVostokConfigurationSourcesBuilder builder, [NotNull] string path)
             => builder.AddSource(new JsonFileSource(path));
 
@@ -52,8 +55,8 @@ namespace Vostok.Hosting.Setup
             => builder.AddSource(ccClient => new ClusterConfigSourceWithParsers(ccClient, prefix));
 
         private static string GetDotnetEnvironment()
-            => Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? 
-               Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? 
+            => Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ??
+               Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
                "Production";
     }
 }

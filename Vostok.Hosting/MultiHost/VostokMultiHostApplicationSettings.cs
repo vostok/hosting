@@ -5,13 +5,16 @@ using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
 {
+    /// <summary>
+    /// Represents configuration of <see cref="IVostokApplication"/> inside <see cref="VostokMultiHost"/>.
+    /// </summary>
     [PublicAPI]
     public class VostokMultiHostApplicationSettings
     {
-        public VostokMultiHostApplicationSettings([NotNull] IVostokApplication application, [NotNull] VostokMultiHostApplicationIdentifier vostokMultiHostApplicationName, VostokHostingEnvironmentSetup environmentSetup = null)
+        public VostokMultiHostApplicationSettings([NotNull] IVostokApplication application, [NotNull] VostokMultiHostApplicationIdentifier identifier, VostokHostingEnvironmentSetup environmentSetup = null)
         {
             Application = application ?? throw new ArgumentNullException(nameof(application));
-            Identifier = vostokMultiHostApplicationName ?? throw new ArgumentNullException(nameof(vostokMultiHostApplicationName));
+            Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
             EnvironmentSetup = environmentSetup ?? (builder => {});
         }
 

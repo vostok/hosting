@@ -1,6 +1,22 @@
+## 0.3.5 (02-12-2020):
+
+Added async suffix to `VostokMultiHostExtensions`.
+
+## 0.3.4 (01-12-2020):
+
+Changed child log behaviour in `VostokMultiHost`.
+
+## 0.3.3 (01-12-2020):
+
+Fixed bug with log level metrics.
+
+## 0.3.2 (27-11-2020):
+
+Setup sources for `RequiresMergedConfiguration`.
+
 ## 0.3.1 (26-11-2020):
 
-IZooKeeperCientBuilder: set ZK logins and passwords
+IZooKeeperCientBuilder: setup ZooKeeperClient logins and passwords
 
 ## 0.3.0 (25-11-2020):
 
