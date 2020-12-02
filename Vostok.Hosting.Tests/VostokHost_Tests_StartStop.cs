@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using NSubstitute;
 using NUnit.Framework;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
-using Vostok.Logging.Abstractions;
-using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
-using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 using Vostok.ZooKeeper.Client.Abstractions.Model.Request;
-using Vostok.ZooKeeper.LocalEnsemble;
+using Vostok.ZooKeeper.Client.Abstractions.Model.Result;
 
 namespace Vostok.Hosting.Tests
 {
@@ -54,48 +51,34 @@ namespace Vostok.Hosting.Tests
             checkStop.Should().Throw<Exception>().WithMessage("initialize");
         }
 
-        [TestCase("badLogin", "password", VostokApplicationState.CrashedDuringRunning)]
-        [TestCase("login", "password", VostokApplicationState.Exited)]
-        public void Start_should_check_that_beacon_has_started(string zkLogin, string zkPassword, VostokApplicationState result)
+        [Test]
+        public void Start_should_check_that_beacon_has_started()
         {
-            var appPath = "/service-discovery/v2/dev/auth-test";
-            var log = new SilentLog();
-
-            using (var zk = ZooKeeperEnsemble.DeployNew(new ZooKeeperEnsembleSettings(), log))
-            {
-                var zkClient = new ZooKeeperClient(new ZooKeeperClientSettings(zk.ConnectionString), log);
-                zkClient.Create(new CreateRequest(appPath, CreateMode.Persistent)).EnsureSuccess();
-                zkClient.SetAcl(
-                        new SetAclRequest(
-                            appPath,
-                            new List<Acl>
-                            {
-                                Acl.Digest(AclPermissions.All, "login", "password"),
-                                Acl.ReadUnsafe
-                            }))
-                    .EnsureSuccess();
-
-                zkClient.AddAuthenticationInfo(zkLogin, zkPassword);
-
-                application = new PortRequiresApplication();
-                host = new VostokHost(
-                    new TestHostSettings(
-                        application,
-                        s =>
-                        {
-                            SetupEnvironment(s);
-                            s.SetupZooKeeperClient(zkSetup => zkSetup.UseInstance(zkClient));
-                            s.SetupServiceBeacon(
-                                beaconSetup => beaconSetup.SetupReplicaInfo(
-                                    replicaInfoSetup => { replicaInfoSetup.SetApplication("auth-test"); }));
-                        })
+            var zkClient = Substitute.For<IZooKeeperClient>();
+            zkClient.CreateAsync(Arg.Any<CreateRequest>()).Returns(Task.FromResult(CreateResult.Unsuccessful(ZooKeeperStatus.AuthFailed, "", null)));
+            
+            application = new PortRequiresApplication();
+            host = new VostokHost(
+                new TestHostSettings(
+                    application,
+                    s =>
                     {
-                        BeaconRegistrationWaitEnabled = true,
-                        BeaconRegistrationTimeout = 2.Seconds()
-                    });
-                host.Start(VostokApplicationState.CrashedDuringRunning);
-                host.ApplicationState.Should().Be(result);
-            }
+                        SetupEnvironment(s);
+                        s.SetupZooKeeperClient(zkSetup => zkSetup.UseInstance(zkClient));
+                        s.SetupServiceBeacon(
+                            beaconSetup => beaconSetup.SetupReplicaInfo(
+                                replicaInfoSetup => { replicaInfoSetup.SetApplication("auth-test"); }));
+                    })
+                {
+                    BeaconRegistrationWaitEnabled = true,
+                    BeaconRegistrationTimeout = 2.Seconds()
+                });
+
+            Action checkStart = () => host.Start();
+            checkStart.Should().Throw<Exception>().Where(e => e.Message.Contains("beacon hasn't registered"));
+
+            host.ApplicationState.Should().Be(VostokApplicationState.CrashedDuringInitialization);
+            
         }
 
         private class Application : IVostokApplication

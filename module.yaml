@@ -69,7 +69,6 @@ notests *default:
 
 full-build > notests:
   deps:
-    - vostok.zookeeper.localensemble
     - vostok.commons.testing/src
     
   build:
