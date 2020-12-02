@@ -140,7 +140,7 @@ namespace Vostok.Hosting.Tests
 
             await vostokMultiHost.StartAsync();
 
-            await vostokMultiHost.RunSequentially(extractApplication, assertApplication);
+            await vostokMultiHost.RunSequentiallyAsync(extractApplication, assertApplication);
 
             var results = await vostokMultiHost.StopAsync();
 
@@ -190,7 +190,7 @@ namespace Vostok.Hosting.Tests
 
             await vostokMultiHost.StartAsync();
 
-            await vostokMultiHost.RunSequentially(extractApplication, assertApplication);
+            await vostokMultiHost.RunSequentiallyAsync(extractApplication, assertApplication);
 
             var results = await vostokMultiHost.StopAsync();
 

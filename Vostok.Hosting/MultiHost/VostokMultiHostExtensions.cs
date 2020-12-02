@@ -15,7 +15,7 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with this identifier has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> RunApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
+        public static Task<VostokApplicationRunResult> RunApplicationAsync(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApplication(settings).RunAsync();
         }
@@ -25,7 +25,7 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with this identifier has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task StartApplication(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
+        public static Task StartApplicationAsync(this VostokMultiHost host, VostokMultiHostApplicationSettings settings)
         {
             return host.AddApplication(settings).StartAsync();
         }
@@ -34,7 +34,7 @@ namespace Vostok.Hosting.MultiHost
         /// Stops provided application if it was added before.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task<VostokApplicationRunResult> StopApplication(this VostokMultiHost host, VostokMultiHostApplicationIdentifier identifier)
+        public static Task<VostokApplicationRunResult> StopApplicationAsync(this VostokMultiHost host, VostokMultiHostApplicationIdentifier identifier)
         {
             var application = host.GetApplication(identifier);
 
@@ -49,7 +49,7 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static async Task StartSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static async Task StartSequentiallyAsync(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             var addedApps = apps.Select(host.AddApplication).ToArray();
 
@@ -62,9 +62,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task StartSequentially(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
+        public static Task StartSequentiallyAsync(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return StartSequentially(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
+            return StartSequentiallyAsync(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task StartInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static Task StartInParallelAsync(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
-            return Task.WhenAll(apps.Select(app => StartApplication(host, app)));
+            return Task.WhenAll(apps.Select(app => StartApplicationAsync(host, app)));
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task StartInParallel(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
+        public static Task StartInParallelAsync(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return StartInParallel(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
+            return StartInParallelAsync(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static async Task RunSequentially(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static async Task RunSequentiallyAsync(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
             var addedApps = apps.Select(host.AddApplication).ToArray();
 
@@ -105,9 +105,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task RunSequentially(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
+        public static Task RunSequentiallyAsync(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return RunSequentially(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
+            return RunSequentiallyAsync(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
 
         /// <summary>
@@ -115,9 +115,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task RunInParallel(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
+        public static Task RunInParallelAsync(this VostokMultiHost host, IEnumerable<VostokMultiHostApplicationSettings> apps)
         {
-            return Task.WhenAll(apps.Select(app => RunApplication(host, app)));
+            return Task.WhenAll(apps.Select(app => RunApplicationAsync(host, app)));
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace Vostok.Hosting.MultiHost
         /// May throw an exception if application with one of the identifiers has already been added.
         /// <see cref="VostokMultiHost"/> should be running to perform this operation.
         /// </summary>
-        public static Task RunInParallel(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
+        public static Task RunInParallelAsync(this VostokMultiHost host, params VostokMultiHostApplicationSettings[] apps)
         {
-            return RunInParallel(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
+            return RunInParallelAsync(host, (IEnumerable<VostokMultiHostApplicationSettings>)apps);
         }
     }
 }

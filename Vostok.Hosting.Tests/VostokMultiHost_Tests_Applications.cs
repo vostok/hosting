@@ -37,7 +37,7 @@ namespace Vostok.Hosting.Tests
 
             vostokMultiHost.GetApplication(identifier).ApplicationState.Should().Match<VostokApplicationState>(state => state >= stateToAwait);
 
-            await vostokMultiHost.StopApplication(identifier);
+            await vostokMultiHost.StopApplicationAsync(identifier);
 
             vostokMultiHost.GetApplication(identifier).ApplicationState.IsTerminal().Should().BeTrue();
 
@@ -53,10 +53,10 @@ namespace Vostok.Hosting.Tests
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(true), identifier, SetupMultiHostApplication);
 
-            Action checkStart = () => vostokMultiHost.StartApplication(badApplication).GetAwaiter().GetResult();
+            Action checkStart = () => vostokMultiHost.StartApplicationAsync(badApplication).GetAwaiter().GetResult();
             checkStart.Should().Throw<Exception>().WithMessage("initialize");
 
-            Action checkStop = () => vostokMultiHost.StopApplication(identifier).GetAwaiter().GetResult();
+            Action checkStop = () => vostokMultiHost.StopApplicationAsync(identifier).GetAwaiter().GetResult();
             checkStop.Should().Throw<Exception>().WithMessage("initialize");
         }
 
@@ -69,10 +69,10 @@ namespace Vostok.Hosting.Tests
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
-            Action checkStart = () => vostokMultiHost.StartApplication(badApplication).GetAwaiter().GetResult();
+            Action checkStart = () => vostokMultiHost.StartApplicationAsync(badApplication).GetAwaiter().GetResult();
             checkStart.Should().NotThrow<Exception>();
 
-            Action checkStop = () => vostokMultiHost.StopApplication(identifier).GetAwaiter().GetResult();
+            Action checkStop = () => vostokMultiHost.StopApplicationAsync(identifier).GetAwaiter().GetResult();
             checkStop.Should().Throw<Exception>().WithMessage("run");
         }
 
@@ -85,7 +85,7 @@ namespace Vostok.Hosting.Tests
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
-            Action checkStart = () => vostokMultiHost.RunApplication(badApplication).GetAwaiter().GetResult();
+            Action checkStart = () => vostokMultiHost.RunApplicationAsync(badApplication).GetAwaiter().GetResult();
             checkStart.Should().NotThrow<Exception>();
         }
 
@@ -98,7 +98,7 @@ namespace Vostok.Hosting.Tests
 
             vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost));
 
-            Action checkStart = () => vostokMultiHost.StartApplication(badApplication).GetAwaiter().GetResult();
+            Action checkStart = () => vostokMultiHost.StartApplicationAsync(badApplication).GetAwaiter().GetResult();
             checkStart.Should().Throw<InvalidOperationException>();
         }
 
@@ -113,7 +113,7 @@ namespace Vostok.Hosting.Tests
 
             var badApplication = new VostokMultiHostApplicationSettings(new BadApplication(false), identifier, SetupMultiHostApplication);
 
-            Action checkStart = () => vostokMultiHost.RunApplication(badApplication).GetAwaiter().GetResult();
+            Action checkStart = () => vostokMultiHost.RunApplicationAsync(badApplication).GetAwaiter().GetResult();
 
             checkStart.Should().Throw<InvalidOperationException>();
         }
@@ -141,7 +141,7 @@ namespace Vostok.Hosting.Tests
                 );
             }
 
-            await vostokMultiHost.RunSequentially(appList);
+            await vostokMultiHost.RunSequentiallyAsync(appList);
         }
 
         [Test]
@@ -161,7 +161,7 @@ namespace Vostok.Hosting.Tests
                 );
             }
 
-            Action runInParallel = () => vostokMultiHost.RunInParallel(appList).GetAwaiter().GetResult();
+            Action runInParallel = () => vostokMultiHost.RunInParallelAsync(appList).GetAwaiter().GetResult();
 
             runInParallel.ShouldPassIn((150 * 2).Milliseconds());
         }
@@ -178,7 +178,7 @@ namespace Vostok.Hosting.Tests
                 workerIdentifier,
                 SetupMultiHostApplication);
 
-            await vostokMultiHost.StartApplication(workerApplication);
+            await vostokMultiHost.StartApplicationAsync(workerApplication);
 
             Action secondStart = () => vostokMultiHost.GetApplication(workerIdentifier).StartAsync().GetAwaiter().GetResult();
 
@@ -197,7 +197,7 @@ namespace Vostok.Hosting.Tests
                 workerIdentifier,
                 SetupMultiHostApplication);
 
-            var result = await vostokMultiHost.RunApplication(workerApplication);
+            var result = await vostokMultiHost.RunApplicationAsync(workerApplication);
 
             var result2 = await vostokMultiHost.GetApplication(workerIdentifier).RunAsync();
 
