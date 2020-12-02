@@ -1,3 +1,7 @@
+## 0.3.5 (02-12-2020):
+
+Added async suffix to `VostokMultiHostExtensions`.
+
 ## 0.3.4 (01-12-2020):
 
 Changed child log behaviour in `VostokMultiHost`.
