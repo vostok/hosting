@@ -42,10 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Vostok.Tracing.Abstractions">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\netstandard2.0\Vostok.Tracing.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="Vostok.Configuration.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\netstandard2.0\Vostok.Configuration.Abstractions.dll</HintPath>
@@ -53,10 +49,6 @@
     <Reference Include="Vostok.Hercules.Client.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.hercules.client.abstractions\Vostok.Hercules.Client.Abstractions\bin\Release\netstandard2.0\Vostok.Hercules.Client.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.ServiceDiscovery.Abstractions">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.servicediscovery.abstractions\Vostok.ServiceDiscovery.Abstractions\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ClusterClient.Core">
       <SpecificVersion>False</SpecificVersion>
@@ -81,18 +73,6 @@
     <Reference Include="Vostok.ServiceDiscovery">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.ZooKeeper.LocalEnsemble">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.zookeeper.localensemble\Vostok.ZooKeeper.LocalEnsemble\bin\Release\netstandard2.0\Vostok.ZooKeeper.LocalEnsemble.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.Logging.Console">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.logging.console\Vostok.Logging.Console\bin\Release\netstandard2.0\Vostok.Logging.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="Vostok.ZooKeeper.Client">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.zookeeper.client\Vostok.ZooKeeper.Client\bin\Release\netstandard2.0\Vostok.ZooKeeper.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
