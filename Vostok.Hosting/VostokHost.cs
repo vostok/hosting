@@ -269,7 +269,14 @@ namespace Vostok.Hosting
             {
                 RequirementsChecker.Check(settings.Application, environment);
 
-                return await RunPhaseAsync(true).ConfigureAwait(false);
+                var initializationResult = await RunPhaseAsync(true).ConfigureAwait(false);
+
+                environment.ServiceBeacon.Start();
+                var beaconStarted = await WaitForServiceBeaconRegistrationIfNeededAsync(environment.ServiceBeacon).ConfigureAwait(false);
+                if (!beaconStarted)
+                    return ReturnResult(VostokApplicationState.CrashedDuringInitialization, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
+
+                return initializationResult;
             }
             catch (Exception error)
             {
@@ -302,24 +309,6 @@ namespace Vostok.Hosting
             var applicationTask = initialize
                 ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
                 : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
-
-            if (!initialize)
-            {
-                environment.ServiceBeacon.Start();
-                var beaconStarted = await WaitForServiceBeaconRegistrationIfNeededAsync(environment.ServiceBeacon).ConfigureAwait(false);
-                if (!beaconStarted)
-                {
-                    ChangeStateTo(VostokApplicationState.CrashedDuringRunning);
-                    
-                    log.Error("Service beacon hasn't registered in '{BeaconRegistrationTimeout}'.", settings.BeaconRegistrationTimeout);
-                    ShutdownTokenSource.Cancel();
-
-                    if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
-                        LogApplicationHasNotCompletedWithinTimeout();
-
-                    return ReturnResult(VostokApplicationState.CrashedDuringRunning, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
-                }
-            }
 
             await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
 
@@ -373,18 +362,12 @@ namespace Vostok.Hosting
 
         private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
         {
-            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconRegistrationWaitEnabled)
+            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconRegistrationWaitEnabled || !(beacon is ServiceBeacon convertedBeacon))
                 return true;
 
-            if (beacon is ServiceBeacon convertedBeacon)
-            {
-                var waitTask = convertedBeacon.WaitForInitialRegistrationAsync();
-                var isStarted = await waitTask.WaitAsync(settings.BeaconRegistrationTimeout).ConfigureAwait(false);
-                if (!isStarted)
-                    return false;
-            }
-
-            return true;
+            return await convertedBeacon.WaitForInitialRegistrationAsync()
+                .WaitAsync(settings.BeaconRegistrationTimeout)
+                .ConfigureAwait(false);
         }
 
         private VostokApplicationRunResult ReturnResult(VostokApplicationState newState, Exception error = null)
@@ -507,6 +490,7 @@ namespace Vostok.Hosting
         {
             log.Warn("Application has not completed within remaining shutdown timeout.");
         }
+
         #endregion
     }
 }
