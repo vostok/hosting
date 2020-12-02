@@ -290,14 +290,11 @@ namespace Vostok.Hosting.MultiHost
                 {
                     settings.EnvironmentSetup(builder);
 
-                    // NOTE: Disable logging so users will be forced to setup logging. This was made to avoid complete mess when multiple apps write to the same place.
-                    // NOTE: Another reason for this is that we use log from Common Environment to log VostokMultiHost events.
                     builder.SetupLog(
                         logBuilder =>
                         {
-                            logBuilder.SetupConsoleLog(consoleLogBuilder => consoleLogBuilder.Disable());
-                            logBuilder.SetupFileLog(fileLogBuilder => fileLogBuilder.Disable());
-                            logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable());
+                            logBuilder.CustomizeLog(
+                                logCustomization => logCustomization.ForContext($"{applicationSettings.Identifier.ApplicationName}-{applicationSettings.Identifier.InstanceName}"));
                         });
 
                     builder.SetupApplicationIdentity(
