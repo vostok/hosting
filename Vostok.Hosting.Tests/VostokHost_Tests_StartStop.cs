@@ -52,6 +52,19 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
+        public void Start_should_not_throw_on_run_fail()
+        {
+            application = new BadApplication(false);
+            host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
+
+            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
+            checkStart.Should().NotThrow();
+
+            Action checkStop = () => host.Stop();
+            checkStop.Should().Throw<Exception>().WithMessage("run");
+        }
+
+        [Test]
         public void Start_should_check_that_beacon_has_started()
         {
             var zkClient = Substitute.For<IZooKeeperClient>();
