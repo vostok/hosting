@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
+using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting.Models
 {
@@ -70,7 +71,8 @@ namespace Vostok.Hosting.Models
         CrashedDuringEnvironmentWarmup,
 
         /// <summary>
-        /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception.
+        /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception
+        /// or <see cref="IServiceBeacon"/> has not registered in <see cref="VostokHostSettings.BeaconRegistrationTimeout"/>.
         /// </summary>
         CrashedDuringInitialization,
 
