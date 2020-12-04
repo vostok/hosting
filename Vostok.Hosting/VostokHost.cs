@@ -270,6 +270,8 @@ namespace Vostok.Hosting
                 RequirementsChecker.Check(settings.Application, environment);
 
                 var initializationResult = await RunPhaseAsync(true).ConfigureAwait(false);
+                if (initializationResult.State != VostokApplicationState.Initialized)
+                    return initializationResult;
 
                 environment.ServiceBeacon.Start();
                 var beaconStarted = await WaitForServiceBeaconRegistrationIfNeededAsync(environment.ServiceBeacon).ConfigureAwait(false);
