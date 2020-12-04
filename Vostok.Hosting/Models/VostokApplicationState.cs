@@ -71,13 +71,13 @@ namespace Vostok.Hosting.Models
         CrashedDuringEnvironmentWarmup,
 
         /// <summary>
-        /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception.
+        /// <see cref="IVostokApplication.InitializeAsync"/> has failed with an exception
+        /// or <see cref="IServiceBeacon"/> has not registered in <see cref="VostokHostSettings.BeaconRegistrationTimeout"/>.
         /// </summary>
         CrashedDuringInitialization,
 
         /// <summary>
-        /// <see cref="IVostokApplication.RunAsync"/> has failed with an exception
-        /// or <see cref="IServiceBeacon"/> has not registered in <see cref="VostokHostSettings.BeaconRegistrationTimeout"/>.
+        /// <see cref="IVostokApplication.RunAsync"/> has failed with an exception.
         /// </summary>
         CrashedDuringRunning,
 
