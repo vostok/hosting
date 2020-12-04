@@ -1,3 +1,8 @@
+## 0.3.6 (04-12-2020):
+
+VostokHostSettings: added settings to make sure the service beacon has successfully registered.
+Moved beacon start to initialization.
+
 ## 0.3.5 (02-12-2020):
 
 Added async suffix to `VostokMultiHostExtensions`.
