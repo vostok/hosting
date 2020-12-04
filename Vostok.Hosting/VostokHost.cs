@@ -23,6 +23,8 @@ using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.ServiceDiscovery;
+using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting
@@ -36,7 +38,6 @@ namespace Vostok.Hosting
     ///     <item><description>Running the application by calling <see cref="IVostokApplication.InitializeAsync"/> and then <see cref="IVostokApplication.RunAsync"/>.</description></item>
     /// </list>
     /// </summary>
-    
     [PublicAPI]
     public class VostokHost
     {
@@ -170,7 +171,7 @@ namespace Vostok.Hosting
             var result = BuildEnvironment();
             if (result != null)
                 return result;
-            
+
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -268,7 +269,16 @@ namespace Vostok.Hosting
             {
                 RequirementsChecker.Check(settings.Application, environment);
 
-                return await RunPhaseAsync(true).ConfigureAwait(false);
+                var initializationResult = await RunPhaseAsync(true).ConfigureAwait(false);
+                if (initializationResult.State != VostokApplicationState.Initialized)
+                    return initializationResult;
+
+                environment.ServiceBeacon.Start();
+                var beaconStarted = await WaitForServiceBeaconRegistrationIfNeededAsync(environment.ServiceBeacon).ConfigureAwait(false);
+                if (!beaconStarted)
+                    return ReturnResult(VostokApplicationState.CrashedDuringInitialization, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
+
+                return initializationResult;
             }
             catch (Exception error)
             {
@@ -302,9 +312,6 @@ namespace Vostok.Hosting
                 ? Task.Run(async () => await settings.Application.InitializeAsync(environment).ConfigureAwait(false))
                 : Task.Run(async () => await settings.Application.RunAsync(environment).ConfigureAwait(false));
 
-            if (!initialize)
-                environment.ServiceBeacon.Start();
-
             await Task.WhenAny(applicationTask, environment.ShutdownTask).ConfigureAwait(false);
 
             if (!initialize)
@@ -316,7 +323,7 @@ namespace Vostok.Hosting
 
                 if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                 {
-                    log.Warn("Application has not completed within remaining shutdown timeout.");
+                    LogApplicationHasNotCompletedWithinTimeout();
                     return ReturnResult(VostokApplicationState.StoppedForcibly);
                 }
 
@@ -353,6 +360,16 @@ namespace Vostok.Hosting
                 log.Info("Application exited.");
                 return ReturnResult(VostokApplicationState.Exited);
             }
+        }
+
+        private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
+        {
+            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconRegistrationWaitEnabled || !(beacon is ServiceBeacon convertedBeacon))
+                return true;
+
+            return await convertedBeacon.WaitForInitialRegistrationAsync()
+                .WaitAsync(settings.BeaconRegistrationTimeout)
+                .ConfigureAwait(false);
         }
 
         private VostokApplicationRunResult ReturnResult(VostokApplicationState newState, Exception error = null)
@@ -469,6 +486,11 @@ namespace Vostok.Hosting
             var state = ThreadPoolUtility.GetPoolState();
 
             log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
+        }
+
+        private void LogApplicationHasNotCompletedWithinTimeout()
+        {
+            log.Warn("Application has not completed within remaining shutdown timeout.");
         }
 
         #endregion
