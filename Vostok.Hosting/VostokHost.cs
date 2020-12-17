@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
 using System.Runtime.InteropServices;
@@ -9,6 +10,7 @@ using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
+using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
@@ -319,6 +321,7 @@ namespace Vostok.Hosting
 
             if (environment.ShutdownTask.IsCompleted)
             {
+                var watch = Stopwatch.StartNew();
                 ChangeStateTo(VostokApplicationState.Stopping);
 
                 if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
@@ -335,7 +338,7 @@ namespace Vostok.Hosting
                 {
                     if (error is OperationCanceledException)
                     {
-                        log.Info("Application has successfully stopped.");
+                        LogApplicationSuccessfullyStopped(watch.Elapsed);
                         return ReturnResult(VostokApplicationState.Stopped);
                     }
 
@@ -343,7 +346,7 @@ namespace Vostok.Hosting
                     return ReturnResult(VostokApplicationState.CrashedDuringStopping, error);
                 }
 
-                log.Info("Application has successfully stopped.");
+                LogApplicationSuccessfullyStopped(watch.Elapsed);
                 return ReturnResult(VostokApplicationState.Stopped);
             }
 
@@ -488,10 +491,11 @@ namespace Vostok.Hosting
             log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
         }
 
-        private void LogApplicationHasNotCompletedWithinTimeout()
-        {
+        private void LogApplicationHasNotCompletedWithinTimeout() =>
             log.Warn("Application has not completed within remaining shutdown timeout.");
-        }
+
+        private void LogApplicationSuccessfullyStopped(TimeSpan elapsed) =>
+            log.Info("Application has successfully stopped in {ApplicationStopTime}.", elapsed.ToPrettyString());
 
         #endregion
     }
