@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Vostok.Commons.Helpers.Extensions;
+using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 
@@ -39,7 +40,7 @@ namespace Vostok.Hosting.Helpers
                     {
                         disposableApplication.Dispose();
 
-                        log.Info("Disposed of the application in {ApplicationDisposeTime}.", watch.Elapsed);
+                        log.Info("Disposed of the application in {ApplicationDisposeTime}.", watch.Elapsed.ToPrettyString());
                     }
                     catch (Exception error)
                     {
