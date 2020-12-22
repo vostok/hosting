@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHerculesSpanSenderBuilder
     {
         bool IsEnabled { get; }
-
+        IVostokHerculesSpanSenderBuilder Enable();
         IVostokHerculesSpanSenderBuilder Disable();
 
         IVostokHerculesSpanSenderBuilder SetStream([NotNull] string stream);

@@ -9,6 +9,7 @@ namespace Vostok.Hosting.Setup
     {
         bool IsEnabled { get; }
 
+        IVostokHerculesMetricEventSenderBuilder Enable();
         IVostokHerculesMetricEventSenderBuilder Disable();
 
         IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider, [CanBeNull] string stream = null);
