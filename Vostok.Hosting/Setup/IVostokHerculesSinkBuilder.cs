@@ -10,8 +10,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHerculesSinkBuilder
     {
         bool IsEnabled { get; }
-
+        IVostokHerculesSinkBuilder Enable();
         IVostokHerculesSinkBuilder Disable();
+
         IVostokHerculesSinkBuilder UseInstance(IHerculesSink instance);
 
         IVostokHerculesSinkBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);

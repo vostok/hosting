@@ -11,8 +11,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokZooKeeperClientBuilder
     {
         bool IsEnabled { get; }
-
+        IVostokZooKeeperClientBuilder Enable();
         IVostokZooKeeperClientBuilder Disable();
+
         IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance);
 
         IVostokZooKeeperClientBuilder SetClusterProvider([NotNull] IClusterProvider clusterProvider);

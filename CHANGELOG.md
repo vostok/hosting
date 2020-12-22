@@ -1,3 +1,7 @@
+## 0.3.6 (22-12-2020):
+
+Added `Enable` method to components builders.
+
 ## 0.3.5 (02-12-2020):
 
 Added async suffix to `VostokMultiHostExtensions`.
