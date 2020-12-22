@@ -1,3 +1,8 @@
+## 0.3.7 (04-12-2020):
+
+VostokHostSettings: added settings to make sure the service beacon has successfully registered.
+Moved beacon start to initialization.
+
 ## 0.3.6 (22-12-2020):
 
 Added `Enable` method to components builders.
