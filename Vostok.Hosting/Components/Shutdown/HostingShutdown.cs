@@ -67,7 +67,7 @@ namespace Vostok.Hosting.Components.Shutdown
 
         private void OnHostShutdownTriggered()
         {
-            log.Info("Hosting shutdown has been initiated. Timeout = {HostingShutdownTimeout}.", totalTimeout);
+            log.Info("Hosting shutdown has been initiated. Timeout = {HostingShutdownTimeout}.", totalTimeout.ToPrettyString());
 
             if (sendAnnotation)
                 AnnotationsHelper.ReportStopping(identity, instanceMetrics);
@@ -88,7 +88,7 @@ namespace Vostok.Hosting.Components.Shutdown
                     task =>
                     {
                         if (!task.Result && beaconTimeout > TimeSpan.Zero)
-                            log.Warn("Failed to shut down service beacon in {ServiceBeaconShutdownTimeout}.", beaconTimeout);
+                            log.Warn("Failed to shut down service beacon in {ServiceBeaconShutdownTimeout}.", beaconTimeout.ToPrettyString());
                     });
         }
 
@@ -116,7 +116,7 @@ namespace Vostok.Hosting.Components.Shutdown
             {
                 serviceBeacon.Stop();
 
-                log.Info("Stopped service beacon in {ServiceBeaconStopTime}.", budget.Elapsed - elapsedBefore);
+                log.Info("Stopped service beacon in {ServiceBeaconStopTime}.", (budget.Elapsed - elapsedBefore).ToPrettyString());
 
                 return true;
             }
@@ -132,7 +132,7 @@ namespace Vostok.Hosting.Components.Shutdown
         {
             try
             {
-                log.Info("Service beacon graceful deregistration has been initiated (up to {ServiceBeaconWaitTime}).", budget.Remaining);
+                log.Info("Service beacon graceful deregistration has been initiated (up to {ServiceBeaconWaitTime}).", budget.Remaining.ToPrettyString());
 
                 var replicaInfo = serviceBeacon.ReplicaInfo;
                 var elapsedBefore = budget.Elapsed;
@@ -144,14 +144,14 @@ namespace Vostok.Hosting.Components.Shutdown
                     var replica = topology?.Replicas.FirstOrDefault(r => r.ToString().Equals(replicaInfo.Replica, StringComparison.OrdinalIgnoreCase));
                     if (replica == null)
                     {
-                        log.Info("Service replica has disappeared from topology according to local service locator in {ServiceBeaconWaitDuration}.", budget.Elapsed - elapsedBefore);
+                        log.Info("Service replica has disappeared from topology according to local service locator in {ServiceBeaconWaitDuration}.", (budget.Elapsed - elapsedBefore).ToPrettyString());
                         break;
                     }
 
                     await Task.Delay(TimeSpanArithmetics.Min(budget.Remaining, 100.Milliseconds())).ConfigureAwait(false);
                 }
 
-                // (iloktionov): The rest of the wait is a safety net (other applications may receive SD notifications significantly later).
+                log.Info("Waiting the rest {ServiceBeaconWaitTime} of the beacon shutdown timeout (other applications may receive SD notifications significantly later).", budget.Remaining.ToPrettyString());
                 await Task.Delay(budget.Remaining).ConfigureAwait(false);
             }
             catch (Exception error)

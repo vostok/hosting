@@ -48,7 +48,7 @@ namespace Vostok.Hosting.Components.Shutdown
 
         public void Initiate(TimeSpan remainingTotalBudget)
         {
-            log.Info("Application shutdown has been initiated. Timeout = {ApplicationShutdownTimeout}.", remainingTotalBudget);
+            log.Info("Application shutdown has been initiated. Timeout = {ApplicationShutdownTimeout}.", remainingTotalBudget.ToPrettyString());
 
             // (iloktionov): Start the shutdown budget so that ShutdownTimeout property will return actual remaining time from here on.
             Interlocked.Exchange(ref budget, TimeBudget.StartNew(remainingTotalBudget));
