@@ -167,9 +167,6 @@ namespace Vostok.Hosting
 
         private async Task<VostokApplicationRunResult> RunInternalAsync()
         {
-            if (settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
-
             var result = BuildEnvironment();
             if (result != null)
                 return result;
@@ -203,7 +200,9 @@ namespace Vostok.Hosting
                     ConfigureStaticProviders = settings.ConfigureStaticProviders,
                     BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
                     BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
-                    SendAnnotations = settings.SendAnnotations
+                    SendAnnotations = settings.SendAnnotations,
+                    ConfigureThreadPool = settings.ConfigureThreadPool,
+                    ThreadPoolTuningMultiplier = settings.ThreadPoolTuningMultiplier
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
@@ -244,7 +243,6 @@ namespace Vostok.Hosting
                 LogApplicationReplication(environment.ApplicationReplicationInfo);
                 LogHostExtensions(environment.HostExtensions);
 
-                ConfigureHostBeforeRun();
                 LogThreadPoolSettings();
 
                 WarmupConfiguration();
@@ -391,13 +389,6 @@ namespace Vostok.Hosting
                 onApplicationStateChanged.Error(error);
             else if (newState.IsTerminal())
                 onApplicationStateChanged.Complete();
-        }
-
-        private void ConfigureHostBeforeRun()
-        {
-            var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
-            if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
-                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
         }
 
         private void WarmupConfiguration()

@@ -22,5 +22,11 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.SendAnnotations"/>
         public bool SendAnnotations { get; set; } = true;
+        
+        /// <inheritdoc cref="VostokHostSettings.ConfigureThreadPool"/>
+        public bool ConfigureThreadPool { get; set; } = true;
+
+        /// <inheritdoc cref="VostokHostSettings.ThreadPoolTuningMultiplier"/>
+        public int ThreadPoolTuningMultiplier { get; set; } = 32;
     }
 }
