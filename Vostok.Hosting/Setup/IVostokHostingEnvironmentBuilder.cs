@@ -20,6 +20,9 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHostingEnvironmentBuilder
     {
+        IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier<T>(Func<T, int> getMultiplier);
+        IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier(int multiplier);
+        
         IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken);
         IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout);
 

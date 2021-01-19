@@ -5,6 +5,7 @@ using System.Threading;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
+using Vostok.Commons.Threading;
 using Vostok.Commons.Time;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources;
@@ -119,6 +120,9 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
+            if (settings.ConfigureThreadPool)
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
+            
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
@@ -156,6 +160,9 @@ namespace Vostok.Hosting.Components.Environment
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
             context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
+            
+            if (settings.ConfigureThreadPool && context.ApplicationLimits.CpuUnits.HasValue)
+                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, context.ApplicationLimits.CpuUnits.Value);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
@@ -279,6 +286,20 @@ namespace Vostok.Hosting.Components.Environment
         }
 
         #region SetupComponents
+
+        public IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier<T>(Func<T, int> getMultiplier)
+        {
+            settings.ConfigureThreadPool = true;
+
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier(int multiplier)
+        {
+            settings.ConfigureThreadPool = true;
+            settings.ThreadPoolTuningMultiplier = multiplier;
+            return this;
+        }
 
         public IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken)
         {
