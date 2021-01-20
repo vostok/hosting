@@ -287,13 +287,6 @@ namespace Vostok.Hosting.Components.Environment
 
         #region SetupComponents
 
-        public IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier<T>(Func<T, int> getMultiplier)
-        {
-            settings.ConfigureThreadPool = true;
-
-            return this;
-        }
-
         public IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier(int multiplier)
         {
             settings.ConfigureThreadPool = true;
