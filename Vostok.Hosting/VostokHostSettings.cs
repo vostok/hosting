@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
+using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Helpers;
@@ -98,6 +99,8 @@ namespace Vostok.Hosting
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
         public int ThreadPoolTuningMultiplier { get; set; } = 32;
+
+        public Func<IConfigurationProvider, int> ThreadPoolSettingsProvider { get; set; }
 
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
