@@ -99,7 +99,7 @@ namespace Vostok.Hosting
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
         public int ThreadPoolTuningMultiplier { get; set; } = 32;
-        
+
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
         /// </summary>
