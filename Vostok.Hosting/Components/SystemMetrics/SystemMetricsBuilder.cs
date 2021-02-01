@@ -78,7 +78,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
                 var collector = new CurrentProcessMetricsCollector(collectorSettings);
                 
-                collector.ReportMetrics(metricContext);
+                collector.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 context.DisposableHostExtensions.Add(hostMonitor.LogPeriodically(context.Log, settings.HostMetricsLoggingPeriod));
 
             if (settings.EnableHostMetricsReporting)
-                new HostMetricsCollector().ReportMetrics(metricContext);
+                new HostMetricsCollector().ReportMetrics(metricContext, settings.HostMetricsReportingPeriod);
         }
     }
 }

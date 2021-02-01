@@ -1,3 +1,7 @@
+## 0.3.8 (01-02-2020):
+
+Added `ProcessMetricsReportingPeriod` and `HostMetricsReportingPeriod` system metrics setting.
+
 ## 0.3.7 (22-12-2020):
 
 Added `Enable` method to components builders.
