@@ -93,14 +93,10 @@ namespace Vostok.Hosting.Components.ThreadPool
             try
             {
                 currentSettings = settingsProvider(configProvider);
-
-                // TODO: Think if it's necessary.
-                // If not, make another cache class. 
-                // Also, make STOP method (Probably)
-                // Also, create settings class and builder so it's possible to setup everything with builder.
                 
-                if (!currentSettings.CpuUnits.HasValue)
-                    currentSettings.CpuUnits = applicationLimits.CpuUnits;
+                // TODO: Also, create settings class and builder so it's possible to setup everything with builder.
+                
+                currentSettings.CpuUnits = applicationLimits.CpuUnits;
 
                 return true;
             }
@@ -115,6 +111,7 @@ namespace Vostok.Hosting.Components.ThreadPool
 
         private void LogThreadPoolSettings(ThreadPoolSettings settings)
         {
+            // TODO: Proper logging?
             log.Info(
                 "New thread pool multiplier: {multiplier}. New CPU units value: {units:D}",
                 settings.ThreadPoolMultiplier,

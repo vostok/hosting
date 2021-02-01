@@ -7,6 +7,6 @@ namespace Vostok.Hosting.Components.ThreadPool
     {
         public int ThreadPoolMultiplier { get; set; }
         
-        public float? CpuUnits { get; set; }
+        internal float? CpuUnits { get; set; }
     }
 }
