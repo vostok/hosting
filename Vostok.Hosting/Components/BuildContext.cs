@@ -10,6 +10,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
@@ -51,6 +52,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationMetrics Metrics { get; set; }
         public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
         public DiagnosticsHub DiagnosticsHub { get; set; }
+        public DynamicThreadPoolTracker DynamicThreadPoolTracker { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
