@@ -10,6 +10,11 @@ namespace Vostok.Hosting.Components.ThreadPool
         private readonly Customization<DynamicThreadPoolTrackerSettings> settingsCustomization;
         private volatile bool enabled;
 
+        public DynamicThreadPoolBuilder()
+        {
+            settingsCustomization = new Customization<DynamicThreadPoolTrackerSettings>();
+        }
+
         public DynamicThreadPoolTracker Build(BuildContext context)
         {
             if (!enabled)
