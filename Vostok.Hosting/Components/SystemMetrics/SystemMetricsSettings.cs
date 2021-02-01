@@ -22,7 +22,11 @@ namespace Vostok.Hosting.Components.SystemMetrics
         public TimeSpan GcMinimumDurationForLogging { get; set; } = 500.Milliseconds();
 
         public TimeSpan ProcessMetricsLoggingPeriod { get; set; } = 10.Seconds();
+        
+        public TimeSpan? ProcessMetricsReportingPeriod { get; set; }
 
         public TimeSpan HostMetricsLoggingPeriod { get; set; } = 10.Seconds();
+
+        public TimeSpan? HostMetricsReportingPeriod { get; set; }
     }
 }
