@@ -21,6 +21,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokHostingEnvironmentBuilder
     {
         IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier(int multiplier);
+        IVostokHostingEnvironmentBuilder SetupDynamicThreadPool(Action<IVostokDynamicThreadPoolBuilder> setup);
         
         IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken);
         IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout);
