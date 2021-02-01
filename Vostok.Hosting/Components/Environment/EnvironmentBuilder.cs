@@ -305,6 +305,12 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
+        public IVostokHostingEnvironmentBuilder SetupDynamicThreadPool(Action<IVostokDynamicThreadPoolBuilder> setup)
+        {
+            dynamicThreadPoolBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
         public IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken)
         {
             shutdownTokens.Add(shutdownToken);

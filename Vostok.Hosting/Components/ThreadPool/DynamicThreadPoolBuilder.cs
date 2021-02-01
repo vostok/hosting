@@ -29,7 +29,7 @@ namespace Vostok.Hosting.Components.ThreadPool
                 customizedSettings.ChecksPeriod,
                 context.ConfigurationProvider,
                 context.ApplicationLimits,
-                customizedSettings.ThreadPoolSettingsProvider,
+                customizedSettings.ThreadPoolSettingsProvider ?? throw new ArgumentNullException(nameof(customizedSettings.ThreadPoolSettingsProvider)),
                 context.Log);
         }
 
