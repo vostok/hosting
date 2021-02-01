@@ -90,6 +90,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
+            dynamicThreadPoolBuilder = new CustomizableBuilder<DynamicThreadPoolBuilder, DynamicThreadPoolTracker>(new DynamicThreadPoolBuilder());
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
             systemMetricsBuilder = new SystemMetricsBuilder();
@@ -225,6 +226,8 @@ namespace Vostok.Hosting.Components.Environment
             
             context.DiagnosticsHub = diagnosticsBuilder.Build(context);
 
+            context.DynamicThreadPoolTracker = dynamicThreadPoolBuilder.Build(context);
+
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
                 context.ServiceLocator,
@@ -281,6 +284,12 @@ namespace Vostok.Hosting.Components.Environment
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
+            
+            if (context.DynamicThreadPoolTracker != null)
+            {
+                context.DynamicThreadPoolTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
+                context.HostExtensions.AsMutable().Add(context.DynamicThreadPoolTracker);
+            }
             
             HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
