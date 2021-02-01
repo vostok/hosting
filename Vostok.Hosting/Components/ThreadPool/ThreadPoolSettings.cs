@@ -2,6 +2,7 @@
 
 namespace Vostok.Hosting.Components.ThreadPool
 {
+    // TODO: Write doc.
     [PublicAPI]
     public class ThreadPoolSettings
     {

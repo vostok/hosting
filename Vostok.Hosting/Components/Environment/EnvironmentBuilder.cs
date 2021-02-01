@@ -26,6 +26,7 @@ using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.SystemMetrics;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Helpers;
@@ -61,6 +62,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
+        private readonly CustomizableBuilder<DynamicThreadPoolBuilder, DynamicThreadPoolTracker> dynamicThreadPoolBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
         private readonly SystemMetricsBuilder systemMetricsBuilder;
