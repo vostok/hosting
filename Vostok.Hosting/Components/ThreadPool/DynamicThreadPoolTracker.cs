@@ -93,9 +93,6 @@ namespace Vostok.Hosting.Components.ThreadPool
             try
             {
                 currentSettings = settingsProvider(configProvider);
-                
-                // TODO: Also, create settings class and builder so it's possible to setup everything with builder.
-                
                 currentSettings.CpuUnits = applicationLimits.CpuUnits;
 
                 return true;
