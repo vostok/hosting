@@ -108,11 +108,10 @@ namespace Vostok.Hosting.Components.ThreadPool
 
         private void LogThreadPoolSettings(ThreadPoolSettings settings)
         {
-            // TODO: Proper logging?
             log.Info(
-                "New thread pool multiplier: {multiplier}. New CPU units value: {units:D}",
+                "New thread pool multiplier: {multiplier}. New CPU units value: {units}",
                 settings.ThreadPoolMultiplier,
-                settings.CpuUnits);
+                settings.CpuUnits.HasValue ? $"{settings.CpuUnits.Value:F2} core(s)" : "<unlimited>");
         }
     }
 }
