@@ -12,11 +12,11 @@ namespace Vostok.Hosting.Components.ThreadPool
         /// <summary>
         /// Per-core thread pool configuration multiplier.
         /// </summary>
-        public int ThreadPoolMultiplier { get; set; }
+        public int ThreadPoolMultiplier { get; set; } = 32;
 
         /// <summary>
-        /// It is used for reconfiguration when on <see cref="IVostokApplicationLimits"/> change.
-        /// Actual value of this setting is <see cref="IVostokApplicationLimits.CpuUnits"/>.
+        /// This value is used for reconfiguration on <see cref="IVostokApplicationLimits"/> change.
+        /// Actual value of this setting is always <see cref="IVostokApplicationLimits.CpuUnits"/>.
         /// </summary>
         internal float? CpuUnits { get; set; }
     }

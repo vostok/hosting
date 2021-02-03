@@ -18,7 +18,7 @@ namespace Vostok.Hosting.Components.ThreadPool
         /// Sets check period time for dynamic reconfiguration of thread pool.
         /// </summary>
         public TimeSpan ChecksPeriod = 10.Seconds();
-        
+
         /// <summary>
         /// Provider of thread pool settings is called every check.
         /// </summary>
