@@ -1,77 +1,31 @@
 ﻿using System;
-using Vostok.Commons.Helpers;
-using Vostok.Configuration.Abstractions;
-using Vostok.Hosting.Setup;
+using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Components.ThreadPool
 {
-    internal class DynamicThreadPoolBuilder : IVostokDynamicThreadPoolBuilder, IBuilder<DynamicThreadPoolTracker>
+    internal class DynamicThreadPoolBuilder
     {
-        private readonly Customization<DynamicThreadPoolTrackerSettings> settingsCustomization;
-        private volatile bool enabled;
-
-        public DynamicThreadPoolBuilder()
+        public void Build(BuildContext context, IVostokHostingEnvironment environment, DynamicThreadPoolSettings settings)
         {
-            settingsCustomization = new Customization<DynamicThreadPoolTrackerSettings>();
+            if (settings == null)
+                context.LogDisabled("Dynamic thread pool");
+            else
+                BuildAndRegisterHostExtensions(context, environment, settings);
         }
 
-        public DynamicThreadPoolTracker Build(BuildContext context)
+        private void BuildAndRegisterHostExtensions(BuildContext context, IVostokHostingEnvironment environment, DynamicThreadPoolSettings settings)
         {
-            if (!enabled)
-            {
-                context.LogDisabled("Dynamic thread pool");
-                return null;
-            }
-
-            var customizedSettings = settingsCustomization.Customize(new DynamicThreadPoolTrackerSettings());
-
-            return new DynamicThreadPoolTracker(
-                customizedSettings.ChecksPeriod,
+            var tracker = new DynamicThreadPoolTracker(
+                settings.ChecksPeriod,
                 context.ConfigurationProvider,
                 context.ApplicationLimits,
-                customizedSettings.ThreadPoolSettingsProvider ?? throw new ArgumentNullException(nameof(customizedSettings.ThreadPoolSettingsProvider)),
+                settings.ThreadPoolSettingsProvider ?? throw new ArgumentNullException(nameof(settings.ThreadPoolSettingsProvider)),
                 context.Log);
-        }
 
-        public IVostokDynamicThreadPoolBuilder Enable()
-        {
-            enabled = true;
+            context.HostExtensions.AsMutable().Add(tracker);
+            context.DisposableHostExtensions.Add(tracker);
 
-            return this;
-        }
-
-        public IVostokDynamicThreadPoolBuilder Disable()
-        {
-            enabled = false;
-
-            return this;
-        }
-
-        public IVostokDynamicThreadPoolBuilder SetCheckPeriod(TimeSpan checkPeriod)
-        {
-            settingsCustomization.AddCustomization(settings => settings.ChecksPeriod = checkPeriod);
-            enabled = true;
-
-            return this;
-        }
-
-        public IVostokDynamicThreadPoolBuilder SetThreadPoolProvider(Func<IConfigurationProvider, ThreadPoolSettings> provider)
-        {
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
-
-            settingsCustomization.AddCustomization(settings => settings.ThreadPoolSettingsProvider = provider);
-            enabled = true;
-
-            return this;
-        }
-
-        public IVostokDynamicThreadPoolBuilder CustomizeDynamicThreadPoolSettings(Action<DynamicThreadPoolTrackerSettings> customization)
-        {
-            settingsCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
-            enabled = true;
-
-            return this;
+            tracker.LaunchPeriodicalChecks(environment.ShutdownToken);
         }
     }
 }

@@ -202,7 +202,8 @@ namespace Vostok.Hosting
                     BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
                     SendAnnotations = settings.SendAnnotations,
                     ConfigureThreadPool = settings.ConfigureThreadPool,
-                    ThreadPoolTuningMultiplier = settings.ThreadPoolTuningMultiplier
+                    ThreadPoolTuningMultiplier = settings.ThreadPoolTuningMultiplier,
+                    DynamicThreadPoolSettings = settings.DynamicThreadPoolSettings
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);

@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 
 namespace Vostok.Hosting
@@ -28,5 +29,8 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.ThreadPoolTuningMultiplier"/>
         public int ThreadPoolTuningMultiplier { get; set; } = 32;
+        
+        /// <inheritdoc cref="VostokHostSettings.DynamicThreadPoolSettings"/>
+        public DynamicThreadPoolSettings DynamicThreadPoolSettings { get; set; }
     }
 }
