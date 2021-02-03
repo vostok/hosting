@@ -62,7 +62,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
-        private readonly CustomizableBuilder<DynamicThreadPoolBuilder, DynamicThreadPoolTracker> dynamicThreadPoolBuilder;
+        private readonly DynamicThreadPoolBuilder dynamicThreadPoolBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
         private readonly SystemMetricsBuilder systemMetricsBuilder;
@@ -90,7 +90,7 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
-            dynamicThreadPoolBuilder = new CustomizableBuilder<DynamicThreadPoolBuilder, DynamicThreadPoolTracker>(new DynamicThreadPoolBuilder());
+            dynamicThreadPoolBuilder = new DynamicThreadPoolBuilder();
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
             systemMetricsBuilder = new SystemMetricsBuilder();
@@ -226,8 +226,6 @@ namespace Vostok.Hosting.Components.Environment
             
             context.DiagnosticsHub = diagnosticsBuilder.Build(context);
 
-            context.DynamicThreadPoolTracker = dynamicThreadPoolBuilder.Build(context);
-
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
                 context.ServiceLocator,
@@ -285,31 +283,14 @@ namespace Vostok.Hosting.Components.Environment
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
             
-            if (context.DynamicThreadPoolTracker != null)
-            {
-                context.DynamicThreadPoolTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
-                context.HostExtensions.AsMutable().Add(context.DynamicThreadPoolTracker);
-            }
-            
+            dynamicThreadPoolBuilder.Build(context, vostokHostingEnvironment, settings.DynamicThreadPoolSettings);
+
             HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
             return vostokHostingEnvironment;
         }
 
         #region SetupComponents
-
-        public IVostokHostingEnvironmentBuilder SetupThreadPoolMultiplier(int multiplier)
-        {
-            settings.ConfigureThreadPool = true;
-            settings.ThreadPoolTuningMultiplier = multiplier;
-            return this;
-        }
-
-        public IVostokHostingEnvironmentBuilder SetupDynamicThreadPool(Action<IVostokDynamicThreadPoolBuilder> setup)
-        {
-            dynamicThreadPoolBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
-            return this;
-        }
 
         public IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken)
         {

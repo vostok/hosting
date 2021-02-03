@@ -5,6 +5,7 @@ using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -99,6 +100,11 @@ namespace Vostok.Hosting
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
         public int ThreadPoolTuningMultiplier { get; set; } = 32;
+
+        /// <summary>
+        /// Per-core dynamic thread pool configuration used when <see cref="DynamicThreadPoolSettings"/> is not <c>null</c>.
+        /// </summary>
+        public DynamicThreadPoolSettings DynamicThreadPoolSettings { get; set; }
 
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
