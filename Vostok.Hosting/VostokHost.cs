@@ -171,24 +171,13 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
-            DynamicThreadPoolTracker dynamicThreadPoolTracker = null;
-            
-            if (settings.DynamicThreadPoolSettings != null)
-            {
-                dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
-                    settings.DynamicThreadPoolSettings,
-                    environment.ConfigurationProvider,
-                    environment.ApplicationLimits,
-                    environment.Log);
-                
-                dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
-            }
-
             var result = BuildEnvironment();
             if (result != null)
                 return result;
+
+            var dynamicThreadPool = ConfigureDynamicThreadPool();
             
-            using (dynamicThreadPoolTracker)
+            using (dynamicThreadPool)
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -413,6 +402,22 @@ namespace Vostok.Hosting
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
+        }
+
+        private DynamicThreadPoolTracker ConfigureDynamicThreadPool()
+        {
+            if (settings.DynamicThreadPoolSettings == null)
+                return null;
+            
+            var dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
+                settings.DynamicThreadPoolSettings,
+                environment.ConfigurationProvider,
+                environment.ApplicationLimits,
+                environment.Log);
+                
+            dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
+
+            return dynamicThreadPoolTracker;
         }
 
         private void WarmupConfiguration()
