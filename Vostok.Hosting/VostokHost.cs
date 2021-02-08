@@ -58,7 +58,6 @@ namespace Vostok.Hosting
         private volatile Task<VostokApplicationRunResult> workerTask;
         private volatile VostokHostingEnvironment environment;
         private volatile ILog log;
-        private volatile DynamicThreadPoolTracker dynamicThreadPoolTracker;
 
         public VostokHost([NotNull] VostokHostSettings settings)
         {
@@ -172,10 +171,24 @@ namespace Vostok.Hosting
             if (settings.ConfigureThreadPool)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
+            DynamicThreadPoolTracker dynamicThreadPoolTracker = null;
+            
+            if (settings.DynamicThreadPoolSettings != null)
+            {
+                dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
+                    settings.DynamicThreadPoolSettings,
+                    environment.ConfigurationProvider,
+                    environment.ApplicationLimits,
+                    environment.Log);
+                
+                dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
+            }
+
             var result = BuildEnvironment();
             if (result != null)
                 return result;
-
+            
+            using (dynamicThreadPoolTracker)
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             {
@@ -400,17 +413,6 @@ namespace Vostok.Hosting
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
-
-            if (settings.DynamicThreadPoolSettings != null)
-            {
-                dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
-                    settings.DynamicThreadPoolSettings,
-                    environment.ConfigurationProvider,
-                    environment.ApplicationLimits,
-                    environment.Log);
-                
-                dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
-            }
         }
 
         private void WarmupConfiguration()
