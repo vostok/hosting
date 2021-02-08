@@ -24,18 +24,17 @@ namespace Vostok.Hosting.Components.ThreadPool
         private volatile ThreadPoolSettings previousSettings;
 
         public DynamicThreadPoolTracker(
-            TimeSpan checkPeriod,
+            DynamicThreadPoolSettings settings,
             IConfigurationProvider configProvider,
             IVostokApplicationLimits limits,
-            Func<IConfigurationProvider, ThreadPoolSettings> settingsProvider,
             ILog log)
         {
             this.log = log.ForContext<DynamicThreadPoolTracker>();
             this.configProvider = configProvider;
             applicationLimits = limits;
-            this.settingsProvider = settingsProvider;
+            settingsProvider = settings.ThreadPoolSettingsProvider ?? throw new ArgumentNullException(nameof(settings.ThreadPoolSettingsProvider));
 
-            this.checkPeriod = checkPeriod;
+            checkPeriod = settings.ChecksPeriod;
 
             cancellation = new CancellationTokenSource();
             previousSettings = new ThreadPoolSettings();

@@ -20,6 +20,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Components.Metrics;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
@@ -57,6 +58,7 @@ namespace Vostok.Hosting
         private volatile Task<VostokApplicationRunResult> workerTask;
         private volatile VostokHostingEnvironment environment;
         private volatile ILog log;
+        private volatile DynamicThreadPoolTracker dynamicThreadPoolTracker;
 
         public VostokHost([NotNull] VostokHostSettings settings)
         {
@@ -398,6 +400,17 @@ namespace Vostok.Hosting
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
+
+            if (settings.DynamicThreadPoolSettings != null)
+            {
+                dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
+                    settings.DynamicThreadPoolSettings,
+                    environment.ConfigurationProvider,
+                    environment.ApplicationLimits,
+                    environment.Log);
+                
+                dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
+            }
         }
 
         private void WarmupConfiguration()
