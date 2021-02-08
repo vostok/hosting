@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
-using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 
 namespace Vostok.Hosting
