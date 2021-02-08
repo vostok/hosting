@@ -62,7 +62,6 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
-        private readonly DynamicThreadPoolBuilder dynamicThreadPoolBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
         private readonly SystemMetricsBuilder systemMetricsBuilder;
@@ -90,7 +89,6 @@ namespace Vostok.Hosting.Components.Environment
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
-            dynamicThreadPoolBuilder = new DynamicThreadPoolBuilder();
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
             systemMetricsBuilder = new SystemMetricsBuilder();
@@ -123,9 +121,6 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
-            if (settings.ConfigureThreadPool)
-                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
-            
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
@@ -163,9 +158,6 @@ namespace Vostok.Hosting.Components.Environment
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
             context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
-            
-            if (settings.ConfigureThreadPool && context.ApplicationLimits.CpuUnits.HasValue)
-                ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, context.ApplicationLimits.CpuUnits.Value);
 
             context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
 
@@ -283,8 +275,6 @@ namespace Vostok.Hosting.Components.Environment
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
             
-            dynamicThreadPoolBuilder.Build(context, vostokHostingEnvironment, settings.DynamicThreadPoolSettings);
-
             HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
             return vostokHostingEnvironment;
