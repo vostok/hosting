@@ -12,6 +12,7 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Customization<ConsoleLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
+        private volatile Func<LogLevel> minLevelProvider;
         private volatile bool enabled;
         private volatile bool synchronous;
 
@@ -47,6 +48,12 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
+        public IVostokConsoleLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
+        {
+            this.minLevelProvider = minLevelProvider ?? throw new ArgumentNullException(nameof(minLevelProvider));
+            return this;
+        }
+
         public IVostokConsoleLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
@@ -75,6 +82,9 @@ namespace Vostok.Hosting.Components.Log
             settingsCustomization.Customize(settings);
 
             var log = synchronous ? (ILog)new SynchronousConsoleLog(settings) : new ConsoleLog(settings);
+
+            if (minLevelProvider != null)
+                log = log.WithMinimumLevel(minLevelProvider);
 
             return logCustomization.Customize(log);
         }
