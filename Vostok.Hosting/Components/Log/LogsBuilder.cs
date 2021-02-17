@@ -18,6 +18,7 @@ namespace Vostok.Hosting.Components.Log
     internal class LogsBuilder : IVostokCompositeLogBuilder, IBuilder<Logs>
     {
         private readonly List<(string name, ILog log)> userLogs;
+        private volatile Func<LogLevel> minLevelProvider;
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
@@ -36,7 +37,7 @@ namespace Vostok.Hosting.Components.Log
         }
 
         public bool IsFileLogEnabled => fileLogBuilder.IsEnabled;
-        
+
         public bool IsConsoleLogEnabled => consoleLogBuilder.IsEnabled;
 
         public bool IsHerculesLogEnabled => herculesLogBuilder.IsEnabled;
@@ -51,7 +52,7 @@ namespace Vostok.Hosting.Components.Log
                 herculesLogBuilder.Build(context),
                 rulesBuilder.Build(context),
                 finalLog => logCustomization.Customize(
-                    finalLog
+                    (minLevelProvider != null ? finalLog.WithMinimumLevel(minLevelProvider) : finalLog)
                         .WithApplicationIdentityProperties(context.ApplicationIdentity)
                         .WithTracingProperties(context.Tracer)
                         .WithOperationContext()));
@@ -81,6 +82,12 @@ namespace Vostok.Hosting.Components.Log
         public IVostokCompositeLogBuilder ClearRules()
         {
             rulesBuilder.Clear();
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
+        {
+            this.minLevelProvider = minLevelProvider ?? throw new ArgumentNullException(nameof(minLevelProvider));
             return this;
         }
 
