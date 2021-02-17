@@ -10,9 +10,9 @@ namespace Vostok.Hosting.Setup
     public interface IVostokCompositeLogBuilder
     {
         bool IsFileLogEnabled { get; }
-        
+
         bool IsConsoleLogEnabled { get; }
-        
+
         bool IsHerculesLogEnabled { get; }
 
         IVostokCompositeLogBuilder AddLog([NotNull] ILog log);
@@ -24,6 +24,8 @@ namespace Vostok.Hosting.Setup
         IVostokCompositeLogBuilder AddRules([NotNull] IConfigurationSource source);
 
         IVostokCompositeLogBuilder ClearRules();
+
+        IVostokCompositeLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
 
         IVostokCompositeLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
