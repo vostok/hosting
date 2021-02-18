@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Threading;
+using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
@@ -11,20 +9,20 @@ namespace Vostok.Hosting.Components.ThreadPool
 {
     internal class DynamicThreadPoolTracker : IDisposable
     {
-        private readonly TimeSpan checkPeriod;
+        private static readonly TimeSpan ChecksPeriod = 10.Seconds();
+
+        private readonly PeriodicalAction threadPoolUpdate;
 
         private readonly ILog log;
         private readonly IConfigurationProvider configProvider;
         private readonly IVostokApplicationLimits applicationLimits;
         private readonly Func<IConfigurationProvider, ThreadPoolSettings> settingsProvider;
 
-        private readonly CancellationTokenSource cancellation;
-        private volatile Task checkerTask;
-
-        private volatile ThreadPoolSettings previousSettings;
+        private int? previousThreadPoolMultiplier;
+        private float? previousCpuUnits;
 
         public DynamicThreadPoolTracker(
-            DynamicThreadPoolSettings settings,
+            Func<IConfigurationProvider, ThreadPoolSettings> settingsProvider,
             IConfigurationProvider configProvider,
             IVostokApplicationLimits limits,
             ILog log)
@@ -32,85 +30,59 @@ namespace Vostok.Hosting.Components.ThreadPool
             this.log = log.ForContext<DynamicThreadPoolTracker>();
             this.configProvider = configProvider;
             applicationLimits = limits;
-            settingsProvider = settings.ThreadPoolSettingsProvider ?? throw new ArgumentNullException(nameof(settings.ThreadPoolSettingsProvider));
+            this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
 
-            checkPeriod = settings.ChecksPeriod;
-
-            cancellation = new CancellationTokenSource();
-            previousSettings = new ThreadPoolSettings();
-        }
-
-        public void LaunchPeriodicalChecks(CancellationToken externalToken)
-        {
-            var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken, cancellation.Token);
-
-            // ReSharper disable once MethodSupportsCancellation
-            Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
+            threadPoolUpdate = new PeriodicalAction(CheckAndUpdate, LogOnException, () => ChecksPeriod);
+            threadPoolUpdate.Start();
         }
 
         public void Dispose()
         {
-            cancellation.Cancel();
-
-            checkerTask?.SilentlyContinue().GetAwaiter().GetResult();
+            threadPoolUpdate.Stop();
         }
 
-        private static bool WereSettingsUpdated(ThreadPoolSettings oldSettings, ThreadPoolSettings newSettings)
+        private bool WereSettingsUpdated(int newThreadPoolMultiplier, float? newCpuUnits)
         {
-            return oldSettings == null ||
-                   newSettings.ThreadPoolMultiplier != oldSettings.ThreadPoolMultiplier ||
-                   !newSettings.CpuUnits.Equals(oldSettings.CpuUnits);
+            return !previousThreadPoolMultiplier.HasValue ||
+                   previousThreadPoolMultiplier.Value != newThreadPoolMultiplier ||
+                   !previousCpuUnits.Equals(newCpuUnits);
         }
 
-        private static void SetupThreadPool(ThreadPoolSettings settings)
+        private static void SetupThreadPool(int threadPoolMultiplier, float? cpuUnits)
         {
-            if (settings.CpuUnits.HasValue)
-                ThreadPoolUtility.Setup(settings.ThreadPoolMultiplier, settings.CpuUnits.Value);
+            if (cpuUnits.HasValue)
+                ThreadPoolUtility.Setup(threadPoolMultiplier, cpuUnits.Value);
             else
-                ThreadPoolUtility.Setup(settings.ThreadPoolMultiplier);
+                ThreadPoolUtility.Setup(threadPoolMultiplier);
         }
 
-        private async Task RunPeriodicallyAsync(CancellationToken cancellationToken)
+        private void CheckAndUpdate()
         {
-            while (!cancellationToken.IsCancellationRequested)
+            var newThreadPoolMultiplier = settingsProvider(configProvider).ThreadPoolMultiplier;
+            var newCpuUnits = applicationLimits.CpuUnits;
+
+            if (WereSettingsUpdated(newThreadPoolMultiplier, newCpuUnits))
             {
-                if (TryGetThreadPoolSettings(out var currentSettings) && WereSettingsUpdated(previousSettings, currentSettings))
-                {
-                    SetupThreadPool(currentSettings);
+                SetupThreadPool(newThreadPoolMultiplier, newCpuUnits);
 
-                    previousSettings = currentSettings;
+                previousThreadPoolMultiplier = newThreadPoolMultiplier;
+                previousCpuUnits = newCpuUnits;
 
-                    LogThreadPoolSettings(currentSettings);
-                }
-
-                await Task.Delay(checkPeriod, cancellationToken).ConfigureAwait(false);
+                LogThreadPoolSettings(newThreadPoolMultiplier, newCpuUnits);
             }
         }
 
-        private bool TryGetThreadPoolSettings(out ThreadPoolSettings currentSettings)
-        {
-            try
-            {
-                currentSettings = settingsProvider(configProvider);
-                currentSettings.CpuUnits = applicationLimits.CpuUnits;
-
-                return true;
-            }
-            catch (Exception error)
-            {
-                log.Warn(error, "Unable to update thread pool settings.");
-
-                currentSettings = null;
-                return false;
-            }
-        }
-
-        private void LogThreadPoolSettings(ThreadPoolSettings settings)
+        private void LogThreadPoolSettings(int threadPoolMultiplier, float? cpuUnits)
         {
             log.Info(
                 "New thread pool multiplier: {multiplier}. New CPU units value: {units}",
-                settings.ThreadPoolMultiplier,
-                settings.CpuUnits.HasValue ? $"{settings.CpuUnits.Value:F2} core(s)" : "<unlimited>");
+                threadPoolMultiplier,
+                cpuUnits.HasValue ? $"{cpuUnits.Value:F2} core(s)" : "<unlimited>");
+        }
+
+        private void LogOnException(Exception error)
+        {
+            log.Warn(error, "Unable to update thread pool settings.");
         }
     }
 }
