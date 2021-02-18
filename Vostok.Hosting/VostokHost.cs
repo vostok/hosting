@@ -177,9 +177,9 @@ namespace Vostok.Hosting
 
             var dynamicThreadPool = ConfigureDynamicThreadPool();
             
-            using (dynamicThreadPool)
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
+            using (dynamicThreadPool)
             {
                 result = WarmupEnvironment();
 
@@ -406,16 +406,14 @@ namespace Vostok.Hosting
 
         private DynamicThreadPoolTracker ConfigureDynamicThreadPool()
         {
-            if (settings.DynamicThreadPoolSettings == null)
+            if (settings.ThreadPoolSettingsProvider == null)
                 return null;
             
             var dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
-                settings.DynamicThreadPoolSettings,
+                settings.ThreadPoolSettingsProvider,
                 environment.ConfigurationProvider,
                 environment.ApplicationLimits,
                 environment.Log);
-                
-            dynamicThreadPoolTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
 
             return dynamicThreadPoolTracker;
         }

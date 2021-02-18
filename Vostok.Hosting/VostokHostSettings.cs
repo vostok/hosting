@@ -102,9 +102,10 @@ namespace Vostok.Hosting
         public int ThreadPoolTuningMultiplier { get; set; } = 32;
 
         /// <summary>
-        /// Per-core dynamic thread pool configuration used when <see cref="DynamicThreadPoolSettings"/> is not <c>null</c>.
+        /// Per-core dynamic thread pool provider is used to reconfigure thread pool.
+        /// Dynamic thread pool feature is active only if <see cref="ThreadPoolSettingsProvider"/> is not <c>null</c>.
         /// </summary>
-        public DynamicThreadPoolSettings DynamicThreadPoolSettings { get; set; }
+        public Func<IConfigurationProvider, ThreadPoolSettings> ThreadPoolSettingsProvider { get; set; }
 
         /// <summary>
         /// Additional actions that will be executed right before application initialization.
