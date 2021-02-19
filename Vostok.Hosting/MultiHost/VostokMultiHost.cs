@@ -253,18 +253,22 @@ namespace Vostok.Hosting.MultiHost
             return EnvironmentBuilder.Build(
                 builder =>
                 {
+                    builder.SetupApplicationIdentity(
+                        identityBuilder => identityBuilder
+                           .SetProject("VostokMultiHost")
+                           .SetEnvironment("VostokMultiHost")
+                           .SetApplication("VostokMultiHost")
+                           .SetInstance("VostokMultiHost"));
+                    
                     settings.EnvironmentSetup(builder);
 
                     builder.SetupLog(logBuilder => logBuilder.CustomizeLog(toCustomize => toCustomize.ForContext<VostokMultiHost>()));
 
-                    builder.SetupApplicationIdentity(
-                        identityBuilder => identityBuilder
-                           .SetProject("VostokMultiHost")
-                           .SetEnvironment("Common")
-                           .SetApplication("Anything")
-                           .SetInstance("1"));
-
                     builder.DisableServiceBeacon();
+
+                    builder.SetupLog(logBuilder => logBuilder.SetupHerculesLog(herculesLogBuilder => herculesLogBuilder.Disable()));
+
+                    builder.SetupMetrics(metricsBuilder => metricsBuilder.SetupHerculesMetricEventSender(senderBuilder => senderBuilder.Disable()));
 
                     builder.SetupSystemMetrics(
                         systemMetricsSettings =>
