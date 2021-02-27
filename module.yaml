@@ -49,7 +49,7 @@ notests *default:
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
     - vostok.hosting.abstractions
-    - vostok.logging.abstractions@minlevel-provider
+    - vostok.logging.abstractions
     - vostok.logging.configuration
     - vostok.logging.console
     - vostok.logging.context
