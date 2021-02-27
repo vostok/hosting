@@ -14,6 +14,8 @@ namespace Vostok.Hosting.Setup
 
         IVostokConsoleLogBuilder Disable();
 
+        IVostokConsoleLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
+
         IVostokConsoleLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokConsoleLogBuilder CustomizeSettings([NotNull] Action<ConsoleLogSettings> settingsCustomization);

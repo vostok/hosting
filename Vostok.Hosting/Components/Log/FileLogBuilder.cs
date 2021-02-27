@@ -15,6 +15,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<FileLogSettings> settingsProvider;
+        private volatile Func<LogLevel> minLevelProvider;
         private volatile bool enabled;
 
         public FileLogBuilder()
@@ -34,6 +35,12 @@ namespace Vostok.Hosting.Components.Log
         public IVostokFileLogBuilder Disable()
         {
             enabled = false;
+            return this;
+        }
+
+        public IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
+        {
+            this.minLevelProvider = minLevelProvider ?? throw new ArgumentNullException(nameof(minLevelProvider));
             return this;
         }
 
@@ -72,7 +79,12 @@ namespace Vostok.Hosting.Components.Log
 
             context.LogsDirectory = GetLogsDirectory();
 
-            return logCustomization.Customize(new FileLog(settingsProvider));
+            ILog log = new FileLog(settingsProvider);
+
+            if (minLevelProvider != null)
+                log = log.WithMinimumLevel(minLevelProvider);
+
+            return logCustomization.Customize(log);
         }
 
         private string GetLogsDirectory()

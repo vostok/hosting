@@ -10,6 +10,8 @@ namespace Vostok.Hosting.Setup
     {
         IVostokFileLogBuilder Disable();
 
+        IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
+
         IVostokFileLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokFileLogBuilder CustomizeSettings([NotNull] Action<FileLogSettings> settingsCustomization);
