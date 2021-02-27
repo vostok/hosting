@@ -1,4 +1,8 @@
-## 0.3.8 (01-02-2020):
+## 0.3.9 (28-02-2021):
+
+Added `SetupMinimumLevelProvider` method to log builders.
+
+## 0.3.8 (01-02-2021):
 
 Added `ProcessMetricsReportingPeriod` and `HostMetricsReportingPeriod` system metrics setting.
 
