@@ -14,6 +14,8 @@ namespace Vostok.Hosting.Setup
 
         IVostokHerculesLogBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
 
+        IVostokHerculesLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
+
         IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokHerculesLogBuilder CustomizeSettings([NotNull] Action<HerculesLogSettings> settingsCustomization);

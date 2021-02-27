@@ -15,6 +15,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<string> apiKeyProvider;
+        private volatile Func<LogLevel> minLevelProvider;
         private volatile string stream;
         private volatile bool enabled;
 
@@ -47,6 +48,12 @@ namespace Vostok.Hosting.Components.Log
         public IVostokHerculesLogBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             this.apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
+            return this;
+        }
+
+        public IVostokHerculesLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
+        {
+            this.minLevelProvider = minLevelProvider ?? throw new ArgumentNullException(nameof(minLevelProvider));
             return this;
         }
 
@@ -90,7 +97,12 @@ namespace Vostok.Hosting.Components.Log
 
             settingsCustomization.Customize(settings);
 
-            return logCustomization.Customize(new HerculesLog(settings));
+            ILog log = new HerculesLog(settings);
+
+            if (minLevelProvider != null)
+                log = log.WithMinimumLevel(minLevelProvider);
+
+            return logCustomization.Customize(log);
         }
     }
 }
