@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 
@@ -50,7 +51,7 @@ namespace Vostok.Hosting.Models
         public VostokApplicationRunResult EnsureSuccess()
         {
             if (Error != null)
-                throw Error;
+                ExceptionDispatchInfo.Capture(Error).Throw();
 
             return this;
         }
