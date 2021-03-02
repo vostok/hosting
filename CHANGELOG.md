@@ -1,3 +1,7 @@
+## 0.3.10 (02-03-2021):
+
+Fixed https://github.com/vostok/hosting/issues/46
+
 ## 0.3.9 (28-02-2021):
 
 Added `SetupMinimumLevelProvider` method to log builders.

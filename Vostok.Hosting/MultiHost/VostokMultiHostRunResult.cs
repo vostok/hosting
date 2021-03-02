@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using JetBrains.Annotations;
 using Vostok.Hosting.Models;
 
@@ -59,7 +60,7 @@ namespace Vostok.Hosting.MultiHost
         public VostokMultiHostRunResult EnsureSuccess()
         {
             if (Error != null)
-                throw Error;
+                ExceptionDispatchInfo.Capture(Error).Throw(); ;
 
             return this;
         }
