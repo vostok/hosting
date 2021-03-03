@@ -175,9 +175,7 @@ namespace Vostok.Hosting.Components.Configuration
         {
             var context = FlowingContext.Globals.Get<BuildContext>();
 
-            var ccClient = context?.ClusterConfigClient ?? ClusterConfigClient.Default;
-
-            var ccSources = clusterConfigSources.Select(sourceProvider => sourceProvider(ccClient));
+            var ccSources = clusterConfigSources.Select(sourceProvider => sourceProvider(context?.ClusterConfigClient ?? ClusterConfigClient.Default));
 
             var sourcesList = ccSources.Concat(sources).ToArray();
 
