@@ -22,5 +22,11 @@ namespace Vostok.Hosting.Setup
         IVostokConfigurationBuilder CustomizeSecretConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
 
         IVostokConfigurationBuilder CustomizePrintSettings([NotNull] Action<PrintSettings> settingsCustomization);
+
+        TSettings GetIntermediateConfiguration<TSettings>(params string[] scope);
+
+        TSettings GetIntermediateSecretConfiguration<TSettings>(params string[] scope);
+
+        TSettings GetIntermediateMergedConfiguration<TSettings>(params string[] scope);
     }
 }
