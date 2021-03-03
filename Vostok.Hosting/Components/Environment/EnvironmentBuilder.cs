@@ -132,10 +132,13 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
                 ClusterConfigClient.TrySetDefaultClient(ccClient);
 
-            (context.ConfigurationSource,
-                context.SecretConfigurationSource,
-                context.ConfigurationProvider,
-                context.SecretConfigurationProvider) = configurationBuilder.Build(context);
+            using (FlowingContext.Globals.Use(context))
+            {
+                (context.ConfigurationSource,
+                    context.SecretConfigurationSource,
+                    context.ConfigurationProvider,
+                    context.SecretConfigurationProvider) = configurationBuilder.Build(context);
+            }
 
             if (settings.ConfigureStaticProviders && context.ConfigurationProvider is ConfigurationProvider configProvider)
                 ConfigurationProvider.TrySetDefault(configProvider);
