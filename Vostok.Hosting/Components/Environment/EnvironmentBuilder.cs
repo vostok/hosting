@@ -119,7 +119,6 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment BuildInner(BuildContext context)
         {
-
             if (settings.ConfigureStaticProviders)
             {
                 LogProvider.Configure(context.Log, true);
