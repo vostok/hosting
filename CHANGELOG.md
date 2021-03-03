@@ -1,3 +1,7 @@
+## 0.3.11 (03-03-2021):
+
+IVostokConfigurationBuilder now allows to obtain intermediate configuration models between adding sources. See methods with `GetIntermediate` prefix.
+
 ## 0.3.10 (02-03-2021):
 
 Fixed https://github.com/vostok/hosting/issues/46
