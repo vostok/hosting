@@ -9,9 +9,11 @@ using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Binders;
 using Vostok.Configuration.Logging;
 using Vostok.Configuration.Printing;
+using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Combined;
 using Vostok.Configuration.Sources.Constant;
 using Vostok.Configuration.Sources.Switching;
+using Vostok.Context;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -115,33 +117,25 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
+        public TSettings GetIntermediateConfiguration<TSettings>(params string[] scope) 
+            => BuildProvider(Context).Get<TSettings>(BuildSource(Context).ScopeTo(scope));
+
+        public TSettings GetIntermediateSecretConfiguration<TSettings>(params string[] scope)
+            => BuildSecretProvider(Context).Get<TSettings>(BuildSecretSource().ScopeTo(scope));
+
+        public TSettings GetIntermediateMergedConfiguration<TSettings>(params string[] scope)
+            => BuildProvider(Context).Get<TSettings>(BuildMergedSource(Context).ScopeTo(scope));
+
         public (SwitchingSource source,
             SwitchingSource secretSource,
             ConfigurationProvider provider,
             ConfigurationProvider secretProvider) Build(BuildContext context)
         {
-            sources.InsertRange(0, clusterConfigSources.Select(sourceProvider => sourceProvider(context.ClusterConfigClient)));
+            var source = BuildSource(context);
+            var secretSource = BuildSecretSource();
 
-            var source = new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sources));
-            var secretSource = new SwitchingSource(PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources));
-
-            var providerSettings = new ConfigurationProviderSettings()
-                .WithErrorLogging(context.Log)
-                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings()
-                {
-                    InitialIndent = true
-                }));
-
-            providerCustomization.Customize(providerSettings);
-
-            var secretProviderSettings = new ConfigurationProviderSettings()
-                .WithErrorLogging(context.Log);
-
-            secretProviderCustomization.Customize(secretProviderSettings);
-            secretProviderSettings.Binder = new SecretBinder(secretProviderSettings.Binder ?? new DefaultSettingsBinder());
-
-            var provider = new ConfigurationProvider(providerSettings);
-            var secretProvider = new ConfigurationProvider(secretProviderSettings);
+            var provider = BuildProvider(context);
+            var secretProvider = BuildSecretProvider(context);
 
             var configurationContext = new ConfigurationContext(source, secretSource, provider, secretProvider, context.ClusterConfigClient);
 
@@ -149,6 +143,52 @@ namespace Vostok.Hosting.Components.Configuration
 
             return (source, secretSource, provider, secretProvider);
         }
+
+        private ConfigurationProvider BuildProvider(BuildContext context)
+        {
+            var providerSettings = new ConfigurationProviderSettings()
+                .WithErrorLogging(context.Log)
+                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings
+                {
+                    InitialIndent = true
+                }));
+
+            providerCustomization.Customize(providerSettings);
+
+            return new ConfigurationProvider(providerSettings);
+        }
+
+        private ConfigurationProvider BuildSecretProvider(BuildContext context)
+        {
+            var secretProviderSettings = new ConfigurationProviderSettings()
+                .WithErrorLogging(context.Log);
+
+            secretProviderCustomization.Customize(secretProviderSettings);
+            secretProviderSettings.Binder = new SecretBinder(secretProviderSettings.Binder ?? new DefaultSettingsBinder());
+
+            return new ConfigurationProvider(secretProviderSettings);
+        }
+
+        private SwitchingSource BuildSource(BuildContext context)
+        {
+            var ccSources = clusterConfigSources.Select(sourceProvider => sourceProvider(GetClusterConfigClient()));
+
+            var sourcesList = ccSources.Concat(sources).ToArray();
+
+            return new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sourcesList));
+
+            IClusterConfigClient GetClusterConfigClient()
+                => context.ClusterConfigClient ?? throw new ArgumentNullException(nameof(BuildContext.ClusterConfigClient), "ClusterConfig client hasn't been built. This is most likely a bug.");
+        }
+
+        private SwitchingSource BuildSecretSource()
+            => new SwitchingSource(PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, secretSources));
+
+        private IConfigurationSource BuildMergedSource(BuildContext context)
+            => PrepareCombinedSource(
+                new Customization<SettingsMergeOptions>(), 
+                new Customization<IConfigurationSource>(),
+                new [] {BuildSource(context), BuildSecretSource()});
 
         private static IConfigurationSource PrepareCombinedSource(
             Customization<SettingsMergeOptions> mergeCustomization,
@@ -164,5 +204,8 @@ namespace Vostok.Hosting.Components.Configuration
 
             return new ConstantSource(null);
         }
+
+        private static BuildContext Context
+            => FlowingContext.Globals.Get<BuildContext>();
     }
 }
