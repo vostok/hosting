@@ -16,6 +16,7 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
+using Vostok.Logging.File;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -94,7 +95,7 @@ namespace Vostok.Hosting.Components
 
                 TryDispose(ServiceBeacon, "ServiceBeacon");
 
-                Log = Logs?.BuildCompositeLog(out _, true) ?? new SilentLog();
+                Logs?.DisposeHerculesLog(this);
                 SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
                 
                 TryDispose(HerculesSink, "HerculesSink");
@@ -111,9 +112,8 @@ namespace Vostok.Hosting.Components
 
                 TryDispose(ClusterConfigClient, "ClusterConfigClient");
 
-                LogDisposing("Log");
-                Log = new SilentLog();
-                Logs?.Dispose();
+                Logs?.DisposeFileLog(this);
+                Logs?.DisposeConsoleLog(this);
             }
             catch (Exception error)
             {
@@ -132,7 +132,7 @@ namespace Vostok.Hosting.Components
         public void LogDisabled(string name, string reason) =>
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
-        private void LogDisposing(string componentName) =>
+        public void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
 
         private void TryDispose(object component, string componentName)
