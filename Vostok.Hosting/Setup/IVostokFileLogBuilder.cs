@@ -17,5 +17,7 @@ namespace Vostok.Hosting.Setup
         IVostokFileLogBuilder CustomizeSettings([NotNull] Action<FileLogSettings> settingsCustomization);
 
         IVostokFileLogBuilder SetSettingsProvider([NotNull] Func<FileLogSettings> settingsProvider);
+
+        IVostokFileLogBuilder DisposeWithEnvironment(bool value);
     }
 }
