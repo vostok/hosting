@@ -1,3 +1,7 @@
+## 0.3.12 (08-03-2021):
+
+Added `Dynamic thread pool` feature.
+
 ## 0.3.11 (03-03-2021):
 
 IVostokConfigurationBuilder now allows to obtain intermediate configuration models between adding sources. See methods with `GetIntermediate` prefix.
