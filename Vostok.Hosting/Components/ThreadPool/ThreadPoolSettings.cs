@@ -8,14 +8,9 @@ namespace Vostok.Hosting.Components.ThreadPool
     [PublicAPI]
     public class ThreadPoolSettings
     {
-        public ThreadPoolSettings(int threadPoolMultiplier = 32)
-        {
-            ThreadPoolMultiplier = threadPoolMultiplier;
-        }
-        
         /// <summary>
         /// Per-core thread pool configuration multiplier.
         /// </summary>
-        public int ThreadPoolMultiplier { get; set; }
+        public int ThreadPoolMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
     }
 }
