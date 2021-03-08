@@ -99,12 +99,13 @@ namespace Vostok.Hosting
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
-        public int ThreadPoolTuningMultiplier { get; set; } = 32;
+        public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
 
         /// <summary>
         /// Per-core dynamic thread pool provider is used to reconfigure thread pool.
         /// Dynamic thread pool feature is active only if <see cref="ThreadPoolSettingsProvider"/> is not <c>null</c>.
         /// </summary>
+        [CanBeNull]
         public Func<IConfigurationProvider, ThreadPoolSettings> ThreadPoolSettingsProvider { get; set; }
 
         /// <summary>

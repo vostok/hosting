@@ -43,17 +43,8 @@ namespace Vostok.Hosting.Components.ThreadPool
 
         private bool WereSettingsUpdated(int newThreadPoolMultiplier, float? newCpuUnits)
         {
-            return !previousThreadPoolMultiplier.HasValue ||
-                   previousThreadPoolMultiplier.Value != newThreadPoolMultiplier ||
+            return previousThreadPoolMultiplier != newThreadPoolMultiplier ||
                    !previousCpuUnits.Equals(newCpuUnits);
-        }
-
-        private static void SetupThreadPool(int threadPoolMultiplier, float? cpuUnits)
-        {
-            if (cpuUnits.HasValue)
-                ThreadPoolUtility.Setup(threadPoolMultiplier, cpuUnits.Value);
-            else
-                ThreadPoolUtility.Setup(threadPoolMultiplier);
         }
 
         private void CheckAndUpdate()
@@ -63,7 +54,7 @@ namespace Vostok.Hosting.Components.ThreadPool
 
             if (WereSettingsUpdated(newThreadPoolMultiplier, newCpuUnits))
             {
-                SetupThreadPool(newThreadPoolMultiplier, newCpuUnits);
+                ThreadPoolUtility.Setup(newThreadPoolMultiplier, newCpuUnits);
 
                 previousThreadPoolMultiplier = newThreadPoolMultiplier;
                 previousCpuUnits = newCpuUnits;
