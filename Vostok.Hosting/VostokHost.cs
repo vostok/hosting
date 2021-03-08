@@ -20,6 +20,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Components.Metrics;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Requirements;
@@ -174,8 +175,11 @@ namespace Vostok.Hosting
             if (result != null)
                 return result;
 
+            var dynamicThreadPool = ConfigureDynamicThreadPool();
+            
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
+            using (dynamicThreadPool)
             {
                 result = WarmupEnvironment();
 
@@ -398,6 +402,20 @@ namespace Vostok.Hosting
             var cpuUnitsLimit = environment.ApplicationLimits.CpuUnits;
             if (settings.ConfigureThreadPool && cpuUnitsLimit.HasValue)
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier, cpuUnitsLimit.Value);
+        }
+
+        private DynamicThreadPoolTracker ConfigureDynamicThreadPool()
+        {
+            if (settings.ThreadPoolSettingsProvider == null)
+                return null;
+            
+            var dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
+                settings.ThreadPoolSettingsProvider,
+                environment.ConfigurationProvider,
+                environment.ApplicationLimits,
+                environment.Log);
+
+            return dynamicThreadPoolTracker;
         }
 
         private void WarmupConfiguration()

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
+using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -97,7 +99,14 @@ namespace Vostok.Hosting
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
-        public int ThreadPoolTuningMultiplier { get; set; } = 32;
+        public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
+
+        /// <summary>
+        /// Per-core dynamic thread pool provider is used to reconfigure thread pool.
+        /// Dynamic thread pool feature is active only if <see cref="ThreadPoolSettingsProvider"/> is not <c>null</c>.
+        /// </summary>
+        [CanBeNull]
+        public Func<IConfigurationProvider, ThreadPoolSettings> ThreadPoolSettingsProvider { get; set; }
 
         /// <summary>
         /// Additional actions that will be executed right before application initialization.

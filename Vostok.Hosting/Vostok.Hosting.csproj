@@ -43,6 +43,7 @@
     <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanArithmetics.cs" Link="Commons\TimeSpanArithmetics.cs" />
     <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs" Link="Commons\TimeSpanConversions.cs" />
     <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanFormatting.cs" Link="Commons\TimeSpanFormatting.cs" />
+    <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\PeriodicalAction.cs" Link="Commons\PeriodicalAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Vostok.Hosting.Abstractions">
