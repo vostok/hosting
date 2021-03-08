@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.MultiHost
@@ -28,6 +29,6 @@ namespace Vostok.Hosting.MultiHost
         public bool ConfigureThreadPool { get; set; } = true;
 
         /// <inheritdoc cref="VostokHostSettings.ThreadPoolTuningMultiplier"/>
-        public int ThreadPoolTuningMultiplier { get; set; } = 32;
+        public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
     }
 }
