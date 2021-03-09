@@ -1,3 +1,7 @@
+## 0.3.13 (09-03-2021):
+
+Fixed https://github.com/vostok/hosting/issues/41
+
 ## 0.3.12 (08-03-2021):
 
 Added `Dynamic thread pool` feature.
