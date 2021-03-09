@@ -10,18 +10,20 @@ using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class FileLogBuilder : IVostokFileLogBuilder, IBuilder<ILog>
+    internal class FileLogBuilder : IVostokFileLogBuilder, IBuilder<(ILog FileLog, Action Dispose)>
     {
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<FileLogSettings> settingsProvider;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile bool enabled;
+        private volatile bool disposeWithEnvironment;
 
         public FileLogBuilder()
         {
             settingsCustomization = new Customization<FileLogSettings>();
             logCustomization = new Customization<ILog>();
+            disposeWithEnvironment = true;
         }
 
         public bool IsEnabled => enabled;
@@ -62,12 +64,18 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
-        public ILog Build(BuildContext context)
+        public IVostokFileLogBuilder DisposeWithEnvironment(bool value)
+        {
+            disposeWithEnvironment = value;
+            return this;
+        }
+
+        public (ILog FileLog, Action Dispose) Build(BuildContext context)
         {
             if (!enabled)
             {
                 context.LogDisabled("FileLog");
-                return null;
+                return (null, null);
             }
 
             if (settingsProvider == null)
@@ -79,12 +87,15 @@ namespace Vostok.Hosting.Components.Log
 
             context.LogsDirectory = GetLogsDirectory();
 
-            ILog log = new FileLog(settingsProvider);
-
+            var fileLog = new FileLog(settingsProvider);
+            var dispose = disposeWithEnvironment ? () => fileLog.Dispose() : (Action)null;
+            
+            ILog log = fileLog;
             if (minLevelProvider != null)
                 log = log.WithMinimumLevel(minLevelProvider);
-
-            return logCustomization.Customize(log);
+            log = logCustomization.Customize(log);
+            
+            return (log, dispose);
         }
 
         private string GetLogsDirectory()
