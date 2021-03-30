@@ -17,6 +17,7 @@ namespace Vostok.Hosting.Components.Tracing
         private readonly HerculesSpanSenderBuilder herculesSpanSenderBuilder;
         private readonly List<IBuilder<ISpanSender>> spanSenderBuilders;
         private readonly Customization<TracerSettings> settingsCustomization;
+        private readonly Customization<ITracer> tracerCustomization;
         private volatile Func<TracerSettings, ITracer> tracerProvider;
 
         public TracerBuilder()
@@ -25,6 +26,7 @@ namespace Vostok.Hosting.Components.Tracing
             herculesSpanSenderBuilder = new HerculesSpanSenderBuilder();
             spanSenderBuilders = new List<IBuilder<ISpanSender>> {herculesSpanSenderBuilder};
             settingsCustomization = new Customization<TracerSettings>();
+            tracerCustomization = new Customization<ITracer>();
         }
 
         public IVostokTracerBuilder SetTracerProvider(Func<TracerSettings, ITracer> tracerProvider)
@@ -54,6 +56,12 @@ namespace Vostok.Hosting.Components.Tracing
             return this;
         }
 
+        public IVostokTracerBuilder CustomizeTracer(Func<ITracer, ITracer> tracerCustomization)
+        {
+            this.tracerCustomization.AddCustomization(tracerCustomization ?? throw new ArgumentNullException(nameof(tracerCustomization)));
+            return this;
+        }
+
         public (ITracer, TracerSettings) Build(BuildContext context)
         {
             var spanSender = BuildCompositeSpanSender(context);
@@ -72,7 +80,7 @@ namespace Vostok.Hosting.Components.Tracing
 
             settingsCustomization.Customize(settings);
 
-            var tracer = tracerProvider(settings);
+            var tracer = tracerCustomization.Customize(tracerProvider(settings));
 
             return (tracer, settings);
         }
