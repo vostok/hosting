@@ -1,3 +1,7 @@
+## 0.3.15 (30-03-2021):
+
+Added `CustomizeTracer` method to `IVostokTracerBuilder`
+
 ## 0.3.13 (09-03-2021):
 
 Fixed https://github.com/vostok/hosting/issues/41
