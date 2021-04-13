@@ -2,13 +2,10 @@
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions.Helpers;
-// ReSharper disable AnnotationRedundancyInHierarchy
 
 namespace Vostok.Hosting
 {
-    /// <summary>
-    /// <see cref="VostokHostShutdown"/> extension allows the application to initiate graceful shutdown.
-    /// </summary>
+    /// <inheritdoc cref="IVostokHostShutdown"/>
     [PublicAPI]
     public class VostokHostShutdown : IVostokHostShutdown
     {
