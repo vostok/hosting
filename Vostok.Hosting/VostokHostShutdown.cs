@@ -14,7 +14,7 @@ namespace Vostok.Hosting
 
         [NotNull]
         public CancellationTokenSource Source { get; }
-        
+
         public bool IsInitiated => Source.Token.IsCancellationRequested;
 
         public void Initiate()
