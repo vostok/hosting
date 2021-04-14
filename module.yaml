@@ -11,7 +11,7 @@ notests *default:
     - module vostok.configuration
     - module vostok.configuration.sources
     - module vostok.hercules.client
-    - module vostok.hosting.abstractions@IVostokHostShutdown
+    - module vostok.hosting.abstractions
     - module vostok.logging.configuration
     - module vostok.logging.console
     - module vostok.logging.file
@@ -48,7 +48,7 @@ notests *default:
     - vostok.devtools
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
-    - vostok.hosting.abstractions@IVostokHostShutdown
+    - vostok.hosting.abstractions
     - vostok.logging.abstractions
     - vostok.logging.configuration
     - vostok.logging.console
