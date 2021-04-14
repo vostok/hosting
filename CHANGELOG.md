@@ -1,3 +1,7 @@
+## 0.3.16 (14-04-2021):
+
+Added `IVostokHostShutdown` interface to HostExtensions.
+
 ## 0.3.15 (30-03-2021):
 
 Added `CustomizeTracer` method to `IVostokTracerBuilder`
