@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
 {
-    internal class DatacenterWhitelistCheck : IHealthCheck
+    [PublicAPI]
+    public class DatacenterWhitelistCheck : IHealthCheck
     {
         private readonly IDatacenters datacenters;
 
