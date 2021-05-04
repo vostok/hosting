@@ -1,12 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.ZooKeeper.Client;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
 
 namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
 {
-    internal class ZooKeeperConnectionCheck : IHealthCheck
+    [PublicAPI]
+    public class ZooKeeperConnectionCheck : IHealthCheck
     {
         private readonly ZooKeeperClient client;
         private volatile bool warmedUp;
