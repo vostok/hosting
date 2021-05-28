@@ -11,14 +11,14 @@ namespace Vostok.Hosting.Components.Metrics
 
         public static void ReportLaunching(IVostokApplicationIdentity identity, IMetricContext context)
             => context.SendAnnotation($"Instance {identity.Instance} is launching (just started) on host {EnvironmentInfo.Host}.", 
-                (HostTag, EnvironmentInfo.Host), (EventTypeTag, "Launching"));
+                (HostTag, EnvironmentInfo.Host.ToLowerInvariant()), (EventTypeTag, "Launching"));
 
         public static void ReportInitialized(IVostokApplicationIdentity identity, IMetricContext context)
             => context.SendAnnotation($"Instance {identity.Instance} has initialized (running now) on host {EnvironmentInfo.Host}.",
-                (HostTag, EnvironmentInfo.Host), (EventTypeTag, "Initialized"));
+                (HostTag, EnvironmentInfo.Host.ToLowerInvariant()), (EventTypeTag, "Initialized"));
 
         public static void ReportStopping(IVostokApplicationIdentity identity, IMetricContext context)
             => context.SendAnnotation($"Instance {identity.Instance} is stopping (graceful shutdown triggered) on host {EnvironmentInfo.Host}.",
-                (HostTag, EnvironmentInfo.Host), (EventTypeTag, "Stopping"));
+                (HostTag, EnvironmentInfo.Host.ToLowerInvariant()), (EventTypeTag, "Stopping"));
     }
 }

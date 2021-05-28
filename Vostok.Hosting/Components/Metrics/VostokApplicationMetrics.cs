@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
+using Vostok.Commons.Environment;
 using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 
@@ -16,7 +18,11 @@ namespace Vostok.Hosting.Components.Metrics
                 : Project.WithTag(WellKnownApplicationIdentityProperties.Subproject, identity.Subproject);
             Environment = Subproject.WithTag(WellKnownApplicationIdentityProperties.Environment, identity.Environment);
             Application = Environment.WithTag(WellKnownApplicationIdentityProperties.Application, identity.Application);
-            Instance = Application.WithTag(WellKnownApplicationIdentityProperties.Instance, identity.Instance);
+
+            var instance = identity.Instance;
+            if (string.Equals(instance, EnvironmentInfo.Host, StringComparison.InvariantCultureIgnoreCase))
+                instance = instance.ToLowerInvariant();
+            Instance = Application.WithTag(WellKnownApplicationIdentityProperties.Instance, instance);
         }
 
         public IMetricContext Root { get; }

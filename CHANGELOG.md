@@ -1,3 +1,7 @@
+## 0.3.17 (28-05-2021):
+
+Cast host name to lower for metrics paths.
+
 ## 0.3.16 (14-04-2021):
 
 Added `IVostokHostShutdown` interface to HostExtensions.
