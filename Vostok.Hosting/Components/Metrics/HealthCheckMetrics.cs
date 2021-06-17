@@ -23,20 +23,26 @@ namespace Vostok.Hosting.Components.Metrics
             new HealthCheckMetrics(healthTracker, context.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks"));
         }
 
-        public void OnCompleted() {}
+        public void OnCompleted()
+        {
+        }
 
-        public void OnError(Exception error) {}
+        public void OnError(Exception error)
+        {
+        }
 
         public void OnNext(HealthReport value)
         {
-            foreach (var keyValuePair in value.Checks)
+            foreach (var check in value.Checks)
             {
                 context.Send(
                     new MetricDataPoint(
-                        Convert.ToDouble(keyValuePair.Value.Status),
+                        Convert.ToDouble(check.Value.Status),
                         (WellKnownTagKeys.Name, "HealthCheckStatus"),
-                        ("HealthCheckName", keyValuePair.Key)
-                    )
+                        ("HealthCheckName", check.Key))
+                    {
+                        Timestamp = value.Timestamp
+                    }
                 );
             }
         }
