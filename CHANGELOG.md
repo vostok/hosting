@@ -1,3 +1,7 @@
+## 0.3.18 (22-07-2021):
+
+Updated default system metrics scraping period
+
 ## 0.3.17 (28-05-2021):
 
 Cast host name to lower for metrics paths.
