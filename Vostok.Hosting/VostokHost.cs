@@ -466,7 +466,7 @@ namespace Vostok.Hosting
             log.Info("Application OS = '{OperatingSystem}'.", RuntimeInformation.OSDescription);
             log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
             log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
-            log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
+            log.Info("Application GC type = '{GCType}'. GC latency mode = '{GCLatencyMode}'.", GCSettings.IsServerGC ? "Server" : "Workstation", GCSettings.LatencyMode);
         }
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
