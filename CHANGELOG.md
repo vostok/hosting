@@ -1,3 +1,7 @@
+## 0.3.19 (18-08-2021):
+
+Enabled ClusterConfig json remote settings merge with local by default.
+
 ## 0.3.18 (22-07-2021):
 
 Updated default system metrics scraping period
