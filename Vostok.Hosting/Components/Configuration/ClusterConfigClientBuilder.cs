@@ -4,6 +4,8 @@ using Vostok.Clusterclient.Tracing;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Helpers;
+using Vostok.Configuration.Abstractions.Merging;
+using Vostok.Configuration.Sources.Json;
 using Vostok.Hosting.Setup;
 
 // ReSharper disable ParameterHidesMember
@@ -33,8 +35,16 @@ namespace Vostok.Hosting.Components.Configuration
                 Log = context.Log,
                 AdditionalSetup = setup =>
                 {
-                    // Note(kungurtsev): do not fill setup.ClientApplicationName here, because build of context.ApplicationIdentity requires ClusterConfigClient.
+                    // note(kungurtsev): we do not fill setup.ClientApplicationName here, because build of context.ApplicationIdentity requires ClusterConfigClient.
                     setup.SetupDistributedTracing(context.Tracer);
+                },
+                MergeOptions = new SettingsMergeOptions
+                {
+                    CustomMerge = (a, b) =>
+                    {
+                        var ok = JsonConfigurationMerger.TryMerge(a, b, out var merged);
+                        return (ok, merged);
+                    }
                 }
             };
 
@@ -52,7 +62,7 @@ namespace Vostok.Hosting.Components.Configuration
         public IVostokClusterConfigClientBuilder UseInstance(IClusterConfigClient instance)
         {
             this.instance = instance;
-            
+
             return this;
         }
 
