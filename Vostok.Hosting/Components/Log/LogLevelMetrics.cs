@@ -15,7 +15,7 @@ namespace Vostok.Hosting.Components.Log
         {
             this.counter = counter;
 
-            context.CreateMultiFuncGauge(ProvideMetrics);
+            context.CreateMultiFuncGauge(ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true});
         }
 
         public static void Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
