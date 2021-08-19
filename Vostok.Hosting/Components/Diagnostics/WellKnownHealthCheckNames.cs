@@ -6,12 +6,12 @@ namespace Vostok.Hosting.Components.Diagnostics
     /// Built-in hosting diagnostic health checks names.
     /// </summary>
     [PublicAPI]
-    public class WellKnownHealthCheckNames
+    public static class WellKnownHealthCheckNames
     {
-        public static string DatacenterWhitelist = "Datacenter whitelist";
+        public const string DatacenterWhitelist = "Datacenter whitelist";
 
-        public static string ThreadPoolStarvation = "Thread pool";
+        public const string ThreadPoolStarvation = "Thread pool";
 
-        public static string ZooKeeperConnection = "ZooKeeper connection";
+        public const string ZooKeeperConnection = "ZooKeeper connection";
     }
 }

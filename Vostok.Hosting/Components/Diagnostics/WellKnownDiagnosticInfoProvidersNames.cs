@@ -6,22 +6,22 @@ namespace Vostok.Hosting.Components.Diagnostics
     /// Built-in hosting diagnostic info providers names.
     /// </summary>
     [PublicAPI]
-    public class WellKnownDiagnosticInfoProvidersNames
+    public static class WellKnownDiagnosticInfoProvidersNames
     {
-        public static string EnvironmentInfo = "environment-info";
+        public const string EnvironmentInfo = "environment-info";
 
-        public static string SystemMetrics = "system-metrics";
+        public const string SystemMetrics = "system-metrics";
 
-        public static string LoadedAssemblies = "loaded-assemblies";
+        public const string LoadedAssemblies = "loaded-assemblies";
 
-        public static string HealthChecks = "health-checks";
+        public const string HealthChecks = "health-checks";
 
-        public static string Configuration = "configuration";
+        public const string Configuration = "configuration";
 
-        public static string HerculesSink = "hercules-sink";
+        public const string HerculesSink = "hercules-sink";
 
-        public static string ApplicationMetrics = "application-metrics";
+        public const string ApplicationMetrics = "application-metrics";
 
-        public static string ApplicationInfo = "application-info";
+        public const string ApplicationInfo = "application-info";
     }
 }
