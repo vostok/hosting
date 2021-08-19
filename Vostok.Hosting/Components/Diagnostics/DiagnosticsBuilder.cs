@@ -50,13 +50,13 @@ namespace Vostok.Hosting.Components.Diagnostics
             var healthTracker = new HealthTracker(healthSettings.ChecksPeriod, context.Log);
 
             if (healthSettings.AddDatacenterWhitelistCheck)
-                healthTracker.RegisterCheck("Datacenter whitelist", new DatacenterWhitelistCheck(context.Datacenters ?? new EmptyDatacenters()));
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, new DatacenterWhitelistCheck(context.Datacenters ?? new EmptyDatacenters()));
 
             if (healthSettings.AddThreadPoolStarvationCheck)
-                healthTracker.RegisterCheck("Thread pool", new ThreadPoolStarvationCheck());
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, new ThreadPoolStarvationCheck());
 
             if (healthSettings.AddZooKeeperConnectionCheck && context.ZooKeeperClient is ZooKeeperClient realClient)
-                healthTracker.RegisterCheck("ZooKeeper connection", new ZooKeeperConnectionCheck(realClient));
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, new ZooKeeperConnectionCheck(realClient));
 
             return healthTracker;
         }
@@ -67,29 +67,29 @@ namespace Vostok.Hosting.Components.Diagnostics
             var info = new DiagnosticInfo();
 
             if (infoSettings.AddEnvironmentInfo)
-                info.RegisterProvider(CreateEntry("environment-info"), new EnvironmentInfoProvider(context.Datacenters));
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo), new EnvironmentInfoProvider(context.Datacenters));
 
             if (infoSettings.AddSystemMetricsInfo)
-                info.RegisterProvider(CreateEntry("system-metrics"), new SystemMetricsProvider());
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), new SystemMetricsProvider());
 
             if (infoSettings.AddLoadedAssembliesInfo)
-                info.RegisterProvider(CreateEntry("loaded-assemblies"), new LoadedAssembliesProvider());
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies), new LoadedAssembliesProvider());
 
             if (infoSettings.AddHealthChecksInfo)
-                info.RegisterProvider(CreateEntry("health-checks"), new HealthChecksInfoProvider(healthTracker));
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.HealthChecks), new HealthChecksInfoProvider(healthTracker));
 
             if (infoSettings.AddConfigurationInfo)
-                info.RegisterProvider(CreateEntry("configuration"), new ConfigurationInfoProvider(context.ConfigurationSource));
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.Configuration), new ConfigurationInfoProvider(context.ConfigurationSource));
 
             if (infoSettings.AddHerculesSinkInfo && context.HerculesSink is HerculesSink realSink)
-                info.RegisterProvider(CreateEntry("hercules-sink"), new HerculesSinkInfoProvider(realSink));
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.HerculesSink), new HerculesSinkInfoProvider(realSink));
 
             if (infoSettings.AddApplicationMetricsInfo && context.MetricsInfoProvider != null)
-                info.RegisterProvider(CreateEntry("application-metrics"), context.MetricsInfoProvider);
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationMetrics), context.MetricsInfoProvider);
 
             if (infoSettings.AddApplicationInfo)
                 info.RegisterProvider(
-                    CreateEntry("application-info"),
+                    CreateEntry(WellKnownDiagnosticInfoProvidersNames.ApplicationInfo),
                     new ApplicationInfoProvider(
                         context.ApplicationIdentity,
                         context.ApplicationLimits,
@@ -99,6 +99,6 @@ namespace Vostok.Hosting.Components.Diagnostics
         }
 
         private static DiagnosticEntry CreateEntry(string name)
-            => new DiagnosticEntry("hosting", name);
+            => new DiagnosticEntry(WellKnownDiagnosticComponentsNames.Hosting, name);
     }
 }
