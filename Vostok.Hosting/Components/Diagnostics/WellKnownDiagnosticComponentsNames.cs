@@ -6,8 +6,8 @@ namespace Vostok.Hosting.Components.Diagnostics
     /// Built-in hosting diagnostic components names.
     /// </summary>
     [PublicAPI]
-    public class WellKnownDiagnosticComponentsNames
+    public static class WellKnownDiagnosticComponentsNames
     {
-        public static string Hosting = "hosting";
+        public const string Hosting = "hosting";
     }
 }
