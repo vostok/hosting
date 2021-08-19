@@ -1,3 +1,7 @@
+## 0.3.20 (19-08-2021):
+
+Added public name constants for diagnostic components names (health checks and info providers).
+
 ## 0.3.19 (18-08-2021):
 
 Enabled ClusterConfig json remote settings merge with local by default.
