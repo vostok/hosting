@@ -33,29 +33,29 @@ namespace Vostok.Hosting.Components.Log
 
         private IEnumerable<MetricEvent> ProvideMetrics()
         {
-            MetricTags ConvertTags(MemberInfo logEventInfo)
-            {
-                return context.Tags
-                   .Append("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty));
-            }
-
-            MetricEvent LogEventToMetricEvent(PropertyInfo logEventInfo, LogEventsMetrics logEventsMetrics, DateTimeOffset timestamp)
-            {
-                return new MetricEvent(
-                    Convert.ToDouble(logEventInfo.GetValue(logEventsMetrics)),
-                    ConvertTags(logEventInfo),
-                    timestamp,
-                    WellKnownUnits.None,
-                    WellKnownAggregationTypes.Counter,
-                    null
-                );
-            }
-
             var metrics = counter.Collect();
             var now = DateTimeOffset.Now;
 
             foreach (var property in typeof(LogEventsMetrics).GetProperties())
                 yield return LogEventToMetricEvent(property, metrics, now);
+        }
+
+        private MetricTags ConvertTags(MemberInfo logEventInfo)
+        {
+            return context.Tags
+               .Append("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty));
+        }
+
+        private MetricEvent LogEventToMetricEvent(PropertyInfo logEventInfo, LogEventsMetrics logEventsMetrics, DateTimeOffset timestamp)
+        {
+            return new MetricEvent(
+                Convert.ToDouble(logEventInfo.GetValue(logEventsMetrics)),
+                ConvertTags(logEventInfo),
+                timestamp,
+                WellKnownUnits.None,
+                WellKnownAggregationTypes.Counter,
+                null
+            );
         }
     }
 }
