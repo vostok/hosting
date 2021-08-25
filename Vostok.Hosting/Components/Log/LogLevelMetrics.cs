@@ -35,14 +35,8 @@ namespace Vostok.Hosting.Components.Log
         {
             MetricTags ConvertTags(MemberInfo logEventInfo)
             {
-                return MetricTagsMerger.Merge(
-                    context.Tags,
-                    null,
-                    new[]
-                    {
-                        new MetricTag("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty))
-                    }
-                );
+                return context.Tags
+                   .Append("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty));
             }
 
             MetricEvent LogEventToMetricEvent(PropertyInfo logEventInfo, LogEventsMetrics logEventsMetrics, DateTimeOffset timestamp)
