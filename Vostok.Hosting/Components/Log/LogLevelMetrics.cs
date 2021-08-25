@@ -33,13 +33,23 @@ namespace Vostok.Hosting.Components.Log
 
         private IEnumerable<MetricEvent> ProvideMetrics()
         {
+            MetricTags ConvertTags(MemberInfo logEventInfo)
+            {
+                return MetricTagsMerger.Merge(
+                    context.Tags,
+                    null,
+                    new[]
+                    {
+                        new MetricTag("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty))
+                    }
+                );
+            }
+
             MetricEvent LogEventToMetricEvent(PropertyInfo logEventInfo, LogEventsMetrics logEventsMetrics, DateTimeOffset timestamp)
             {
                 return new MetricEvent(
                     Convert.ToDouble(logEventInfo.GetValue(logEventsMetrics)),
-                    MetricTagsMerger.Merge(context.Tags,
-                        null,
-                        new[] {new MetricTag("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty))}),
+                    ConvertTags(logEventInfo),
                     timestamp,
                     WellKnownUnits.None,
                     WellKnownAggregationTypes.Counter,
