@@ -8,14 +8,13 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
+using Vostok.Metrics.Primitives.Gauge;
 using Vostok.Metrics.Scraping;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkMetrics : IScrapableMetric
+    internal class HerculesSinkMetrics
     {
-        private static readonly TimeSpan ScrapePeriod = 1.Minutes();
-
         private readonly ILog log;
         private readonly HerculesSink herculesSink;
         private readonly MetricTags tags;
@@ -28,7 +27,7 @@ namespace Vostok.Hosting.Components.Hercules
             this.herculesSink = herculesSink;
             tags = context.Tags;
 
-            context.Register(this, ScrapePeriod);
+            context.CreateMultiFuncGaugeFromEvents(ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true});
         }
 
         public static void Measure(IHerculesSink herculesSink, IVostokApplicationMetrics context, ILog log)
@@ -40,8 +39,10 @@ namespace Vostok.Hosting.Components.Hercules
             new HerculesSinkMetrics(sink, context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink"), log);
         }
 
-        public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
+        public IEnumerable<MetricEvent> ProvideMetrics()
         {
+            var timestamp = DateTimeOffset.Now;
+
             var statistic = herculesSink.GetStatistics();
 
             var delta = statistic.Total - previous.Total;
@@ -67,6 +68,7 @@ namespace Vostok.Hosting.Components.Hercules
         {
             var message = new StringBuilder("Successfully sent {RecordsCount} record(s) of size {RecordsSize}");
             var started = false;
+
             foreach (var kvp in statistic.PerStream)
             {
                 previous.PerStream.TryGetValue(kvp.Key, out var p);
@@ -89,8 +91,8 @@ namespace Vostok.Hosting.Components.Hercules
             return new MetricEvent(
                 value,
                 tags
-                    .Append("summarized", "Total") //may be by stream
-                    .Append(WellKnownTagKeys.Name, name),
+                   .Append("summarized", "Total") //may be by stream
+                   .Append(WellKnownTagKeys.Name, name),
                 timestamp,
                 null,
                 WellKnownAggregationTypes.Counter,

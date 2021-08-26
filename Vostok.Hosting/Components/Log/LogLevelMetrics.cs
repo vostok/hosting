@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
@@ -9,13 +10,15 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class LogLevelMetrics
     {
+        private readonly IMetricContext context;
         private readonly LogEventLevelCounter counter;
 
         public LogLevelMetrics(LogEventLevelCounter counter, IMetricContext context)
         {
+            this.context = context;
             this.counter = counter;
 
-            context.CreateMultiFuncGauge(ProvideMetrics);
+            context.CreateMultiFuncGaugeFromEvents(ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true});
         }
 
         public static void Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
@@ -28,14 +31,31 @@ namespace Vostok.Hosting.Components.Log
                    .WithTag(WellKnownTagKeys.Name, "EventsByLevel"));
         }
 
-        private IEnumerable<MetricDataPoint> ProvideMetrics()
+        private IEnumerable<MetricEvent> ProvideMetrics()
         {
             var metrics = counter.Collect();
+            var now = DateTimeOffset.Now;
 
             foreach (var property in typeof(LogEventsMetrics).GetProperties())
-                yield return new MetricDataPoint(
-                    Convert.ToDouble(property.GetValue(metrics)),
-                    ("LogLevel", property.Name.Replace("LogEvents", string.Empty)));
+                yield return LogEventToMetricEvent(property, metrics, now);
+        }
+
+        private MetricTags ConvertTags(MemberInfo logEventInfo)
+        {
+            return context.Tags
+               .Append("LogLevel", logEventInfo.Name.Replace("LogEvents", string.Empty));
+        }
+
+        private MetricEvent LogEventToMetricEvent(PropertyInfo logEventInfo, LogEventsMetrics logEventsMetrics, DateTimeOffset timestamp)
+        {
+            return new MetricEvent(
+                Convert.ToDouble(logEventInfo.GetValue(logEventsMetrics)),
+                ConvertTags(logEventInfo),
+                timestamp,
+                WellKnownUnits.None,
+                WellKnownAggregationTypes.Counter,
+                null
+            );
         }
     }
 }
