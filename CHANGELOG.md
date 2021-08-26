@@ -1,3 +1,7 @@
+## 0.3.21 (26-08-2021):
+
+Now scraping log and hercules metrics on dispose.
+
 ## 0.3.20 (19-08-2021):
 
 Added public name constants for diagnostic components names (health checks and info providers).
