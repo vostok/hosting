@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Abstractions.Wrappers;
@@ -27,10 +26,18 @@ namespace Vostok.Hosting.Components.Log
 
         public void SubstituteWith(ILog newLog)
         {
-            var oldLog = Interlocked.Exchange(ref baseLog, newLog);
-            if (oldLog is BufferedLog bufferedLog)
+            if (baseLog is BufferedLog bufferedLog)
             {
                 bufferedLog.SendBufferedEvents(newLog);
+
+                baseLog = newLog;
+
+                // note (kungurtsev, 31.08.2021): hack to avoid deadlock between settings logging and using
+                bufferedLog.SendBufferedEvents(newLog);
+            }
+            else
+            {
+                baseLog = newLog;
             }
         }
     }
