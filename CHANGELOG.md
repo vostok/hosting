@@ -1,3 +1,7 @@
+## 0.3.23 (31-08-2021):
+
+Fixed possible deadlock when using configuration for logging setup.
+
 ## 0.3.22 (26-08-2021):
 
 Revert log scraping

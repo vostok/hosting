@@ -7,6 +7,7 @@ using Vostok.Commons.Testing;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
+using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
@@ -152,6 +153,47 @@ namespace Vostok.Hosting.Tests
             result.State.Should().Be(VostokApplicationState.Exited);
         }
 
+        [TestCase(LogLevel.Debug)]
+        [TestCase(LogLevel.Warn)]
+        public async Task Should_allow_to_use_configuration_during_logging_setup(LogLevel logLevel)
+        {
+            application = new Application();
+
+            host = new VostokHost(new TestHostSettings(application,
+                builder =>
+                {
+                    builder.SetupApplicationIdentity(
+                        id => id
+                            .SetProject("infra")
+                            .SetSubproject("vostok")
+                            .SetApplication("app")
+                            .SetInstance("1"));
+
+                    builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
+
+                    builder.SetupLog((b, ctx) =>
+                    {
+                        //ctx.ConfigurationProvider.Get<ApplicationSettings>();
+                        b.SetupConsoleLog(
+                            c => c.SetupMinimumLevelProvider(
+                                () => ctx.ConfigurationProvider.Get<ApplicationSettings>().LogLevel));
+                    });
+
+                    builder.SetupConfiguration(
+                        config =>
+                        {
+                            config.AddSource(new ObjectSource(new
+                            {
+                                LogLevel = logLevel
+                            }));
+                        });
+                }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
+
         [RequiresConfiguration(typeof(ApplicationSettings))]
         [RequiresSecretConfiguration(typeof(ApplicationSecretSettings))]
         private class Application : IVostokApplication
@@ -179,6 +221,7 @@ namespace Vostok.Hosting.Tests
             public string C { get; }
             public string D { get; }
             public string E { get; }
+            public LogLevel LogLevel { get; } = LogLevel.Debug;
         }
 
         private class ApplicationSecretSettings
