@@ -1,0 +1,70 @@
+name: Vostok
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        framework: [net471, netcoreapp2.1, netcoreapp3.1, net5.0]
+        exclude:
+          - os: ubuntu-latest
+            framework: net471
+    runs-on: ${{ matrix.os }}    
+
+    steps: 
+      - name: Install .NET
+        uses: actions/setup-dotnet@main
+        
+      - name: Download Cement
+        run: | 
+          Invoke-WebRequest "https://github.com/skbkontur/cement/releases/download/v1.0.58/63d70a890a8a69703c066965196021afb7a793c1.zip" -Out "cement.zip"
+          Expand-Archive "cement.zip" -Force -DestinationPath "./cement"       
+        shell: pwsh
+      
+      - name: Install Cement
+        run: |
+          cd ./cement
+          cd ./dotnet
+          chmod +x ./install.sh
+          ./install.sh
+          ~/bin/cm --version
+        shell: bash
+        if: runner.os != 'Windows'
+      
+      - name: Install Cement
+        run: |
+          cd ./cement
+          cd ./dotnet
+          ./install.cmd
+          cm --version
+        shell: cmd
+        if: runner.os == 'Windows'
+      
+      - name: Checkout
+        uses: actions/checkout@main
+      
+      - name: Init
+        run: |
+          cd ..
+          ~/bin/cm init          
+        shell: bash
+
+      - name: Update deps
+        run: |
+          ~/bin/cm update-deps
+        shell: bash
+          
+      - name: Build deps
+        run: |
+          ~/bin/cm build-deps
+        shell: bash
+      
+      - name: Build
+        run: |
+          dotnet build -c Release
+          
+      - name: Test
+        run: dotnet test -c Release "$testProjectFolder" --logger GitHubActions --framework ${{ matrix.framework }}
