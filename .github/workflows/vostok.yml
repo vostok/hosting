@@ -1,4 +1,4 @@
-name: Vostok
+name: Build & Test
 
 on: [push, workflow_dispatch]
 
