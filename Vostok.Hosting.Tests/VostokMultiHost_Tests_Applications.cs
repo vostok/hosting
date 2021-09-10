@@ -72,6 +72,12 @@ namespace Vostok.Hosting.Tests
             Action checkStart = () => vostokMultiHost.StartApplicationAsync(badApplication).GetAwaiter().GetResult();
             checkStart.Should().NotThrow<Exception>();
 
+            var application = vostokMultiHost.GetApplication(identifier);
+            AssertionAssertions.ShouldPassIn(() =>
+            {
+                application.ApplicationState.IsTerminal().Should().BeTrue();
+            }, 10.Seconds());
+            
             Action checkStop = () => vostokMultiHost.StopApplicationAsync(identifier).GetAwaiter().GetResult();
             checkStop.Should().Throw<Exception>().WithMessage("run");
         }
