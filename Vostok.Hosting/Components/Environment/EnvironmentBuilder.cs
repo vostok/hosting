@@ -123,9 +123,10 @@ namespace Vostok.Hosting.Components.Environment
             {
                 LogProvider.Configure(context.Log, true);
                 TracerProvider.Configure(context.Tracer, true);
+                DatacentersProvider.Configure(context.Datacenters, true);
             }
 
-            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, () => intermediateApplicationIdentityBuilder.Build(context));
+            context.ConfigurationSetupContext = new ConfigurationSetupContext(context.Log, context.Datacenters, () => intermediateApplicationIdentityBuilder.Build(context));
 
             context.ClusterConfigClient = clusterConfigClientBuilder.Build(context);
 
@@ -149,12 +150,10 @@ namespace Vostok.Hosting.Components.Environment
                 context.SecretConfigurationSource,
                 context.ConfigurationProvider,
                 context.SecretConfigurationProvider,
-                context.ClusterConfigClient);
+                context.ClusterConfigClient,
+                context.Datacenters);
 
             context.Datacenters = datacentersBuilder.Build(context);
-
-            if (settings.ConfigureStaticProviders && context.Datacenters != null)
-                DatacentersProvider.Configure(context.Datacenters, true);
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
@@ -254,7 +253,7 @@ namespace Vostok.Hosting.Components.Environment
                 FlowingContext.Globals,
                 FlowingContext.Properties,
                 FlowingContext.Configuration,
-                context.Datacenters ?? new EmptyDatacenters(),
+                context.Datacenters,
                 hostExtensionsBuilder.HostExtensions,
                 context.Dispose);
 

@@ -7,6 +7,7 @@ using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Datacenters;
 using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
@@ -30,11 +31,13 @@ namespace Vostok.Hosting.Components
     {
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
+        private readonly SubstitutableDatacenters substitutableDatacenters;
 
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
+            substitutableDatacenters = new SubstitutableDatacenters();
             ExternalComponents = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
         }
 
@@ -53,7 +56,6 @@ namespace Vostok.Hosting.Components
         public ApplicationMetricsProvider MetricsInfoProvider { get; set; }
         public DiagnosticsHub DiagnosticsHub { get; set; }
         public IZooKeeperClient ZooKeeperClient { get; set; }
-        public IDatacenters Datacenters { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
@@ -73,6 +75,12 @@ namespace Vostok.Hosting.Components
 
         public void SubstituteTracer((ITracer tracer, TracerSettings tracerSettings) tracer)
             => substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
+        
+        public IDatacenters Datacenters
+        {
+            get => substitutableDatacenters;
+            set => substitutableDatacenters.SubstituteWith(value);
+        }
 
         public void PrintBufferedLogs()
         {
@@ -104,7 +112,7 @@ namespace Vostok.Hosting.Components
 
                 TryDispose(ZooKeeperClient, "ZooKeeperClient");
 
-                TryDispose(Datacenters, "Datacenters");
+                TryDispose(substitutableDatacenters.GetBase(), "Datacenters");
 
                 TryDispose(ConfigurationProvider, "ConfigurationProvider");
 

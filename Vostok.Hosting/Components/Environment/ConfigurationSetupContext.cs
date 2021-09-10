@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
@@ -10,9 +11,10 @@ namespace Vostok.Hosting.Components.Environment
     {
         private readonly Func<IVostokApplicationIdentity> identityProvider;
 
-        public ConfigurationSetupContext(ILog log, Func<IVostokApplicationIdentity> identityProvider)
+        public ConfigurationSetupContext(ILog log, IDatacenters datacenters, Func<IVostokApplicationIdentity> identityProvider)
         {
             Log = log.ForContext<VostokHostingEnvironment>();
+            Datacenters = datacenters;
 
             this.identityProvider = identityProvider;
         }
@@ -20,5 +22,7 @@ namespace Vostok.Hosting.Components.Environment
         public ILog Log { get; }
 
         public IVostokApplicationIdentity ApplicationIdentity => identityProvider();
+
+        public IDatacenters Datacenters { get; }
     }
 }
