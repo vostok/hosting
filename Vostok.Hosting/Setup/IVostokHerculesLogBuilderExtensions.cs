@@ -9,5 +9,8 @@ namespace Vostok.Hosting.Setup
     {
         public static IVostokHerculesLogBuilder SetElkIndex([NotNull] this IVostokHerculesLogBuilder builder, string elkIndex) =>
             builder.CustomizeLog(log => log.WithProperty(WellKnownHerculesLogProperties.ElkIndex, elkIndex));
+
+        public static IVostokHerculesLogBuilder SetMinimumLevel([NotNull] this IVostokHerculesLogBuilder builder, LogLevel minLevel) =>
+            builder.SetupMinimumLevelProvider(() => minLevel);
     }
 }
