@@ -153,7 +153,9 @@ namespace Vostok.Hosting.Components.Environment
                 context.ClusterConfigClient,
                 context.Datacenters);
 
-            context.Datacenters = datacentersBuilder.Build(context);
+            var datacenters = datacentersBuilder.Build(context);
+            if (datacenters != null)
+                context.Datacenters = datacenters;
 
             context.ApplicationIdentity = applicationIdentityBuilder.Build(context);
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
@@ -169,7 +171,7 @@ namespace Vostok.Hosting.Components.Environment
                 HerculesSinkProvider.Configure(context.HerculesSink, true);
 
             context.Logs = compositeLogBuilder.Build(context);
-            
+
             var hasLogs = context.Logs.Count() > 0;
             if (hasLogs)
             {
@@ -180,8 +182,8 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders)
-                ClusterClientDefaults.ClientApplicationName = context.ServiceBeacon is ServiceBeacon beacon 
-                    ? beacon.ReplicaInfo.Application 
+                ClusterClientDefaults.ClientApplicationName = context.ServiceBeacon is ServiceBeacon beacon
+                    ? beacon.ReplicaInfo.Application
                     : context.ApplicationIdentity.FormatServiceName();
 
             context.SubstituteTracer(tracerBuilder.Build(context));
@@ -215,7 +217,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
-            
+
             context.DiagnosticsHub = diagnosticsBuilder.Build(context);
 
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
@@ -274,7 +276,7 @@ namespace Vostok.Hosting.Components.Environment
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
-            
+
             HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
             return vostokHostingEnvironment;
@@ -291,7 +293,7 @@ namespace Vostok.Hosting.Components.Environment
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
             this.shutdownTimeout = shutdownTimeout.Cut(
-                ShutdownConstants.CutAmountForExternalTimeout, 
+                ShutdownConstants.CutAmountForExternalTimeout,
                 ShutdownConstants.CutMaximumRelativeValue);
 
             return this;
@@ -490,7 +492,7 @@ namespace Vostok.Hosting.Components.Environment
             return this;
         }
 
-        public IVostokHostingEnvironmentBuilder SetupSystemMetrics(Action<SystemMetricsSettings, IVostokHostingEnvironment> setup) 
+        public IVostokHostingEnvironmentBuilder SetupSystemMetrics(Action<SystemMetricsSettings, IVostokHostingEnvironment> setup)
         {
             systemMetricsBuilder.Customize(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
