@@ -1,3 +1,7 @@
+## 0.3.24 (13-09-2021):
+
+Added `IDatacenters` to setup context.
+
 ## 0.3.23 (31-08-2021):
 
 Fixed possible deadlock when using configuration for logging setup.
