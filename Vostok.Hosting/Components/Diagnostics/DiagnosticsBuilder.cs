@@ -50,7 +50,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             var healthTracker = new HealthTracker(healthSettings.ChecksPeriod, context.Log);
 
             if (healthSettings.AddDatacenterWhitelistCheck)
-                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, new DatacenterWhitelistCheck(context.Datacenters ?? new EmptyDatacenters()));
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DatacenterWhitelist, new DatacenterWhitelistCheck(context.Datacenters));
 
             if (healthSettings.AddThreadPoolStarvationCheck)
                 healthTracker.RegisterCheck(WellKnownHealthCheckNames.ThreadPoolStarvation, new ThreadPoolStarvationCheck());

@@ -4,6 +4,7 @@ using System.Net;
 using Vostok.Commons.Helpers;
 using Vostok.Datacenters;
 using Vostok.Hosting.Setup;
+using Vostok.Logging.Abstractions;
 
 // ReSharper disable ParameterHidesMember
 
@@ -43,7 +44,20 @@ namespace Vostok.Hosting.Components.Datacenters
 
             settingsCustomization.Customize(settings);
 
-            return new Vostok.Datacenters.Datacenters(settings);
+            var result = new Vostok.Datacenters.Datacenters(settings);
+
+            // note (kungurtsev, 10.09.2021): warm up providers to prevent cyclic dependency with ClusterConfigClient
+            try
+            {
+                datacenterMapping.Invoke(IPAddress.None);
+                activeDatacentersProvider.Invoke();
+            }
+            catch (Exception error)
+            {
+                context.Log.Error(error, "Failed to warm up datacenters.");
+            }
+            
+            return result;
         }
 
         public IVostokDatacentersBuilder UseInstance(IDatacenters datacenters)

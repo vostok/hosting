@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Configuration.Abstractions;
+using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 
@@ -35,5 +36,9 @@ namespace Vostok.Hosting.Setup
         /// <inheritdoc cref="IVostokHostingEnvironment.ClusterConfigClient"/>
         [NotNull]
         IClusterConfigClient ClusterConfigClient { get; }
+        
+        /// <inheritdoc cref="IVostokHostingEnvironment.Datacenters"/>
+        [NotNull]
+        IDatacenters Datacenters { get; }
     }
 }

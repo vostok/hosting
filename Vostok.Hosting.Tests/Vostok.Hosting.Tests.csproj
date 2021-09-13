@@ -44,6 +44,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Datacenters">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\netstandard2.0\Vostok.Datacenters.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ClusterClient.Datacenters">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.clusterclient.datacenters\Vostok.ClusterClient.Datacenters\bin\Release\netstandard2.0\Vostok.ClusterClient.Datacenters.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.Configuration.Abstractions">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\netstandard2.0\Vostok.Configuration.Abstractions.dll</HintPath>
