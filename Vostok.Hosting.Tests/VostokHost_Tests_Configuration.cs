@@ -173,7 +173,6 @@ namespace Vostok.Hosting.Tests
 
                     builder.SetupLog((b, ctx) =>
                     {
-                        //ctx.ConfigurationProvider.Get<ApplicationSettings>();
                         b.SetupConsoleLog(
                             c => c.SetupMinimumLevelProvider(
                                 () => ctx.ConfigurationProvider.Get<ApplicationSettings>().LogLevel));
@@ -186,6 +185,37 @@ namespace Vostok.Hosting.Tests
                             {
                                 LogLevel = logLevel
                             }));
+                        });
+                }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
+        
+        [Test]
+        public async Task Should_allow_to_use_datacenters_during_clusterconfig_setup()
+        {
+            application = new Application();
+
+            host = new VostokHost(new TestHostSettings(application,
+                builder =>
+                {
+                    builder.SetupApplicationIdentity(
+                        id => id
+                            .SetProject("infra")
+                            .SetSubproject("vostok")
+                            .SetApplication("app")
+                            .SetInstance("1"));
+
+                    builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
+
+                    builder.SetupLog(b => b.SetupConsoleLog());
+
+                    builder.SetupConfiguration(
+                        (config, context) =>
+                        {
+                            context.Datacenters.GetLocalDatacenter().Should().BeNull();
                         });
                 }));
 

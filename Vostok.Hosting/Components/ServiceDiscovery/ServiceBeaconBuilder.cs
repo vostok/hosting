@@ -94,14 +94,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        private Func<bool> LocalDatacenterIsActive(IDatacenters datacenters)
-        {
-            if (datacenters == null)
-                return null;
-
-            return datacenters.LocalDatacenterIsActive;
-        }
-
         private IReplicaInfo CreateReplicaInfo(BuildContext context)
             => CreateBeacon(new DevNullZooKeeperClient(), context).ReplicaInfo;
 
@@ -110,7 +102,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             var settings = new ServiceBeaconSettings();
 
             if (registrationDeniedFromNonActiveDatacenters)
-                settings.RegistrationAllowedProvider = LocalDatacenterIsActive(context.Datacenters);
+                settings.RegistrationAllowedProvider = context.Datacenters.LocalDatacenterIsActive;
 
             settingsCustomization.Customize(settings);
 
