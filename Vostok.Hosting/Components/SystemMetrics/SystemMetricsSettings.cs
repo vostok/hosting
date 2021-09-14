@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
+using Vostok.Metrics.System.Host;
 
 namespace Vostok.Hosting.Components.SystemMetrics
 {
@@ -18,6 +19,8 @@ namespace Vostok.Hosting.Components.SystemMetrics
         public bool EnableHostMetricsLogging { get; set; }
 
         public bool EnableHostMetricsReporting { get; set; }
+
+        public HostMetricsSettings HostMetricsSettings { get; set; } = new HostMetricsSettings();
 
         public TimeSpan GcMinimumDurationForLogging { get; set; } = 500.Milliseconds();
 
