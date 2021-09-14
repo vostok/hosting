@@ -84,7 +84,8 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
         private void RegisterHostMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
         {
-            var hostMonitor = new HostMonitor();
+            var hostMetricsSettings = settings.HostMetricsSettings;
+            var hostMonitor = new HostMonitor(hostMetricsSettings);
 
             context.HostExtensions.AsMutable().Add(hostMonitor);
 
@@ -92,7 +93,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 context.DisposableHostExtensions.Add(hostMonitor.LogPeriodically(context.Log, settings.HostMetricsLoggingPeriod));
 
             if (settings.EnableHostMetricsReporting)
-                new HostMetricsCollector().ReportMetrics(metricContext, settings.HostMetricsReportingPeriod);
+                new HostMetricsCollector(hostMetricsSettings).ReportMetrics(metricContext, settings.HostMetricsReportingPeriod);
         }
     }
 }
