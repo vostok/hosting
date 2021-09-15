@@ -1,8 +1,10 @@
-﻿using Vostok.ServiceDiscovery.Abstractions;
+﻿using JetBrains.Annotations;
+using Vostok.ServiceDiscovery.Abstractions;
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
-    internal class DevNullServiceBeacon : IServiceBeacon
+    [PublicAPI]
+    public class DevNullServiceBeacon : IServiceBeacon
     {
         public DevNullServiceBeacon(IReplicaInfo replicaInfo)
             => ReplicaInfo = replicaInfo;

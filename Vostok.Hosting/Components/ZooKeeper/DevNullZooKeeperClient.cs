@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.ZooKeeper.Client.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions.Model;
@@ -8,7 +9,8 @@ using Vostok.ZooKeeper.Client.Abstractions.Model.Result;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class DevNullZooKeeperClient : IZooKeeperClient
+    [PublicAPI]
+    public class DevNullZooKeeperClient : IZooKeeperClient
     {
         public IObservable<ConnectionState> OnConnectionStateChanged =>
             new CachingObservable<ConnectionState>(ConnectionState.Disconnected);

@@ -1,3 +1,7 @@
+## 0.3.25 (15-09-2021):
+
+Made DevNull implementations public for testing purposes.
+
 ## 0.3.24 (13-09-2021):
 
 Added `IDatacenters` to setup context.
