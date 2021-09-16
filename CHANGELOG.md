@@ -1,3 +1,7 @@
+## 0.3.26 (16-09-2021):
+
+Add possibility to target setup of host metrics.
+
 ## 0.3.25 (15-09-2021):
 
 Made DevNull implementations public for testing purposes.
