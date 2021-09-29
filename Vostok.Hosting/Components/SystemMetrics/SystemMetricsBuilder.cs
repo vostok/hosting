@@ -32,17 +32,17 @@ namespace Vostok.Hosting.Components.SystemMetrics
         {
             this.environment = environment;
 
-            var settings = settingsCustomization.Customize(new SystemMetricsSettings());
+            //var settings = settingsCustomization.Customize(new SystemMetricsSettings());
 
-            var processMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
-            var hostMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Host");
+            //var processMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
+            //var hostMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Host");
 
-            if (RuntimeDetector.IsDotNetCore30AndNewer)
-                RegisterGcMonitor(settings, context, processMetricsContext);
+            //if (RuntimeDetector.IsDotNetCore30AndNewer)
+            //    RegisterGcMonitor(settings, context, processMetricsContext);
 
             // RegisterProcessMonitor(settings, context, processMetricsContext);
 
-            RegisterHostMonitor(settings, context, hostMetricsContext);
+            // RegisterHostMonitor(settings, context, hostMetricsContext);
         }
 
         private void RegisterGcMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
