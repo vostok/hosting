@@ -79,7 +79,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 var collector = new CurrentProcessMetricsCollector(collectorSettings);
                 
                 collector.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod);
-                context.DisposableHostExtensions.Add(collector);
+                //context.DisposableHostExtensions.Add(collector);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
                 collector.ReportMetrics(metricContext, settings.HostMetricsReportingPeriod);
                 
-                context.DisposableHostExtensions.Add(collector);
+                //context.DisposableHostExtensions.Add(collector);
             }
         }
     }
