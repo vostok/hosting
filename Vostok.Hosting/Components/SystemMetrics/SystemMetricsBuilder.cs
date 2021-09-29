@@ -40,7 +40,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
             if (RuntimeDetector.IsDotNetCore30AndNewer)
                 RegisterGcMonitor(settings, context, processMetricsContext);
 
-            RegisterProcessMonitor(settings, context, processMetricsContext);
+            // RegisterProcessMonitor(settings, context, processMetricsContext);
 
             RegisterHostMonitor(settings, context, hostMetricsContext);
         }
