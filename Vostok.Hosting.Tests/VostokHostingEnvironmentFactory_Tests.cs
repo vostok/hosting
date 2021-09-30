@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using JetBrains.dotMemoryUnit;
 using NUnit.Framework;
 using Vostok.Commons.Environment;
 using Vostok.Commons.Testing;
@@ -176,6 +177,24 @@ namespace Vostok.Hosting.Tests
                 Setup(builder);
                 builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = true)); // enable ApplicationMetricsProvider metrics sender
             }
+        }
+        
+        [Test, Explicit]
+        public void Should_not_leak()
+        {
+            var checkPoint = dotMemory.Check();
+
+            var environment = VostokHostingEnvironmentFactory.Create(Setup);
+            (environment as IDisposable)?.Dispose();
+
+            dotMemory.Check(memory =>
+            {
+                memory.GetDifference(checkPoint)
+                    .GetSurvivedObjects()
+                    .GetObjects(o => o.Namespace.Like("Vostok"))
+                    .ObjectsCount.Should()
+                    .Be(0);
+            });
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
