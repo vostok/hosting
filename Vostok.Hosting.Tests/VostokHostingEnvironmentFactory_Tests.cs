@@ -56,11 +56,10 @@ namespace Vostok.Hosting.Tests
 
             var immediatelyAfter = environment.ShutdownTimeout;
 
-            Thread.Sleep(100);
-
-            var awhileAfter = environment.ShutdownTimeout;
-
-            awhileAfter.Should().BeLessThan(immediatelyAfter);
+            new Action(() =>
+            {
+                environment.ShutdownTimeout.Should().BeLessThan(immediatelyAfter);
+            }).ShouldPassIn(5.Seconds());
         }
 
         [Test]
