@@ -188,6 +188,8 @@ namespace Vostok.Hosting.Components.Environment
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
+            context.DiagnosticsHub = diagnosticsBuilder.Build(context);
+
             if (diagnosticsBuilder.Builder.NeedsApplicationMetricsProvider)
             {
                 context.MetricsInfoProvider = new ApplicationMetricsProvider();
@@ -217,8 +219,6 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
-
-            context.DiagnosticsHub = diagnosticsBuilder.Build(context);
 
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
