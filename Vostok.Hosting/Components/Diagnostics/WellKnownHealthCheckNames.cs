@@ -13,5 +13,7 @@ namespace Vostok.Hosting.Components.Diagnostics
         public const string ThreadPoolStarvation = "Thread pool";
 
         public const string ZooKeeperConnection = "ZooKeeper connection";
+        
+        public const string DnsResolution = "DNS resolution";
     }
 }
