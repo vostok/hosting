@@ -188,7 +188,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
-            if (diagnosticsBuilder.Builder.NeedsApplicationMetricsProvider)
+            if (diagnosticsBuilder.GetCustomizedBuilderIntermediate(context).NeedsApplicationMetricsProvider)
             {
                 context.MetricsInfoProvider = new ApplicationMetricsProvider();
                 metricsBuilder.AddCustomization(metrics => metrics.AddMetricEventSender(context.MetricsInfoProvider));

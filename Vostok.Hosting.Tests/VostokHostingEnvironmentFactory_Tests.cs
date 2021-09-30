@@ -10,6 +10,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
+using Vostok.Metrics;
 using Vostok.Metrics.System.Gc;
 using Vostok.Metrics.System.Process;
 
@@ -30,7 +31,7 @@ namespace Vostok.Hosting.Tests
         public void Should_produce_an_environment_with_linked_cancellation_tokens()
         {
             var environment = VostokHostingEnvironmentFactory.Create(Setup);
-            
+
             shutdown.Cancel();
 
             Action assertion = () => environment.ShutdownToken.IsCancellationRequested.Should().BeTrue();
@@ -65,10 +66,12 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_substract_beacon_shutdown_timeout_from_total()
         {
-            var environment = VostokHostingEnvironmentFactory.Create(SetupWithServiceDiscovery, new VostokHostingEnvironmentFactorySettings
-            {
-                BeaconShutdownTimeout = 3.Seconds()
-            });
+            var environment = VostokHostingEnvironmentFactory.Create(
+                SetupWithServiceDiscovery,
+                new VostokHostingEnvironmentFactorySettings
+                {
+                    BeaconShutdownTimeout = 3.Seconds()
+                });
 
             environment.ShutdownTimeout.Should().Be(27.Seconds());
         }
@@ -76,10 +79,12 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_not_substract_beacon_shutdown_timeout_from_total_if_there_is_no_real_beacon()
         {
-            var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings
-            {
-                BeaconShutdownTimeout = 3.Seconds()
-            });
+            var environment = VostokHostingEnvironmentFactory.Create(
+                Setup,
+                new VostokHostingEnvironmentFactorySettings
+                {
+                    BeaconShutdownTimeout = 3.Seconds()
+                });
 
             environment.ShutdownTimeout.Should().Be(30.Seconds());
         }
@@ -87,10 +92,12 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_wait_after_beacon_shutdown_if_instructed_to_do_so()
         {
-            var environment = VostokHostingEnvironmentFactory.Create(SetupWithServiceDiscovery, new VostokHostingEnvironmentFactorySettings
-            {
-                BeaconShutdownTimeout = 1.Seconds()
-            });
+            var environment = VostokHostingEnvironmentFactory.Create(
+                SetupWithServiceDiscovery,
+                new VostokHostingEnvironmentFactorySettings
+                {
+                    BeaconShutdownTimeout = 1.Seconds()
+                });
 
             var watch = Stopwatch.StartNew();
 
@@ -104,11 +111,13 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_not_wait_after_beacon_shutdown_if_disabled()
         {
-            var environment = VostokHostingEnvironmentFactory.Create(SetupWithServiceDiscovery, new VostokHostingEnvironmentFactorySettings
-            {
-                BeaconShutdownTimeout = 2.Seconds(),
-                BeaconShutdownWaitEnabled = false
-            });
+            var environment = VostokHostingEnvironmentFactory.Create(
+                SetupWithServiceDiscovery,
+                new VostokHostingEnvironmentFactorySettings
+                {
+                    BeaconShutdownTimeout = 2.Seconds(),
+                    BeaconShutdownWaitEnabled = false
+                });
 
             var watch = Stopwatch.StartNew();
 
@@ -140,6 +149,20 @@ namespace Vostok.Hosting.Tests
                 environment.HostExtensions.TryGet<GarbageCollectionMonitor>(out _).Should().BeTrue();
 
             environment.HostExtensions.TryGet<CurrentProcessMonitor>(out _).Should().BeTrue();
+        }
+
+        [Test]
+        public void Should_provide_dev_null_metric_context_when_no_metric_event_senders_built()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(SetupForDevNullMetricContext, new VostokHostingEnvironmentFactorySettings());
+
+            environment.Metrics.Root.Should().BeOfType<DevNullMetricContext>();
+
+            void SetupForDevNullMetricContext(IVostokHostingEnvironmentBuilder builder)
+            {
+                Setup(builder);
+                builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = false)); // disable ApplicationMetricsProvider metrics sender
+            }
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
