@@ -164,6 +164,20 @@ namespace Vostok.Hosting.Tests
                 builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = false)); // disable ApplicationMetricsProvider metrics sender
             }
         }
+        
+        [Test]
+        public void Should_provide_not_dev_null_metric_context_when_metric_event_senders_built()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(SetupForDevNullMetricContext, new VostokHostingEnvironmentFactorySettings());
+
+            environment.Metrics.Root.Should().BeOfType<MetricContext>();
+
+            void SetupForDevNullMetricContext(IVostokHostingEnvironmentBuilder builder)
+            {
+                Setup(builder);
+                builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = true)); // enable ApplicationMetricsProvider metrics sender
+            }
+        }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
         {
