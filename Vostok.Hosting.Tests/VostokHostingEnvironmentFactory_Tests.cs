@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
-using JetBrains.dotMemoryUnit;
 using NUnit.Framework;
 using Vostok.Commons.Environment;
 using Vostok.Commons.Testing;
@@ -182,19 +181,15 @@ namespace Vostok.Hosting.Tests
         [Test, Explicit]
         public void Should_not_leak()
         {
-            var checkPoint = dotMemory.Check();
-
-            var environment = VostokHostingEnvironmentFactory.Create(Setup);
-            (environment as IDisposable)?.Dispose();
-
-            dotMemory.Check(memory =>
+            for (int i = 0; i < 100; i++)
             {
-                memory.GetDifference(checkPoint)
-                    .GetSurvivedObjects()
-                    .GetObjects(o => o.Namespace.Like("Vostok"))
-                    .ObjectsCount.Should()
-                    .Be(0);
-            });
+                var environment = VostokHostingEnvironmentFactory.Create(Setup,
+                    new VostokHostingEnvironmentFactorySettings
+                    {
+                        ConfigureStaticProviders = false
+                    });
+                (environment as IDisposable)?.Dispose();
+            }
         }
 
         private void Setup(IVostokHostingEnvironmentBuilder builder)
