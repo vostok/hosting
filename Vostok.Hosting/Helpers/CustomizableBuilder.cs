@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Helpers
             return builder.Build(context);
         }
 
-        public TBuilder GetCustomizedBuilderIntermediate(BuildContext context)
+        public TBuilder GetIntermediateBuilder(BuildContext context)
         {
             try
             {
