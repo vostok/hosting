@@ -1,6 +1,6 @@
 ﻿using System;
+using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers;
-using Vostok.Datacenters;
 using Vostok.Hercules.Client;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.HealthChecks;
@@ -57,6 +57,9 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             if (healthSettings.AddZooKeeperConnectionCheck && context.ZooKeeperClient is ZooKeeperClient realClient)
                 healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, new ZooKeeperConnectionCheck(realClient));
+
+            if (healthSettings.AddDnsResolutionCheck && RuntimeDetector.IsDotNet50AndNewer)
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, new DnsResolutionCheck());
 
             return healthTracker;
         }

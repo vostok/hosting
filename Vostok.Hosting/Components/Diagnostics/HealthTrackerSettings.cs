@@ -14,5 +14,7 @@ namespace Vostok.Hosting.Components.Diagnostics
         public bool AddThreadPoolStarvationCheck { get; set; } = true;
 
         public bool AddZooKeeperConnectionCheck { get; set; } = true;
+
+        public bool AddDnsResolutionCheck { get; set; } = true;
     }
 }
