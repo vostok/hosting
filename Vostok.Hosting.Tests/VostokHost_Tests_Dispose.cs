@@ -51,13 +51,11 @@ namespace Vostok.Hosting.Tests
 
             var host = new VostokHost(new TestHostSettings(app, SetupEnvironment));
 
-            host.Start();
-
             var watch = Stopwatch.StartNew();
 
-            host.Stop().State.Should().Be(VostokApplicationState.Exited);
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
 
-            watch.Elapsed.Should().BeLessThan(2.Seconds());
+            watch.Elapsed.Should().BeLessThan(5.Seconds());
         }
 
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
