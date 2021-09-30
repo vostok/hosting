@@ -141,7 +141,7 @@ namespace Vostok.Hosting.Components.Environment
                     context.SecretConfigurationProvider) = configurationBuilder.Build(context);
             }
 
-            if (settings.ConfigureStaticProviders && context.ConfigurationProvider is ConfigurationProvider configProvider)
+            if (settings.ConfigureStaticProviders && context.ConfigurationProvider is {} configProvider)
                 ConfigurationProvider.TrySetDefault(configProvider);
 
             context.EnvironmentSetupContext = new EnvironmentSetupContext(
@@ -188,7 +188,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.SubstituteTracer(tracerBuilder.Build(context));
 
-            if (diagnosticsBuilder.GetIntermediateBuilder(context).NeedsApplicationMetricsProvider)
+            if (settings.HostMetricsEnabled && diagnosticsBuilder.GetIntermediateBuilder(context).NeedsApplicationMetricsProvider)
             {
                 context.MetricsInfoProvider = new ApplicationMetricsProvider();
                 metricsBuilder.AddCustomization(metrics => metrics.AddMetricEventSender(context.MetricsInfoProvider));
@@ -201,7 +201,8 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.SendAnnotations)
                 AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance);
 
-            HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
+            if (settings.HostMetricsEnabled)
+                HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
 
             if (settings.ConfigureStaticProviders)
                 FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
@@ -218,7 +219,9 @@ namespace Vostok.Hosting.Components.Environment
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
-            context.DiagnosticsHub = diagnosticsBuilder.Build(context);
+            context.DiagnosticsHub = settings.HostMetricsEnabled
+                ? diagnosticsBuilder.Build(context)
+                : new DiagnosticsHub(new DiagnosticInfo(), new HealthTracker(TimeSpan.MaxValue, context.Log));
 
             var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
@@ -261,7 +264,8 @@ namespace Vostok.Hosting.Components.Environment
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
 
-            systemMetricsBuilder.Build(context, vostokHostingEnvironment);
+            if (settings.HostMetricsEnabled)
+                systemMetricsBuilder.Build(context, vostokHostingEnvironment);
 
             if (!hasLogs)
             {
@@ -270,14 +274,17 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log = context.Logs.BuildCompositeLog(out _);
             }
 
-            LogLevelMetrics.Measure(context.Logs.LogEventLevelCounterFactory.CreateCounter(), context.Metrics);
+            if (settings.HostMetricsEnabled)
+                LogLevelMetrics.Measure(context.Logs.LogEventLevelCounterFactory.CreateCounter(), context.Metrics);
 
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
-            context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
+            if (settings.HostMetricsEnabled)
+                context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
 
-            HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
+            if (settings.HostMetricsEnabled)
+                HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
 
             return vostokHostingEnvironment;
         }
