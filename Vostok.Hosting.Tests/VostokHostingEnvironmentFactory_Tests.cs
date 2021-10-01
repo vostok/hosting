@@ -151,6 +151,17 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
+        public void Should_provide_dev_null_metric_context_when_diagnostic_metrics_disabled_and_no_senders()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings
+            {
+                DiagnosticMetricsEnabled = false
+            });
+
+            environment.Metrics.Root.Should().BeOfType<DevNullMetricContext>();
+        }
+
+        [Test]
         public void Should_provide_dev_null_metric_context_when_no_metric_event_senders_built()
         {
             var environment = VostokHostingEnvironmentFactory.Create(SetupForDevNullMetricContext, new VostokHostingEnvironmentFactorySettings());
@@ -163,7 +174,7 @@ namespace Vostok.Hosting.Tests
                 builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = false)); // disable ApplicationMetricsProvider metrics sender
             }
         }
-        
+
         [Test]
         public void Should_provide_not_dev_null_metric_context_when_metric_event_senders_built()
         {
