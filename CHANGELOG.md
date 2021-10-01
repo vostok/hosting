@@ -1,4 +1,4 @@
-## 0.3.37 (01-10-2021):
+## 0.3.27 (01-10-2021):
 
 - Added `DiagnosticMetricsEnabled` settings
 - Fixed #60
