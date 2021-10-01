@@ -22,5 +22,8 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.SendAnnotations"/>
         public bool SendAnnotations { get; set; } = true;
+
+        /// <inheritdoc cref="VostokHostSettings.DiagnosticMetricsEnabled"/>
+        public bool DiagnosticMetricsEnabled { get; set; } = true;
     }
 }
