@@ -64,7 +64,11 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             ForceNextIteration();
 
-            return new ActionDisposable(() => checks.TryRemove(name, out _));
+            return new ActionDisposable(() =>
+            {
+                if (checks.TryRemove(name, out _))
+                    (check as IDisposable)?.Dispose();
+            });
         }
 
         public IEnumerator<(string name, IHealthCheck check)> GetEnumerator() =>
@@ -76,6 +80,9 @@ namespace Vostok.Hosting.Components.Diagnostics
 
             if (checkerTask != null)
                 checkerTask.SilentlyContinue().GetAwaiter().GetResult();
+
+            foreach (var check in checks.Values.OfType<IDisposable>())
+                check.Dispose();
         }
 
         public void LaunchPeriodicalChecks(CancellationToken externalToken)
