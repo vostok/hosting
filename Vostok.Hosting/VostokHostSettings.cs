@@ -67,6 +67,16 @@ namespace Vostok.Hosting
         /// If set to <c>true</c>, sends annotations with application lifecycle events (launching, initialized, stopping).
         /// </summary>
         public bool SendAnnotations { get; set; } = true;
+        
+        /// <summary>
+        /// <para>If set to <c>false</c>, forcibly disables:</para>
+        /// <list type="bullet">
+        ///     <item><description>All diagnostic metrics</description></item>
+        ///     <item><description>All system metrics</description></item>
+        ///     <item><description>All health checks</description></item>
+        /// </list> 
+        /// </summary>
+        public bool DiagnosticMetricsEnabled { get; set; } = true;
 
         /// <summary>
         /// If enabled, <see cref="VostokHost"/> will wait for <see cref="IServiceBeacon"/> start.

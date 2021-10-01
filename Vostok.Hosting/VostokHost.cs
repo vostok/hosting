@@ -208,7 +208,8 @@ namespace Vostok.Hosting
                     ConfigureStaticProviders = settings.ConfigureStaticProviders,
                     BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
                     BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
-                    SendAnnotations = settings.SendAnnotations
+                    SendAnnotations = settings.SendAnnotations,
+                    DiagnosticMetricsEnabled = settings.DiagnosticMetricsEnabled
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
