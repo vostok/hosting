@@ -8,17 +8,19 @@ using Vostok.Metrics.System.Process;
 namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
 {
     [PublicAPI]
-    public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>
+    public class DnsResolutionCheck : IHealthCheck, IObserver<CurrentProcessMetrics>, IDisposable
     {
         private const double FailedLookupsThreshold = 0.2;
 
         private static readonly TimeSpan Period = TimeSpan.FromMinutes(5);
 
         private readonly CurrentProcessMonitor monitor = new CurrentProcessMonitor();
+        private readonly IDisposable subscription;
+
         private DnsStatistics dnsStatistics;
 
         public DnsResolutionCheck() =>
-            monitor.ObserveMetrics(Period).Subscribe(this);
+            subscription = monitor.ObserveMetrics(Period).Subscribe(this);
 
         public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
         {
@@ -41,18 +43,24 @@ namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
         {
         }
 
+        public void Dispose()
+        {
+            subscription?.Dispose();
+            monitor?.Dispose();
+        }
+
         private struct DnsStatistics
         {
             private readonly int failedLookupsCount;
             private readonly int lookupsCount;
-
-            public double FailedLookupsFraction => lookupsCount != 0 ? (double)failedLookupsCount / lookupsCount : 0;
 
             public DnsStatistics(int failedLookupsCount, int lookupsCount)
             {
                 this.failedLookupsCount = failedLookupsCount;
                 this.lookupsCount = lookupsCount;
             }
+
+            public double FailedLookupsFraction => lookupsCount != 0 ? (double)failedLookupsCount / lookupsCount : 0;
         }
     }
 }
