@@ -17,7 +17,10 @@ namespace Vostok.Hosting.Components.Diagnostics
         public HealthTracker HealthTracker { get; }
 
         public void Dispose()
-            => HealthTracker.Dispose();
+        {
+            HealthTracker.Dispose();
+            Info.Dispose();
+        }
 
         IDiagnosticInfo IVostokApplicationDiagnostics.Info => Info;
 
