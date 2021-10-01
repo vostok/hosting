@@ -7,7 +7,7 @@ using Vostok.Hosting.Abstractions.Diagnostics;
 
 namespace Vostok.Hosting.Components.Diagnostics
 {
-    internal class DiagnosticInfo : IDiagnosticInfo
+    internal class DiagnosticInfo : IDiagnosticInfo, IDisposable
     {
         private readonly ConcurrentDictionary<DiagnosticEntry, IDiagnosticInfoProvider> providers;
 
@@ -19,7 +19,11 @@ namespace Vostok.Hosting.Components.Diagnostics
             if (!providers.TryAdd(entry, provider))
                 throw new InvalidOperationException($"Provider with entry '{entry}' is already registered.");
 
-            return new ActionDisposable(() => providers.TryRemove(entry, out _));
+            return new ActionDisposable(() =>
+            {
+                if (providers.TryRemove(entry, out _))
+                    (provider as IDisposable)?.Dispose();
+            });
         }
 
         public IReadOnlyList<DiagnosticEntry> ListAll() 
@@ -32,6 +36,12 @@ namespace Vostok.Hosting.Components.Diagnostics
             info = foundProvider ? provider.QuerySafe() : null;
 
             return foundProvider;
+        }
+
+        public void Dispose()
+        {
+            foreach (var provider in providers.Values.OfType<IDisposable>())
+                provider.Dispose();
         }
     }
 }
