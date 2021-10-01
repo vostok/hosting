@@ -17,7 +17,6 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
-using Vostok.Logging.File;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;

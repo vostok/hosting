@@ -12,6 +12,8 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
         public bool EnableGcEventsMetrics { get; set; } = true;
 
+        public bool EnableDnsEventsMetrics { get; set; } = true;
+
         public bool EnableProcessMetricsLogging { get; set; } = true;
 
         public bool EnableProcessMetricsReporting { get; set; } = true;
