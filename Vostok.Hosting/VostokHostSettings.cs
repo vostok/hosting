@@ -73,7 +73,7 @@ namespace Vostok.Hosting
         /// <list type="bullet">
         ///     <item><description>All diagnostic metrics</description></item>
         ///     <item><description>All system metrics</description></item>
-        ///     <item><description>All health check metrics</description></item>
+        ///     <item><description>All health checks</description></item>
         /// </list> 
         /// </summary>
         public bool DiagnosticMetricsEnabled { get; set; } = true;
