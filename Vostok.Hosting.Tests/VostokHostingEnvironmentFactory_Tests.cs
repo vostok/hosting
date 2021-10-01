@@ -26,6 +26,43 @@ namespace Vostok.Hosting.Tests
             shutdown = new CancellationTokenSource();
         }
 
+        // NOTE (tsup): Let's keep these tests so that future memory leaks are easier to detect 
+
+        /*[Test, Explicit]
+        public void Should_not_leak()
+        {
+            var checkPoint = dotMemory.Check();
+
+            (VostokHostingEnvironmentFactory.Create(Setup) as IDisposable)?.Dispose();
+
+            dotMemory.Check(memory =>
+            {
+                memory.GetDifference(checkPoint)
+                   .GetSurvivedObjects()
+                   .GetObjects(o => o.Namespace.Like("Vostok"))
+                   .ObjectsCount.Should()
+                   .Be(0);
+            });
+        }
+
+        [Test, Explicit, DotMemoryUnit(SavingStrategy = SavingStrategy.OnAnyFail, Directory = @"C:\dotUnitTmp\")]
+        public void Should_not_leak_STRESS()
+        {
+            var checkPoint = dotMemory.Check();
+
+            for (var i = 0; i < 100; ++i)
+                (VostokHostingEnvironmentFactory.Create(Setup) as IDisposable)?.Dispose();
+
+            dotMemory.Check(memory =>
+            {
+                memory.GetDifference(checkPoint)
+                   .GetSurvivedObjects()
+                   .GetObjects(o => o.Namespace.Like("Vostok"))
+                   .ObjectsCount.Should()
+                   .Be(0);
+            });
+        }*/
+
         [Test]
         public void Should_produce_an_environment_with_linked_cancellation_tokens()
         {
