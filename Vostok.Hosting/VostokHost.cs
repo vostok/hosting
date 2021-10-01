@@ -209,7 +209,7 @@ namespace Vostok.Hosting
                     BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
                     BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
                     SendAnnotations = settings.SendAnnotations,
-                    HostMetricsEnabled = settings.HostMetricsEnabled
+                    DiagnosticMetricsEnabled = settings.DiagnosticMetricsEnabled
                 };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);

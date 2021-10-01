@@ -69,9 +69,14 @@ namespace Vostok.Hosting
         public bool SendAnnotations { get; set; } = true;
         
         /// <summary>
-        /// If set to <c>true</c>, reports diagnostic and system metrics.
+        /// <para>If set to <c>false</c>, forcibly disables:</para>
+        /// <list type="bullet">
+        ///     <item><description>All diagnostic metrics</description></item>
+        ///     <item><description>All system metrics</description></item>
+        ///     <item><description>All health check metrics</description></item>
+        /// </list> 
         /// </summary>
-        public bool HostMetricsEnabled { get; set; } = true;
+        public bool DiagnosticMetricsEnabled { get; set; } = true;
 
         /// <summary>
         /// If enabled, <see cref="VostokHost"/> will wait for <see cref="IServiceBeacon"/> start.

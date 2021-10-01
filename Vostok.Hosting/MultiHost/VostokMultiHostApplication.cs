@@ -91,7 +91,7 @@ namespace Vostok.Hosting.MultiHost
                 ConfigureStaticProviders = false,
                 WarmupConfiguration = false,
                 WarmupZooKeeper = false,
-                HostMetricsEnabled = false
+                DiagnosticMetricsEnabled = false
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
