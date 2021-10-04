@@ -93,7 +93,7 @@ namespace Vostok.Hosting.Components
             {
                 LogDisposing("VostokHostingEnvironment");
 
-                DisposeExternals();
+                TryDisposeImplicitComponents();
 
                 TryDispose(DiagnosticsHub, "Diagnostics");
 
@@ -146,7 +146,7 @@ namespace Vostok.Hosting.Components
             if (ExternalComponents.Contains(component))
                 return;
 
-            if (!(component is IDisposable disposable))
+            if (component is not IDisposable disposable)
                 return;
 
             if (shouldLog)
@@ -155,7 +155,7 @@ namespace Vostok.Hosting.Components
             disposable.Dispose();
         }
 
-        private void DisposeExternals()
+        private void TryDisposeImplicitComponents()
         {
             var registeredExtensions = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
             foreach (var valueTuple in HostExtensions.GetAll())
