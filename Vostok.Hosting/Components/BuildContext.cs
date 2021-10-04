@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Components
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
-        public List<object> DisposableHostExtensions { get; set; }
+        public List<object> Disposables { get; set; }
         public HashSet<object> ExternalComponents { get; }
 
         public Logs Logs { get; set; }
@@ -93,8 +93,7 @@ namespace Vostok.Hosting.Components
             {
                 LogDisposing("VostokHostingEnvironment");
 
-                foreach (var hostExtension in DisposableHostExtensions ?? new List<object>())
-                    TryDispose(hostExtension, $"{hostExtension.GetType().Name} extension");
+                DisposeExternals();
 
                 TryDispose(DiagnosticsHub, "Diagnostics");
 
@@ -142,7 +141,7 @@ namespace Vostok.Hosting.Components
         public void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
 
-        private void TryDispose(object component, string componentName)
+        private void TryDispose(object component, string componentName, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
@@ -150,8 +149,20 @@ namespace Vostok.Hosting.Components
             if (!(component is IDisposable disposable))
                 return;
 
-            LogDisposing(componentName);
+            if (shouldLog)
+                LogDisposing(componentName);
+
             disposable.Dispose();
+        }
+
+        private void DisposeExternals()
+        {
+            var registeredExtensions = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
+            foreach (var valueTuple in HostExtensions.GetAll())
+                registeredExtensions.Add(valueTuple.Item2);
+
+            foreach (var disposable in Disposables ?? new List<object>())
+                TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
         }
     }
 }
