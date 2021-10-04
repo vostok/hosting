@@ -70,7 +70,7 @@ namespace Vostok.Hosting.Components.Diagnostics
                 info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo), new EnvironmentInfoProvider(context.Datacenters));
 
             if (infoSettings.AddSystemMetricsInfo)
-                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), new SystemMetricsProvider());
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), AsDisposable(context, new SystemMetricsProvider()));
 
             if (infoSettings.AddLoadedAssembliesInfo)
                 info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies), new LoadedAssembliesProvider());
@@ -100,5 +100,11 @@ namespace Vostok.Hosting.Components.Diagnostics
 
         private static DiagnosticEntry CreateEntry(string name)
             => new DiagnosticEntry(WellKnownDiagnosticComponentsNames.Hosting, name);
+
+        private static T AsDisposable<T>(BuildContext context, T disposable)
+        {
+            context.Disposables.Add(disposable);
+            return disposable;
+        }
     }
 }
