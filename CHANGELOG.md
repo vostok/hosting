@@ -1,3 +1,8 @@
+## 0.3.27 (01-10-2021):
+
+- Added `DiagnosticMetricsEnabled` settings
+- Fixed #60
+
 ## 0.3.26 (16-09-2021):
 
 Add possibility to target setup of host metrics.

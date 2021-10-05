@@ -247,7 +247,8 @@ namespace Vostok.Hosting.MultiHost
         {
             var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
             {
-                ConfigureStaticProviders = settings.ConfigureStaticProviders
+                ConfigureStaticProviders = settings.ConfigureStaticProviders,
+                DiagnosticMetricsEnabled = settings.DiagnosticMetricsEnabled
             };
 
             return EnvironmentBuilder.Build(
