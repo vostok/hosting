@@ -201,7 +201,7 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.SendAnnotations)
                 AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance);
 
-            HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log);
+            context.RegisterDisposable(HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log));
 
             if (settings.ConfigureStaticProviders)
                 FlowingContext.Configuration.ErrorCallback = (errorMessage, error) => context.Log.ForContext(typeof(FlowingContext)).Error(error, errorMessage);
@@ -270,14 +270,14 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log = context.Logs.BuildCompositeLog(out _);
             }
 
-            LogLevelMetrics.Measure(context.Logs.LogEventLevelCounterFactory.CreateCounter(), context.Metrics);
+            context.RegisterDisposable(LogLevelMetrics.Measure(context.Logs.LogEventLevelCounterFactory.CreateCounter(), context.Metrics));
 
             if (settings.ConfigureStaticProviders)
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
             context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
 
-            HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics);
+            context.RegisterDisposable(HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics));
 
             return vostokHostingEnvironment;
         }
