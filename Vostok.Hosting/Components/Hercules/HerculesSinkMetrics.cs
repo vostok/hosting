@@ -27,17 +27,15 @@ namespace Vostok.Hosting.Components.Hercules
             this.log = log.ForContext<HerculesSink>();
             this.herculesSink = herculesSink;
             tags = context.Tags;
-
-            context.Register(this, ScrapePeriod);
         }
 
-        public static void Measure(IHerculesSink herculesSink, IVostokApplicationMetrics context, ILog log)
+        public static IDisposable Measure(IHerculesSink herculesSink, IVostokApplicationMetrics context, ILog log)
         {
             if (!(herculesSink is HerculesSink sink))
-                return;
+                return null;
 
-            // ReSharper disable once ObjectCreationAsStatement
-            new HerculesSinkMetrics(sink, context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink"), log);
+            var builtContext = context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink");
+            return builtContext.Register(new HerculesSinkMetrics(sink, builtContext, log), ScrapePeriod);
         }
 
         public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)

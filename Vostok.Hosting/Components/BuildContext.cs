@@ -79,7 +79,8 @@ namespace Vostok.Hosting.Components
 
         public T RegisterDisposable<T>(T disposable)
         {
-            disposables.Add(disposable);
+            if (disposable != null)
+                disposables.Add(disposable);
             return disposable;
         }
 
