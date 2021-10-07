@@ -1,6 +1,5 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
-using Vostok.Datacenters;
 using Vostok.Hercules.Client;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.HealthChecks;
@@ -70,7 +69,7 @@ namespace Vostok.Hosting.Components.Diagnostics
                 info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.EnvironmentInfo), new EnvironmentInfoProvider(context.Datacenters));
 
             if (infoSettings.AddSystemMetricsInfo)
-                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), AsDisposable(context, new SystemMetricsProvider()));
+                info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.SystemMetrics), context.RegisterDisposable(new SystemMetricsProvider()));
 
             if (infoSettings.AddLoadedAssembliesInfo)
                 info.RegisterProvider(CreateEntry(WellKnownDiagnosticInfoProvidersNames.LoadedAssemblies), new LoadedAssembliesProvider());
@@ -100,11 +99,5 @@ namespace Vostok.Hosting.Components.Diagnostics
 
         private static DiagnosticEntry CreateEntry(string name)
             => new DiagnosticEntry(WellKnownDiagnosticComponentsNames.Hosting, name);
-
-        private static T AsDisposable<T>(BuildContext context, T disposable)
-        {
-            context.Disposables.Add(disposable);
-            return disposable;
-        }
     }
 }

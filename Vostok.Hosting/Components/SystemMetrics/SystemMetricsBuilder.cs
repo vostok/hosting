@@ -56,12 +56,12 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(gcMonitor);
 
             if (settings.EnableGcEventsLogging)
-                context.Disposables.Add(gcMonitor.LogCollections(context.Log, gc => gc.Duration >= settings.GcMinimumDurationForLogging));
+                context.RegisterDisposable(gcMonitor.LogCollections(context.Log, gc => gc.Duration >= settings.GcMinimumDurationForLogging));
 
             if (settings.EnableGcEventsMetrics)
-                context.Disposables.Add(gcMonitor.ReportMetrics(metricContext));
+                context.RegisterDisposable(gcMonitor.ReportMetrics(metricContext));
 
-            context.Disposables.Add(gcMonitor);
+            context.RegisterDisposable(gcMonitor);
         }
 
         private void RegisterProcessMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
@@ -71,7 +71,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(processMonitor);
 
             if (settings.EnableProcessMetricsLogging)
-                context.Disposables.Add(processMonitor.LogPeriodically(context.Log, settings.ProcessMetricsLoggingPeriod));
+                context.RegisterDisposable(processMonitor.LogPeriodically(context.Log, settings.ProcessMetricsLoggingPeriod));
 
             if (settings.EnableProcessMetricsReporting)
             {
@@ -82,11 +82,11 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 };
 
                 var collector = new CurrentProcessMetricsCollector(collectorSettings);
-                context.Disposables.Add(collector.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
-                context.Disposables.Add(collector);
+                context.RegisterDisposable(collector.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
+                context.RegisterDisposable(collector);
             }
 
-            context.Disposables.Add(processMonitor);
+            context.RegisterDisposable(processMonitor);
         }
 
         private void RegisterHostMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
@@ -97,16 +97,16 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(hostMonitor);
 
             if (settings.EnableHostMetricsLogging)
-                context.Disposables.Add(hostMonitor.LogPeriodically(context.Log, settings.HostMetricsLoggingPeriod));
+                context.RegisterDisposable(hostMonitor.LogPeriodically(context.Log, settings.HostMetricsLoggingPeriod));
 
             if (settings.EnableHostMetricsReporting)
             {
                 var collector = new HostMetricsCollector(hostMetricsSettings);
-                context.Disposables.Add(collector.ReportMetrics(metricContext, settings.HostMetricsReportingPeriod));
-                context.Disposables.Add(collector);
+                context.RegisterDisposable(collector.ReportMetrics(metricContext, settings.HostMetricsReportingPeriod));
+                context.RegisterDisposable(collector);
             }
 
-            context.Disposables.Add(hostMonitor);
+            context.RegisterDisposable(hostMonitor);
         }
 
         private void RegisterDnsMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
@@ -116,9 +116,9 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(dnsMonitor);
 
             if (settings.EnableDnsEventsMetrics)
-                context.Disposables.Add(dnsMonitor.ReportMetrics(metricContext));
+                context.RegisterDisposable(dnsMonitor.ReportMetrics(metricContext));
 
-            context.Disposables.Add(dnsMonitor);
+            context.RegisterDisposable(dnsMonitor);
         }
     }
 }
