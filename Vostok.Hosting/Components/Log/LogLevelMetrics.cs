@@ -21,7 +21,7 @@ namespace Vostok.Hosting.Components.Log
             return context.Instance
                    .WithTag(WellKnownTagKeys.Component, "VostokLog")
                    .WithTag(WellKnownTagKeys.Name, "EventsByLevel")
-                   .CreateMultiFuncGauge(new LogLevelMetrics(counter).ProvideMetrics)
+                   .CreateMultiFuncGauge(new LogLevelMetrics(counter).ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true})
                 as IDisposable;
         }
 
