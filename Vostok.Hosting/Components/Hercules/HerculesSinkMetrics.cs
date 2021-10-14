@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Vostok.Commons.Time;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
-using Vostok.Metrics.Scraping;
+using Vostok.Metrics.Primitives.Gauge;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkMetrics : IScrapableMetric
+    internal class HerculesSinkMetrics
     {
-        private static readonly TimeSpan ScrapePeriod = 1.Minutes();
-
         private readonly ILog log;
         private readonly HerculesSink herculesSink;
         private readonly MetricTags tags;
@@ -35,11 +32,13 @@ namespace Vostok.Hosting.Components.Hercules
                 return null;
 
             var builtContext = context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink");
-            return builtContext.Register(new HerculesSinkMetrics(sink, builtContext, log), ScrapePeriod);
+            return builtContext.CreateMultiFuncGaugeFromEvents(new HerculesSinkMetrics(sink, builtContext, log).ProvideMetrics, new FuncGaugeConfig(){ScrapeOnDispose = true}) as IDisposable;
         }
 
-        public IEnumerable<MetricEvent> Scrape(DateTimeOffset timestamp)
+        public IEnumerable<MetricEvent> ProvideMetrics()
         {
+            var timestamp = DateTimeOffset.Now;
+
             var statistic = herculesSink.GetStatistics();
 
             var delta = statistic.Total - previous.Total;
