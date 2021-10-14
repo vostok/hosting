@@ -166,7 +166,7 @@ namespace Vostok.Hosting.Components
 
         private void TryDisposeImplicitComponents()
         {
-            var registeredExtensions = new HashSet<object>(HostExtensions.GetAll().Select(x => x.Item2), ByReferenceEqualityComparer<object>.Instance);
+            var registeredExtensions = new HashSet<object>(HostExtensions?.GetAll().Select(x => x.Item2) ?? new List<object>(), ByReferenceEqualityComparer<object>.Instance);
 
             foreach (var disposable in disposables ?? new List<object>())
                 TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
