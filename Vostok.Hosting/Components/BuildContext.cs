@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
 using Vostok.Configuration;
@@ -17,7 +18,6 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
-using Vostok.Logging.File;
 using Vostok.ServiceDiscovery.Abstractions;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
@@ -32,12 +32,14 @@ namespace Vostok.Hosting.Components
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
         private readonly SubstitutableDatacenters substitutableDatacenters;
+        private readonly List<object> disposables;
 
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
             substitutableDatacenters = new SubstitutableDatacenters();
+            disposables = new List<object>();
             ExternalComponents = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
         }
 
@@ -59,7 +61,6 @@ namespace Vostok.Hosting.Components
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
-        public List<object> DisposableHostExtensions { get; set; }
         public HashSet<object> ExternalComponents { get; }
 
         public Logs Logs { get; set; }
@@ -75,7 +76,14 @@ namespace Vostok.Hosting.Components
 
         public void SubstituteTracer((ITracer tracer, TracerSettings tracerSettings) tracer)
             => substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
-        
+
+        public T RegisterDisposable<T>(T disposable)
+        {
+            if (disposable != null)
+                disposables.Add(disposable);
+            return disposable;
+        }
+
         public IDatacenters Datacenters
         {
             get => substitutableDatacenters;
@@ -94,8 +102,7 @@ namespace Vostok.Hosting.Components
             {
                 LogDisposing("VostokHostingEnvironment");
 
-                foreach (var hostExtension in DisposableHostExtensions ?? new List<object>())
-                    TryDispose(hostExtension, $"{hostExtension.GetType().Name} extension");
+                TryDisposeImplicitComponents();
 
                 TryDispose(DiagnosticsHub, "Diagnostics");
 
@@ -143,16 +150,26 @@ namespace Vostok.Hosting.Components
         public void LogDisposing(string componentName) =>
             Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
 
-        private void TryDispose(object component, string componentName)
+        private void TryDispose(object component, string componentName, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
 
-            if (!(component is IDisposable disposable))
+            if (component is not IDisposable disposable)
                 return;
 
-            LogDisposing(componentName);
+            if (shouldLog)
+                LogDisposing(componentName);
+
             disposable.Dispose();
+        }
+
+        private void TryDisposeImplicitComponents()
+        {
+            var registeredExtensions = new HashSet<object>(HostExtensions.GetAll().Select(x => x.Item2), ByReferenceEqualityComparer<object>.Instance);
+
+            foreach (var disposable in disposables ?? new List<object>())
+                TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
         }
     }
 }
