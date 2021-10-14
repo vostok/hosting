@@ -1,3 +1,8 @@
+## 0.3.29 (14-10-2021):
+
+- Fixed a couple of small dispose leaks
+- Enabled DNS latency metric scraping
+
 ## 0.3.28 (12-10-2021):
 
 Update dependencies.
