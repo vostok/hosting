@@ -11,21 +11,18 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly LogEventLevelCounter counter;
 
-        public LogLevelMetrics(LogEventLevelCounter counter, IMetricContext context)
+        private LogLevelMetrics(LogEventLevelCounter counter)
         {
             this.counter = counter;
-
-            context.CreateMultiFuncGauge(ProvideMetrics);
         }
 
-        public static void Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
+        public static IDisposable Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            new LogLevelMetrics(
-                counter,
-                context.Instance
+            return context.Instance
                    .WithTag(WellKnownTagKeys.Component, "VostokLog")
-                   .WithTag(WellKnownTagKeys.Name, "EventsByLevel"));
+                   .WithTag(WellKnownTagKeys.Name, "EventsByLevel")
+                   .CreateMultiFuncGauge(new LogLevelMetrics(counter).ProvideMetrics)
+                as IDisposable;
         }
 
         private IEnumerable<MetricDataPoint> ProvideMetrics()

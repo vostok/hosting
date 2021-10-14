@@ -1,3 +1,12 @@
+## 0.3.29 (14-10-2021):
+
+- Fixed a couple of small dispose leaks
+- Enabled DNS latency metric scraping
+
+## 0.3.28 (12-10-2021):
+
+Update dependencies.
+
 ## 0.3.27 (01-10-2021):
 
 - Added `DiagnosticMetricsEnabled` settings
@@ -5,7 +14,7 @@
 
 ## 0.3.26 (16-09-2021):
 
-Add possibility to target setup of host metrics.
+Added possibility to target setup of host metrics.
 
 ## 0.3.25 (15-09-2021):
 
