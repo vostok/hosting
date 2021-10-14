@@ -17,10 +17,10 @@ namespace Vostok.Hosting.Components.Metrics
             healthTracker.ObserveReports().Subscribe(this);
         }
 
-        public static void Measure(IHealthTracker healthTracker, IVostokApplicationMetrics context)
+        public static IDisposable Measure(IHealthTracker healthTracker, IVostokApplicationMetrics context)
         {
-            // ReSharper disable once ObjectCreationAsStatement
-            new HealthCheckMetrics(healthTracker, context.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks"));
+            var metrics = new HealthCheckMetrics(healthTracker, context.Instance.WithTag(WellKnownTagKeys.Component, "VostokHealthChecks"));
+            return healthTracker.ObserveReports().Subscribe(metrics);
         }
 
         public void OnCompleted()

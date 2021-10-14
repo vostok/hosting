@@ -6,15 +6,16 @@ using Vostok.Metrics.System.Process;
 
 namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
 {
-    internal class SystemMetricsProvider : IDiagnosticInfoProvider, IObserver<CurrentProcessMetrics>
+    internal class SystemMetricsProvider : IDiagnosticInfoProvider, IObserver<CurrentProcessMetrics>, IDisposable
     {
         private static readonly TimeSpan ObservationPeriod = 5.Seconds();
 
         private readonly CurrentProcessMonitor monitor = new CurrentProcessMonitor();
+        private readonly IDisposable subscription;
         private volatile CurrentProcessMetrics metrics = new CurrentProcessMetrics();
 
         public SystemMetricsProvider()
-            => monitor.ObserveMetrics(ObservationPeriod).Subscribe(this);
+            => subscription = monitor.ObserveMetrics(ObservationPeriod).Subscribe(this);
 
         public object Query()
         {
@@ -55,6 +56,12 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
 
         public void OnError(Exception error)
         {
+        }
+
+        public void Dispose()
+        {
+            subscription?.Dispose();
+            monitor?.Dispose();
         }
     }
 }

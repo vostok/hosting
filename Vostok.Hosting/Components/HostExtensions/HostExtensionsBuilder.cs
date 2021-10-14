@@ -42,7 +42,7 @@ namespace Vostok.Hosting.Components.HostExtensions
 
             builderCustomization.Customize(this);
 
-            context.DisposableHostExtensions = disposable;
+            disposable.ForEach(x => context.RegisterDisposable(x));
             context.HostExtensions = HostExtensions;
         }
 
