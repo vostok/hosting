@@ -1,3 +1,8 @@
+## 0.3.30 (14-10-2021):
+
+- Added DNS health check
+- Now scraping log and hercules metrics on dispose. (Revert of 0.3.22)
+
 ## 0.3.29 (14-10-2021):
 
 - Fixed a couple of small dispose leaks
