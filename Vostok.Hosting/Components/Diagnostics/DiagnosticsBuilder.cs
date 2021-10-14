@@ -59,7 +59,7 @@ namespace Vostok.Hosting.Components.Diagnostics
                 healthTracker.RegisterCheck(WellKnownHealthCheckNames.ZooKeeperConnection, new ZooKeeperConnectionCheck(realClient));
 
             if (healthSettings.AddDnsResolutionCheck && RuntimeDetector.IsDotNet50AndNewer)
-                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, new DnsResolutionCheck());
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, context.RegisterDisposable(new DnsResolutionCheck()));
 
             return healthTracker;
         }
