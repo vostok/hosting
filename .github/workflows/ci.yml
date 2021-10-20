@@ -18,7 +18,7 @@ jobs:
           path: vostok.module
         
       - name: Build
-        uses: KungA/vostok.ci@master
+        uses: vostok/github.ci@master
         with:
           references: ${{ matrix.references }}
 
@@ -34,7 +34,7 @@ jobs:
    
     steps:
       - name: Test
-        uses: KungA/vostok.ci@master
+        uses: vostok/github.ci@master
         with:
           references: ${{ matrix.references }}
           framework: ${{ matrix.framework }}
@@ -46,6 +46,6 @@ jobs:
    
     steps:
        - name: Publish
-         uses: KungA/vostok.ci@master
+         uses: vostok/github.ci@master
          with: 
            key: ${{ secrets.NUGET_TOKEN }}
