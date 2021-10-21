@@ -251,6 +251,7 @@ namespace Vostok.Hosting
             {
                 LogEnvironmentInfo();
                 LogApplicationIdentity(environment.ApplicationIdentity);
+                LogPort(environment.Port);
                 LogLocalDatacenter(environment.Datacenters);
                 LogApplicationLimits(environment.ApplicationLimits);
                 LogApplicationReplication(environment.ApplicationReplicationInfo);
@@ -481,6 +482,12 @@ namespace Vostok.Hosting
                 : new object[] {applicationIdentity.Project, applicationIdentity.Subproject, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance};
 
             log.Info(messageTemplate, messageParameters);
+        }
+
+        private void LogPort(int? port)
+        {
+            if (port.HasValue)
+                log.Info("Application port: {Port}.",  port);
         }
 
         private void LogLocalDatacenter(IDatacenters datacenters) =>
