@@ -17,6 +17,8 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_dispose_of_the_application()
         {
+            1.Should().Be(2);
+            
             var app = new DisposableApplication();
 
             var host = new VostokHost(new TestHostSettings(app, SetupEnvironment));
