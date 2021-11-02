@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Commons.Time;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources.Switching;
@@ -98,47 +99,8 @@ namespace Vostok.Hosting.Components
             Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 
-        public void Dispose()
-        {
-            try
-            {
-                LogDisposing("VostokHostingEnvironment");
-
-                TryDisposeImplicitComponents();
-
-                TryDispose(DiagnosticsHub, "Diagnostics");
-
-                TryDispose(Metrics?.Root, "Metrics");
-
-                TryDispose(ServiceBeacon, "ServiceBeacon");
-
-                Logs?.DisposeHerculesLog(this);
-                SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
-                
-                TryDispose(HerculesSink, "HerculesSink");
-
-                TryDispose(ServiceLocator, "ServiceLocator");
-
-                TryDispose(ZooKeeperClient, "ZooKeeperClient");
-
-                TryDispose(substitutableDatacenters.GetBase(), "Datacenters");
-
-                TryDispose(ConfigurationProvider, "ConfigurationProvider");
-
-                TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
-
-                TryDispose(ClusterConfigClient, "ClusterConfigClient");
-
-                Logs?.DisposeFileLog(this);
-                Logs?.DisposeConsoleLog(this);
-            }
-            catch (Exception error)
-            {
-                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose of the hosting environment.");
-
-                throw;
-            }
-        }
+        public void Dispose() =>
+            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", DisposeTimeout, Log.ForContext<VostokHostingEnvironment>());
 
         public void LogConfiguredLoggers(string[] configuredLoggers) =>
             Log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", configuredLoggers);
@@ -163,6 +125,37 @@ namespace Vostok.Hosting.Components
             ApplicationDisposable.DisposeComponent(disposable, componentName, 3.Seconds(), Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
+        private void DoDispose()
+        {
+            TryDisposeImplicitComponents();
+
+            TryDispose(DiagnosticsHub, "Diagnostics");
+
+            TryDispose(Metrics?.Root, "Metrics");
+
+            TryDispose(ServiceBeacon, "ServiceBeacon");
+
+            Logs?.DisposeHerculesLog(this);
+            SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
+
+            TryDispose(HerculesSink, "HerculesSink");
+
+            TryDispose(ServiceLocator, "ServiceLocator");
+
+            TryDispose(ZooKeeperClient, "ZooKeeperClient");
+
+            TryDispose(substitutableDatacenters.GetBase(), "Datacenters");
+
+            TryDispose(ConfigurationProvider, "ConfigurationProvider");
+
+            TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
+
+            TryDispose(ClusterConfigClient, "ClusterConfigClient");
+
+            Logs?.DisposeFileLog(this);
+            Logs?.DisposeConsoleLog(this);
+        }
+        
         private void TryDisposeImplicitComponents()
         {
             var registeredExtensions = new HashSet<object>(HostExtensions?.GetAll().Select(x => x.Item2) ?? new List<object>(), ByReferenceEqualityComparer<object>.Instance);
@@ -170,5 +163,8 @@ namespace Vostok.Hosting.Components
             foreach (var disposable in disposables ?? new List<object>())
                 TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
         }
+
+        // todo (kungurtsev, 02.11.2021): 
+        private TimeSpan DisposeTimeout => 3.Seconds();
     }
 }
