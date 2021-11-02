@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
 using Vostok.Commons.Helpers.Disposable;
-using Vostok.Commons.Time;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
@@ -103,7 +101,7 @@ namespace Vostok.Hosting.Components
         }
 
         public void Dispose() =>
-            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", DisposeTimeout, Log.ForContext<VostokHostingEnvironment>());
+            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", HostingShutdown.ShutdownTimeout, Log.ForContext<VostokHostingEnvironment>());
 
         public void LogConfiguredLoggers(string[] configuredLoggers) =>
             Log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", configuredLoggers);
@@ -117,7 +115,7 @@ namespace Vostok.Hosting.Components
         public void LogDisposing(string componentName) =>
             ApplicationDisposable.LogDisposing(Log.ForContext<VostokHostingEnvironment>(), componentName);
 
-        public void TryDispose(object component, string componentName, bool shouldLog = true)
+        public void TryDispose(object component, string componentName, TimeSpan? timeout = null, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
@@ -125,7 +123,9 @@ namespace Vostok.Hosting.Components
             if (component is not IDisposable disposable)
                 return;
 
-            ApplicationDisposable.DisposeComponent(disposable, componentName, 3.Seconds(), Log.ForContext<VostokHostingEnvironment>(), shouldLog);
+            timeout ??= HostingShutdown.ShutdownTimeout;
+            
+            ApplicationDisposable.DisposeComponent(disposable, componentName, timeout.Value, Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
         private void DoDispose()
@@ -173,11 +173,9 @@ namespace Vostok.Hosting.Components
             foreach (var disposable in Disposables)
             {
                 var registered = registeredExtensions.TryGetValue(disposable, out var name);
-                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", registered);
+                var timeout = registered ? ApplicationShutdown.ShutdownTimeout : HostingShutdown.ShutdownTimeout;
+                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", timeout, registered);
             }
         }
-
-        // todo (kungurtsev, 02.11.2021): 
-        private TimeSpan DisposeTimeout => 3.Seconds();
     }
 }
