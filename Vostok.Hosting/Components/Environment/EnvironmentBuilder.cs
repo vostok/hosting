@@ -223,7 +223,7 @@ namespace Vostok.Hosting.Components.Environment
                 ? diagnosticsBuilder.Build(context)
                 : new DiagnosticsHub(new DiagnosticInfo(), new HealthTracker(TimeSpan.MaxValue, context.Log));
 
-            var (hostingShutdown, applicationShutdown) = ShutdownFactory.Create(
+            (context.HostingShutdown, context.ApplicationShutdown) = ShutdownFactory.Create(
                 context.ServiceBeacon,
                 context.ServiceLocator,
                 context.ApplicationIdentity,
@@ -237,8 +237,8 @@ namespace Vostok.Hosting.Components.Environment
                 settings.SendAnnotations);
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
-                hostingShutdown,
-                applicationShutdown,
+                context.HostingShutdown,
+                context.ApplicationShutdown,
                 context.ApplicationIdentity,
                 context.ApplicationLimits,
                 context.ApplicationReplication,
