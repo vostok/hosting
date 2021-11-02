@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
+using Vostok.Commons.Time;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
@@ -13,6 +14,7 @@ using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
 using Vostok.Hosting.Components.Tracing;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
@@ -158,10 +160,7 @@ namespace Vostok.Hosting.Components
             if (component is not IDisposable disposable)
                 return;
 
-            if (shouldLog)
-                LogDisposing(componentName);
-
-            disposable.Dispose();
+            ApplicationDisposable.DisposeComponent(disposable, componentName, 3.Seconds(), Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
         private void TryDisposeImplicitComponents()
