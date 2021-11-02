@@ -36,14 +36,13 @@ namespace Vostok.Hosting.Components
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
         private readonly SubstitutableDatacenters substitutableDatacenters;
-        private readonly List<object> disposables;
 
         public BuildContext()
         {
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
             substitutableDatacenters = new SubstitutableDatacenters();
-            disposables = new List<object>();
+            Disposables = new List<object>();
             ExternalComponents = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
         }
 
@@ -64,8 +63,9 @@ namespace Vostok.Hosting.Components
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
-        public IVostokHostExtensions HostExtensions { get; set; }
+        public HostExtensions.HostExtensions HostExtensions { get; set; }
         public HashSet<object> ExternalComponents { get; }
+        public List<object> Disposables { get; }
         public HostingShutdown HostingShutdown { get; set; }
         public ApplicationShutdown ApplicationShutdown { get; set; }
 
@@ -86,7 +86,7 @@ namespace Vostok.Hosting.Components
         public T RegisterDisposable<T>(T disposable)
         {
             if (disposable != null)
-                disposables.Add(disposable);
+                Disposables.Add(disposable);
             return disposable;
         }
 
@@ -161,10 +161,20 @@ namespace Vostok.Hosting.Components
         
         private void TryDisposeImplicitComponents()
         {
-            var registeredExtensions = new HashSet<object>(HostExtensions?.GetAll().Select(x => x.Item2) ?? new List<object>(), ByReferenceEqualityComparer<object>.Instance);
+            var registeredExtensions = new Dictionary<object, string>(ByReferenceEqualityComparer<object>.Instance);
+            if (HostExtensions != null)
+            {
+                foreach (var (type, e) in HostExtensions.GetAll())
+                    registeredExtensions[e] = type.Name;
+                foreach (var (key, _, e) in HostExtensions.GetAllKeyed())
+                    registeredExtensions[e] = key;
+            }
 
-            foreach (var disposable in disposables ?? new List<object>())
-                TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
+            foreach (var disposable in Disposables)
+            {
+                var registered = registeredExtensions.TryGetValue(disposable, out var name);
+                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", registered);
+            }
         }
 
         // todo (kungurtsev, 02.11.2021): 
