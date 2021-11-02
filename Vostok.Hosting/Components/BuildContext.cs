@@ -14,6 +14,7 @@ using Vostok.Hosting.Components.Datacenters;
 using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.Tracing;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
@@ -65,6 +66,8 @@ namespace Vostok.Hosting.Components
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
         public IVostokHostExtensions HostExtensions { get; set; }
         public HashSet<object> ExternalComponents { get; }
+        public HostingShutdown HostingShutdown { get; set; }
+        public ApplicationShutdown ApplicationShutdown { get; set; }
 
         public Logs Logs { get; set; }
         public string LogsDirectory { get; set; }
