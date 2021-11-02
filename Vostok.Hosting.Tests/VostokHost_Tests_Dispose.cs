@@ -25,6 +25,25 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
+        
+        [Test]
+        public void Should_dispose_components()
+        {
+            var app = new DisposableApplication();
+            var component = new DisposableApplication();
+
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable(component));
+                }));
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            app.Disposed.Should().BeTrue();
+            component.Disposed.Should().BeTrue();
+        }
 
         [Test]
         public void Should_not_crash_on_dispose_errors()
@@ -40,6 +59,26 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
+        
+        [Test]
+        public void Should_not_crash_on_components_dispose_errors()
+        {
+            var app = new DisposableApplication();
+            var component = new DisposableApplication {DisposeError = new Exception("crash")};
+            
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable(component));
+                }));
+
+            var watch = Stopwatch.StartNew();
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            watch.Elapsed.Should().BeLessThan(5.Seconds());
+        }
 
         [Test]
         public void Should_not_block_on_dispose_longer_than_shutdown_timeout_allows()
@@ -50,6 +89,26 @@ namespace Vostok.Hosting.Tests
             };
 
             var host = new VostokHost(new TestHostSettings(app, SetupEnvironment));
+
+            var watch = Stopwatch.StartNew();
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            watch.Elapsed.Should().BeLessThan(5.Seconds());
+        }
+        
+        [Test]
+        public void Should_not_block_on_components_dispose_longer_than_shutdown_timeout_allows()
+        {
+            var app = new DisposableApplication();
+            var component = new DisposableApplication {DisposeDelay = 10.Seconds()};
+            
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable(component));
+                }));
 
             var watch = Stopwatch.StartNew();
 
