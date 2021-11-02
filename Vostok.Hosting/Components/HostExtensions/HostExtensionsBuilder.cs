@@ -14,14 +14,14 @@ namespace Vostok.Hosting.Components.HostExtensions
         public readonly HostExtensions HostExtensions;
 
         private readonly Customization<HostExtensionsBuilder> builderCustomization;
-        private readonly List<object> disposable;
+        private readonly List<object> disposables;
         private volatile IVostokHostingEnvironment environment;
 
         public HostExtensionsBuilder()
         {
             HostExtensions = new HostExtensions();
             builderCustomization = new Customization<HostExtensionsBuilder>();
-            disposable = new List<object>();
+            disposables = new List<object>();
         }
 
         public void AddCustomization(Action<IVostokHostExtensionsBuilder> setup)
@@ -42,8 +42,11 @@ namespace Vostok.Hosting.Components.HostExtensions
 
             builderCustomization.Customize(this);
 
-            disposable.ForEach(x => context.RegisterDisposable(x));
             context.HostExtensions = HostExtensions;
+
+            // note (kungurtsev, 02.11.2021): user components should be disposed right after application in reverse order
+            disposables.Reverse();
+            context.Disposables.InsertRange(0, disposables);
         }
 
         public IVostokHostExtensionsBuilder Add(Type type, object extension) =>
@@ -78,7 +81,7 @@ namespace Vostok.Hosting.Components.HostExtensions
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), extension);
 
             if (disposable)
-                this.disposable.Add(extension);
+                disposables.Add(extension);
 
             return this;
         }
@@ -91,7 +94,7 @@ namespace Vostok.Hosting.Components.HostExtensions
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), key ?? throw new ArgumentNullException(nameof(key)), extension);
 
             if (disposable)
-                this.disposable.Add(extension);
+                disposables.Add(extension);
 
             return this;
         }

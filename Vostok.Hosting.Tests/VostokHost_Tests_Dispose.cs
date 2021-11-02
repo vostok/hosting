@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Models;
@@ -29,20 +30,23 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_dispose_components()
         {
+            var check = "";
             var app = new DisposableApplication();
-            var component = new DisposableApplication();
+            var component1 = new ActionDisposable(() => check += "1");
+            var component2 = new ActionDisposable(() => check += "2");
 
             var host = new VostokHost(new TestHostSettings(app,
                 setup =>
                 {
                     SetupEnvironment(setup);
-                    setup.SetupHostExtensions(e => e.AddDisposable(component));
+                    setup.SetupHostExtensions(e => e.AddDisposable("1", component1));
+                    setup.SetupHostExtensions(e => e.AddDisposable("2", component2));
                 }));
 
             host.Run().State.Should().Be(VostokApplicationState.Exited);
 
             app.Disposed.Should().BeTrue();
-            component.Disposed.Should().BeTrue();
+            check.Should().Be("21");
         }
 
         [Test]
