@@ -30,7 +30,7 @@ namespace Vostok.Hosting.Helpers
 
         public static void DisposeComponent(IDisposable disposable, string componentName, TimeSpan timeout, ILog log, bool shouldLog = true)
         {
-            if (disposable == null)
+            if (disposable == null || timeout == TimeSpan.Zero)
                 return;
 
             var disposeTask = Task.Run(
