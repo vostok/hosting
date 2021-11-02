@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Helpers
                     var watch = Stopwatch.StartNew();
 
                     if (shouldLog)
-                        log.Info("Disposing of {ComponentName}..", componentName);
+                        LogDisposing(log, componentName);
 
                     try
                     {
@@ -59,5 +59,8 @@ namespace Vostok.Hosting.Helpers
             if (!disposedInTime)
                 log.Warn("Failed to dispose of {ComponentName} within {Timeout} shutdown budget.", componentName, timeout);
         }
+        
+        public static void LogDisposing(ILog log, string componentName) =>
+            log.Info("Disposing of {ComponentName}..", componentName);
     }
 }

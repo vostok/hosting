@@ -150,9 +150,9 @@ namespace Vostok.Hosting.Components
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
         public void LogDisposing(string componentName) =>
-            Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
+            ApplicationDisposable.LogDisposing(Log.ForContext<VostokHostingEnvironment>(), componentName);
 
-        private void TryDispose(object component, string componentName, bool shouldLog = true)
+        public void TryDispose(object component, string componentName, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
