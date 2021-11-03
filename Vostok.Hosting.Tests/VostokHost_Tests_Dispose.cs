@@ -102,7 +102,7 @@ namespace Vostok.Hosting.Tests
         }
         
         [Test]
-        public void Should_not_block_on_components_dispose_longer_than_shutdown_timeout_allows()
+        public void Should_not_block_on_components_dispose_longer_than_dispose_timeout_allows()
         {
             var app = new DisposableApplication();
             var component = new DisposableApplication {DisposeDelay = 10.Seconds()};
@@ -112,6 +112,7 @@ namespace Vostok.Hosting.Tests
                 {
                     SetupEnvironment(setup);
                     setup.SetupHostExtensions(e => e.AddDisposable(component));
+                    setup.SetupShutdownTimeout(1.Minutes());
                 })
             {
                 DisposeComponentTimeout = 1.Seconds()
@@ -122,36 +123,6 @@ namespace Vostok.Hosting.Tests
             host.Run().State.Should().Be(VostokApplicationState.Exited);
 
             watch.Elapsed.Should().BeLessThan(5.Seconds());
-        }
-        
-        [Test]
-        public void Should_dispose_components_that_fits_into_timeout()
-        {
-            var check = "";
-            var app = new DisposableApplication();
-            var component1 = new ActionDisposable(() =>
-            {
-                Thread.Sleep(100.Milliseconds());
-                check += "1";
-            });
-            var component2 = new ActionDisposable(() =>
-            {
-                Thread.Sleep(5.Seconds());
-                check += "2";
-            });
-
-            var host = new VostokHost(new TestHostSettings(app,
-                setup =>
-                {
-                    SetupEnvironment(setup);
-                    setup.SetupHostExtensions(e => e.AddDisposable("2", component2));
-                    setup.SetupHostExtensions(e => e.AddDisposable("1", component1));
-                }));
-
-            host.Run().State.Should().Be(VostokApplicationState.Exited);
-
-            app.Disposed.Should().BeTrue();
-            check.Should().Be("1");
         }
         
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
