@@ -112,7 +112,10 @@ namespace Vostok.Hosting.Tests
                 {
                     SetupEnvironment(setup);
                     setup.SetupHostExtensions(e => e.AddDisposable(component));
-                }));
+                })
+            {
+                DisposeComponentTimeout = 1.Seconds()
+            });
 
             var watch = Stopwatch.StartNew();
 
@@ -133,7 +136,7 @@ namespace Vostok.Hosting.Tests
             });
             var component2 = new ActionDisposable(() =>
             {
-                Thread.Sleep(10.Seconds());
+                Thread.Sleep(5.Seconds());
                 check += "2";
             });
 
@@ -151,32 +154,6 @@ namespace Vostok.Hosting.Tests
             check.Should().Be("1");
         }
         
-        [Test]
-        public void Should_stop_dispose_components_after_timeout()
-        {
-            var check = "";
-            var app = new DisposableApplication();
-            var component1 = new ActionDisposable(() =>
-            {
-                Thread.Sleep(10.Seconds());
-                check += "1";
-            });
-            var component2 = new ActionDisposable(() => check += "2");
-
-            var host = new VostokHost(new TestHostSettings(app,
-                setup =>
-                {
-                    SetupEnvironment(setup);
-                    setup.SetupHostExtensions(e => e.AddDisposable("2", component2));
-                    setup.SetupHostExtensions(e => e.AddDisposable("1", component1));
-                }));
-
-            host.Run().State.Should().Be(VostokApplicationState.Exited);
-
-            app.Disposed.Should().BeTrue();
-            check.Should().Be("");
-        }
-
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
         {
             builder.SetupApplicationIdentity(
