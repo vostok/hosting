@@ -109,6 +109,11 @@ namespace Vostok.Hosting
         public bool BeaconShutdownWaitEnabled { get; set; } = true;
 
         /// <summary>
+        /// Dispose timeout for each component of <see cref="IVostokHostingEnvironment"/>
+        /// </summary>
+        public TimeSpan DisposeComponentTimeout { get; set; } = 5.Seconds();
+        
+        /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>
         public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;

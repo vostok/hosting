@@ -30,7 +30,7 @@ namespace Vostok.Hosting.Helpers
 
         public static void DisposeComponent(IDisposable disposable, string componentName, TimeSpan timeout, ILog log, bool shouldLog = true)
         {
-            if (disposable == null || timeout == TimeSpan.Zero)
+            if (disposable == null)
                 return;
 
             var disposeTask = Task.Run(
@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Helpers
                     var watch = Stopwatch.StartNew();
 
                     if (shouldLog)
-                        LogDisposing(log, timeout, componentName);
+                        LogDisposing(log, componentName);
 
                     try
                     {
@@ -60,7 +60,7 @@ namespace Vostok.Hosting.Helpers
                 log.Warn("Failed to dispose of {ComponentName} within {ComponentShutdownTimeout} shutdown budget.", componentName, timeout);
         }
         
-        public static void LogDisposing(ILog log, TimeSpan timeout, string componentName) =>
-            log.Info("Disposing of {ComponentName} with {DisposeTimeout} shutdown budget..", componentName, timeout.ToPrettyString());
+        public static void LogDisposing(ILog log, string componentName) =>
+            log.Info("Disposing of {ComponentName}..", componentName);
     }
 }

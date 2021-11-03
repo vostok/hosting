@@ -101,7 +101,7 @@ namespace Vostok.Hosting.Components.Environment
 
         private VostokHostingEnvironment Build()
         {
-            var context = new BuildContext();
+            var context = new BuildContext(settings);
 
             try
             {

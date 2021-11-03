@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
 using Vostok.Commons.Helpers.Disposable;
@@ -31,12 +32,14 @@ namespace Vostok.Hosting.Components
 {
     internal class BuildContext : IDisposable
     {
+        private readonly VostokHostingEnvironmentFactorySettings settings;
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
         private readonly SubstitutableDatacenters substitutableDatacenters;
 
-        public BuildContext()
+        public BuildContext(VostokHostingEnvironmentFactorySettings settings)
         {
+            this.settings = settings;
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
             substitutableDatacenters = new SubstitutableDatacenters();
@@ -101,7 +104,7 @@ namespace Vostok.Hosting.Components
         }
 
         public void Dispose() =>
-            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", HostingShutdown.ShutdownTimeout, Log.ForContext<VostokHostingEnvironment>());
+            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", Timeout.InfiniteTimeSpan, Log.ForContext<VostokHostingEnvironment>());
 
         public void LogConfiguredLoggers(string[] configuredLoggers) =>
             Log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", configuredLoggers);
@@ -112,20 +115,18 @@ namespace Vostok.Hosting.Components
         public void LogDisabled(string name, string reason) =>
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
-        public void LogDisposing(string componentName, TimeSpan? timeout = null) =>
-            ApplicationDisposable.LogDisposing(Log.ForContext<VostokHostingEnvironment>(), timeout ?? HostingShutdown.ShutdownTimeout, componentName);
+        public void LogDisposing(string componentName) =>
+            ApplicationDisposable.LogDisposing(Log.ForContext<VostokHostingEnvironment>(), componentName);
 
-        public void TryDispose(object component, string componentName, TimeSpan? timeout = null, bool shouldLog = true)
+        public void TryDispose(object component, string componentName, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
 
             if (component is not IDisposable disposable)
                 return;
-
-            timeout ??= HostingShutdown.ShutdownTimeout;
             
-            ApplicationDisposable.DisposeComponent(disposable, componentName, timeout.Value, Log.ForContext<VostokHostingEnvironment>(), shouldLog);
+            ApplicationDisposable.DisposeComponent(disposable, componentName, settings.DisposeComponentTimeout, Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
         private void DoDispose()
@@ -173,8 +174,7 @@ namespace Vostok.Hosting.Components
             foreach (var disposable in Disposables)
             {
                 var registered = registeredExtensions.TryGetValue(disposable, out var name);
-                var timeout = registered ? ApplicationShutdown.ShutdownTimeout : HostingShutdown.ShutdownTimeout;
-                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", timeout, registered);
+                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", registered);
             }
         }
     }

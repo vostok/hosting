@@ -19,6 +19,9 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.BeaconShutdownWaitEnabled"/>
         public bool BeaconShutdownWaitEnabled { get; set; } = true;
+        
+        /// <inheritdoc cref="VostokHostSettings.DisposeComponentTimeout"/>
+        public TimeSpan DisposeComponentTimeout { get; set; } = 5.Seconds();
 
         /// <inheritdoc cref="VostokHostSettings.SendAnnotations"/>
         public bool SendAnnotations { get; set; } = true;

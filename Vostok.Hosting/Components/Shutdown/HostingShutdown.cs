@@ -61,8 +61,6 @@ namespace Vostok.Hosting.Components.Shutdown
             hostShutdownBudget = TimeBudget.CreateNew(totalTimeout);
             tokenRegistration = token.Register(OnHostShutdownTriggered);
         }
-
-        public TimeSpan ShutdownTimeout => hostShutdownBudget.Remaining;
         
         public void Dispose()
             => tokenRegistration.Dispose();
