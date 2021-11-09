@@ -1,3 +1,8 @@
+## 0.3.31 (09-11-2021):
+
+- Fixed [#64](https://github.com/vostok/hosting/issues/64)
+- Fixed [#61](https://github.com/vostok/hosting/issues/61)
+
 ## 0.3.30 (14-10-2021):
 
 - Added DNS health check
