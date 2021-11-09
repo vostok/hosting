@@ -17,7 +17,12 @@ jobs:
         with:
           path: vostok.module
           
-      - name: Install .NET
+      - name: Install .NET 2.1
+        uses: actions/setup-dotnet@main
+        with:
+          dotnet-version: '2.1.x'
+          
+      - name: Install .NET 6
         uses: actions/setup-dotnet@main
         with:
           dotnet-version: '6.0.x'
