@@ -338,7 +338,7 @@ namespace Vostok.Hosting
                 var watch = Stopwatch.StartNew();
                 ChangeStateTo(VostokApplicationState.Stopping);
 
-                if (!await applicationTask.WaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
+                if (!await applicationTask.TryWaitAsync(environment.ShutdownTimeout).ConfigureAwait(false))
                 {
                     LogApplicationHasNotCompletedWithinTimeout();
                     return ReturnResult(VostokApplicationState.StoppedForcibly);
@@ -385,7 +385,7 @@ namespace Vostok.Hosting
                 return true;
 
             return await convertedBeacon.WaitForInitialRegistrationAsync()
-                .WaitAsync(settings.BeaconRegistrationTimeout)
+                .TryWaitAsync(settings.BeaconRegistrationTimeout)
                 .ConfigureAwait(false);
         }
 
