@@ -15,7 +15,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 {
     internal class SystemMetricsBuilder : IVostokSystemMetricsBuilder
     {
-        private readonly Customization<SystemMetricsSettings> settingsCustomization 
+        private readonly Customization<SystemMetricsSettings> settingsCustomization
             = new Customization<SystemMetricsSettings>();
 
         private volatile IVostokHostingEnvironment environment;
@@ -40,7 +40,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
             if (RuntimeDetector.IsDotNetCore30AndNewer)
                 RegisterGcMonitor(settings, context, processMetricsContext);
-            
+
             if (RuntimeDetector.IsDotNet50AndNewer)
                 RegisterDnsMonitor(settings, context, processMetricsContext);
 

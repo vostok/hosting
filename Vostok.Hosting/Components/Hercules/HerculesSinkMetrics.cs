@@ -32,7 +32,7 @@ namespace Vostok.Hosting.Components.Hercules
                 return null;
 
             var builtContext = context.Application.WithTag(WellKnownTagKeys.Component, "HerculesSink");
-            return builtContext.CreateMultiFuncGaugeFromEvents(new HerculesSinkMetrics(sink, builtContext, log).ProvideMetrics, new FuncGaugeConfig(){ScrapeOnDispose = true}) as IDisposable;
+            return builtContext.CreateMultiFuncGaugeFromEvents(new HerculesSinkMetrics(sink, builtContext, log).ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true}) as IDisposable;
         }
 
         public IEnumerable<MetricEvent> ProvideMetrics()

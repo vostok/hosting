@@ -93,18 +93,18 @@ namespace Vostok.Hosting.Components.Hercules
         public IVostokHerculesSinkBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             instance = null;
-            
+
             this.apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetClusterConfigTopology(string path)
         {
             instance = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromClusterConfig(path ?? throw new ArgumentNullException(nameof(path)));
-            
+
             return this;
         }
 
@@ -115,52 +115,52 @@ namespace Vostok.Hosting.Components.Hercules
             clusterProviderBuilder = ClusterProviderBuilder.FromServiceDiscovery(
                 environment ?? throw new ArgumentNullException(nameof(environment)),
                 application ?? throw new ArgumentNullException(nameof(application)));
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetExternalUrlTopology(string url)
         {
             instance = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(new FixedClusterProvider(url ?? throw new ArgumentNullException(nameof(url))));
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder SetClusterProvider(IClusterProvider clusterProvider)
         {
             instance = null;
-            
+
             clusterProviderBuilder = ClusterProviderBuilder.FromValue(clusterProvider ?? throw new ArgumentNullException(nameof(clusterProvider)));
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder EnableVerboseLogging()
         {
             instance = null;
-            
+
             verboseLogging = true;
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder DisableVerboseLogging()
         {
             instance = null;
-            
+
             verboseLogging = false;
-            
+
             return this;
         }
 
         public IVostokHerculesSinkBuilder CustomizeSettings(Action<HerculesSinkSettings> settingsCustomization)
         {
             instance = null;
-            
+
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
-            
+
             return this;
         }
     }

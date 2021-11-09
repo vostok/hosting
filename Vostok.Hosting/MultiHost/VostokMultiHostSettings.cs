@@ -30,7 +30,7 @@ namespace Vostok.Hosting.MultiHost
 
         /// <inheritdoc cref="VostokHostSettings.ThreadPoolTuningMultiplier"/>
         public int ThreadPoolTuningMultiplier { get; set; } = ThreadPoolConstants.DefaultThreadPoolMultiplier;
-        
+
         /// <inheritdoc cref="VostokHostSettings.DiagnosticMetricsEnabled"/>
         public bool DiagnosticMetricsEnabled { get; set; }
     }

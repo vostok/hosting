@@ -56,7 +56,7 @@ namespace Vostok.Hosting.Components.Datacenters
             {
                 context.Log.Error(error, "Failed to warm up datacenters.");
             }
-            
+
             return result;
         }
 

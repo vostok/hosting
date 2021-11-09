@@ -21,7 +21,7 @@ namespace Vostok.Hosting.Components.Log
             rulesSources.AddRange(userSources);
             rulesSources.Add(new ObjectSource(userRules));
 
-            var mergeOptions = new SettingsMergeOptions { ArrayMergeStyle = ArrayMergeStyle.Union };
+            var mergeOptions = new SettingsMergeOptions {ArrayMergeStyle = ArrayMergeStyle.Union};
             var mergedSource = new CombinedSource(rulesSources, mergeOptions);
 
             return context.ConfigurationProvider.Observe<LogConfigurationRule[]>(mergedSource);

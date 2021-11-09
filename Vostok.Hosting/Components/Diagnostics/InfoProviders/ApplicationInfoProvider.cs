@@ -12,7 +12,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
         private readonly Func<IVostokApplicationReplicationInfo> replication;
 
         public ApplicationInfoProvider(
-            IVostokApplicationIdentity identity, 
+            IVostokApplicationIdentity identity,
             IVostokApplicationLimits limits,
             Func<IVostokApplicationReplicationInfo> replication)
         {

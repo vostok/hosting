@@ -59,7 +59,7 @@ namespace Vostok.Hosting.Helpers
             if (!disposedInTime)
                 log.Warn("Failed to dispose of {ComponentName} within {ComponentShutdownTimeout} shutdown budget.", componentName, timeout);
         }
-        
+
         public static void LogDisposing(ILog log, string componentName) =>
             log.Info("Disposing of {ComponentName}..", componentName);
     }

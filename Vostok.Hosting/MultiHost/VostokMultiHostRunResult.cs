@@ -60,7 +60,8 @@ namespace Vostok.Hosting.MultiHost
         public VostokMultiHostRunResult EnsureSuccess()
         {
             if (Error != null)
-                ExceptionDispatchInfo.Capture(Error).Throw(); ;
+                ExceptionDispatchInfo.Capture(Error).Throw();
+            ;
 
             return this;
         }

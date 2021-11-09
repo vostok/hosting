@@ -25,6 +25,6 @@ namespace Vostok.Hosting.Setup
         /// Enables console log.
         /// </summary>
         public static IVostokCompositeLogBuilder SetupConsoleLog([NotNull] this IVostokCompositeLogBuilder builder) =>
-            builder.SetupConsoleLog(_ => { });
+            builder.SetupConsoleLog(_ => {});
     }
 }

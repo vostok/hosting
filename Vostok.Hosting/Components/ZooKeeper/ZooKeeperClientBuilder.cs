@@ -130,7 +130,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
                 settings,
                 context.Log.WithEventsDroppedByProperties(IsDataChangedLog));
 
-            foreach(var authenticationInfo in authenticationInfos)
+            foreach (var authenticationInfo in authenticationInfos)
                 zkClient.AddAuthenticationInfo(authenticationInfo);
 
             return zkClient;

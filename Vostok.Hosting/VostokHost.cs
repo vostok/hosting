@@ -177,7 +177,7 @@ namespace Vostok.Hosting
                 return result;
 
             var dynamicThreadPool = ConfigureDynamicThreadPool();
-            
+
             using (environment)
             using (new ApplicationDisposable(settings.Application, environment, log))
             using (dynamicThreadPool)
@@ -418,7 +418,7 @@ namespace Vostok.Hosting
         {
             if (settings.ThreadPoolSettingsProvider == null)
                 return null;
-            
+
             var dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
                 settings.ThreadPoolSettingsProvider,
                 environment.ConfigurationProvider,
@@ -488,7 +488,7 @@ namespace Vostok.Hosting
         private void LogPort(int? port)
         {
             if (port.HasValue)
-                log.Info("Application port: {Port}.",  port);
+                log.Info("Application port: {Port}.", port);
         }
 
         private void LogLocalDatacenter(IDatacenters datacenters) =>

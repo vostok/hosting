@@ -36,7 +36,7 @@ namespace Vostok.Hosting.Setup
         /// <inheritdoc cref="IVostokHostingEnvironment.ClusterConfigClient"/>
         [NotNull]
         IClusterConfigClient ClusterConfigClient { get; }
-        
+
         /// <inheritdoc cref="IVostokHostingEnvironment.Datacenters"/>
         [NotNull]
         IDatacenters Datacenters { get; }

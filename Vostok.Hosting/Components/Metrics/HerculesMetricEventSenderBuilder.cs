@@ -76,10 +76,10 @@ namespace Vostok.Hosting.Components.Metrics
         {
             var allStreams = new[]
             {
-                settings.FallbackStream, 
-                settings.FinalStream, 
-                settings.CountersStream, 
-                settings.TimersStream, 
+                settings.FallbackStream,
+                settings.FinalStream,
+                settings.CountersStream,
+                settings.TimersStream,
                 settings.HistogramsStream,
                 settings.AnnotationsStream
             };

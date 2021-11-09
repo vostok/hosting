@@ -74,7 +74,7 @@ namespace Vostok.Hosting.Models
             Datacenters = datacenters ?? throw new ArgumentNullException(nameof(datacenters));
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
         }
-        
+
         public CancellationToken ShutdownToken => applicationShutdown.ShutdownToken;
         public TimeSpan ShutdownTimeout => applicationShutdown.ShutdownTimeout;
         public Task ShutdownTask => applicationShutdown.ShutdownTask;

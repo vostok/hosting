@@ -199,7 +199,7 @@ namespace Vostok.Hosting.Tests
 
             extractedSink.Should().BeSameAs(initialSink);
         }
-        
+
         private static void SetupMultiHostApplication(IVostokHostingEnvironmentBuilder builder)
         {
             builder.SetupLog(log => log.SetupConsoleLog());

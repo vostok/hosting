@@ -37,7 +37,7 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
                 metrics.GcTimePercent,
                 ThreadPoolTotalThreads = metrics.ThreadPoolTotalCount,
                 ThreadPoolQueue = metrics.ThreadPoolQueueLength,
-                ThreadPoolWorkers = $"{metrics.ThreadPoolBusyWorkers}/{metrics.ThreadPoolMinWorkers}", 
+                ThreadPoolWorkers = $"{metrics.ThreadPoolBusyWorkers}/{metrics.ThreadPoolMinWorkers}",
                 ThreadPoolIO = $"{metrics.ThreadPoolBusyIo}/{metrics.ThreadPoolMinIo}",
                 metrics.HandlesCount,
                 metrics.ActiveTimersCount,

@@ -56,10 +56,7 @@ namespace Vostok.Hosting.Tests
 
             var immediatelyAfter = environment.ShutdownTimeout;
 
-            new Action(() =>
-            {
-                environment.ShutdownTimeout.Should().BeLessThan(immediatelyAfter);
-            }).ShouldPassIn(5.Seconds());
+            new Action(() => { environment.ShutdownTimeout.Should().BeLessThan(immediatelyAfter); }).ShouldPassIn(5.Seconds());
         }
 
         [Test]
@@ -153,10 +150,11 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_provide_dev_null_metric_context_when_diagnostic_metrics_disabled_and_no_senders()
         {
-            var environment = VostokHostingEnvironmentFactory.Create(Setup, new VostokHostingEnvironmentFactorySettings
-            {
-                DiagnosticMetricsEnabled = false
-            });
+            var environment = VostokHostingEnvironmentFactory.Create(Setup,
+                new VostokHostingEnvironmentFactorySettings
+                {
+                    DiagnosticMetricsEnabled = false
+                });
 
             environment.Metrics.Root.Should().BeOfType<DevNullMetricContext>();
         }
@@ -188,11 +186,11 @@ namespace Vostok.Hosting.Tests
                 builder.SetupDiagnostics(x => x.CustomizeInfo(s => s.AddApplicationMetricsInfo = true)); // enable ApplicationMetricsProvider metrics sender
             }
         }
-        
+
         [Test, Explicit]
         public void Should_not_leak()
         {
-            for (int i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 var environment = VostokHostingEnvironmentFactory.Create(Setup,
                     new VostokHostingEnvironmentFactorySettings

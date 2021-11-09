@@ -77,7 +77,7 @@ namespace Vostok.Hosting.Components.HostExtensions
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            
+
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), extension);
 
             if (disposable)
@@ -90,7 +90,7 @@ namespace Vostok.Hosting.Components.HostExtensions
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            
+
             HostExtensions.Add(type ?? throw new ArgumentNullException(nameof(type)), key ?? throw new ArgumentNullException(nameof(key)), extension);
 
             if (disposable)

@@ -26,7 +26,7 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
-        
+
         [Test]
         public void Should_dispose_components_with_reverse_order()
         {
@@ -63,7 +63,7 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
-        
+
         [Test]
         public void Should_not_crash_on_components_dispose_errors()
         {
@@ -71,7 +71,7 @@ namespace Vostok.Hosting.Tests
             var app = new DisposableApplication();
             var component1 = new ActionDisposable(() => throw new Exception("crash"));
             var component2 = new ActionDisposable(() => check += "2");
-            
+
             var host = new VostokHost(new TestHostSettings(app,
                 setup =>
                 {
@@ -101,13 +101,13 @@ namespace Vostok.Hosting.Tests
 
             watch.Elapsed.Should().BeLessThan(5.Seconds());
         }
-        
+
         [Test]
         public void Should_not_block_on_components_dispose_longer_than_dispose_timeout_allows()
         {
             var app = new DisposableApplication();
             var component = new ActionDisposable(() => Thread.Sleep(10.Seconds()));
-            
+
             var host = new VostokHost(new TestHostSettings(app,
                 setup =>
                 {
@@ -125,7 +125,7 @@ namespace Vostok.Hosting.Tests
 
             watch.Elapsed.Should().BeLessThan(5.Seconds());
         }
-        
+
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
         {
             builder.SetupApplicationIdentity(

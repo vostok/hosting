@@ -210,10 +210,7 @@ namespace Vostok.Hosting.Tests
         [Test]
         public void Should_return_CrashedDuringEnvironmentWarmup()
         {
-            var runTask = CreateAndRunAsync(new SimpleApplicationSettings(), additionalHostSetup: settings =>
-            {
-                settings.BeforeInitializeApplication.Add(_ => throw error);
-            });
+            var runTask = CreateAndRunAsync(new SimpleApplicationSettings(), additionalHostSetup: settings => { settings.BeforeInitializeApplication.Add(_ => throw error); });
 
             runTask
                 .GetAwaiter()
@@ -370,8 +367,6 @@ namespace Vostok.Hosting.Tests
                 .Should()
                 .Throw<InvalidOperationException>();
         }
-
-        
 
         private void CheckStates(params VostokApplicationState[] states)
             => CheckStates(null, states);

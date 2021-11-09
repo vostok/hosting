@@ -19,9 +19,9 @@ namespace Vostok.Hosting.Components.Log
         public static IDisposable Measure(LogEventLevelCounter counter, IVostokApplicationMetrics context)
         {
             return context.Instance
-                   .WithTag(WellKnownTagKeys.Component, "VostokLog")
-                   .WithTag(WellKnownTagKeys.Name, "EventsByLevel")
-                   .CreateMultiFuncGauge(new LogLevelMetrics(counter).ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true})
+                    .WithTag(WellKnownTagKeys.Component, "VostokLog")
+                    .WithTag(WellKnownTagKeys.Name, "EventsByLevel")
+                    .CreateMultiFuncGauge(new LogLevelMetrics(counter).ProvideMetrics, new FuncGaugeConfig {ScrapeOnDispose = true})
                 as IDisposable;
         }
 

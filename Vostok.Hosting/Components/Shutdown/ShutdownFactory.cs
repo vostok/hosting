@@ -41,15 +41,15 @@ namespace Vostok.Hosting.Components.Shutdown
             var hostingToken = tokens.Any() ? CancellationTokenSource.CreateLinkedTokenSource(tokens.ToArray()).Token : default;
 
             var hostingShutdown = new HostingShutdown(
-                applicationShutdown, 
-                serviceBeacon, 
+                applicationShutdown,
+                serviceBeacon,
                 serviceLocator,
                 identity,
                 instanceMetrics,
                 log,
                 hostingToken,
                 totalTimeout,
-                beaconTimeout, 
+                beaconTimeout,
                 beaconWaitEnabled,
                 sendAnnotation);
 

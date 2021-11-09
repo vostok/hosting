@@ -11,9 +11,9 @@ namespace Vostok.Hosting.Components.Configuration
     internal static class SubstitutionsProvider
     {
         public static IEnumerable<Substitution> Provide(
-            IVostokApplicationIdentity identity, 
-            IClusterConfigClient clusterConfig, 
-            IServiceBeacon beacon, 
+            IVostokApplicationIdentity identity,
+            IClusterConfigClient clusterConfig,
+            IServiceBeacon beacon,
             IDatacenters datacenters)
         {
             if (identity != null)

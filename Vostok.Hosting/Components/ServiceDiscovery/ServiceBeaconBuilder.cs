@@ -115,7 +115,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                     s.SetProperty(WellKnownApplicationIdentityProperties.Environment, context.ApplicationIdentity.Environment);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Application, context.ApplicationIdentity.Application);
                     s.SetProperty(WellKnownApplicationIdentityProperties.Instance, context.ApplicationIdentity.Instance);
-                    
+
                     s.SetProperty("logsDirectory", context.LogsDirectory);
 
                     replicaInfoCustomization.Customize(s);
