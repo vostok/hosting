@@ -44,6 +44,8 @@ namespace Vostok.Hosting.Components.Environment
 {
     internal class EnvironmentBuilder : IVostokHostingEnvironmentBuilder
     {
+        private static readonly object FlowingContextSync = new object();
+
         private readonly VostokHostingEnvironmentFactorySettings settings;
 
         private readonly CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)> configurationBuilder;
@@ -133,13 +135,15 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders && context.ClusterConfigClient is ClusterConfigClient ccClient)
                 ClusterConfigClient.TrySetDefaultClient(ccClient);
 
-            using (FlowingContext.Globals.Use(context))
-            {
-                (context.ConfigurationSource,
-                    context.SecretConfigurationSource,
-                    context.ConfigurationProvider,
-                    context.SecretConfigurationProvider) = configurationBuilder.Build(context);
-            }
+            // note (iloktionov, 03.03.2021): FlowingContext needed because CustomizableBuilder.Build will be called before ConfigurationBuilder.Build 
+            lock (FlowingContextSync)
+                using (FlowingContext.Globals.Use(context))
+                {
+                    (context.ConfigurationSource,
+                        context.SecretConfigurationSource,
+                        context.ConfigurationProvider,
+                        context.SecretConfigurationProvider) = configurationBuilder.Build(context);
+                }
 
             if (settings.ConfigureStaticProviders && context.ConfigurationProvider is {} configProvider)
                 ConfigurationProvider.TrySetDefault(configProvider);
