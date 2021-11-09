@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Configuration;
 using Vostok.Configuration.Sources.Switching;
 using Vostok.Datacenters;
@@ -12,7 +13,9 @@ using Vostok.Hosting.Components.Datacenters;
 using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Diagnostics.InfoProviders;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.Tracing;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
@@ -29,17 +32,18 @@ namespace Vostok.Hosting.Components
 {
     internal class BuildContext : IDisposable
     {
+        private readonly VostokHostingEnvironmentFactorySettings settings;
         private readonly SubstitutableLog substitutableLog;
         private readonly SubstitutableTracer substitutableTracer;
         private readonly SubstitutableDatacenters substitutableDatacenters;
-        private readonly List<object> disposables;
 
-        public BuildContext()
+        public BuildContext(VostokHostingEnvironmentFactorySettings settings)
         {
+            this.settings = settings;
             substitutableLog = new SubstitutableLog();
             substitutableTracer = new SubstitutableTracer();
             substitutableDatacenters = new SubstitutableDatacenters();
-            disposables = new List<object>();
+            Disposables = new List<object>();
             ExternalComponents = new HashSet<object>(ByReferenceEqualityComparer<object>.Instance);
         }
 
@@ -60,8 +64,11 @@ namespace Vostok.Hosting.Components
         public IZooKeeperClient ZooKeeperClient { get; set; }
         public IVostokHostingEnvironmentSetupContext EnvironmentSetupContext { get; set; }
         public IVostokConfigurationSetupContext ConfigurationSetupContext { get; set; }
-        public IVostokHostExtensions HostExtensions { get; set; }
+        public HostExtensions.HostExtensions HostExtensions { get; set; }
         public HashSet<object> ExternalComponents { get; }
+        public List<object> Disposables { get; }
+        public HostingShutdown HostingShutdown { get; set; }
+        public ApplicationShutdown ApplicationShutdown { get; set; }
 
         public Logs Logs { get; set; }
         public string LogsDirectory { get; set; }
@@ -80,7 +87,7 @@ namespace Vostok.Hosting.Components
         public T RegisterDisposable<T>(T disposable)
         {
             if (disposable != null)
-                disposables.Add(disposable);
+                Disposables.Add(disposable);
             return disposable;
         }
 
@@ -96,47 +103,8 @@ namespace Vostok.Hosting.Components
             Log = new SynchronousConsoleLog(new ConsoleLogSettings {ColorsEnabled = true});
         }
 
-        public void Dispose()
-        {
-            try
-            {
-                LogDisposing("VostokHostingEnvironment");
-
-                TryDisposeImplicitComponents();
-
-                TryDispose(DiagnosticsHub, "Diagnostics");
-
-                TryDispose(Metrics?.Root, "Metrics");
-
-                TryDispose(ServiceBeacon, "ServiceBeacon");
-
-                Logs?.DisposeHerculesLog(this);
-                SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
-                
-                TryDispose(HerculesSink, "HerculesSink");
-
-                TryDispose(ServiceLocator, "ServiceLocator");
-
-                TryDispose(ZooKeeperClient, "ZooKeeperClient");
-
-                TryDispose(substitutableDatacenters.GetBase(), "Datacenters");
-
-                TryDispose(ConfigurationProvider, "ConfigurationProvider");
-
-                TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
-
-                TryDispose(ClusterConfigClient, "ClusterConfigClient");
-
-                Logs?.DisposeFileLog(this);
-                Logs?.DisposeConsoleLog(this);
-            }
-            catch (Exception error)
-            {
-                Log.ForContext<VostokHostingEnvironment>().Error(error, "Failed to dispose of the hosting environment.");
-
-                throw;
-            }
-        }
+        public void Dispose() =>
+            ApplicationDisposable.DisposeComponent(new ActionDisposable(DoDispose), "VostokHostingEnvironment", Timeout.InfiniteTimeSpan, Log.ForContext<VostokHostingEnvironment>());
 
         public void LogConfiguredLoggers(string[] configuredLoggers) =>
             Log.ForContext<ConfigurableLog>().Info("Configured loggers: {ConfiguredLoggers}.", configuredLoggers);
@@ -148,28 +116,66 @@ namespace Vostok.Hosting.Components
             Log.ForContext<VostokHostingEnvironment>().Info("{ComponentName} feature has been disabled due to {ComponentDisabledReason}.", name, reason);
 
         public void LogDisposing(string componentName) =>
-            Log.ForContext<VostokHostingEnvironment>().Info("Disposing of {ComponentName}..", componentName);
+            ApplicationDisposable.LogDisposing(Log.ForContext<VostokHostingEnvironment>(), componentName);
 
-        private void TryDispose(object component, string componentName, bool shouldLog = true)
+        public void TryDispose(object component, string componentName, bool shouldLog = true)
         {
             if (ExternalComponents.Contains(component))
                 return;
 
             if (component is not IDisposable disposable)
                 return;
-
-            if (shouldLog)
-                LogDisposing(componentName);
-
-            disposable.Dispose();
+            
+            ApplicationDisposable.DisposeComponent(disposable, componentName, settings.DisposeComponentTimeout, Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
+        private void DoDispose()
+        {
+            TryDisposeImplicitComponents();
+
+            TryDispose(DiagnosticsHub, "Diagnostics");
+
+            TryDispose(Metrics?.Root, "Metrics");
+
+            TryDispose(ServiceBeacon, "ServiceBeacon");
+
+            Logs?.DisposeHerculesLog(this);
+            SubstituteTracer((new Tracer(new TracerSettings(new DevNullSpanSender())), new TracerSettings(new DevNullSpanSender())));
+
+            TryDispose(HerculesSink, "HerculesSink");
+
+            TryDispose(ServiceLocator, "ServiceLocator");
+
+            TryDispose(ZooKeeperClient, "ZooKeeperClient");
+
+            TryDispose(substitutableDatacenters.GetBase(), "Datacenters");
+
+            TryDispose(ConfigurationProvider, "ConfigurationProvider");
+
+            TryDispose(SecretConfigurationProvider, "SecretConfigurationProvider");
+
+            TryDispose(ClusterConfigClient, "ClusterConfigClient");
+
+            Logs?.DisposeFileLog(this);
+            Logs?.DisposeConsoleLog(this);
+        }
+        
         private void TryDisposeImplicitComponents()
         {
-            var registeredExtensions = new HashSet<object>(HostExtensions?.GetAll().Select(x => x.Item2) ?? new List<object>(), ByReferenceEqualityComparer<object>.Instance);
+            var registeredExtensions = new Dictionary<object, string>(ByReferenceEqualityComparer<object>.Instance);
+            if (HostExtensions != null)
+            {
+                foreach (var (type, e) in HostExtensions.GetAll())
+                    registeredExtensions[e] = type.Name;
+                foreach (var (key, _, e) in HostExtensions.GetAllKeyed())
+                    registeredExtensions[e] = key;
+            }
 
-            foreach (var disposable in disposables ?? new List<object>())
-                TryDispose(disposable, $"{disposable.GetType().Name} extension", registeredExtensions.Contains(disposable));
+            foreach (var disposable in Disposables)
+            {
+                var registered = registeredExtensions.TryGetValue(disposable, out var name);
+                TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", registered);
+            }
         }
     }
 }

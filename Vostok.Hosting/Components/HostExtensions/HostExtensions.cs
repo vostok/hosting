@@ -51,6 +51,9 @@ namespace Vostok.Hosting.Components.HostExtensions
 
         public IEnumerable<(Type, object)> GetAll() =>
             byType.Select(p => (p.Key, p.Value));
+        
+        public IEnumerable<(string, Type, object)> GetAllKeyed() =>
+            byKey.Select(p => (p.Key.Item1, p.Key.Item2, p.Value));
 
         public void Add<TExtension>(TExtension extension) =>
             Add(typeof(TExtension), extension);
