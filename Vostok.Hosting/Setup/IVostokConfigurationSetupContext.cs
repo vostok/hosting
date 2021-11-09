@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Setup
         /// <para>Access to any fields that rely on configuration to be set up will result in exceptions to prevent circular dependencies.</para>
         [NotNull]
         IVostokApplicationIdentity ApplicationIdentity { get; }
-        
+
         /// <inheritdoc cref="IVostokHostingEnvironment.Datacenters"/>
         /// <para>Please note that all methods will return <c>null</c> before configuration initialization.</para>
         [NotNull]

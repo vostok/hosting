@@ -8,7 +8,7 @@ namespace Vostok.Hosting.Components.Log
     {
         private readonly Func<IEnumerable<LogEventLevelCounter>> provider;
         private readonly ILog baseLog;
-        
+
         public LevelCountingLog(ILog baseLog, Func<IEnumerable<LogEventLevelCounter>> countersProvider)
         {
             this.baseLog = baseLog;

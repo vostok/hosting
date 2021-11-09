@@ -69,7 +69,7 @@ namespace Vostok.Hosting.Tests
         {
             var zkClient = Substitute.For<IZooKeeperClient>();
             zkClient.CreateAsync(Arg.Any<CreateRequest>()).Returns(Task.FromResult(CreateResult.Unsuccessful(ZooKeeperStatus.AuthFailed, "", null)));
-            
+
             application = new PortRequiresApplication();
             host = new VostokHost(
                 new TestHostSettings(
@@ -91,7 +91,20 @@ namespace Vostok.Hosting.Tests
             checkStart.Should().Throw<Exception>().Where(e => e.Message.Contains("beacon hasn't registered"));
 
             host.ApplicationState.Should().Be(VostokApplicationState.CrashedDuringInitialization);
-            
+        }
+
+        private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
+        {
+            builder.SetupApplicationIdentity(
+                id =>
+                {
+                    id.SetProject("infra");
+                    id.SetApplication("vostok-test");
+                    id.SetEnvironment("dev");
+                    id.SetInstance("the only one");
+                });
+
+            builder.SetupLog(log => log.SetupConsoleLog());
         }
 
         private class Application : IVostokApplication
@@ -129,20 +142,6 @@ namespace Vostok.Hosting.Tests
             public Task InitializeAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
 
             public Task RunAsync(IVostokHostingEnvironment environment) => Task.CompletedTask;
-        }
-
-        private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
-        {
-            builder.SetupApplicationIdentity(
-                id =>
-                {
-                    id.SetProject("infra");
-                    id.SetApplication("vostok-test");
-                    id.SetEnvironment("dev");
-                    id.SetInstance("the only one");
-                });
-
-            builder.SetupLog(log => log.SetupConsoleLog());
         }
     }
 }

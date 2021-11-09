@@ -117,7 +117,7 @@ namespace Vostok.Hosting.Components.Configuration
             return this;
         }
 
-        public TSettings GetIntermediateConfiguration<TSettings>(params string[] scope) 
+        public TSettings GetIntermediateConfiguration<TSettings>(params string[] scope)
             => BuildProvider(Context).Get<TSettings>(BuildSource(Context).ScopeTo(scope));
 
         public TSettings GetIntermediateSecretConfiguration<TSettings>(params string[] scope)
@@ -144,14 +144,18 @@ namespace Vostok.Hosting.Components.Configuration
             return (source, secretSource, provider, secretProvider);
         }
 
+        private static BuildContext Context
+            => FlowingContext.Globals.Get<BuildContext>();
+
         private ConfigurationProvider BuildProvider(BuildContext context)
         {
             var providerSettings = new ConfigurationProviderSettings()
                 .WithErrorLogging(context.Log)
-                .WithSettingsLogging(context.Log, printSettingsCustomization.Customize(new PrintSettings
-                {
-                    InitialIndent = true
-                }));
+                .WithSettingsLogging(context.Log,
+                    printSettingsCustomization.Customize(new PrintSettings
+                    {
+                        InitialIndent = true
+                    }));
 
             providerCustomization.Customize(providerSettings);
 
@@ -186,9 +190,9 @@ namespace Vostok.Hosting.Components.Configuration
 
         private IConfigurationSource BuildMergedSource(BuildContext context)
             => PrepareCombinedSource(
-                new Customization<SettingsMergeOptions>(), 
+                new Customization<SettingsMergeOptions>(),
                 new Customization<IConfigurationSource>(),
-                new [] {BuildSource(context), BuildSecretSource()});
+                new[] {BuildSource(context), BuildSecretSource()});
 
         private static IConfigurationSource PrepareCombinedSource(
             Customization<SettingsMergeOptions> mergeCustomization,
@@ -204,8 +208,5 @@ namespace Vostok.Hosting.Components.Configuration
 
             return new ConstantSource(null);
         }
-
-        private static BuildContext Context
-            => FlowingContext.Globals.Get<BuildContext>();
     }
 }

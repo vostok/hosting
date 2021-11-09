@@ -138,7 +138,7 @@ namespace Vostok.Hosting.MultiHost
                 ThreadPoolUtility.Setup(settings.ThreadPoolTuningMultiplier);
 
             BuildCommonEnvironment()?.EnsureSuccess();
-            
+
             StartAddedApplications();
 
             return Task.FromResult(ReturnResult(VostokMultiHostState.Running));
@@ -150,7 +150,7 @@ namespace Vostok.Hosting.MultiHost
 
             foreach (var application in applications.Select(x => x.Value))
                 application.InternalStartApplication();
-            
+
             lock (launchGate)
                 workerTask = Task.Run(RunAddedApplications);
         }
@@ -161,8 +161,8 @@ namespace Vostok.Hosting.MultiHost
                 apps.Where(x => x != null);
 
             var appTasks = applications
-               .Select(x => x.Value.WorkerTask)
-               .ToArray();
+                .Select(x => x.Value.WorkerTask)
+                .ToArray();
 
             var isInitialized = false;
 
@@ -172,7 +172,7 @@ namespace Vostok.Hosting.MultiHost
                         Task.WhenAny(Task.WhenAll(GetLaunchedApplications(appTasks)), initiateShutdown.Task),
                         Task.Delay(20)
                     )
-                   .ConfigureAwait(false);
+                    .ConfigureAwait(false);
 
                 // NOTE: MultiHost becomes initialized when it launches at least one app.
                 if (!isInitialized && GetLaunchedApplications(appTasks).Any())
@@ -180,10 +180,10 @@ namespace Vostok.Hosting.MultiHost
 
                 // NOTE: We don't launch added applications. Their start is their owner's responsibility.
                 appTasks = applications
-                   .Select(x => x.Value)
-                   .Where(x => !x.ApplicationState.IsTerminal())
-                   .Select(x => x.WorkerTask)
-                   .ToArray();
+                    .Select(x => x.Value)
+                    .Where(x => !x.ApplicationState.IsTerminal())
+                    .Select(x => x.WorkerTask)
+                    .ToArray();
             }
 
             var applicationRunResults = await StopInternalAsync().ConfigureAwait(false);
@@ -256,11 +256,11 @@ namespace Vostok.Hosting.MultiHost
                 {
                     builder.SetupApplicationIdentity(
                         identityBuilder => identityBuilder
-                           .SetProject("VostokMultiHost")
-                           .SetEnvironment("VostokMultiHost")
-                           .SetApplication("VostokMultiHost")
-                           .SetInstance("VostokMultiHost"));
-                    
+                            .SetProject("VostokMultiHost")
+                            .SetEnvironment("VostokMultiHost")
+                            .SetApplication("VostokMultiHost")
+                            .SetInstance("VostokMultiHost"));
+
                     settings.EnvironmentSetup(builder);
 
                     builder.SetupLog(logBuilder => logBuilder.CustomizeLog(toCustomize => toCustomize.ForContext<VostokMultiHost>()));
@@ -306,8 +306,8 @@ namespace Vostok.Hosting.MultiHost
                         identityBuilder =>
                         {
                             identityBuilder
-                               .SetApplication(applicationSettings.Identifier.ApplicationName)
-                               .SetInstance(applicationSettings.Identifier.InstanceName);
+                                .SetApplication(applicationSettings.Identifier.ApplicationName)
+                                .SetInstance(applicationSettings.Identifier.InstanceName);
                         });
 
                     applicationSettings.EnvironmentSetup(builder);

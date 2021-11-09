@@ -8,9 +8,9 @@ using Vostok.Datacenters;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
+using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
 using Vostok.Tracing.Abstractions;
-using Vostok.Metrics;
 
 namespace Vostok.Hosting.Helpers
 {
@@ -38,8 +38,8 @@ namespace Vostok.Hosting.Helpers
             if (environment == null)
                 throw new ArgumentNullException(nameof(environment));
 
-            ClusterClientDefaults.ClientApplicationName = environment.ServiceBeacon is ServiceBeacon beacon 
-                ? beacon.ReplicaInfo.Application 
+            ClusterClientDefaults.ClientApplicationName = environment.ServiceBeacon is ServiceBeacon beacon
+                ? beacon.ReplicaInfo.Application
                 : environment.ApplicationIdentity.FormatServiceName();
 
             LogProvider.Configure(environment.Log, true);

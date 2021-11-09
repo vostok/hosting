@@ -21,6 +21,9 @@ namespace Vostok.Hosting.Components.Diagnostics
             infoSettingsCustomization = new Customization<DiagnosticInfoSettings>();
         }
 
+        public bool NeedsApplicationMetricsProvider
+            => infoSettingsCustomization.Customize(new DiagnosticInfoSettings()).AddApplicationMetricsInfo;
+
         public IVostokDiagnosticsBuilder CustomizeInfo(Action<DiagnosticInfoSettings> customization)
         {
             infoSettingsCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
@@ -32,9 +35,6 @@ namespace Vostok.Hosting.Components.Diagnostics
             healthSettingsCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
             return this;
         }
-
-        public bool NeedsApplicationMetricsProvider
-            => infoSettingsCustomization.Customize(new DiagnosticInfoSettings()).AddApplicationMetricsInfo;
 
         public DiagnosticsHub Build(BuildContext context)
         {

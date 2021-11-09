@@ -27,7 +27,7 @@ namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
                 case ConnectionState.Connected:
                 case ConnectionState.ConnectedReadonly:
                     return HealthCheckResult.Healthy();
-                
+
                 default:
                     return HealthCheckResult.Degraded($"ZooKeeper client is not connected. Current connection state = '{currentConnectionState}'.");
             }

@@ -7,10 +7,10 @@ using Vostok.Commons.Testing;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
-using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Models;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+
 // ReSharper disable UnassignedGetOnlyAutoProperty
 
 namespace Vostok.Hosting.Tests
@@ -192,7 +192,7 @@ namespace Vostok.Hosting.Tests
 
             result.State.Should().Be(VostokApplicationState.Exited);
         }
-        
+
         [Test]
         public async Task Should_allow_to_use_datacenters_during_clusterconfig_setup()
         {
@@ -213,15 +213,33 @@ namespace Vostok.Hosting.Tests
                     builder.SetupLog(b => b.SetupConsoleLog());
 
                     builder.SetupConfiguration(
-                        (config, context) =>
-                        {
-                            context.Datacenters.GetLocalDatacenter().Should().BeNull();
-                        });
+                        (config, context) => { context.Datacenters.GetLocalDatacenter().Should().BeNull(); });
                 }));
 
             var result = await host.RunAsync();
 
             result.State.Should().Be(VostokApplicationState.Exited);
+        }
+
+        private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
+        {
+            builder.SetupApplicationIdentity(
+                id =>
+                {
+                    id.SetProject("infra");
+                    id.SetApplication("vostok-test");
+                    id.SetEnvironment("dev");
+                    id.SetInstance("the only one");
+                });
+
+            builder.SetupLog(log => log.SetupConsoleLog());
+
+            builder.SetupConfiguration(
+                config =>
+                {
+                    config.AddSource(new ObjectSource(new {}));
+                    config.AddSecretSource(new ObjectSource(new {}));
+                });
         }
 
         [RequiresConfiguration(typeof(ApplicationSettings))]
@@ -258,27 +276,6 @@ namespace Vostok.Hosting.Tests
         {
             public string F { get; }
             public string G { get; }
-        }
-
-        private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
-        {
-            builder.SetupApplicationIdentity(
-                id =>
-                {
-                    id.SetProject("infra");
-                    id.SetApplication("vostok-test");
-                    id.SetEnvironment("dev");
-                    id.SetInstance("the only one");
-                });
-
-            builder.SetupLog(log => log.SetupConsoleLog());
-
-            builder.SetupConfiguration(
-                config =>
-                {
-                    config.AddSource(new ObjectSource(new {}));
-                    config.AddSecretSource(new ObjectSource(new {}));
-                });
         }
     }
 }

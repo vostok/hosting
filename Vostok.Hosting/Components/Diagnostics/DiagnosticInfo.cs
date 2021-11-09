@@ -22,7 +22,7 @@ namespace Vostok.Hosting.Components.Diagnostics
             return new ActionDisposable(() => providers.TryRemove(entry, out _));
         }
 
-        public IReadOnlyList<DiagnosticEntry> ListAll() 
+        public IReadOnlyList<DiagnosticEntry> ListAll()
             => providers.Select(pair => pair.Key).ToArray();
 
         public bool TryQuery(DiagnosticEntry entry, out object info)

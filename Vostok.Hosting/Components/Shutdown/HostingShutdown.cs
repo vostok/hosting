@@ -61,7 +61,7 @@ namespace Vostok.Hosting.Components.Shutdown
             hostShutdownBudget = TimeBudget.CreateNew(totalTimeout);
             tokenRegistration = token.Register(OnHostShutdownTriggered);
         }
-        
+
         public void Dispose()
             => tokenRegistration.Dispose();
 
@@ -107,7 +107,7 @@ namespace Vostok.Hosting.Components.Shutdown
         {
             if (serviceBeacon is DevNullServiceBeacon)
                 return true;
-            
+
             var elapsedBefore = budget.Elapsed;
 
             log.Info("Stopping service beacon..");

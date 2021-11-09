@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Net;
 using Vostok.Datacenters;
-using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Components.Datacenters
 {
     internal class SubstitutableDatacenters : IDatacenters
     {
         private volatile IDatacenters baseDatacenters = new EmptyDatacenters();
-        
+
         public string GetLocalDatacenter() =>
             baseDatacenters.GetLocalDatacenter();
 
@@ -23,10 +22,10 @@ namespace Vostok.Hosting.Components.Datacenters
 
         public IReadOnlyCollection<string> GetActiveDatacenters() =>
             baseDatacenters.GetActiveDatacenters();
-        
+
         public void SubstituteWith(IDatacenters newDatacenters) =>
             baseDatacenters = newDatacenters;
-        
+
         public IDatacenters GetBase() =>
             baseDatacenters;
     }

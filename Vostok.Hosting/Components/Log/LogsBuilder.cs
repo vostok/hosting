@@ -18,12 +18,12 @@ namespace Vostok.Hosting.Components.Log
     internal class LogsBuilder : IVostokCompositeLogBuilder, IBuilder<Logs>
     {
         private readonly List<(string name, ILog log)> userLogs;
-        private volatile Func<LogLevel> minLevelProvider;
         private readonly HerculesLogBuilder herculesLogBuilder;
         private readonly FileLogBuilder fileLogBuilder;
         private readonly ConsoleLogBuilder consoleLogBuilder;
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<ILog> logCustomization;
+        private volatile Func<LogLevel> minLevelProvider;
         private int unnamedLogsCounter;
 
         public LogsBuilder()
@@ -53,9 +53,9 @@ namespace Vostok.Hosting.Components.Log
                 rulesBuilder.Build(context),
                 finalLog => logCustomization.Customize(
                     (minLevelProvider != null ? finalLog.WithMinimumLevel(minLevelProvider) : finalLog)
-                        .WithApplicationIdentityProperties(context.ApplicationIdentity)
-                        .WithTracingProperties(context.Tracer)
-                        .WithOperationContext()));
+                    .WithApplicationIdentityProperties(context.ApplicationIdentity)
+                    .WithTracingProperties(context.Tracer)
+                    .WithOperationContext()));
         }
 
         public IVostokCompositeLogBuilder AddLog(ILog log)

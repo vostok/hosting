@@ -69,7 +69,7 @@ namespace Vostok.Hosting
         /// If set to <c>true</c>, sends annotations with application lifecycle events (launching, initialized, stopping).
         /// </summary>
         public bool SendAnnotations { get; set; } = true;
-        
+
         /// <summary>
         /// <para>If set to <c>false</c>, forcibly disables:</para>
         /// <list type="bullet">
@@ -112,7 +112,7 @@ namespace Vostok.Hosting
         /// Dispose timeout for each component of <see cref="IVostokHostingEnvironment"/>
         /// </summary>
         public TimeSpan DisposeComponentTimeout { get; set; } = 5.Seconds();
-        
+
         /// <summary>
         /// Per-core thread pool configuration multiplier used when <see cref="ConfigureThreadPool"/> is <c>true</c>.
         /// </summary>

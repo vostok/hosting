@@ -15,19 +15,19 @@ namespace Vostok.Hosting.Components.Application
         protected volatile string application = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityApplication);
         protected volatile string instance = System.Environment.GetEnvironmentVariable(VostokEnvironmentVariables.IdentityInstance);
 
+        public string Project => project;
+
+        public string Subproject => subproject;
+
+        public string Environment => environment;
+
+        public string Application => application;
+
+        public string Instance => instance;
+
         [NotNull]
         public virtual IVostokApplicationIdentity Build(BuildContext context) =>
             new ApplicationIdentity(project, subproject, environment, application, instance);
-
-        public string Project => project;
-        
-        public string Subproject => subproject;
-        
-        public string Environment => environment;
-        
-        public string Application => application;
-        
-        public string Instance => instance;
 
         public IVostokApplicationIdentityBuilder SetProject(string project)
         {
