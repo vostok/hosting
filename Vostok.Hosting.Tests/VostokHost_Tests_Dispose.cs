@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Models;
@@ -25,6 +26,28 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
+        
+        [Test]
+        public void Should_dispose_components_with_reverse_order()
+        {
+            var check = "";
+            var app = new DisposableApplication();
+            var component1 = new ActionDisposable(() => check += "1");
+            var component2 = new ActionDisposable(() => check += "2");
+
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable("2", component2));
+                    setup.SetupHostExtensions(e => e.AddDisposable("1", component1));
+                }));
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            app.Disposed.Should().BeTrue();
+            check.Should().Be("12");
+        }
 
         [Test]
         public void Should_not_crash_on_dispose_errors()
@@ -39,6 +62,27 @@ namespace Vostok.Hosting.Tests
             host.Run().State.Should().Be(VostokApplicationState.Exited);
 
             app.Disposed.Should().BeTrue();
+        }
+        
+        [Test]
+        public void Should_not_crash_on_components_dispose_errors()
+        {
+            var check = "";
+            var app = new DisposableApplication();
+            var component1 = new ActionDisposable(() => throw new Exception("crash"));
+            var component2 = new ActionDisposable(() => check += "2");
+            
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable("2", component2));
+                    setup.SetupHostExtensions(e => e.AddDisposable("1", component1));
+                }));
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            check.Should().Be("2");
         }
 
         [Test]
@@ -57,7 +101,31 @@ namespace Vostok.Hosting.Tests
 
             watch.Elapsed.Should().BeLessThan(5.Seconds());
         }
+        
+        [Test]
+        public void Should_not_block_on_components_dispose_longer_than_dispose_timeout_allows()
+        {
+            var app = new DisposableApplication();
+            var component = new ActionDisposable(() => Thread.Sleep(10.Seconds()));
+            
+            var host = new VostokHost(new TestHostSettings(app,
+                setup =>
+                {
+                    SetupEnvironment(setup);
+                    setup.SetupHostExtensions(e => e.AddDisposable(component));
+                    setup.SetupShutdownTimeout(1.Minutes());
+                })
+            {
+                DisposeComponentTimeout = 1.Seconds()
+            });
 
+            var watch = Stopwatch.StartNew();
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            watch.Elapsed.Should().BeLessThan(5.Seconds());
+        }
+        
         private static void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
         {
             builder.SetupApplicationIdentity(

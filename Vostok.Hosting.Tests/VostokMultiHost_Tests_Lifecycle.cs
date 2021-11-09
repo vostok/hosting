@@ -34,39 +34,6 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public async Task Should_return_CrashedDuringStopping()
-        {
-            var workerApplication = new VostokMultiHostApplicationSettings(
-                new TestApplication(),
-                ("test", "test"),
-                builder => builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog()));
-
-            vostokMultiHost = new VostokMultiHost(
-                new VostokMultiHostSettings(
-                    builder =>
-                    {
-                        // By the way, it's just irrational to use AddDisposable in VostokMultiHost :(
-
-                        builder.SetupHostExtensions(extensionsBuilder => extensionsBuilder.AddDisposable(new BadDisposable()));
-                        builder.SetupLog(logBuilder => logBuilder.SetupConsoleLog());
-                    }),
-                workerApplication
-            );
-
-            await vostokMultiHost.StartAsync();
-
-            var result = await vostokMultiHost.StopAsync();
-
-            result.State.Should().Be(VostokMultiHostState.CrashedDuringStopping);
-
-            Action error = () => result.EnsureSuccess();
-
-            error.Should().Throw<Exception>().WithMessage("HAHA! FAILED!");
-
-            vostokMultiHost.MultiHostState.Should().Be(VostokMultiHostState.CrashedDuringStopping);
-        }
-
-        [Test]
         public async Task Should_return_exited()
         {
             SetupMultiHost();

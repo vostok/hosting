@@ -12,6 +12,8 @@ namespace Vostok.Hosting.Helpers
 {
     internal class ApplicationDisposable : IDisposable
     {
+        private const string TheApplication = "the application";
+
         private readonly IVostokApplication application;
         private readonly IVostokHostingEnvironment environment;
         private readonly ILog log;
@@ -23,10 +25,12 @@ namespace Vostok.Hosting.Helpers
             this.log = log;
         }
 
-        public void Dispose()
+        public void Dispose() =>
+            DisposeComponent(application as IDisposable, TheApplication, environment.ShutdownTimeout, log);
+
+        public static void DisposeComponent(IDisposable disposable, string componentName, TimeSpan timeout, ILog log, bool shouldLog = true)
         {
-            var disposableApplication = application as IDisposable;
-            if (disposableApplication == null)
+            if (disposable == null)
                 return;
 
             var disposeTask = Task.Run(
@@ -34,24 +38,29 @@ namespace Vostok.Hosting.Helpers
                 {
                     var watch = Stopwatch.StartNew();
 
-                    log.Info("Disposing of the application..");
+                    if (shouldLog)
+                        LogDisposing(log, componentName);
 
                     try
                     {
-                        disposableApplication.Dispose();
+                        disposable.Dispose();
 
-                        log.Info("Disposed of the application in {ApplicationDisposeTime}.", watch.Elapsed.ToPrettyString());
+                        if (shouldLog && componentName == TheApplication)
+                            log.Info("Disposed of the application in {ApplicationDisposeTime}.", watch.Elapsed.ToPrettyString());
                     }
                     catch (Exception error)
                     {
-                        log.Error(error, "Failed to dispose of the application.");
+                        log.Error(error, "Failed to dispose of {ComponentName}.", componentName);
                     }
                 });
 
-            var disposedInTime = disposeTask.WaitAsync(environment.ShutdownTimeout).GetAwaiter().GetResult();
+            var disposedInTime = disposeTask.WaitAsync(timeout).GetAwaiter().GetResult();
 
             if (!disposedInTime)
-                log.Warn("Failed to dispose of the application in time to meet shutdown budget.");
+                log.Warn("Failed to dispose of {ComponentName} within {ComponentShutdownTimeout} shutdown budget.", componentName, timeout);
         }
+        
+        public static void LogDisposing(ILog log, string componentName) =>
+            log.Info("Disposing of {ComponentName}..", componentName);
     }
 }

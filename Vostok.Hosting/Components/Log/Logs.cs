@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
@@ -77,7 +78,7 @@ namespace Vostok.Hosting.Components.Log
                 context.LogDisposing("FileLog");
                 fileLog = null;
                 context.Log = BuildCompositeLog(out _);
-                disposeFileLog?.Invoke();
+                context.TryDispose(new ActionDisposable(disposeFileLog), "FileLog", shouldLog: false);
             }
         }
         
@@ -88,7 +89,7 @@ namespace Vostok.Hosting.Components.Log
                 context.LogDisposing("ConsoleLog");
                 consoleLog = null;
                 context.Log = BuildCompositeLog(out _);
-                ConsoleLog.Flush();
+                context.TryDispose(new ActionDisposable(ConsoleLog.Flush), "ConsoleLog", shouldLog: false);
             }
         }
 
