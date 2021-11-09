@@ -19,6 +19,8 @@ jobs:
           
       - name: Install .NET
         uses: actions/setup-dotnet@main
+        with:
+          dotnet-version: '6.0.x'
         
       - name: Build
         uses: vostok/github.ci@master
