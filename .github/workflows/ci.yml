@@ -17,12 +17,7 @@ jobs:
         with:
           path: vostok.module
           
-      - name: Install .NET 2.1
-        uses: actions/setup-dotnet@main
-        with:
-          dotnet-version: '2.1.x'
-          
-      - name: Install .NET 6.0
+      - name: Install .NET
         uses: actions/setup-dotnet@main
         with:
           dotnet-version: '6.0.x'
@@ -39,7 +34,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         references: [cement, nuget]
-        framework: [netcoreapp2.1, net471, net6.0]
+        framework: [netcoreapp3.1, net471, net6.0]
         exclude: 
           - os: ubuntu-latest
             framework: net471
