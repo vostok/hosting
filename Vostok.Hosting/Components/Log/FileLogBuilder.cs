@@ -89,12 +89,12 @@ namespace Vostok.Hosting.Components.Log
 
             var fileLog = new FileLog(settingsProvider);
             var dispose = disposeWithEnvironment ? () => fileLog.Dispose() : (Action)null;
-            
+
             ILog log = fileLog;
             if (minLevelProvider != null)
                 log = log.WithMinimumLevel(minLevelProvider);
             log = logCustomization.Customize(log);
-            
+
             return (log, dispose);
         }
 

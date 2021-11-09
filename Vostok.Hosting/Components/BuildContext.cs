@@ -81,6 +81,12 @@ namespace Vostok.Hosting.Components
 
         public ITracer Tracer => substitutableTracer;
 
+        public IDatacenters Datacenters
+        {
+            get => substitutableDatacenters;
+            set => substitutableDatacenters.SubstituteWith(value);
+        }
+
         public void SubstituteTracer((ITracer tracer, TracerSettings tracerSettings) tracer)
             => substitutableTracer.SubstituteWith(tracer.tracer, tracer.tracerSettings);
 
@@ -89,12 +95,6 @@ namespace Vostok.Hosting.Components
             if (disposable != null)
                 Disposables.Add(disposable);
             return disposable;
-        }
-
-        public IDatacenters Datacenters
-        {
-            get => substitutableDatacenters;
-            set => substitutableDatacenters.SubstituteWith(value);
         }
 
         public void PrintBufferedLogs()
@@ -125,7 +125,7 @@ namespace Vostok.Hosting.Components
 
             if (component is not IDisposable disposable)
                 return;
-            
+
             ApplicationDisposable.DisposeComponent(disposable, componentName, settings.DisposeComponentTimeout, Log.ForContext<VostokHostingEnvironment>(), shouldLog);
         }
 
@@ -159,7 +159,7 @@ namespace Vostok.Hosting.Components
             Logs?.DisposeFileLog(this);
             Logs?.DisposeConsoleLog(this);
         }
-        
+
         private void TryDisposeImplicitComponents()
         {
             var registeredExtensions = new Dictionary<object, string>(ByReferenceEqualityComparer<object>.Instance);

@@ -70,7 +70,7 @@ namespace Vostok.Hosting.Components.Log
                 context.Log = BuildCompositeLog(out _);
             }
         }
-        
+
         public void DisposeFileLog(BuildContext context)
         {
             if (disposeFileLog != null && fileLog != null)
@@ -81,7 +81,7 @@ namespace Vostok.Hosting.Components.Log
                 context.TryDispose(new ActionDisposable(disposeFileLog), "FileLog", shouldLog: false);
             }
         }
-        
+
         public void DisposeConsoleLog(BuildContext context)
         {
             if (consoleLog != null)
