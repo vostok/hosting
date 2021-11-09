@@ -16,6 +16,9 @@ jobs:
         uses: actions/checkout@main
         with:
           path: vostok.module
+          
+      - name: Install .NET
+        uses: actions/setup-dotnet@main
         
       - name: Build
         uses: vostok/github.ci@master
