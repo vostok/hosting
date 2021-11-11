@@ -20,6 +20,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Environment;
+using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
@@ -516,7 +517,11 @@ namespace Vostok.Hosting
         }
 
         private void LogHostExtensions(IVostokHostExtensions extensions)
-            => log.Info("Registered host extensions: {HostExtensions}.", extensions.GetAll().Select(pair => pair.Item1.Name).ToArray());
+            => log.Info("Registered host extensions: {HostExtensions}.",
+                extensions.GetAll()
+                    .Select(pair => pair.Item1.Name)
+                    .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
+                    .ToArray());
 
         private void LogThreadPoolSettings()
         {
