@@ -192,6 +192,42 @@ namespace Vostok.Hosting.Tests
 
             result.State.Should().Be(VostokApplicationState.Exited);
         }
+        
+        [Test]
+        public async Task Should_allow_to_use_configuration_during_configuration_setup()
+        {
+            application = new Application();
+
+            host = new VostokHost(new TestHostSettings(application,
+                builder =>
+                {
+                    builder.SetupApplicationIdentity(
+                        id => id
+                            .SetProject("infra")
+                            .SetSubproject("vostok")
+                            .SetApplication("app")
+                            .SetInstance("1"));
+
+                    builder.SetupApplicationIdentity((id, ctx) => id.SetEnvironment("env"));
+
+                    builder.SetupConfiguration(
+                        config =>
+                        {
+                            config.AddSource(new ObjectSource(new
+                            {
+                                A = "hello"
+                            }));
+                        });
+
+                    builder.SetupConfiguration(
+                        config =>
+                            config.GetIntermediateConfiguration<ApplicationSettings>().A.Should().Be("hello"));
+                }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
 
         [Test]
         public async Task Should_allow_to_use_datacenters_during_clusterconfig_setup()
