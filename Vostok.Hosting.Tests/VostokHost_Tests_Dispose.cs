@@ -26,6 +26,28 @@ namespace Vostok.Hosting.Tests
 
             app.Disposed.Should().BeTrue();
         }
+        
+        [Test]
+        public void Should_not_have_references_after_dispose()
+        {
+            WeakReference appWeak = null, hostWeak = null;
+
+            var app = new DisposableApplication();
+            var host = new VostokHost(new TestHostSettings(app, SetupEnvironment) {ConfigureStaticProviders = false});
+
+            appWeak = new WeakReference(app);
+            hostWeak = new WeakReference(host);
+
+            host.Run().State.Should().Be(VostokApplicationState.Exited);
+
+            app = null;
+            host = null;
+            
+            GC.Collect(2, GCCollectionMode.Forced, true, true);
+            
+            appWeak.IsAlive.Should().BeFalse();
+            hostWeak.IsAlive.Should().BeFalse();
+        }
 
         [Test]
         public void Should_dispose_components_with_reverse_order()
