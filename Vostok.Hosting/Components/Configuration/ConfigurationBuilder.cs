@@ -145,7 +145,7 @@ namespace Vostok.Hosting.Components.Configuration
         }
 
         private static BuildContext Context
-            => FlowingContext.Globals.Get<BuildContext>();
+            => (BuildContext)FlowingContext.Properties.Get<WeakReference>("VostokBuildContext").Target;
 
         private ConfigurationProvider BuildProvider(BuildContext context)
         {
