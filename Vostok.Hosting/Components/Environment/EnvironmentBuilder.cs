@@ -137,7 +137,7 @@ namespace Vostok.Hosting.Components.Environment
 
             // note (iloktionov, 03.03.2021): FlowingContext needed because CustomizableBuilder.Build will be called before ConfigurationBuilder.Build 
             lock (FlowingContextSync)
-                using (FlowingContext.Globals.Use(context))
+                using (ConfigurationBuilder.UseContext(context))
                 {
                     (context.ConfigurationSource,
                         context.SecretConfigurationSource,

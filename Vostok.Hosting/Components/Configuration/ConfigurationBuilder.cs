@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Helpers;
+using Vostok.Commons.Helpers.Disposable;
 using Vostok.Configuration;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
@@ -144,8 +145,21 @@ namespace Vostok.Hosting.Components.Configuration
             return (source, secretSource, provider, secretProvider);
         }
 
+        public static IDisposable UseContext(BuildContext context)
+        {
+            var wrapper = new BuildContextWrapper {Value = context};
+            var contextToken = FlowingContext.Globals.Use(wrapper);
+
+            return new ActionDisposable(() =>
+            {
+                // note (kungurtsev, 16.11.2021): use wrapper to avoid context leak to started threads
+                wrapper.Value = null;
+                contextToken.Dispose();
+            });
+        }
+
         private static BuildContext Context
-            => FlowingContext.Globals.Get<BuildContext>();
+            => FlowingContext.Globals.Get<BuildContextWrapper>()?.Value ?? throw new InvalidOperationException();
 
         private ConfigurationProvider BuildProvider(BuildContext context)
         {
@@ -207,6 +221,11 @@ namespace Vostok.Hosting.Components.Configuration
                 return sourceCustomization.Customize(new CombinedSource(sources.ToArray(), mergeOptions));
 
             return new ConstantSource(null);
+        }
+
+        private class BuildContextWrapper
+        {
+            public BuildContext Value { get; set; }
         }
     }
 }
