@@ -119,10 +119,16 @@ namespace Vostok.Hosting.Components.Configuration
         }
 
         public TSettings GetIntermediateConfiguration<TSettings>(params string[] scope)
-            => BuildProvider(Context).Get<TSettings>(BuildSource(Context).ScopeTo(scope));
+        {
+            using (var provider = BuildProvider(Context))
+                return provider.Get<TSettings>(BuildSource(Context).ScopeTo(scope));
+        }
 
         public TSettings GetIntermediateSecretConfiguration<TSettings>(params string[] scope)
-            => BuildSecretProvider(Context).Get<TSettings>(BuildSecretSource().ScopeTo(scope));
+        {
+            using (var secretProvider = BuildSecretProvider(Context))
+                return secretProvider.Get<TSettings>(BuildSecretSource().ScopeTo(scope));
+        }
 
         public TSettings GetIntermediateMergedConfiguration<TSettings>(params string[] scope)
             => BuildProvider(Context).Get<TSettings>(BuildMergedSource(Context).ScopeTo(scope));
