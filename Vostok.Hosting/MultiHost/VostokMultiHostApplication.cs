@@ -18,13 +18,13 @@ namespace Vostok.Hosting.MultiHost
         private readonly Func<bool> isReadyToStart;
         private readonly VostokMultiHostApplicationSettings settings;
         private volatile VostokHost vostokHost;
-        private PropagateObservable<VostokApplicationState> stateObservable;
+        private ObservablePropagator<VostokApplicationState> stateObservable;
 
         public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
             this.settings = settings;
             this.isReadyToStart = isReadyToStart;
-            stateObservable = new PropagateObservable<VostokApplicationState>();
+            stateObservable = new ObservablePropagator<VostokApplicationState>();
         }
 
         public VostokMultiHostApplicationIdentifier Identifier => settings.Identifier;
