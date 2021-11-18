@@ -208,6 +208,31 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
+        public async Task Should_allow_to_subscribe_to_state_changes_prior_to_start()
+        {
+            vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost));
+
+            var workerIdentifier = ("nevermind", "delay");
+
+            var workerApplication = new VostokMultiHostApplicationSettings(
+                new DelayApplication(),
+                workerIdentifier,
+                SetupMultiHostApplication);
+
+            var stateChangesCount = 0;
+            VostokApplicationState? lastState = null;
+            
+            var observable = vostokMultiHost.AddApplication(workerApplication).OnApplicationStateChanged;
+            
+            using (observable.Subscribe(state => stateChangesCount++))
+                using (observable.Subscribe(state => lastState = state))
+                    await vostokMultiHost.RunAsync();
+
+            stateChangesCount.Should().Be(7);
+            lastState.Should().Be(VostokApplicationState.Exited);
+        }
+
+        [Test]
         public async Task Should_stop_all_applications()
         {
             vostokMultiHost = new VostokMultiHost(new VostokMultiHostSettings(SetupMultiHost));
