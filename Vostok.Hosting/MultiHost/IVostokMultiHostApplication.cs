@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Models;
@@ -25,6 +26,11 @@ namespace Vostok.Hosting.MultiHost
         /// <inheritdoc cref="VostokHost.ApplicationState"/>
         /// </summary>
         VostokApplicationState ApplicationState { get; }
+
+        /// <summary>
+        /// <inheritdoc cref="VostokHost.OnApplicationStateChanged"/>
+        /// </summary>
+        IObservable<VostokApplicationState> OnApplicationStateChanged { get; }
 
         /// <summary>
         /// <para>Launches the provided <see cref="IVostokApplication"/>.</para>

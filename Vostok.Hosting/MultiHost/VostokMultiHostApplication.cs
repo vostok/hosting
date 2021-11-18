@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 
 // ReSharper disable InconsistentlySynchronizedField
@@ -16,16 +18,20 @@ namespace Vostok.Hosting.MultiHost
         private readonly Func<bool> isReadyToStart;
         private readonly VostokMultiHostApplicationSettings settings;
         private volatile VostokHost vostokHost;
+        private PropagateObservable<VostokApplicationState> stateObservable;
 
         public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
             this.settings = settings;
             this.isReadyToStart = isReadyToStart;
+            stateObservable = new PropagateObservable<VostokApplicationState>();
         }
 
         public VostokMultiHostApplicationIdentifier Identifier => settings.Identifier;
 
         public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
+
+        public IObservable<VostokApplicationState> OnApplicationStateChanged => stateObservable;
 
         public Task<VostokApplicationRunResult> RunAsync()
         {
@@ -95,6 +101,7 @@ namespace Vostok.Hosting.MultiHost
             };
 
             vostokHost = new VostokHost(vostokHostSettings);
+            stateObservable.SetBaseObservable(vostokHost.OnApplicationStateChanged);
 
             WorkerTask = Task.Run(vostokHost.RunAsync);
         }
