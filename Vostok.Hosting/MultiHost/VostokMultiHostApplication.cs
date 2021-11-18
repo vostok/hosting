@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Models;
 
 // ReSharper disable InconsistentlySynchronizedField
@@ -14,29 +12,38 @@ namespace Vostok.Hosting.MultiHost
     {
         internal volatile Task<VostokApplicationRunResult> WorkerTask;
         private readonly AtomicBoolean launchedOnce = false;
-        private readonly object launchGate = new object();
+        private readonly object launchGate = new();
         private readonly Func<bool> isReadyToStart;
         private readonly VostokMultiHostApplicationSettings settings;
         private volatile VostokHost vostokHost;
-        private ObservablePropagator<VostokApplicationState> stateObservable;
 
         public VostokMultiHostApplication(VostokMultiHostApplicationSettings settings, Func<bool> isReadyToStart)
         {
             this.settings = settings;
             this.isReadyToStart = isReadyToStart;
-            stateObservable = new ObservablePropagator<VostokApplicationState>();
+            
+            var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
+            {
+                ConfigureThreadPool = false,
+                ConfigureStaticProviders = false,
+                WarmupConfiguration = false,
+                WarmupZooKeeper = false,
+                DiagnosticMetricsEnabled = false
+            };
+
+            vostokHost = new VostokHost(vostokHostSettings);
         }
 
         public VostokMultiHostApplicationIdentifier Identifier => settings.Identifier;
 
-        public VostokApplicationState ApplicationState => vostokHost?.ApplicationState ?? VostokApplicationState.NotInitialized;
+        public VostokApplicationState ApplicationState => vostokHost.ApplicationState;
 
-        public IObservable<VostokApplicationState> OnApplicationStateChanged => stateObservable;
+        public IObservable<VostokApplicationState> OnApplicationStateChanged => vostokHost.OnApplicationStateChanged;
 
         public Task<VostokApplicationRunResult> RunAsync()
         {
             lock (launchGate)
-                CreateVostokHost();
+                StartVostokHost();
 
             return WorkerTask;
         }
@@ -44,7 +51,7 @@ namespace Vostok.Hosting.MultiHost
         public async Task StartAsync(VostokApplicationState? stateToAwait)
         {
             lock (launchGate)
-                CreateVostokHost();
+                StartVostokHost();
 
             var stateCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -68,18 +75,15 @@ namespace Vostok.Hosting.MultiHost
             }
         }
 
-        public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true)
-        {
-            return vostokHost?.StopAsync(ensureSuccess) ?? Task.FromResult(new VostokApplicationRunResult(VostokApplicationState.NotInitialized));
-        }
+        public Task<VostokApplicationRunResult> StopAsync(bool ensureSuccess = true) => vostokHost.StopAsync(ensureSuccess);
 
         internal void InternalStartApplication()
         {
             lock (launchGate)
-                CreateVostokHost(false);
+                StartVostokHost(false);
         }
 
-        private void CreateVostokHost(bool throwsException = true)
+        private void StartVostokHost(bool throwsException = true)
         {
             if (!launchedOnce.TrySetTrue())
                 return;
@@ -90,18 +94,6 @@ namespace Vostok.Hosting.MultiHost
                     throw new InvalidOperationException("VostokMultiHost should be running to launch applications.");
                 return;
             }
-
-            var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
-            {
-                ConfigureThreadPool = false,
-                ConfigureStaticProviders = false,
-                WarmupConfiguration = false,
-                WarmupZooKeeper = false,
-                DiagnosticMetricsEnabled = false
-            };
-
-            vostokHost = new VostokHost(vostokHostSettings);
-            stateObservable.SetBaseObservable(vostokHost.OnApplicationStateChanged);
 
             WorkerTask = Task.Run(vostokHost.RunAsync);
         }
