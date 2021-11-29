@@ -1,3 +1,7 @@
+## 0.3.33 (29-11-2021):
+
+Added `OnApplicationStateChanged` property to `VostokMultiHostApplication`.
+
 ## 0.3.32 (16-11-2021):
 
 Fixed [#61](https://github.com/vostok/hosting/issues/61) again.
