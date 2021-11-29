@@ -3,8 +3,6 @@
   <Import Project="..\..\vostok.devtools\library-common-props\Test-Project.props" />
   <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;net471</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netcoreapp2.1</TargetFrameworks>
     <LangVersion>7.2</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
@@ -29,59 +27,59 @@
   <ItemGroup>
     <Reference Include="Vostok.Hosting.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.hosting.abstractions\Vostok.Hosting.Abstractions\bin\Release\netstandard2.0\Vostok.Hosting.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.hosting.abstractions\Vostok.Hosting.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hosting.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Context">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.context\Vostok.Context\bin\Release\netstandard2.0\Vostok.Context.dll</HintPath>
+      <HintPath>..\..\vostok.context\Vostok.Context\bin\Release\$(ReferencesFramework)\Vostok.Context.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Metrics">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.metrics\Vostok.Metrics\bin\Release\netstandard2.0\Vostok.Metrics.dll</HintPath>
+      <HintPath>..\..\vostok.metrics\Vostok.Metrics\bin\Release\$(ReferencesFramework)\Vostok.Metrics.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Logging.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\netstandard2.0\Vostok.Logging.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Datacenters">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\netstandard2.0\Vostok.Datacenters.dll</HintPath>
+      <HintPath>..\..\vostok.datacenters\Vostok.Datacenters\bin\Release\$(ReferencesFramework)\Vostok.Datacenters.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ClusterClient.Datacenters">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.clusterclient.datacenters\Vostok.ClusterClient.Datacenters\bin\Release\netstandard2.0\Vostok.ClusterClient.Datacenters.dll</HintPath>
+      <HintPath>..\..\vostok.clusterclient.datacenters\Vostok.ClusterClient.Datacenters\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Datacenters.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Configuration.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\netstandard2.0\Vostok.Configuration.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.configuration.abstractions\Vostok.Configuration.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Hercules.Client.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.hercules.client.abstractions\Vostok.Hercules.Client.Abstractions\bin\Release\netstandard2.0\Vostok.Hercules.Client.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.hercules.client.abstractions\Vostok.Hercules.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hercules.Client.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ClusterClient.Core">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.clusterclient.core\Vostok.ClusterClient.Core\bin\Release\netstandard2.0\Vostok.ClusterClient.Core.dll</HintPath>
+      <HintPath>..\..\vostok.clusterclient.core\Vostok.ClusterClient.Core\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Core.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ClusterConfig.Client.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.clusterconfig.client.abstractions\Vostok.ClusterConfig.Client.Abstractions\bin\Release\netstandard2.0\Vostok.ClusterConfig.Client.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.clusterconfig.client.abstractions\Vostok.ClusterConfig.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.ClusterConfig.Client.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Configuration.Sources">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\netstandard2.0\Vostok.Configuration.Sources.dll</HintPath>
+      <HintPath>..\..\vostok.configuration.sources\Vostok.Configuration.Sources\bin\Release\$(ReferencesFramework)\Vostok.Configuration.Sources.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ZooKeeper.Client.Abstractions">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.zookeeper.client.abstractions\Vostok.ZooKeeper.Client.Abstractions\bin\Release\netstandard2.0\Vostok.ZooKeeper.Client.Abstractions.dll</HintPath>
+      <HintPath>..\..\vostok.zookeeper.client.abstractions\Vostok.ZooKeeper.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.ZooKeeper.Client.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Metrics.System">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\netstandard2.0\Vostok.Metrics.System.dll</HintPath>
+      <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\$(ReferencesFramework)\Vostok.Metrics.System.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ServiceDiscovery">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.dll</HintPath>
+      <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
