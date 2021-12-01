@@ -83,7 +83,7 @@ namespace Vostok.Hosting.Components.Shutdown
             // (iloktionov): External timeout protects from serviceBeacon.Stop() call taking too long.
             // (iloktionov): Artifical timeout reduction protects solely from false warning logs.
             return Task.Run(() => ShutdownBeaconAsync(beaconTimeout.Cut(ShutdownConstants.CutAmountForBeaconTimeout, ShutdownConstants.CutMaximumRelativeValue)))
-                .WaitAsync(beaconTimeout)
+                .TryWaitAsync(beaconTimeout)
                 .ContinueWith(
                     task =>
                     {

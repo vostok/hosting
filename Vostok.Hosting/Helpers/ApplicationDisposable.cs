@@ -54,7 +54,7 @@ namespace Vostok.Hosting.Helpers
                     }
                 });
 
-            var disposedInTime = disposeTask.WaitAsync(timeout).GetAwaiter().GetResult();
+            var disposedInTime = disposeTask.TryWaitAsync(timeout).GetAwaiter().GetResult();
 
             if (!disposedInTime)
                 log.Warn("Failed to dispose of {ComponentName} within {ComponentShutdownTimeout} shutdown budget.", componentName, timeout);
