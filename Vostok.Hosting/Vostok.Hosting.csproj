@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>0.3.34</VersionPrefix>
+    <VersionPrefix>0.3.35</VersionPrefix>
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.Hosting</Title>
