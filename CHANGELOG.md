@@ -1,3 +1,7 @@
+## 0.3.34 (06-12-2021):
+
+Added `net6.0` target.
+
 ## 0.3.33 (29-11-2021):
 
 Added `OnApplicationStateChanged` property to `VostokMultiHostApplication`.
