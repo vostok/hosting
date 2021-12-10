@@ -185,7 +185,8 @@ namespace Vostok.Hosting.Components.Configuration
         private ConfigurationProvider BuildSecretProvider(BuildContext context)
         {
             var secretProviderSettings = new ConfigurationProviderSettings()
-                .WithErrorLogging(context.Log);
+                .WithErrorLogging(context.Log)
+                .WithUpdatesLogging(context.Log);
 
             secretProviderCustomization.Customize(secretProviderSettings);
             secretProviderSettings.Binder = new SecretBinder(secretProviderSettings.Binder ?? new DefaultSettingsBinder());
