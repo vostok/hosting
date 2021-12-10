@@ -1,3 +1,7 @@
+## 0.3.36 (10-12-2021):
+
+Log secret settings updates.
+
 ## 0.3.35 (06-12-2021):
 
 Added `net6.0` target.
