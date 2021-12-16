@@ -1,3 +1,7 @@
+## 0.3.37 (16-12-2021):
+
+Fixed lambda closure in `BuildContext` related to `HerculesSink`.
+
 ## 0.3.36 (10-12-2021):
 
 Log secret settings updates.
