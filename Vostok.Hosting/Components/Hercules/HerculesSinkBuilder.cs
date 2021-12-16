@@ -56,15 +56,7 @@ namespace Vostok.Hosting.Components.Hercules
 
             log = log.DropEvents(evt => evt?.MessageTemplate != null && evt.MessageTemplate.Contains("put event to a disposed"));
 
-            // Note(kungurtsev): allow null api key provider, streams can be configured later.
-            var settings = new HerculesSinkSettings(cluster, apiKeyProvider ?? (() => null))
-            {
-                AdditionalSetup = setup =>
-                {
-                    setup.ClientApplicationName = context.ApplicationIdentity.FormatServiceName();
-                    setup.SetupDistributedTracing(context.Tracer);
-                }
-            };
+            var settings = BuildHerculesSettings(cluster, context);
 
             settingsCustomization.Customize(settings);
 
@@ -162,6 +154,23 @@ namespace Vostok.Hosting.Components.Hercules
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
 
             return this;
+        }
+
+        private HerculesSinkSettings BuildHerculesSettings(IClusterProvider cluster, BuildContext context)
+        {
+            // NOTE(tsup): Do not inline this statements to get rid of closure of BuildContext
+            var formattedServiceName = context.ApplicationIdentity.FormatServiceName();
+            var tracer = context.Tracer;
+
+            // Note(kungurtsev): allow null api key provider, streams can be configured later.
+            return new HerculesSinkSettings(cluster, apiKeyProvider ?? (() => null))
+            {
+                AdditionalSetup = setup =>
+                {
+                    setup.ClientApplicationName = formattedServiceName;
+                    setup.SetupDistributedTracing(tracer);
+                }
+            };
         }
     }
 }
