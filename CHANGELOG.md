@@ -1,3 +1,7 @@
+## 0.3.37 (21-12-2021):
+
+Fixed misuse of structured log.
+
 ## 0.3.36 (10-12-2021):
 
 Log secret settings updates.

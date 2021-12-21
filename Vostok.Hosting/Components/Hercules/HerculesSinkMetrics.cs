@@ -62,8 +62,7 @@ namespace Vostok.Hosting.Components.Hercules
 
         private void LogSentRecords(HerculesSinkStatistics statistic, HerculesSinkCounters delta)
         {
-            var message = new StringBuilder("Successfully sent {RecordsCount} record(s) of size {RecordsSize}");
-            var started = false;
+            var details = new StringBuilder();
             foreach (var kvp in statistic.PerStream)
             {
                 previous.PerStream.TryGetValue(kvp.Key, out var p);
@@ -71,14 +70,16 @@ namespace Vostok.Hosting.Components.Hercules
                 if (count == 0)
                     continue;
 
-                message.Append(started ? ", " : " (");
-                message.Append($"{count} {kvp.Key}");
-                started = true;
+                details.Append(details.Length > 0 ? ", " : " (");
+                details.Append($"{count} {kvp.Key}");
             }
+            if (details.Length > 0)
+                details.Append(')');
 
-            message.Append(started ? ")." : ".");
-
-            log.Info(message.ToString(), delta.SentRecords.Count, delta.SentRecords.Size);
+            log.Info("Successfully sent {RecordsCount} record(s) of size {RecordsSize}{Details}.", 
+                delta.SentRecords.Count, 
+                delta.SentRecords.Size,
+                details.ToString());
         }
 
         private MetricEvent CreateMetricEvent(DateTimeOffset timestamp, string name, double value)
