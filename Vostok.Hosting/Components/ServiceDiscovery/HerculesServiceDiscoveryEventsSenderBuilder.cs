@@ -1,4 +1,5 @@
 ﻿using System;
+using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions.Models;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery.Telemetry.Hercules;
@@ -9,9 +10,15 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class HerculesServiceDiscoveryEventsSenderBuilder : IVostokHerculesServiceDiscoveryEventsSenderBuilder, IBuilder<HerculesServiceDiscoveryEventsSender>
     {
+        private readonly Customization<HerculesServiceDiscoveryEventsSenderSettings> settingsCustomization;
         private string stream;
         private Func<string> apiKeyProvider;
         private volatile bool enabled;
+
+        public HerculesServiceDiscoveryEventsSenderBuilder()
+        {
+            settingsCustomization = new Customization<HerculesServiceDiscoveryEventsSenderSettings>();
+        }
 
         public bool IsEnabled => enabled;
 
@@ -36,6 +43,12 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IVostokHerculesServiceDiscoveryEventsSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider)
         {
             this.apiKeyProvider = apiKeyProvider ?? throw new ArgumentNullException(nameof(apiKeyProvider));
+            return this;
+        }
+
+        public IVostokHerculesServiceDiscoveryEventsSenderBuilder CustomizeSettings(Action<HerculesServiceDiscoveryEventsSenderSettings> settingsCustomization)
+        {
+            this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
 
@@ -64,6 +77,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 herculesSink.ConfigureStream(stream, new StreamSettings {ApiKeyProvider = apiKeyProvider});
 
             var settings = new HerculesServiceDiscoveryEventsSenderSettings(herculesSink, stream);
+            settingsCustomization.Customize(settings);
 
             return new HerculesServiceDiscoveryEventsSender(settings);
         }
