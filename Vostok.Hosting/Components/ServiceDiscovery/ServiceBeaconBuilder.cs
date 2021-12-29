@@ -7,7 +7,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
-using Vostok.ServiceDiscovery.Telemetry;
 using Vostok.ZooKeeper.Client.Abstractions;
 
 // ReSharper disable ParameterHidesMember
@@ -18,7 +17,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
     {
         private readonly Customization<ServiceBeaconSettings> settingsCustomization;
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
-        private readonly HerculesServiceDiscoveryEventsSenderBuilder herculesServiceDiscoveryEventsSenderBuilder;
         private volatile IVostokApplicationIdentity applicationIdentity;
         private volatile bool enabled;
         private volatile bool registrationDeniedFromNonActiveDatacenters;
@@ -35,7 +33,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
                 });
 
             settingsCustomization = new Customization<ServiceBeaconSettings>();
-            herculesServiceDiscoveryEventsSenderBuilder = new HerculesServiceDiscoveryEventsSenderBuilder();
         }
 
         public bool IsEnabled => enabled;
@@ -84,13 +81,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             return this;
         }
 
-        public IVostokServiceBeaconBuilder SetupHerculesServiceDiscoveryEventsSender(Action<IVostokHerculesServiceDiscoveryEventsSenderBuilder> herculesEventsSenderSetup)
-        {
-            herculesServiceDiscoveryEventsSenderBuilder.Enable();
-            herculesEventsSenderSetup(herculesServiceDiscoveryEventsSenderBuilder);
-            return this;
-        }
-
         public IVostokServiceBeaconBuilder SetupReplicaInfo(ReplicaInfoSetup setup)
         {
             setup = setup ?? throw new ArgumentNullException(nameof(setup));
@@ -109,13 +99,10 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         private ServiceBeacon CreateBeacon(IZooKeeperClient zooKeeperClient, BuildContext context)
         {
-            var settings = new ServiceBeaconSettings();
-            var herculesEventsSender = herculesServiceDiscoveryEventsSenderBuilder.Build(context);
+            var settings = new ServiceBeaconSettings {ServiceDiscoveryEventContext = context.ServiceDiscoveryEventsContext};
 
             if (registrationDeniedFromNonActiveDatacenters)
                 settings.RegistrationAllowedProvider = context.Datacenters.LocalDatacenterIsActive;
-            if (herculesEventsSender != null)
-                settings.ServiceDiscoveryEventContext = new ServiceDiscoveryEventsContext(new ServiceDiscoveryEventsContextConfig(herculesEventsSender));
 
             settingsCustomization.Customize(settings);
 
