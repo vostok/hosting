@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.ServiceDiscovery.Telemetry.Hercules;
 
 namespace Vostok.Hosting.Setup
 {
@@ -13,5 +14,6 @@ namespace Vostok.Hosting.Setup
 
         IVostokHerculesServiceDiscoveryEventsSenderBuilder SetStream([NotNull] string stream);
         IVostokHerculesServiceDiscoveryEventsSenderBuilder SetApiKeyProvider([NotNull] Func<string> apiKeyProvider);
+        IVostokHerculesServiceDiscoveryEventsSenderBuilder CustomizeSettings([NotNull] Action<HerculesServiceDiscoveryEventsSenderSettings> settingsCustomization);
     }
 }
