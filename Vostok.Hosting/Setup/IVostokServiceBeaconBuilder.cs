@@ -15,8 +15,6 @@ namespace Vostok.Hosting.Setup
 
         IVostokServiceBeaconBuilder AllowRegistrationFromNotActiveDatacenters();
         
-        IVostokServiceBeaconBuilder SetupHerculesServiceDiscoveryEventsSender([NotNull] Action<IVostokHerculesServiceDiscoveryEventsSenderBuilder> herculesEventsSenderSetup);
-
         IVostokServiceBeaconBuilder SetupReplicaInfo([NotNull] ReplicaInfoSetup replicaInfoSetup);
 
         IVostokServiceBeaconBuilder CustomizeSettings([NotNull] Action<ServiceBeaconSettings> settingsCustomization);
