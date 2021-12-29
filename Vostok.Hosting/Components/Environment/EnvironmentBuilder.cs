@@ -34,6 +34,7 @@ using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.ServiceDiscovery.Telemetry;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -61,6 +62,7 @@ namespace Vostok.Hosting.Components.Environment
         private readonly CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub> diagnosticsBuilder;
         private readonly CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient> zooKeeperClientBuilder;
         private readonly CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon> serviceBeaconBuilder;
+        private readonly CustomizableBuilder<ServiceDiscoveryEventsContextBuilder, IServiceDiscoveryEventsContext> serviceDiscoveryEventsContextBuilder;
         private readonly CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator> serviceLocatorBuilder;
         private readonly IntermediateApplicationIdentityBuilder intermediateApplicationIdentityBuilder;
         private readonly HostExtensionsBuilder hostExtensionsBuilder;
@@ -88,6 +90,7 @@ namespace Vostok.Hosting.Components.Environment
             diagnosticsBuilder = new CustomizableBuilder<DiagnosticsBuilder, DiagnosticsHub>(new DiagnosticsBuilder());
             zooKeeperClientBuilder = new CustomizableBuilder<ZooKeeperClientBuilder, IZooKeeperClient>(new ZooKeeperClientBuilder());
             serviceBeaconBuilder = new CustomizableBuilder<ServiceBeaconBuilder, IServiceBeacon>(new ServiceBeaconBuilder());
+            serviceDiscoveryEventsContextBuilder = new CustomizableBuilder<ServiceDiscoveryEventsContextBuilder, IServiceDiscoveryEventsContext>(new ServiceDiscoveryEventsContextBuilder());
             serviceLocatorBuilder = new CustomizableBuilder<ServiceLocatorBuilder, IServiceLocator>(new ServiceLocatorBuilder());
             intermediateApplicationIdentityBuilder = new IntermediateApplicationIdentityBuilder();
             hostExtensionsBuilder = new HostExtensionsBuilder();
@@ -183,6 +186,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.LogConfiguredLoggers(configuredLoggers);
             }
 
+            context.ServiceDiscoveryEventsContext = serviceDiscoveryEventsContextBuilder.Build(context);
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders)
@@ -458,6 +462,18 @@ namespace Vostok.Hosting.Components.Environment
         {
             serviceBeaconBuilder.AddCustomization(b => b.Enable());
             serviceBeaconBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupServiceDiscoveryEventsContext(Action<IVostokServiceDiscoveryEventsContextBuilder> setup)
+        {
+            serviceDiscoveryEventsContextBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
+            return this;
+        }
+
+        public IVostokHostingEnvironmentBuilder SetupServiceDiscoveryEventsContext(Action<IVostokServiceDiscoveryEventsContextBuilder, IVostokHostingEnvironmentSetupContext> setup)
+        {
+            serviceDiscoveryEventsContextBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
