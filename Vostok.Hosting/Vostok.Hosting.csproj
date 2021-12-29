@@ -198,11 +198,11 @@
     </Reference>
     <Reference Include="Vostok.ServiceDiscovery.Telemetry">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.servicediscovery.telemetry\Vostok.ServiceDiscovery.Telemetry\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.Telemetry.dll</HintPath>
+      <HintPath>..\..\vostok.servicediscovery.telemetry\Vostok.ServiceDiscovery.Telemetry\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.ServiceDiscovery.Telemetry.Hercules">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.servicediscovery.telemetry.hercules\Vostok.ServiceDiscovery.Telemetry.Hercules\bin\Release\netstandard2.0\Vostok.ServiceDiscovery.Telemetry.Hercules.dll</HintPath>
+      <HintPath>..\..\vostok.servicediscovery.telemetry.hercules\Vostok.ServiceDiscovery.Telemetry.Hercules\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.Hercules.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
