@@ -4,6 +4,7 @@ using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
+using Vostok.ServiceDiscovery.Telemetry;
 
 // ReSharper disable ParameterHidesMember
 
@@ -36,6 +37,8 @@ namespace Vostok.Hosting.Components.HostExtensions
 
             if (context.ZooKeeperClient != null && !(context.ZooKeeperClient is DevNullZooKeeperClient))
                 HostExtensions.Add(context.ZooKeeperClient);
+            if (!(context.ServiceDiscoveryEventsContext is DevNullServiceDiscoveryEventsContext))
+                HostExtensions.Add(context.ServiceDiscoveryEventsContext);
 
             HostExtensions.Add<IVostokApplicationDiagnostics>(context.DiagnosticsHub);
             HostExtensions.Add(context.Logs.LogEventLevelCounterFactory);

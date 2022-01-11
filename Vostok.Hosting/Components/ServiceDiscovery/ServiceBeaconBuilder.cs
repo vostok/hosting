@@ -99,7 +99,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         private ServiceBeacon CreateBeacon(IZooKeeperClient zooKeeperClient, BuildContext context)
         {
-            var settings = new ServiceBeaconSettings();
+            var settings = new ServiceBeaconSettings {ServiceDiscoveryEventContext = context.ServiceDiscoveryEventsContext};
 
             if (registrationDeniedFromNonActiveDatacenters)
                 settings.RegistrationAllowedProvider = context.Datacenters.LocalDatacenterIsActive;
