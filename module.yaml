@@ -61,7 +61,7 @@ notests *default:
     - vostok.metrics
     - vostok.metrics.hercules
     - vostok.metrics.system
-    - vostok.servicediscovery@service-discovery-events
+    - vostok.servicediscovery
     - vostok.servicediscovery.abstractions
     - vostok.tracing
     - vostok.tracing.abstractions
