@@ -22,6 +22,7 @@ using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
 using Vostok.ServiceDiscovery.Abstractions;
+using Vostok.ServiceDiscovery.Telemetry;
 using Vostok.Tracing;
 using Vostok.Tracing.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
@@ -51,6 +52,7 @@ namespace Vostok.Hosting.Components
         public IVostokApplicationLimits ApplicationLimits { get; set; }
         public Func<IVostokApplicationReplicationInfo> ApplicationReplication { get; set; }
         public IServiceLocator ServiceLocator { get; set; }
+        public IServiceDiscoveryEventsContext ServiceDiscoveryEventsContext { get; set; }
         public IServiceBeacon ServiceBeacon { get; set; }
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public SwitchingSource ConfigurationSource { get; set; }

@@ -1,3 +1,8 @@
+## 0.3.39 (11-01-2022):
+
+- Added `IServiceDiscoveryEventsContext` setting
+- Added sending `ServiceBeacon` events
+
 ## 0.3.38 (21-12-2021):
 
 Fixed misuse of structured log.

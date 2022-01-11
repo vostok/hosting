@@ -23,6 +23,8 @@ notests *default:
     - module vostok.zookeeper.client
 
   deps:
+    - vostok.servicediscovery.telemetry.hercules
+    - vostok.servicediscovery.telemetry
     - vostok.clusterclient.context
     - vostok.clusterclient.core
     - vostok.clusterclient.datacenters

@@ -61,6 +61,9 @@ namespace Vostok.Hosting.Setup
 
         IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> setup);
+        
+        IVostokHostingEnvironmentBuilder SetupServiceDiscoveryEventsContext([NotNull] Action<IVostokServiceDiscoveryEventsContextBuilder> setup);
+        IVostokHostingEnvironmentBuilder SetupServiceDiscoveryEventsContext([NotNull] Action<IVostokServiceDiscoveryEventsContextBuilder, IVostokHostingEnvironmentSetupContext> setup);
 
         IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder> setup);
         IVostokHostingEnvironmentBuilder SetupServiceLocator([NotNull] Action<IVostokServiceLocatorBuilder, IVostokHostingEnvironmentSetupContext> setup);

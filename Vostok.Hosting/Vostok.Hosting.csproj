@@ -196,6 +196,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.metrics.system\Vostok.Metrics.System\bin\Release\$(ReferencesFramework)\Vostok.Metrics.System.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Telemetry">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.telemetry\Vostok.ServiceDiscovery.Telemetry\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Telemetry.Hercules">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.telemetry.hercules\Vostok.ServiceDiscovery.Telemetry.Hercules\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.Hercules.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />
