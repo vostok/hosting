@@ -59,7 +59,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 context.RegisterDisposable(gcMonitor.LogCollections(context.Log, gc => gc.Duration >= settings.GcMinimumDurationForLogging));
 
             if (settings.EnableGcEventsMetrics)
-                context.RegisterDisposable(gcMonitor.ReportMetrics(metricContext));
+                context.RegisterDisposable(gcMonitor.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
 
             context.RegisterDisposable(gcMonitor);
         }
@@ -116,7 +116,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(dnsMonitor);
 
             if (settings.EnableDnsEventsMetrics)
-                context.RegisterDisposable(dnsMonitor.ReportMetrics(metricContext));
+                context.RegisterDisposable(dnsMonitor.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
 
             context.RegisterDisposable(dnsMonitor);
         }

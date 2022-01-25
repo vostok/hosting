@@ -60,7 +60,7 @@ notests *default:
     - vostok.logging.tracing
     - vostok.metrics
     - vostok.metrics.hercules
-    - vostok.metrics.system
+    - vostok.metrics.system@AddReportPeriod
     - vostok.servicediscovery
     - vostok.servicediscovery.abstractions
     - vostok.tracing
