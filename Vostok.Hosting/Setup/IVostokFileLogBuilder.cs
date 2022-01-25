@@ -1,6 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Setup
@@ -13,6 +14,8 @@ namespace Vostok.Hosting.Setup
         IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
 
         IVostokFileLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
+        
+        IVostokFileLogBuilder AddRule([NotNull] LogConfigurationRule rule);
 
         IVostokFileLogBuilder CustomizeSettings([NotNull] Action<FileLogSettings> settingsCustomization);
 

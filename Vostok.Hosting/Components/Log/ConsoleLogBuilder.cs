@@ -2,6 +2,7 @@
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Console;
 
 // ReSharper disable ParameterHidesMember
@@ -10,14 +11,16 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class ConsoleLogBuilder : IVostokConsoleLogBuilder, IBuilder<ILog>
     {
+        private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<ConsoleLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile bool enabled;
         private volatile bool synchronous;
 
-        public ConsoleLogBuilder()
+        public ConsoleLogBuilder(LogRulesBuilder rulesBuilder)
         {
+            this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<ConsoleLogSettings>();
             logCustomization = new Customization<ILog>();
         }
@@ -57,6 +60,13 @@ namespace Vostok.Hosting.Components.Log
         public IVostokConsoleLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
+            return this;
+        }
+        
+        public IVostokConsoleLogBuilder AddRule(LogConfigurationRule rule)
+        {
+            rule.Log = Logs.ConsoleLogName;
+            rulesBuilder.Add(rule);
             return this;
         }
 

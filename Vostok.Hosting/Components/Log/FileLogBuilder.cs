@@ -3,6 +3,7 @@ using System.IO;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.File;
 using Vostok.Logging.File.Configuration;
 
@@ -12,6 +13,7 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class FileLogBuilder : IVostokFileLogBuilder, IBuilder<(ILog FileLog, Action Dispose)>
     {
+        private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<FileLogSettings> settingsProvider;
@@ -19,8 +21,9 @@ namespace Vostok.Hosting.Components.Log
         private volatile bool enabled;
         private volatile bool disposeWithEnvironment;
 
-        public FileLogBuilder()
+        public FileLogBuilder(LogRulesBuilder rulesBuilder)
         {
+            this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<FileLogSettings>();
             logCustomization = new Customization<ILog>();
             disposeWithEnvironment = true;
@@ -49,6 +52,13 @@ namespace Vostok.Hosting.Components.Log
         public IVostokFileLogBuilder CustomizeLog(Func<ILog, ILog> logCustomization)
         {
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
+            return this;
+        }
+        
+        public IVostokFileLogBuilder AddRule(LogConfigurationRule rule)
+        {
+            rule.Log = Logs.FileLogName;
+            rulesBuilder.Add(rule);
             return this;
         }
 

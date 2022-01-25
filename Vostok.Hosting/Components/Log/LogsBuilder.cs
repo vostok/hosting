@@ -29,10 +29,10 @@ namespace Vostok.Hosting.Components.Log
         public LogsBuilder()
         {
             userLogs = new List<(string name, ILog log)>();
-            herculesLogBuilder = new HerculesLogBuilder();
-            fileLogBuilder = new FileLogBuilder();
-            consoleLogBuilder = new ConsoleLogBuilder();
             rulesBuilder = new LogRulesBuilder();
+            herculesLogBuilder = new HerculesLogBuilder(rulesBuilder);
+            fileLogBuilder = new FileLogBuilder(rulesBuilder);
+            consoleLogBuilder = new ConsoleLogBuilder(rulesBuilder);
             logCustomization = new Customization<ILog>();
         }
 
