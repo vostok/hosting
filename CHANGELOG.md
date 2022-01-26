@@ -1,3 +1,7 @@
+## 0.3.40 (26-01-2022):
+
+Set up reporting period for GC monitor and DNS monitor.
+
 ## 0.3.39 (11-01-2022):
 
 - Added `IServiceDiscoveryEventsContext` setting
