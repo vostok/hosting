@@ -19,6 +19,10 @@ namespace Vostok.Hosting.Components.Log
         private volatile ILog fileLog;
         private volatile ILog consoleLog;
         private volatile ILog herculesLog;
+        
+        public const string HerculesLogName = "Hercules";
+        public const string ConsoleLogName = "Console";
+        public const string FileLogName = "File";
 
         public Logs(
             List<(string name, ILog log)> userLogs,
@@ -101,13 +105,13 @@ namespace Vostok.Hosting.Components.Log
                 yield return pair;
 
             if (fileLog != null)
-                yield return ("File", fileLog);
+                yield return (FileLogName, fileLog);
 
             if (consoleLog != null)
-                yield return ("Console", consoleLog);
+                yield return (ConsoleLogName, consoleLog);
 
             if (herculesLog != null)
-                yield return ("Hercules", herculesLog);
+                yield return (HerculesLogName, herculesLog);
         }
     }
 }
