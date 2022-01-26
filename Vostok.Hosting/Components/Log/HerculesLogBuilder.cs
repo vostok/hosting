@@ -1,6 +1,7 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions.Models;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
@@ -68,7 +69,7 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokHerculesLogBuilder AddRule(LogConfigurationRule rule)
         {
-            rule.Log = Logs.HerculesLogName;
+            rule = rule.WithLog(Logs.HerculesLogName);
             rulesBuilder.Add(rule);
             return this;
         }

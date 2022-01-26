@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
@@ -65,7 +66,7 @@ namespace Vostok.Hosting.Components.Log
         
         public IVostokConsoleLogBuilder AddRule(LogConfigurationRule rule)
         {
-            rule.Log = Logs.ConsoleLogName;
+            rule = rule.WithLog(Logs.ConsoleLogName);
             rulesBuilder.Add(rule);
             return this;
         }
