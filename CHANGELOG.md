@@ -1,3 +1,7 @@
+## 0.3.41 (26-01-2022):
+
+Added `AddRule` methods for Hercules/File/Console log builders.
+
 ## 0.3.40 (26-01-2022):
 
 Set up reporting period for GC monitor and DNS monitor.
