@@ -165,11 +165,12 @@ namespace Vostok.Hosting.Components.Configuration
         {
             var source = BuildSource(context);
             var secretSource = BuildSecretSource(context);
+            var mergedSource = BuildMergedSource(context);
 
             var provider = BuildProvider(context);
             var secretProvider = BuildSecretProvider(context);
 
-            var configurationContext = new ConfigurationContext(source, secretSource, provider, secretProvider, context.ClusterConfigClient);
+            var configurationContext = new ConfigurationContext(source, secretSource, mergedSource, provider, secretProvider, context.ClusterConfigClient);
 
             configurationContextCustomization.Customize(configurationContext);
 

@@ -15,6 +15,10 @@ namespace Vostok.Hosting.Setup
         /// <inheritdoc cref="IVostokHostingEnvironment.SecretConfigurationSource"/>
         [NotNull]
         IConfigurationSource SecretConfigurationSource { get; }
+        
+        /// Combined <see cref="ConfigurationSource"/> and <see cref="SecretConfigurationSource"/>.
+        [NotNull]
+        IConfigurationSource MergedConfigurationSource { get; }
 
         /// <inheritdoc cref="IVostokHostingEnvironment.ConfigurationProvider"/>
         [NotNull]
