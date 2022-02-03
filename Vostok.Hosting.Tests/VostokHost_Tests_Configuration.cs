@@ -386,6 +386,9 @@ namespace Vostok.Hosting.Tests
                     config.AddSource(new ObjectSource(new {}));
                     config.AddSecretSource(new ObjectSource(new {}));
                 });
+
+            builder.SetupClusterConfigClient(config => 
+                config.CustomizeSettings(setting => setting.EnableClusterSettings = false));
         }
 
         [RequiresConfiguration(typeof(ApplicationSettings))]
