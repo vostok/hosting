@@ -286,6 +286,10 @@ namespace Vostok.Hosting.Tests
                 
                 setup.SetupConfiguration(c => c.GetIntermediateConfiguration<int[]>("Array")
                     .Should().BeEquivalentTo(new[] {1, 2, 3, 4, 5}, options => options.WithStrictOrdering()));
+                
+                setup.SetupConfiguration(c => c.CustomizeConfigurationContext(env => 
+                    env.ConfigurationProvider.Get<int[]>(env.ConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {1, 2, 3, 4, 5}, options => options.WithStrictOrdering())));
             }));
 
             var result = await host.RunAsync();
@@ -317,6 +321,10 @@ namespace Vostok.Hosting.Tests
                 
                 setup.SetupConfiguration(c => c.GetIntermediateSecretConfiguration<int[]>("Array")
                     .Should().BeEquivalentTo(new[] {1, 2, 3}, options => options.WithStrictOrdering()));
+                
+                setup.SetupConfiguration(c => c.CustomizeConfigurationContext(env => 
+                    env.ConfigurationProvider.Get<int[]>(env.SecretConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {1, 2, 3}, options => options.WithStrictOrdering())));
             }));
 
             var result = await host.RunAsync();
@@ -348,6 +356,10 @@ namespace Vostok.Hosting.Tests
                 
                 setup.SetupConfiguration(c => c.GetIntermediateMergedConfiguration<int[]>("Array")
                     .Should().BeEquivalentTo(new[] {0, 1, 2, 3, 4, 5, 6}, options => options.WithStrictOrdering()));
+                
+                setup.SetupConfiguration(c => c.CustomizeConfigurationContext(env => 
+                    env.ConfigurationProvider.Get<int[]>(env.MergedConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {0, 1, 2, 3, 4, 5, 6}, options => options.WithStrictOrdering())));
             }));
 
             var result = await host.RunAsync();
