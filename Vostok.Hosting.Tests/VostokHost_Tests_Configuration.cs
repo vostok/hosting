@@ -4,6 +4,9 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Vostok.Commons.Testing;
+using Vostok.Configuration.Abstractions.Merging;
+using Vostok.Configuration.Extensions;
+using Vostok.Configuration.Sources;
 using Vostok.Configuration.Sources.Object;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Requirements;
@@ -251,6 +254,34 @@ namespace Vostok.Hosting.Tests
                     builder.SetupConfiguration(
                         (config, context) => { context.Datacenters.GetLocalDatacenter().Should().BeNull(); });
                 }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
+
+        [Test]
+        public async Task Should_combine_sources_in_order()
+        {
+            application = new Application(
+                env =>
+                {
+                    env.Log.Info("Configuration: {Configuration}", env.ConfigurationSource.Get());
+                    var array = env.ConfigurationProvider.Get<int[]>(env.ConfigurationSource.ScopeTo("Array"));
+                    array.Should().BeEquivalentTo(new[] {1, 2, 3, 4}, options => options.WithStrictOrdering());
+                });
+
+            host = new VostokHost(new TestHostSettings(application, setup =>
+            {
+                SetupEnvironment(setup);
+
+                setup.SetupConfiguration(c => c.AddSource(new ObjectSource(new {Array = new[] {1}})));
+                setup.SetupConfiguration(c => c.AddClusterConfig("settings2.json"));
+                setup.SetupConfiguration(c => c.AddSource(new ObjectSource(new {Array = new[] {3}})));
+                setup.SetupConfiguration(c => c.AddClusterConfig("settings4.json"));
+
+                setup.SetupConfiguration(c => c.CustomizeSettingsMerging(s => s.ArrayMergeStyle = ArrayMergeStyle.Concat));
+            }));
 
             var result = await host.RunAsync();
 
