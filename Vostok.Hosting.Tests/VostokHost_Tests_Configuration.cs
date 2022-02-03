@@ -261,14 +261,15 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
-        public async Task Should_combine_sources_in_order()
+        public async Task Should_combine_public_sources_in_order()
         {
             application = new Application(
                 env =>
                 {
-                    env.Log.Info("Configuration: {Configuration}", env.ConfigurationSource.Get());
-                    var array = env.ConfigurationProvider.Get<int[]>(env.ConfigurationSource.ScopeTo("Array"));
-                    array.Should().BeEquivalentTo(new[] {1, 2, 3, 4}, options => options.WithStrictOrdering());
+                    env.ConfigurationProvider.Get<int[]>(env.ConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {1, 2, 3, 4, 5}, options => options.WithStrictOrdering());
+                    env.ConfigurationProvider.Get<int[]>(env.SecretConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEmpty();
                 });
 
             host = new VostokHost(new TestHostSettings(application, setup =>
@@ -279,8 +280,74 @@ namespace Vostok.Hosting.Tests
                 setup.SetupConfiguration(c => c.AddClusterConfig("settings2.json"));
                 setup.SetupConfiguration(c => c.AddSource(new ObjectSource(new {Array = new[] {3}})));
                 setup.SetupConfiguration(c => c.AddClusterConfig("settings4.json"));
+                setup.SetupConfiguration(c => c.CustomizeConfigurationSource(s => s.CombineWith(new ObjectSource(new {Array = new[] {5}}), new SettingsMergeOptions {ArrayMergeStyle = ArrayMergeStyle.Concat})));
 
                 setup.SetupConfiguration(c => c.CustomizeSettingsMerging(s => s.ArrayMergeStyle = ArrayMergeStyle.Concat));
+                
+                setup.SetupConfiguration(c => c.GetIntermediateConfiguration<int[]>("Array")
+                    .Should().BeEquivalentTo(new[] {1, 2, 3, 4, 5}, options => options.WithStrictOrdering()));
+            }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
+        
+        [Test]
+        public async Task Should_combine_secret_sources_in_order()
+        {
+            application = new Application(
+                env =>
+                {
+                    env.ConfigurationProvider.Get<int[]>(env.SecretConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {1, 2, 3}, options => options.WithStrictOrdering());
+                    env.ConfigurationProvider.Get<int[]>(env.ConfigurationSource.ScopeTo("Array"))
+                        .Should().BeEmpty();
+                });
+
+            host = new VostokHost(new TestHostSettings(application, setup =>
+            {
+                SetupEnvironment(setup);
+
+                setup.SetupConfiguration(c => c.AddSecretSource(new ObjectSource(new {Array = new[] {1}})));
+                setup.SetupConfiguration(c => c.AddSecretSource(new ObjectSource(new {Array = new[] {2}})));
+                setup.SetupConfiguration(c => c.CustomizeSecretConfigurationSource(s => s.CombineWith(new ObjectSource(new {Array = new[] {3}}), new SettingsMergeOptions {ArrayMergeStyle = ArrayMergeStyle.Concat})));
+                
+                setup.SetupConfiguration(c => c.CustomizeSecretSettingsMerging(s => s.ArrayMergeStyle = ArrayMergeStyle.Concat));
+                
+                setup.SetupConfiguration(c => c.GetIntermediateSecretConfiguration<int[]>("Array")
+                    .Should().BeEquivalentTo(new[] {1, 2, 3}, options => options.WithStrictOrdering()));
+            }));
+
+            var result = await host.RunAsync();
+
+            result.State.Should().Be(VostokApplicationState.Exited);
+        }
+        
+        [Test]
+        public async Task Should_combine_merged_sources_in_order()
+        {
+            application = new Application(
+                env =>
+                {
+                });
+
+            host = new VostokHost(new TestHostSettings(application, setup =>
+            {
+                SetupEnvironment(setup);
+
+                setup.SetupConfiguration(c => c.AddSource(new ObjectSource(new {Array = new[] {0}})));
+                setup.SetupConfiguration(c => c.AddSecretSource(new ObjectSource(new {Array = new[] {1}})));
+                setup.SetupConfiguration(c => c.AddClusterConfig("settings2.json"));
+                setup.SetupConfiguration(c => c.AddSecretSource(new ObjectSource(new {Array = new[] {3}})));
+                setup.SetupConfiguration(c => c.AddClusterConfig("settings4.json"));
+                setup.SetupConfiguration(c => c.AddSource(new ObjectSource(new {Array = new[] {5}})));
+                setup.SetupConfiguration(c => c.CustomizeMergedConfigurationSource(s => s.CombineWith(new ObjectSource(new {Array = new[] {6}}), new SettingsMergeOptions {ArrayMergeStyle = ArrayMergeStyle.Concat})));
+
+                setup.SetupConfiguration(c => c.CustomizeMergedSettingsMerging(s => s.ArrayMergeStyle = ArrayMergeStyle.Concat));
+                
+                setup.SetupConfiguration(c => c.GetIntermediateMergedConfiguration<int[]>("Array")
+                    .Should().BeEquivalentTo(new[] {0, 1, 2, 3, 4, 5, 6}, options => options.WithStrictOrdering()));
             }));
 
             var result = await host.RunAsync();
