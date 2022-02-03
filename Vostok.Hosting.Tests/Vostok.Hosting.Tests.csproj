@@ -77,8 +77,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Configuration">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.configuration\Vostok.Configuration\bin\Release\$(ReferencesFramework)\Vostok.Configuration.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="settings\settings2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="settings\settings4.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
