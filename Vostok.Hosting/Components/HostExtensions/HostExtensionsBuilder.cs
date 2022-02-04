@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Vostok.Commons.Helpers;
+using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
@@ -42,6 +43,7 @@ namespace Vostok.Hosting.Components.HostExtensions
 
             HostExtensions.Add<IVostokApplicationDiagnostics>(context.DiagnosticsHub);
             HostExtensions.Add(context.Logs.LogEventLevelCounterFactory);
+            HostExtensions.Add<IConfigurationSource>("MergedConfigurationSource", context.MergedConfigurationSource);
 
             builderCustomization.Customize(this);
 

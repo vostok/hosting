@@ -22,7 +22,7 @@ using Vostok.Hosting.Setup;
 namespace Vostok.Hosting.Components.Configuration
 {
     internal class ConfigurationBuilder : IVostokConfigurationBuilder,
-        IBuilder<(SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>
+        IBuilder<(SwitchingSource source, SwitchingSource secretSource, SwitchingSource mergedSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>
     {
         private readonly List<Source> sources;
 
@@ -160,6 +160,7 @@ namespace Vostok.Hosting.Components.Configuration
 
         public (SwitchingSource source,
             SwitchingSource secretSource,
+            SwitchingSource mergedSource,
             ConfigurationProvider provider,
             ConfigurationProvider secretProvider) Build(BuildContext context)
         {
@@ -174,7 +175,7 @@ namespace Vostok.Hosting.Components.Configuration
 
             configurationContextCustomization.Customize(configurationContext);
 
-            return (source, secretSource, provider, secretProvider);
+            return (source, secretSource, mergedSource, provider, secretProvider);
         }
 
         public static IDisposable UseContext(BuildContext context)

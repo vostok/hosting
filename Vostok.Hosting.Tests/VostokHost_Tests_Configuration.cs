@@ -4,6 +4,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NUnit.Framework;
 using Vostok.Commons.Testing;
+using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Abstractions.Merging;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Sources;
@@ -338,6 +339,8 @@ namespace Vostok.Hosting.Tests
             application = new Application(
                 env =>
                 {
+                    env.ConfigurationProvider.Get<int[]>(env.HostExtensions.Get<IConfigurationSource>("MergedConfigurationSource").ScopeTo("Array"))
+                        .Should().BeEquivalentTo(new[] {0, 1, 2, 3, 4, 5, 6}, options => options.WithStrictOrdering());
                 });
 
             host = new VostokHost(new TestHostSettings(application, setup =>
