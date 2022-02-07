@@ -45,15 +45,8 @@ namespace Vostok.Hosting.Requirements
                         foreach (var requirement in RequirementDetector.GetRequiredSecretConfigurations(application))
                             SetupSource(context.SecretConfigurationProvider, context.SecretConfigurationSource, requirement.Scope, requirement.Type);
 
-                        var mergedSource = new CombinedSource(
-                            new[] {context.ConfigurationSource, context.SecretConfigurationSource},
-                            new SettingsMergeOptions
-                            {
-                                ArrayMergeStyle = ArrayMergeStyle.PerElement,
-                                ObjectMergeStyle = ObjectMergeStyle.Deep
-                            });
                         foreach (var requirement in RequirementDetector.GetRequiredMergedConfigurations(application))
-                            SetupSource(context.ConfigurationProvider, mergedSource, requirement.Scope, requirement.Type);
+                            SetupSource(context.ConfigurationProvider, context.MergedConfigurationSource, requirement.Scope, requirement.Type);
                     }));
         }
     }
