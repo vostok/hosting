@@ -1,3 +1,10 @@
+## 0.3.42 (07-02-2022):
+
+- Combine configuration sources in correct order
+- Added `CustomizeMergedSettingsMerging` and `CustomizeMergedConfigurationSource` methods for setting up `МergedConfigurationSource`
+- Added `МergedConfigurationSource` to `IVostokConfigurationContext`, `IVostokHostingEnvironmentSetupContext`
+- Added `МergedConfigurationSource` to host extensions (with `MergedConfigurationSource` key)
+
 ## 0.3.41 (26-01-2022):
 
 Added `AddRule` methods for Hercules/File/Console log builders.
