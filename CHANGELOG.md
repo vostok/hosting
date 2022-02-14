@@ -1,3 +1,7 @@
+## 0.3.43 (14-02-2022):
+
+Bump ClusterConfig dependency version
+
 ## 0.3.42 (07-02-2022):
 
 - Combine configuration sources in correct order
