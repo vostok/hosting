@@ -1,7 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
-using Vostok.Commons.Environment;
-using Vostok.Logging.Abstractions;
+﻿using JetBrains.Annotations;
 using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Setup
