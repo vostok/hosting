@@ -8,8 +8,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
-using Vostok.Logging.Context;
-using Vostok.Logging.Tracing;
 
 // ReSharper disable ParameterHidesMember
 
@@ -53,9 +51,9 @@ namespace Vostok.Hosting.Components.Log
                 rulesBuilder.Build(context),
                 finalLog => logCustomization.Customize(
                     (minLevelProvider != null ? finalLog.WithMinimumLevel(minLevelProvider) : finalLog)
-                    .WithApplicationIdentityProperties(context.ApplicationIdentity)
-                    .WithTracingProperties(context.Tracer)
-                    .WithOperationContext()));
+                   .WithEnrichedProperties(context)
+                )
+            );
         }
 
         public IVostokCompositeLogBuilder AddLog(ILog log)
