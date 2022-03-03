@@ -1,6 +1,10 @@
-## 0.3.44 (03-03-2022):
+## 0.3.45 (03-03-2022):
 
 Append host name from `EnvironmentInfo.Host` to LogProperties.
+
+## 0.3.44 (01-03-2022):
+
+Bump ClusterConfig dependency version
 
 ## 0.3.43 (14-02-2022):
 
