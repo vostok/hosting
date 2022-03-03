@@ -1,4 +1,6 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Commons.Environment;
+using Vostok.Logging.Abstractions;
 using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Setup
@@ -26,5 +28,12 @@ namespace Vostok.Hosting.Setup
         /// </summary>
         public static IVostokCompositeLogBuilder SetupConsoleLog([NotNull] this IVostokCompositeLogBuilder builder) =>
             builder.SetupConsoleLog(_ => {});
+
+        /// <summary>
+        /// Enriches composite log properties with given <see cref="hostName"/>.
+        /// Note that properties are enriched with <see cref="EnvironmentInfo.Host"/> by default.
+        /// </summary>
+        public static IVostokCompositeLogBuilder SetHostName([NotNull] this IVostokCompositeLogBuilder builder, [NotNull] string hostName) =>
+            builder.CustomizeLog(log => log.WithProperty("hostName", hostName));
     }
 }
