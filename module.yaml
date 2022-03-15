@@ -24,7 +24,7 @@ notests *default:
 
   deps:
     - vostok.servicediscovery.telemetry.hercules
-    - vostok.servicediscovery.telemetry@context-provider
+    - vostok.servicediscovery.telemetry
     - vostok.clusterclient.context
     - vostok.clusterclient.core
     - vostok.clusterclient.datacenters
