@@ -187,9 +187,9 @@ namespace Vostok.Hosting.Components.Environment
             }
 
             context.ServiceDiscoveryEventsContext = serviceDiscoveryEventsContextBuilder.Build(context);
-            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
-            if(settings.ConfigureStaticProviders)
+            if (settings.ConfigureStaticProviders)
                 ServiceDiscoveryEventsContextProvider.Configure(context.ServiceDiscoveryEventsContext, true);
+            context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders)
                 ClusterClientDefaults.ClientApplicationName = context.ServiceBeacon is ServiceBeacon beacon
