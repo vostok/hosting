@@ -57,6 +57,7 @@ namespace Vostok.Hosting.Components
         public IClusterConfigClient ClusterConfigClient { get; set; }
         public SwitchingSource ConfigurationSource { get; set; }
         public SwitchingSource SecretConfigurationSource { get; set; }
+        public SwitchingSource MergedConfigurationSource { get; set; }
         public ConfigurationProvider ConfigurationProvider { get; set; }
         public ConfigurationProvider SecretConfigurationProvider { get; set; }
         public IHerculesSink HerculesSink { get; set; }

@@ -1,3 +1,30 @@
+## 0.3.45 (03-03-2022):
+
+Append host name from `EnvironmentInfo.Host` to LogProperties.
+
+## 0.3.44 (01-03-2022):
+
+Bump ClusterConfig dependency version
+
+## 0.3.43 (14-02-2022):
+
+Bump ClusterConfig dependency version
+
+## 0.3.42 (07-02-2022):
+
+- Combine configuration sources in correct order
+- Added `CustomizeMergedSettingsMerging` and `CustomizeMergedConfigurationSource` methods for setting up `МergedConfigurationSource`
+- Added `МergedConfigurationSource` to `IVostokConfigurationContext`, `IVostokHostingEnvironmentSetupContext`
+- Added `МergedConfigurationSource` to host extensions (with `MergedConfigurationSource` key)
+
+## 0.3.41 (26-01-2022):
+
+Added `AddRule` methods for Hercules/File/Console log builders.
+
+## 0.3.40 (26-01-2022):
+
+Set up reporting period for GC monitor and DNS monitor.
+
 ## 0.3.39 (11-01-2022):
 
 - Added `IServiceDiscoveryEventsContext` setting

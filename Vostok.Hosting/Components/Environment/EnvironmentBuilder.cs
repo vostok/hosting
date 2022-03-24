@@ -49,7 +49,7 @@ namespace Vostok.Hosting.Components.Environment
 
         private readonly VostokHostingEnvironmentFactorySettings settings;
 
-        private readonly CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)> configurationBuilder;
+        private readonly CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, SwitchingSource mergedSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)> configurationBuilder;
         private readonly CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient> clusterConfigClientBuilder;
         private readonly CustomizableBuilder<LogsBuilder, Logs> compositeLogBuilder;
         private readonly CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity> applicationIdentityBuilder;
@@ -77,7 +77,7 @@ namespace Vostok.Hosting.Components.Environment
 
             shutdownTokens = new List<CancellationToken>();
             shutdownTimeout = ShutdownConstants.DefaultShutdownTimeout;
-            configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
+            configurationBuilder = new CustomizableBuilder<ConfigurationBuilder, (SwitchingSource source, SwitchingSource secretSource, SwitchingSource mergedSource, ConfigurationProvider provider, ConfigurationProvider secretProvider)>(new ConfigurationBuilder());
             clusterConfigClientBuilder = new CustomizableBuilder<ClusterConfigClientBuilder, IClusterConfigClient>(new ClusterConfigClientBuilder());
             compositeLogBuilder = new CustomizableBuilder<LogsBuilder, Logs>(new LogsBuilder());
             applicationIdentityBuilder = new CustomizableBuilder<ApplicationIdentityBuilder, IVostokApplicationIdentity>(new ApplicationIdentityBuilder());
@@ -144,6 +144,7 @@ namespace Vostok.Hosting.Components.Environment
                 {
                     (context.ConfigurationSource,
                         context.SecretConfigurationSource,
+                        context.MergedConfigurationSource,
                         context.ConfigurationProvider,
                         context.SecretConfigurationProvider) = configurationBuilder.Build(context);
                 }
@@ -155,6 +156,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.Log,
                 context.ConfigurationSource,
                 context.SecretConfigurationSource,
+                context.MergedConfigurationSource,
                 context.ConfigurationProvider,
                 context.SecretConfigurationProvider,
                 context.ClusterConfigClient,
@@ -228,6 +230,7 @@ namespace Vostok.Hosting.Components.Environment
 
             context.ConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
             context.SecretConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
+            context.MergedConfigurationSource.SwitchTo(src => src.Substitute(configSubstitutions));
 
             context.DiagnosticsHub = settings.DiagnosticMetricsEnabled
                 ? diagnosticsBuilder.Build(context)
