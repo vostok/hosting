@@ -1,8 +1,10 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
 using Vostok.Hercules.Client.Abstractions.Models;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Logging.Configuration;
 using Vostok.Logging.Hercules;
 using Vostok.Logging.Hercules.Configuration;
 
@@ -12,6 +14,7 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class HerculesLogBuilder : IVostokHerculesLogBuilder, IBuilder<ILog>
     {
+        private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<string> apiKeyProvider;
@@ -19,8 +22,9 @@ namespace Vostok.Hosting.Components.Log
         private volatile string stream;
         private volatile bool enabled;
 
-        public HerculesLogBuilder()
+        public HerculesLogBuilder(LogRulesBuilder rulesBuilder)
         {
+            this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<HerculesLogSettings>();
             logCustomization = new Customization<ILog>();
         }
@@ -63,6 +67,13 @@ namespace Vostok.Hosting.Components.Log
             return this;
         }
 
+        public IVostokHerculesLogBuilder AddRule(LogConfigurationRule rule)
+        {
+            rule = rule.WithLog(Logs.HerculesLogName);
+            rulesBuilder.Add(rule);
+            return this;
+        }
+        
         public IVostokHerculesLogBuilder CustomizeSettings(Action<HerculesLogSettings> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));

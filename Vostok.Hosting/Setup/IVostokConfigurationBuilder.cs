@@ -14,9 +14,11 @@ namespace Vostok.Hosting.Setup
 
         IVostokConfigurationBuilder CustomizeSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
         IVostokConfigurationBuilder CustomizeSecretSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
+        IVostokConfigurationBuilder CustomizeMergedSettingsMerging([NotNull] Action<SettingsMergeOptions> settingsCustomization);
 
         IVostokConfigurationBuilder CustomizeConfigurationSource([NotNull] Func<IConfigurationSource, IConfigurationSource> customization);
         IVostokConfigurationBuilder CustomizeSecretConfigurationSource([NotNull] Func<IConfigurationSource, IConfigurationSource> customization);
+        IVostokConfigurationBuilder CustomizeMergedConfigurationSource([NotNull] Func<IConfigurationSource, IConfigurationSource> customization);
 
         IVostokConfigurationBuilder CustomizeConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
         IVostokConfigurationBuilder CustomizeSecretConfigurationProvider([NotNull] Action<ConfigurationProviderSettings> settingsCustomization);
@@ -24,9 +26,7 @@ namespace Vostok.Hosting.Setup
         IVostokConfigurationBuilder CustomizePrintSettings([NotNull] Action<PrintSettings> settingsCustomization);
 
         TSettings GetIntermediateConfiguration<TSettings>(params string[] scope);
-
         TSettings GetIntermediateSecretConfiguration<TSettings>(params string[] scope);
-
         TSettings GetIntermediateMergedConfiguration<TSettings>(params string[] scope);
     }
 }
