@@ -56,6 +56,11 @@ namespace Vostok.Hosting
         public bool LogApplicationConfiguration { get; set; }
 
         /// <summary>
+        /// <para>If set to <c>true</c>, logs all environment variables that begin with <c>DOTNET_</c>, <c>COMPlus_</c>, <c>ASPNETCORE_</c>.</para>
+        /// </summary>
+        public bool LogDotnetEnvironmentVariables { get; set; } = true;
+
+        /// <summary>
         /// If set to <c>true</c>, warms up configuration sources before initializing the application. Required by <see cref="LogApplicationConfiguration"/>.
         /// </summary>
         public bool WarmupConfiguration { get; set; } = true;
