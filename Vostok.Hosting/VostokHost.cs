@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
@@ -471,6 +473,27 @@ namespace Vostok.Hosting
             log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
             log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
             log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
+
+            try
+            {
+                var dotnetPrefixes = new[] {"DOTNET_", "COMPlus_", "ASPNETCORE_"};
+                var environmentVariables = (IEnumerable)Environment.GetEnvironmentVariables();
+                var dotnetVariables = new Dictionary<string, string>();
+
+                foreach (DictionaryEntry entry in environmentVariables)
+                {
+                    if (entry.Key is string stringKey &&
+                        entry.Value is string stringValue &&
+                        dotnetPrefixes.Any(p => stringKey.StartsWith(p, StringComparison.InvariantCultureIgnoreCase)))
+                        dotnetVariables[stringKey] = stringValue;
+                }
+
+                log.Info("Application dotnet environment variables = '{EnvironmentVariables}'.", dotnetVariables);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
