@@ -1,7 +1,11 @@
+## 0.3.47 (07-04-2022):
+
+Added `ServiceDiscoveryEventsContextProvider` configure.
+
 ## 0.3.46 (07-04-2022):
 
 - Added `CustomizeOutputTemplate` extension that customizes file and console log templates. Use it with conduction of `WithPropertyAfter` extension for `OutputTemplate`.
-- Log dotnet environment variables on host start. 
+- Log dotnet environment variables on host start.
 
 ## 0.3.45 (03-03-2022):
 

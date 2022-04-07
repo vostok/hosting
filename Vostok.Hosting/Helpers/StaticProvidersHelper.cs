@@ -10,6 +10,7 @@ using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.ServiceDiscovery;
+using Vostok.ServiceDiscovery.Telemetry;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Helpers
@@ -29,6 +30,7 @@ namespace Vostok.Hosting.Helpers
         ///     <item><description><see cref="HerculesSinkProvider"/></description></item>
         ///     <item><description><see cref="DatacentersProvider"/></description></item>
         ///     <item><description><see cref="MetricContextProvider"/></description></item>
+        ///     <item><description><see cref="ServiceDiscoveryEventsContextProvider"/></description></item>
         ///     <item><description>ClusterConfigClient.<see cref="ClusterConfigClient.Default"/> (if not configured earlier)</description></item>
         ///     <item><description>ConfigurationProvider.<see cref="ConfigurationProvider.Default"/> (if not configured earlier)</description></item>
         /// </list>
@@ -62,6 +64,11 @@ namespace Vostok.Hosting.Helpers
             {
                 if (!ConfigurationProvider.TrySetDefault(configurationProvider))
                     log.Warn("ConfigurationProvider.Default has already been configured.");
+            }
+
+            if (environment.HostExtensions.TryGet<IServiceDiscoveryEventsContext>(out var context))
+            {
+                ServiceDiscoveryEventsContextProvider.Configure(context, true);
             }
         }
     }
