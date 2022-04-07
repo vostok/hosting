@@ -189,6 +189,8 @@ namespace Vostok.Hosting.Components.Environment
             }
 
             context.ServiceDiscoveryEventsContext = serviceDiscoveryEventsContextBuilder.Build(context);
+            if (settings.ConfigureStaticProviders)
+                ServiceDiscoveryEventsContextProvider.Configure(context.ServiceDiscoveryEventsContext, true);
             context.ServiceBeacon = serviceBeaconBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders)
