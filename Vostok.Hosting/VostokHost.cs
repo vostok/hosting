@@ -477,10 +477,9 @@ namespace Vostok.Hosting
             try
             {
                 var dotnetPrefixes = new[] {"DOTNET_", "COMPlus_", "ASPNETCORE_"};
-                var environmentVariables = (IEnumerable)Environment.GetEnvironmentVariables();
                 var dotnetVariables = new Dictionary<string, string>();
 
-                foreach (DictionaryEntry entry in environmentVariables)
+                foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
                 {
                     if (entry.Key is string stringKey &&
                         entry.Value is string stringValue &&
