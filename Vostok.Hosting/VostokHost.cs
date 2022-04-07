@@ -254,6 +254,7 @@ namespace Vostok.Hosting
             try
             {
                 LogEnvironmentInfo();
+                LogDotnetEnvironmentVariables();
                 LogApplicationIdentity(environment.ApplicationIdentity);
                 LogPort(environment.Port);
                 LogLocalDatacenter(environment.Datacenters);
@@ -473,7 +474,13 @@ namespace Vostok.Hosting
             log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
             log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
             log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
+        }
 
+        private void LogDotnetEnvironmentVariables()
+        {
+            if (!settings.LogDotnetEnvironmentVariables)
+                return;
+            
             try
             {
                 var dotnetPrefixes = new[] {"DOTNET_", "COMPlus_", "ASPNETCORE_"};
