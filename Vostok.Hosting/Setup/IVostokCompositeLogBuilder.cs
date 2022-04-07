@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Vostok.Configuration.Abstractions;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
+using Vostok.Logging.Formatting;
 
 namespace Vostok.Hosting.Setup
 {
@@ -34,5 +35,7 @@ namespace Vostok.Hosting.Setup
         IVostokCompositeLogBuilder SetupConsoleLog([NotNull] Action<IVostokConsoleLogBuilder> consoleLogSetup);
 
         IVostokCompositeLogBuilder SetupHerculesLog([NotNull] Action<IVostokHerculesLogBuilder> herculesLogSetup);
+
+        IVostokCompositeLogBuilder CustomizeOutputTemplate([NotNull] Func<OutputTemplate, OutputTemplate> outputTemplateCustomization);
     }
 }

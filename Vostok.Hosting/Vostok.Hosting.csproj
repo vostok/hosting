@@ -6,7 +6,7 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>0.3.46</VersionPrefix>
+    <VersionPrefix>0.3.47</VersionPrefix>
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.Hosting</Title>
@@ -203,6 +203,10 @@
     <Reference Include="Vostok.ServiceDiscovery.Telemetry.Hercules">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery.telemetry.hercules\Vostok.ServiceDiscovery.Telemetry.Hercules\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Telemetry.Hercules.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging.Formatting">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.logging.formatting\Vostok.Logging.Formatting\bin\Release\$(ReferencesFramework)\Vostok.Logging.Formatting.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
