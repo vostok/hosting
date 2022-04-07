@@ -8,6 +8,7 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Configuration;
+using Vostok.Logging.Formatting;
 
 // ReSharper disable ParameterHidesMember
 
@@ -119,6 +120,13 @@ namespace Vostok.Hosting.Components.Log
         {
             herculesLogBuilder.Enable();
             herculesLogSetup(herculesLogBuilder ?? throw new ArgumentNullException(nameof(herculesLogSetup)));
+            return this;
+        }
+
+        public IVostokCompositeLogBuilder CustomizeOutputTemplate(Func<OutputTemplate, OutputTemplate> outputTemplateCustomization)
+        {
+            fileLogBuilder.CustomizeSettings(settings => settings.OutputTemplate = outputTemplateCustomization(settings.OutputTemplate));
+            consoleLogBuilder.CustomizeSettings(settings => settings.OutputTemplate = outputTemplateCustomization(settings.OutputTemplate));
             return this;
         }
     }
