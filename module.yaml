@@ -8,7 +8,7 @@ notests *default:
   install:
     - Vostok.Hosting/bin/Release/netstandard2.0/Vostok.Hosting.dll
     - module vostok.clusterconfig.client
-    - module vostok.configuration@health-check
+    - module vostok.configuration
     - module vostok.configuration.sources
     - module vostok.hercules.client
     - module vostok.hosting.abstractions
@@ -38,7 +38,7 @@ notests *default:
     - vostok.commons.helpers/src
     - vostok.commons.threading/src
     - vostok.commons.time/src
-    - vostok.configuration
+    - vostok.configuration@health-check
     - vostok.configuration.abstractions
     - vostok.configuration.logging
     - vostok.configuration.sources
