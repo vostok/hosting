@@ -78,11 +78,14 @@ namespace Vostok.Hosting.Components.Diagnostics
                 checkerTask.SilentlyContinue().GetAwaiter().GetResult();
         }
 
-        public void LaunchPeriodicalChecks(CancellationToken externalToken)
+        public void PrepareToLaunchPeriodicalChecks(Task launchHealthChecksTriggerTask, CancellationToken externalToken)
         {
             var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(externalToken, cancellation.Token);
 
-            Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
+            (launchHealthChecksTriggerTask ?? Task.CompletedTask).ContinueWith(_ =>
+            {
+                Interlocked.Exchange(ref checkerTask, Task.Run(() => RunPeriodicallyAsync(linkedCancellation.Token)));
+            });
         }
 
         public async Task<HealthReport> RunChecksAsync(CancellationToken cancellationToken)

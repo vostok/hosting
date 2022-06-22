@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Helpers;
@@ -28,5 +29,12 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.DiagnosticMetricsEnabled"/>
         public bool DiagnosticMetricsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// <para>The completion of the specified task indicates a request to launch health checks.</para>
+        /// <para>Health checks will be started right away in case provided task is <c>null</c>.</para>
+        /// </summary>
+        [CanBeNull]
+        public Task LaunchHealthChecks { get; set; }
     }
 }
