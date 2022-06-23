@@ -1,3 +1,7 @@
+## 0.3.48 (23-06-2022):
+
+Add Configuration health check.
+
 ## 0.3.47 (07-04-2022):
 
 Added `ServiceDiscoveryEventsContextProvider` configure.
