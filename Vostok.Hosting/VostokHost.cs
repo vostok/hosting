@@ -21,6 +21,7 @@ using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
+using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Metrics;
@@ -388,7 +389,7 @@ namespace Vostok.Hosting
         private void ConfigureHostAfterBeaconRegistration()
         {
             if (settings.DiagnosticMetricsEnabled)
-                environment.Diagnostics.HealthTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
+                (environment.Diagnostics.HealthTracker as HealthTracker)!.LaunchPeriodicalChecks(environment.ShutdownToken);
         }
 
         private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
