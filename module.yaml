@@ -38,7 +38,7 @@ notests *default:
     - vostok.commons.helpers/src
     - vostok.commons.threading/src
     - vostok.commons.time/src
-    - vostok.configuration@health-check
+    - vostok.configuration
     - vostok.configuration.abstractions
     - vostok.configuration.logging
     - vostok.configuration.sources

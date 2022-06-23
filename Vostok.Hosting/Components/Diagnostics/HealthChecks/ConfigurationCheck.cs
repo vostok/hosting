@@ -16,9 +16,9 @@ public class ConfigurationCheck : IHealthCheck
 
     public Task<HealthCheckResult> CheckAsync(CancellationToken cancellationToken)
     {
-        var reason = configurationProvider.GetHealthStatus();
+        var reason = configurationProvider.GetHealthCheckResult();
 
-        var result = new HealthCheckResult(reason == null ? HealthStatus.Healthy : HealthStatus.Degraded, reason);
+        var result = new HealthCheckResult(reason.Error == null ? HealthStatus.Healthy : HealthStatus.Degraded, reason.Error);
 
         return Task.FromResult(result);
     }
