@@ -51,7 +51,7 @@ notests *default:
     - vostok.devtools
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
-    - vostok.hosting.abstractions
+    - vostok.hosting.abstractions@HealthChecksStart
     - vostok.logging.abstractions
     - vostok.logging.configuration
     - vostok.logging.console
