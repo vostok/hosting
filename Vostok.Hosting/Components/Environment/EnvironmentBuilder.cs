@@ -294,7 +294,7 @@ namespace Vostok.Hosting.Components.Environment
                 StaticProvidersHelper.Configure(vostokHostingEnvironment);
 
             if (settings.DiagnosticMetricsEnabled)
-                context.DiagnosticsHub.HealthTracker.PrepareToLaunchPeriodicalChecks(settings.LaunchHealthChecks, vostokHostingEnvironment.ShutdownToken);
+                context.DiagnosticsHub.HealthTracker.LaunchPeriodicalChecks(vostokHostingEnvironment.ShutdownToken);
 
             if (settings.DiagnosticMetricsEnabled)
                 context.RegisterDisposable(HealthCheckMetrics.Measure(context.DiagnosticsHub.HealthTracker, context.Metrics));

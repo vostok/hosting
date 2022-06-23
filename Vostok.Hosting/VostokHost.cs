@@ -16,13 +16,11 @@ using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
-using Vostok.Configuration.Extensions.Observable;
 using Vostok.Configuration.Primitives;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
-using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Environment;
 using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Metrics;
@@ -208,7 +206,15 @@ namespace Vostok.Hosting
 
             try
             {
-                var environmentFactorySettings = CreateFactorySettings();
+                var environmentFactorySettings = new VostokHostingEnvironmentFactorySettings
+                {
+                    ConfigureStaticProviders = settings.ConfigureStaticProviders,
+                    BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
+                    BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
+                    DisposeComponentTimeout = settings.DisposeComponentTimeout,
+                    SendAnnotations = settings.SendAnnotations,
+                    DiagnosticMetricsEnabled = settings.DiagnosticMetricsEnabled
+                };
 
                 environment = EnvironmentBuilder.Build(SetupEnvironment, environmentFactorySettings);
 
@@ -220,26 +226,6 @@ namespace Vostok.Hosting
             {
                 return ReturnResult(VostokApplicationState.CrashedDuringEnvironmentSetup, error);
             }
-        }
-
-        private VostokHostingEnvironmentFactorySettings CreateFactorySettings()
-        {
-            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-            onApplicationStateChanged
-               .Where(x => x == VostokApplicationState.Initialized)
-               .SubscribeOnce(_ => tcs.TrySetResult(true));
-
-            return new VostokHostingEnvironmentFactorySettings
-            {
-                ConfigureStaticProviders = settings.ConfigureStaticProviders,
-                BeaconShutdownTimeout = settings.BeaconShutdownTimeout,
-                BeaconShutdownWaitEnabled = settings.BeaconShutdownWaitEnabled,
-                DisposeComponentTimeout = settings.DisposeComponentTimeout,
-                SendAnnotations = settings.SendAnnotations,
-                DiagnosticMetricsEnabled = settings.DiagnosticMetricsEnabled,
-                LaunchHealthChecks = tcs.Task
-            };
         }
 
         private void SetupEnvironment(IVostokHostingEnvironmentBuilder builder)
