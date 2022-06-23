@@ -61,6 +61,12 @@ namespace Vostok.Hosting.Components.Diagnostics
             if (healthSettings.AddDnsResolutionCheck && RuntimeDetector.IsDotNet50AndNewer)
                 healthTracker.RegisterCheck(WellKnownHealthCheckNames.DnsResolution, context.RegisterDisposable(new DnsResolutionCheck()));
 
+            if (healthSettings.AddConfigurationCheck)
+            {
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.Configuration, context.RegisterDisposable(new ConfigurationCheck(context.ConfigurationProvider)));
+                healthTracker.RegisterCheck(WellKnownHealthCheckNames.SecretConfiguration, context.RegisterDisposable(new ConfigurationCheck(context.SecretConfigurationProvider)));
+            }
+
             return healthTracker;
         }
 
