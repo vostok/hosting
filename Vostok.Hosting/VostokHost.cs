@@ -19,6 +19,7 @@ using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Diagnostics;
@@ -299,7 +300,13 @@ namespace Vostok.Hosting
                 if (!beaconStarted)
                     return ReturnResult(VostokApplicationState.CrashedDuringInitialization, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
 
-                ConfigureHostAfterBeaconRegistration();
+                if (settings.DiagnosticMetricsEnabled)
+                {
+                    if (environment.Diagnostics.HealthTracker is HealthTracker healthTracker)
+                        healthTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
+                    else
+                        log.Warn($"Provided {nameof(IHealthTracker)} instance is of unknown type {environment.Diagnostics.HealthTracker.GetType().Name}, unable to launch periodical health checks.");
+                }
 
                 return initializationResult;
             }
@@ -384,12 +391,6 @@ namespace Vostok.Hosting
                 log.Info("Application exited.");
                 return ReturnResult(VostokApplicationState.Exited);
             }
-        }
-
-        private void ConfigureHostAfterBeaconRegistration()
-        {
-            if (settings.DiagnosticMetricsEnabled)
-                (environment.Diagnostics.HealthTracker as HealthTracker)!.LaunchPeriodicalChecks(environment.ShutdownToken);
         }
 
         private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
