@@ -298,6 +298,8 @@ namespace Vostok.Hosting
                 if (!beaconStarted)
                     return ReturnResult(VostokApplicationState.CrashedDuringInitialization, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
 
+                ConfigureHostAfterBeaconRegistration();
+
                 return initializationResult;
             }
             catch (Exception error)
@@ -381,6 +383,12 @@ namespace Vostok.Hosting
                 log.Info("Application exited.");
                 return ReturnResult(VostokApplicationState.Exited);
             }
+        }
+
+        private void ConfigureHostAfterBeaconRegistration()
+        {
+            if (settings.DiagnosticMetricsEnabled)
+                environment.Diagnostics.HealthTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
         }
 
         private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
