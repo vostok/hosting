@@ -1,6 +1,10 @@
+## 0.3.49 (26-06-2022):
+
+Moved health checks launch to after warmup.
+
 ## 0.3.48 (23-06-2022):
 
-Add Configuration health check.
+Added configuration health check.
 
 ## 0.3.47 (07-04-2022):
 
