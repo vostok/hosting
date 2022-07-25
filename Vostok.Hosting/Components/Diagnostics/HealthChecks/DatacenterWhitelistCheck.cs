@@ -25,7 +25,8 @@ namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
             if (activeDatacenters.Contains(localDatacenter))
                 return Task.FromResult(HealthCheckResult.Healthy());
 
-            return Task.FromResult(HealthCheckResult.Failing($"Local datacenter '{localDatacenter}' is not among active datacenters ({string.Join(", ", activeDatacenters)})."));
+            return Task.FromResult(HealthCheckResult.Failing(
+                $"Local datacenter '{localDatacenter}' is not among active datacenters ({string.Join(", ", activeDatacenters.Select(d => $"'{d}'"))})."));
         }
     }
 }
