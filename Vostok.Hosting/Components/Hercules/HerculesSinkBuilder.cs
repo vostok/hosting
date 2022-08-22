@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Web;
+using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Commons.Helpers;
@@ -8,6 +11,7 @@ using Vostok.Hosting.Components.ClusterProvider;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Tracing.Extensions.Http;
 
 // ReSharper disable ParameterHidesMember
 
@@ -168,9 +172,29 @@ namespace Vostok.Hosting.Components.Hercules
                 AdditionalSetup = setup =>
                 {
                     setup.ClientApplicationName = formattedServiceName;
-                    setup.SetupDistributedTracing(tracer);
-                }
+                    setup.SetupDistributedTracing(new TracingConfiguration(tracer)
+                    {
+                        SetAdditionalRequestDetails = SetStreamName
+                    });
+                },
+                SuppressVerboseLogging =false 
             };
+        }
+
+        private static void SetStreamName(IHttpRequestSpanBuilder spanBuilder, Request request)
+        {
+            try
+            {
+                // todo (kungurtsev, 22.08.2022): move to clusterclient.core?
+                var stream = HttpUtility.ParseQueryString(request.Url.ToString().Split('?').Last()).Get("stream");
+                if (stream == null)
+                    return;
+                spanBuilder.SetAnnotation("http.request.stream", Uri.UnescapeDataString(stream));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }
