@@ -176,8 +176,7 @@ namespace Vostok.Hosting.Components.Hercules
                     {
                         SetAdditionalRequestDetails = SetStreamName
                     });
-                },
-                SuppressVerboseLogging =false 
+                }
             };
         }
 
