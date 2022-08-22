@@ -23,6 +23,7 @@ notests *default:
     - module vostok.zookeeper.client
 
   deps:
+    - vostok.tracing.extensions
     - vostok.logging.formatting
     - vostok.servicediscovery.telemetry.hercules
     - vostok.servicediscovery.telemetry
@@ -31,7 +32,7 @@ notests *default:
     - vostok.clusterclient.datacenters
     - vostok.clusterclient.topology.cc
     - vostok.clusterclient.topology.sd
-    - vostok.clusterclient.tracing
+    - vostok.clusterclient.tracing@set-custom-annotations
     - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
     - vostok.commons.environment/src
