@@ -182,18 +182,8 @@ namespace Vostok.Hosting.Components.Hercules
 
         private static void SetStreamName(IHttpRequestSpanBuilder spanBuilder, Request request)
         {
-            try
-            {
-                // todo (kungurtsev, 22.08.2022): move to clusterclient.core?
-                var stream = HttpUtility.ParseQueryString(request.Url.ToString().Split('?').Last()).Get("stream");
-                if (stream == null)
-                    return;
-                spanBuilder.SetAnnotation("http.request.stream", Uri.UnescapeDataString(stream));
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            if (request.TryGetQueryParameter("stream", out var stream))
+                spanBuilder.SetAnnotation("http.request.stream", stream);
         }
     }
 }
