@@ -28,7 +28,7 @@ notests *default:
     - vostok.servicediscovery.telemetry.hercules
     - vostok.servicediscovery.telemetry
     - vostok.clusterclient.context
-    - vostok.clusterclient.core
+    - vostok.clusterclient.core@get-query-parameter
     - vostok.clusterclient.datacenters
     - vostok.clusterclient.topology.cc
     - vostok.clusterclient.topology.sd
