@@ -28,11 +28,11 @@ notests *default:
     - vostok.servicediscovery.telemetry.hercules
     - vostok.servicediscovery.telemetry
     - vostok.clusterclient.context
-    - vostok.clusterclient.core@get-query-parameter
+    - vostok.clusterclient.core
     - vostok.clusterclient.datacenters
     - vostok.clusterclient.topology.cc
     - vostok.clusterclient.topology.sd
-    - vostok.clusterclient.tracing@set-custom-annotations
+    - vostok.clusterclient.tracing
     - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
     - vostok.commons.environment/src
