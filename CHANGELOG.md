@@ -1,3 +1,7 @@
+## 0.3.50 (05-09-2022):
+
+Fixed small bug with `EnsureSuccess` in `WithSigtermCancellation`.
+
 ## 0.3.49 (26-06-2022):
 
 Moved health checks launch to after warmup.
