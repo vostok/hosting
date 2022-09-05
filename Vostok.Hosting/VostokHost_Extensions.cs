@@ -53,7 +53,7 @@ namespace Vostok.Hosting
         /// </summary>
         public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost)
         {
-            AppDomain.CurrentDomain.ProcessExit += (sender, e) => { vostokHost.Stop(); };
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => vostokHost.Stop(false);
 
             return vostokHost;
         }
