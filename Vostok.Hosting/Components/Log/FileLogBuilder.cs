@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private readonly ComponentStateManager stateManager;
+        private readonly ComponentState state;
         private volatile Func<FileLogSettings> settingsProvider;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile bool disposeWithEnvironment;
@@ -27,27 +27,27 @@ namespace Vostok.Hosting.Components.Log
             this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<FileLogSettings>();
             logCustomization = new Customization<ILog>();
-            stateManager = new ComponentStateManager();
+            state = new ComponentState();
             disposeWithEnvironment = true;
         }
 
-        public bool IsEnabled => stateManager.IsEnabled();
+        public bool IsEnabled => state.IsEnabled();
 
         public IVostokFileLogBuilder Enable()
         {
-            stateManager.Enable(false);
+            state.Enable();
             return this;
         }
         
         public IVostokFileLogBuilder AutoEnable()
         {
-            stateManager.Enable(true);
+            state.AutoEnable();
             return this;
         }
 
         public IVostokFileLogBuilder Disable()
         {
-            stateManager.Disable();
+            state.Disable();
             return this;
         }
 
