@@ -13,14 +13,16 @@ namespace Vostok.Hosting.Setup
 
         IVostokConsoleLogBuilder UseAsynchronous();
 
+        bool IsEnabled { get; }
+
         IVostokConsoleLogBuilder Enable();
-        
+
         IVostokConsoleLogBuilder Disable();
 
         IVostokConsoleLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
 
         IVostokConsoleLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
-        
+
         IVostokConsoleLogBuilder AddRule([NotNull] LogConfigurationRule rule);
 
         IVostokConsoleLogBuilder CustomizeSettings([NotNull] Action<ConsoleLogSettings> settingsCustomization);

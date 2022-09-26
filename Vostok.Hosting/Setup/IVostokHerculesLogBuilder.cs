@@ -9,8 +9,10 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHerculesLogBuilder
     {
+        bool IsEnabled { get; }
+
         IVostokHerculesLogBuilder Enable();
-        
+
         IVostokHerculesLogBuilder Disable();
 
         IVostokHerculesLogBuilder SetStream([NotNull] string stream);
@@ -22,7 +24,7 @@ namespace Vostok.Hosting.Setup
         IVostokHerculesLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
 
         IVostokHerculesLogBuilder AddRule([NotNull] LogConfigurationRule rule);
-        
+
         IVostokHerculesLogBuilder CustomizeSettings([NotNull] Action<HerculesLogSettings> settingsCustomization);
     }
 }
