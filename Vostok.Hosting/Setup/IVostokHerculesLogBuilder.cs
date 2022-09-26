@@ -9,6 +9,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokHerculesLogBuilder
     {
+        IVostokHerculesLogBuilder Enable();
+        
         IVostokHerculesLogBuilder Disable();
 
         IVostokHerculesLogBuilder SetStream([NotNull] string stream);

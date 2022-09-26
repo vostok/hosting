@@ -9,6 +9,8 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokFileLogBuilder
     {
+        IVostokFileLogBuilder Enable();
+        
         IVostokFileLogBuilder Disable();
 
         IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
