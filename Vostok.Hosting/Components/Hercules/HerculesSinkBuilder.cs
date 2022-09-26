@@ -16,7 +16,7 @@ namespace Vostok.Hosting.Components.Hercules
     internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
-        private readonly ComponentStateManager stateManager;
+        private readonly ComponentState state;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile Func<string> apiKeyProvider;
         private volatile bool verboseLogging;
@@ -25,10 +25,10 @@ namespace Vostok.Hosting.Components.Hercules
         public HerculesSinkBuilder()
         {
             settingsCustomization = new Customization<HerculesSinkSettings>();
-            stateManager = new ComponentStateManager();
+            state = new ComponentState();
         }
 
-        public bool IsEnabled => stateManager.IsEnabled();
+        public bool IsEnabled => state.IsEnabled();
 
         public IHerculesSink Build(BuildContext context)
         {
@@ -66,19 +66,19 @@ namespace Vostok.Hosting.Components.Hercules
 
         public IVostokHerculesSinkBuilder Enable()
         {
-            stateManager.Enable(false);
+            state.Enable();
             return this;
         }
 
         public IVostokHerculesSinkBuilder AutoEnable()
         {
-            stateManager.Enable(true);
+            state.AutoEnable();
             return this;
         }
 
         public IVostokHerculesSinkBuilder Disable()
         {
-            stateManager.Disable();
+            state.Disable();
             return this;
         }
 

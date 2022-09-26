@@ -17,14 +17,14 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
     {
         private readonly Customization<ServiceBeaconSettings> settingsCustomization;
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
-        private readonly ComponentStateManager stateManager;
+        private readonly ComponentState state;
         private volatile IVostokApplicationIdentity applicationIdentity;
         private volatile bool registrationDeniedFromNonActiveDatacenters;
 
         public ServiceBeaconBuilder()
         {
             replicaInfoCustomization = new Customization<IReplicaInfoBuilder>();
-            stateManager = new ComponentStateManager();
+            state = new ComponentState();
 
             replicaInfoCustomization.AddCustomization(
                 s =>
@@ -36,7 +36,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
 
-        public bool IsEnabled => stateManager.IsEnabled();
+        public bool IsEnabled => state.IsEnabled();
 
         public IServiceBeacon Build(BuildContext context)
         {
@@ -60,19 +60,19 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public IVostokServiceBeaconBuilder Enable()
         {
-            stateManager.Enable(false);
+            state.Enable();
             return this;
         }
         
         public IVostokServiceBeaconBuilder AutoEnable()
         {
-            stateManager.Enable(true);
+            state.AutoEnable();
             return this;
         }
 
         public IVostokServiceBeaconBuilder Disable()
         {
-            stateManager.Disable();
+            state.Disable();
             return this;
         }
 

@@ -19,7 +19,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
     internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
-        private readonly ComponentStateManager stateManager;
+        private readonly ComponentState state;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
         private volatile IZooKeeperClient instance;
@@ -28,26 +28,26 @@ namespace Vostok.Hosting.Components.ZooKeeper
         public ZooKeeperClientBuilder()
         {
             settingsCustomization = new Customization<ZooKeeperClientSettings>();
-            stateManager = new ComponentStateManager();
+            state = new ComponentState();
         }
 
-        public bool IsEnabled => stateManager.IsEnabled();
+        public bool IsEnabled => state.IsEnabled();
 
         public IVostokZooKeeperClientBuilder Enable()
         {
-            stateManager.Enable(false);
+            state.Enable();
             return this;
         }
         
         public IVostokZooKeeperClientBuilder AutoEnable()
         {
-            stateManager.Enable(true);
+            state.AutoEnable();
             return this;
         }
 
         public IVostokZooKeeperClientBuilder Disable()
         {
-            stateManager.Disable();
+            state.Disable();
             return this;
         }
 

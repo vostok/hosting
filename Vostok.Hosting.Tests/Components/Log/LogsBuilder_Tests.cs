@@ -20,6 +20,7 @@ namespace Vostok.Hosting.Tests.Components.Log
         public void Should_not_auto_enable_console_log_when_manually_disabled()
         {
             var builder = new LogsBuilder()
+                .SetupConsoleLog(_ => {})
                 .SetupConsoleLog(b => b.Disable())
                 .SetupConsoleLog(_ => {});
 

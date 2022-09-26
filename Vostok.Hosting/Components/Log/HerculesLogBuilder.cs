@@ -17,7 +17,7 @@ namespace Vostok.Hosting.Components.Log
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private readonly ComponentStateManager stateManager;        
+        private readonly ComponentState state;        
         private volatile Func<string> apiKeyProvider;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile string stream;
@@ -27,26 +27,26 @@ namespace Vostok.Hosting.Components.Log
             this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<HerculesLogSettings>();
             logCustomization = new Customization<ILog>();
-            stateManager = new ComponentStateManager();
+            state = new ComponentState();
         }
 
-        public bool IsEnabled => stateManager.IsEnabled();
+        public bool IsEnabled => state.IsEnabled();
 
         public IVostokHerculesLogBuilder Enable()
         {
-            stateManager.Enable(false);
+            state.Enable();
             return this;
         }
         
         public IVostokHerculesLogBuilder AutoEnable()
         {
-            stateManager.Enable(true);
+            state.AutoEnable();
             return this;
         }
 
         public IVostokHerculesLogBuilder Disable()
         {
-            stateManager.Disable();
+            state.Disable();
             return this;
         }
 
