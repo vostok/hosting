@@ -234,7 +234,6 @@ namespace Vostok.Hosting.Tests
             environment.ServiceBeacon.Should().BeOfType<ServiceBeacon>();
         }
 
-        
         [Test]
         public void Should_not_auto_enable_hercules_sink_if_manually_disabled()
         {
