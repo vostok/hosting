@@ -15,8 +15,8 @@ namespace Vostok.Hosting.Components.Log
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<ConsoleLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
+        private readonly ComponentStateManager stateManager;
         private volatile Func<LogLevel> minLevelProvider;
-        private volatile bool enabled;
         private volatile bool synchronous;
 
         public ConsoleLogBuilder(LogRulesBuilder rulesBuilder)
@@ -24,9 +24,10 @@ namespace Vostok.Hosting.Components.Log
             this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<ConsoleLogSettings>();
             logCustomization = new Customization<ILog>();
+            stateManager = new ComponentStateManager();
         }
 
-        public bool IsEnabled => enabled;
+        public bool IsEnabled => stateManager.IsEnabled();
 
         public IVostokConsoleLogBuilder UseSynchronous()
         {
@@ -42,13 +43,19 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokConsoleLogBuilder Enable()
         {
-            enabled = true;
+            stateManager.Enable(false);
+            return this;
+        }
+        
+        public IVostokConsoleLogBuilder AutoEnable()
+        {
+            stateManager.Enable(true);
             return this;
         }
 
         public IVostokConsoleLogBuilder Disable()
         {
-            enabled = false;
+            stateManager.Disable();
             return this;
         }
 
@@ -79,7 +86,7 @@ namespace Vostok.Hosting.Components.Log
 
         public ILog Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("ConsoleLog");
                 return null;

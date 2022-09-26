@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Components.ClusterProvider;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
@@ -18,26 +19,35 @@ namespace Vostok.Hosting.Components.ZooKeeper
     internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
+        private readonly ComponentStateManager stateManager;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
-        private volatile bool enabled;
         private volatile IZooKeeperClient instance;
         private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
-            => settingsCustomization = new Customization<ZooKeeperClientSettings>();
+        {
+            settingsCustomization = new Customization<ZooKeeperClientSettings>();
+            stateManager = new ComponentStateManager();
+        }
 
-        public bool IsEnabled => enabled;
+        public bool IsEnabled => stateManager.IsEnabled();
 
         public IVostokZooKeeperClientBuilder Enable()
         {
-            enabled = true;
+            stateManager.Enable(false);
+            return this;
+        }
+        
+        public IVostokZooKeeperClientBuilder AutoEnable()
+        {
+            stateManager.Enable(true);
             return this;
         }
 
         public IVostokZooKeeperClientBuilder Disable()
         {
-            enabled = false;
+            stateManager.Disable();
             return this;
         }
 
@@ -96,7 +106,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
         public IZooKeeperClient Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("ZooKeeperClient");
                 return null;
