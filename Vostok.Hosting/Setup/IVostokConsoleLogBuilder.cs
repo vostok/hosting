@@ -13,6 +13,8 @@ namespace Vostok.Hosting.Setup
 
         IVostokConsoleLogBuilder UseAsynchronous();
 
+        IVostokConsoleLogBuilder Enable();
+        
         IVostokConsoleLogBuilder Disable();
 
         IVostokConsoleLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
