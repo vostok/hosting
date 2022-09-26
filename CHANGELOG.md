@@ -1,4 +1,4 @@
-## 0.3.51 (26-09-2022):
+## 0.3.52 (26-09-2022):
 
 Added `Enable` method to `IVostokFileLogBuilder`, `IVostokConsoleLogBuilder`, `IVostokHerculesLogBuilder`. 
 
