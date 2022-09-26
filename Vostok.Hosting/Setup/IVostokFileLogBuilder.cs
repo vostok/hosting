@@ -9,14 +9,16 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokFileLogBuilder
     {
+        bool IsEnabled { get; }
+
         IVostokFileLogBuilder Enable();
-        
+
         IVostokFileLogBuilder Disable();
 
         IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider);
 
         IVostokFileLogBuilder CustomizeLog([NotNull] Func<ILog, ILog> logCustomization);
-        
+
         IVostokFileLogBuilder AddRule([NotNull] LogConfigurationRule rule);
 
         IVostokFileLogBuilder CustomizeSettings([NotNull] Action<FileLogSettings> settingsCustomization);
