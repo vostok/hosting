@@ -427,42 +427,42 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder> setup)
         {
-            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
+            zooKeeperClientBuilder.AddCustomization(b => b.AutoEnable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupZooKeeperClient(Action<IVostokZooKeeperClientBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            zooKeeperClientBuilder.AddCustomization(b => b.Enable());
+            zooKeeperClientBuilder.AddCustomization(b => b.AutoEnable());
             zooKeeperClientBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder> setup)
         {
-            herculesSinkBuilder.AddCustomization(b => b.Enable());
+            herculesSinkBuilder.AddCustomization(b => b.AutoEnable());
             herculesSinkBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupHerculesSink(Action<IVostokHerculesSinkBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            herculesSinkBuilder.AddCustomization(b => b.Enable());
+            herculesSinkBuilder.AddCustomization(b => b.AutoEnable());
             herculesSinkBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder> setup)
         {
-            serviceBeaconBuilder.AddCustomization(b => b.Enable());
+            serviceBeaconBuilder.AddCustomization(b => b.AutoEnable());
             serviceBeaconBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupServiceBeacon(Action<IVostokServiceBeaconBuilder, IVostokHostingEnvironmentSetupContext> setup)
         {
-            serviceBeaconBuilder.AddCustomization(b => b.Enable());
+            serviceBeaconBuilder.AddCustomization(b => b.AutoEnable());
             serviceBeaconBuilder.AddCustomization(setup ?? throw new ArgumentNullException(nameof(setup)));
             return this;
         }

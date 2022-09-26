@@ -53,6 +53,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.hercules.client.abstractions\Vostok.Hercules.Client.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Hercules.Client.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Hercules.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.hercules.client\Vostok.Hercules.Client\bin\Release\$(ReferencesFramework)\Vostok.Hercules.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Vostok.ClusterClient.Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.clusterclient.core\Vostok.ClusterClient.Core\bin\Release\$(ReferencesFramework)\Vostok.ClusterClient.Core.dll</HintPath>
@@ -76,6 +80,10 @@
     <Reference Include="Vostok.ServiceDiscovery">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.servicediscovery\Vostok.ServiceDiscovery\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.ServiceDiscovery.Abstractions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.servicediscovery.abstractions\Vostok.ServiceDiscovery.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.ServiceDiscovery.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Configuration">
       <SpecificVersion>False</SpecificVersion>
