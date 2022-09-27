@@ -17,10 +17,20 @@ namespace Vostok.Hosting.Tests.Components.Log
         }
 
         [Test]
-        public void Should_disable_console_log()
+        public void Should_disable_console_log_after_auto_enable()
         {
             var builder = new LogsBuilder()
                 .SetupConsoleLog(_ => {})
+                .SetupConsoleLog(b => b.Disable());
+
+            builder.IsConsoleLogEnabled.Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_disable_console_log_after_manually_enable()
+        {
+            var builder = new LogsBuilder()
+                .SetupConsoleLog(b => b.Enable())
                 .SetupConsoleLog(b => b.Disable());
 
             builder.IsConsoleLogEnabled.Should().BeFalse();
@@ -44,7 +54,7 @@ namespace Vostok.Hosting.Tests.Components.Log
                 .SetupConsoleLog(_ => {})
                 .SetupConsoleLog(b => b.Disable())
                 .SetupConsoleLog(b => b.Enable());
-            
+
             builder.IsConsoleLogEnabled.Should().BeTrue();
         }
     }
