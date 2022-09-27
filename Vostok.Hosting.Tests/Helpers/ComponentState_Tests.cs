@@ -7,6 +7,14 @@ namespace Vostok.Hosting.Tests.Helpers
     [TestFixture]
     public class ComponentState_Tests
     {
+        
+        [Test]
+        public void Should_be_not_enabled_when_state_is_not_initialized()
+        {
+            var state = new ComponentState();
+            state.IsEnabled().Should().BeFalse();
+        }
+        
         [Test]
         public void Should_auto_enable_when_state_is_not_initialized()
         {

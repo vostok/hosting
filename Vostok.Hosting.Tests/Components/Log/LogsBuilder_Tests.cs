@@ -1,6 +1,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using Vostok.Hosting.Components.Log;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting.Tests.Components.Log
 {
@@ -54,6 +55,17 @@ namespace Vostok.Hosting.Tests.Components.Log
                 .SetupConsoleLog(_ => {})
                 .SetupConsoleLog(b => b.Disable())
                 .SetupConsoleLog(b => b.Enable());
+
+            builder.IsConsoleLogEnabled.Should().BeTrue();
+        }
+        
+        [Test]
+        public void Should_enable_console_log_when_manually_disabled_and_then_enabled_with_extension()
+        {
+            var builder = new LogsBuilder()
+                .SetupConsoleLog(_ => {})
+                .SetupConsoleLog(b => b.Disable())
+                .SetupConsoleLog();
 
             builder.IsConsoleLogEnabled.Should().BeTrue();
         }
