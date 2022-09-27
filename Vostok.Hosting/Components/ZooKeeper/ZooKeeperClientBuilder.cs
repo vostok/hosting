@@ -16,40 +16,18 @@ using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
+    internal class ZooKeeperClientBuilder : SwitchableComponent<IVostokZooKeeperClientBuilder>,
+        IVostokZooKeeperClientBuilder,
+        IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
-        private readonly ComponentState state;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
         private volatile IZooKeeperClient instance;
         private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
-        {
-            settingsCustomization = new Customization<ZooKeeperClientSettings>();
-            state = new ComponentState();
-        }
-
-        public bool IsEnabled => state.IsEnabled();
-
-        public IVostokZooKeeperClientBuilder Enable()
-        {
-            state.Enable();
-            return this;
-        }
-        
-        public IVostokZooKeeperClientBuilder AutoEnable()
-        {
-            state.AutoEnable();
-            return this;
-        }
-
-        public IVostokZooKeeperClientBuilder Disable()
-        {
-            state.Disable();
-            return this;
-        }
+            => settingsCustomization = new Customization<ZooKeeperClientSettings>();
 
         public IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance)
         {

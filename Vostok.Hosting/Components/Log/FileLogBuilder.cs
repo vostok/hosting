@@ -12,12 +12,13 @@ using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class FileLogBuilder : IVostokFileLogBuilder, IBuilder<(ILog FileLog, Action Dispose)>
+    internal class FileLogBuilder : SwitchableComponent<IVostokFileLogBuilder>,
+        IVostokFileLogBuilder,
+        IBuilder<(ILog FileLog, Action Dispose)>
     {
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private readonly ComponentState state;
         private volatile Func<FileLogSettings> settingsProvider;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile bool disposeWithEnvironment;
@@ -27,28 +28,7 @@ namespace Vostok.Hosting.Components.Log
             this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<FileLogSettings>();
             logCustomization = new Customization<ILog>();
-            state = new ComponentState();
             disposeWithEnvironment = true;
-        }
-
-        public bool IsEnabled => state.IsEnabled();
-
-        public IVostokFileLogBuilder Enable()
-        {
-            state.Enable();
-            return this;
-        }
-        
-        public IVostokFileLogBuilder AutoEnable()
-        {
-            state.AutoEnable();
-            return this;
-        }
-
-        public IVostokFileLogBuilder Disable()
-        {
-            state.Disable();
-            return this;
         }
 
         public IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
@@ -62,7 +42,7 @@ namespace Vostok.Hosting.Components.Log
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
             return this;
         }
-        
+
         public IVostokFileLogBuilder AddRule(LogConfigurationRule rule)
         {
             rule = rule.WithLog(Logs.FileLogName);

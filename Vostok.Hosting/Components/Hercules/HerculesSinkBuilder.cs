@@ -13,10 +13,11 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : SwitchableComponent<IVostokHerculesSinkBuilder>,
+        IVostokHerculesSinkBuilder,
+        IBuilder<IHerculesSink>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
-        private readonly ComponentState state;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile Func<string> apiKeyProvider;
         private volatile bool verboseLogging;
@@ -25,10 +26,7 @@ namespace Vostok.Hosting.Components.Hercules
         public HerculesSinkBuilder()
         {
             settingsCustomization = new Customization<HerculesSinkSettings>();
-            state = new ComponentState();
         }
-
-        public bool IsEnabled => state.IsEnabled();
 
         public IHerculesSink Build(BuildContext context)
         {
@@ -62,24 +60,6 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization.Customize(settings);
 
             return new HerculesSink(settings, log);
-        }
-
-        public IVostokHerculesSinkBuilder Enable()
-        {
-            state.Enable();
-            return this;
-        }
-
-        public IVostokHerculesSinkBuilder AutoEnable()
-        {
-            state.AutoEnable();
-            return this;
-        }
-
-        public IVostokHerculesSinkBuilder Disable()
-        {
-            state.Disable();
-            return this;
         }
 
         public IVostokHerculesSinkBuilder UseInstance(IHerculesSink instance)
