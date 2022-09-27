@@ -11,9 +11,19 @@ namespace Vostok.Hosting.Tests.Components.Log
         public void Should_auto_enable_console_log_when_setup()
         {
             var builder = new LogsBuilder()
-                .SetupConsoleLog();
+                .SetupConsoleLog(_ => {});
 
             builder.IsConsoleLogEnabled.Should().BeTrue();
+        }
+
+        [Test]
+        public void Should_disable_console_log()
+        {
+            var builder = new LogsBuilder()
+                .SetupConsoleLog(_ => {})
+                .SetupConsoleLog(b => b.Disable());
+
+            builder.IsConsoleLogEnabled.Should().BeFalse();
         }
 
         [Test]
@@ -28,41 +38,14 @@ namespace Vostok.Hosting.Tests.Components.Log
         }
 
         [Test]
-        public void Should_auto_enable_file_log_when_setup()
+        public void Should_enable_console_log_when_manually_disabled_and_then_manually_enabled()
         {
             var builder = new LogsBuilder()
-                .SetupFileLog(_ => {});
-
-            builder.IsFileLogEnabled.Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_not_auto_enable_file_log_when_manually_disabled()
-        {
-            var builder = new LogsBuilder()
-                .SetupFileLog(b => b.Disable())
-                .SetupFileLog(_ => {});
-
-            builder.IsFileLogEnabled.Should().BeFalse();
-        }
-
-        [Test]
-        public void Should_auto_enable_hercules_log_when_setup()
-        {
-            var builder = new LogsBuilder()
-                .SetupHerculesLog(_ => {});
-
-            builder.IsHerculesLogEnabled.Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_not_auto_enable_hercules_log_when_manually_disabled()
-        {
-            var builder = new LogsBuilder()
-                .SetupHerculesLog(b => b.Disable())
-                .SetupHerculesLog(_ => {});
-
-            builder.IsHerculesLogEnabled.Should().BeFalse();
+                .SetupConsoleLog(_ => {})
+                .SetupConsoleLog(b => b.Disable())
+                .SetupConsoleLog(b => b.Enable());
+            
+            builder.IsConsoleLogEnabled.Should().BeTrue();
         }
     }
 }
