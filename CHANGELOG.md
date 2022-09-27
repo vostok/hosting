@@ -1,3 +1,7 @@
+## 0.3.52 (27-09-2022):
+
+Added `Enable` and `IsEnabled` method to `IVostokFileLogBuilder`, `IVostokConsoleLogBuilder`, `IVostokHerculesLogBuilder`. 
+
 ## 0.3.50 (05-09-2022):
 
 Fixed small bug with `EnsureSuccess` in `WithSigtermCancellation`.
