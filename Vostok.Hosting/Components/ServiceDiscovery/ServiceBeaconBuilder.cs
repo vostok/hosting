@@ -13,18 +13,16 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
-    internal class ServiceBeaconBuilder : IVostokServiceBeaconBuilder, IBuilder<IServiceBeacon>
+    internal class ServiceBeaconBuilder : SwitchableComponent<IVostokServiceBeaconBuilder>, IVostokServiceBeaconBuilder, IBuilder<IServiceBeacon>
     {
         private readonly Customization<ServiceBeaconSettings> settingsCustomization;
         private readonly Customization<IReplicaInfoBuilder> replicaInfoCustomization;
-        private readonly ComponentState state;
         private volatile IVostokApplicationIdentity applicationIdentity;
         private volatile bool registrationDeniedFromNonActiveDatacenters;
 
         public ServiceBeaconBuilder()
         {
             replicaInfoCustomization = new Customization<IReplicaInfoBuilder>();
-            state = new ComponentState();
 
             replicaInfoCustomization.AddCustomization(
                 s =>
@@ -35,8 +33,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
             settingsCustomization = new Customization<ServiceBeaconSettings>();
         }
-
-        public bool IsEnabled => state.IsEnabled();
 
         public IServiceBeacon Build(BuildContext context)
         {
@@ -56,24 +52,6 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             }
 
             return CreateBeacon(zooKeeperClient, context);
-        }
-
-        public IVostokServiceBeaconBuilder Enable()
-        {
-            state.Enable();
-            return this;
-        }
-        
-        public IVostokServiceBeaconBuilder AutoEnable()
-        {
-            state.AutoEnable();
-            return this;
-        }
-
-        public IVostokServiceBeaconBuilder Disable()
-        {
-            state.Disable();
-            return this;
         }
 
         public IVostokServiceBeaconBuilder DenyRegistrationFromNotActiveDatacenters()

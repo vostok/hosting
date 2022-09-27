@@ -9,29 +9,16 @@ using Vostok.Tracing.Hercules;
 
 namespace Vostok.Hosting.Components.Tracing
 {
-    internal class HerculesSpanSenderBuilder : IVostokHerculesSpanSenderBuilder, IBuilder<ISpanSender>
+    internal class HerculesSpanSenderBuilder : SwitchableComponent<IVostokHerculesSpanSenderBuilder>,
+        IVostokHerculesSpanSenderBuilder,
+        IBuilder<ISpanSender>
     {
         private readonly Customization<HerculesSpanSenderSettings> settingsCustomization;
         private volatile Func<string> apiKeyProvider;
         private volatile string stream;
-        private volatile bool enabled;
 
         public HerculesSpanSenderBuilder()
             => settingsCustomization = new Customization<HerculesSpanSenderSettings>();
-
-        public bool IsEnabled => enabled;
-
-        public IVostokHerculesSpanSenderBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokHerculesSpanSenderBuilder Disable()
-        {
-            enabled = false;
-            return this;
-        }
 
         public IVostokHerculesSpanSenderBuilder SetStream(string stream)
         {
@@ -53,7 +40,7 @@ namespace Vostok.Hosting.Components.Tracing
 
         public ISpanSender Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("HerculesSpanSender");
                 return null;

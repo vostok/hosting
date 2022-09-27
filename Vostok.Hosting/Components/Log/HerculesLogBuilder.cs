@@ -12,12 +12,11 @@ using Vostok.Logging.Hercules.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class HerculesLogBuilder : IVostokHerculesLogBuilder, IBuilder<ILog>
+    internal class HerculesLogBuilder : SwitchableComponent<IVostokHerculesLogBuilder>, IVostokHerculesLogBuilder, IBuilder<ILog>
     {
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<HerculesLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
-        private readonly ComponentState state;        
         private volatile Func<string> apiKeyProvider;
         private volatile Func<LogLevel> minLevelProvider;
         private volatile string stream;
@@ -27,27 +26,6 @@ namespace Vostok.Hosting.Components.Log
             this.rulesBuilder = rulesBuilder;
             settingsCustomization = new Customization<HerculesLogSettings>();
             logCustomization = new Customization<ILog>();
-            state = new ComponentState();
-        }
-
-        public bool IsEnabled => state.IsEnabled();
-
-        public IVostokHerculesLogBuilder Enable()
-        {
-            state.Enable();
-            return this;
-        }
-        
-        public IVostokHerculesLogBuilder AutoEnable()
-        {
-            state.AutoEnable();
-            return this;
-        }
-
-        public IVostokHerculesLogBuilder Disable()
-        {
-            state.Disable();
-            return this;
         }
 
         public IVostokHerculesLogBuilder SetStream(string stream)
