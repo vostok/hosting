@@ -252,7 +252,7 @@ namespace Vostok.Hosting.Components.Configuration
             mergeCustomization.Customize(mergeOptions);
 
             if (sources.Any())
-                return sourceCustomization.Customize(new CombinedSource(sources.ToArray(), mergeOptions));
+                return sourceCustomization.Customize(new CombinedSource(sources, mergeOptions));
 
             return new ConstantSource(null);
         }
