@@ -80,7 +80,7 @@ namespace Vostok.Hosting.Setup
         /// Enables service beacon.
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetupServiceBeacon([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
-            builder.SetupServiceBeacon(_ => {});
+            builder.SetupServiceBeacon(b => b.Enable());
 
         /// <summary>
         /// Applies given <paramref name="port"/> to <see cref="IServiceBeacon"/> configuration.

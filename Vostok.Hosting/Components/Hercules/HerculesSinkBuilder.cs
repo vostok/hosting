@@ -17,13 +17,14 @@ using Vostok.Tracing.Extensions.Http;
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : SwitchableComponent<IVostokHerculesSinkBuilder>,
+        IVostokHerculesSinkBuilder,
+        IBuilder<IHerculesSink>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile Func<string> apiKeyProvider;
         private volatile bool verboseLogging;
-        private volatile bool enabled;
         private volatile IHerculesSink instance;
 
         public HerculesSinkBuilder()
@@ -31,11 +32,9 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization = new Customization<HerculesSinkSettings>();
         }
 
-        public bool IsEnabled => enabled;
-
         public IHerculesSink Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("HerculesSink");
                 return null;
@@ -65,18 +64,6 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization.Customize(settings);
 
             return new HerculesSink(settings, log);
-        }
-
-        public IVostokHerculesSinkBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokHerculesSinkBuilder Disable()
-        {
-            enabled = false;
-            return this;
         }
 
         public IVostokHerculesSinkBuilder UseInstance(IHerculesSink instance)

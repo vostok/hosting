@@ -29,7 +29,7 @@ namespace Vostok.Hosting.Components.Metrics
 
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
         {
-            herculesMetricEventSenderBuilder.Enable();
+            herculesMetricEventSenderBuilder.AutoEnable();
             herculesMetricEventSenderSetup(herculesMetricEventSenderBuilder ?? throw new ArgumentNullException(nameof(herculesMetricEventSenderSetup)));
             return this;
         }
