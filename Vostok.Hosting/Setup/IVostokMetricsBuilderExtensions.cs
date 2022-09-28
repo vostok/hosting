@@ -9,6 +9,6 @@ namespace Vostok.Hosting.Setup
         /// Enables sending metrics to hercules.
         /// </summary>
         public static IVostokMetricsBuilder SetupHerculesMetricEventSender([NotNull] this IVostokMetricsBuilder builder) =>
-            builder.SetupHerculesMetricEventSender(_ => {});
+            builder.SetupHerculesMetricEventSender(b => b.Enable());
     }
 }
