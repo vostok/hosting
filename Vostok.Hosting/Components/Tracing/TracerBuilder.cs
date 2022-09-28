@@ -39,7 +39,7 @@ namespace Vostok.Hosting.Components.Tracing
         {
             herculesSpanSenderSetup = herculesSpanSenderSetup ?? throw new ArgumentNullException(nameof(herculesSpanSenderSetup));
 
-            herculesSpanSenderBuilder.Enable();
+            herculesSpanSenderBuilder.AutoEnable();
             herculesSpanSenderSetup(herculesSpanSenderBuilder);
             return this;
         }
