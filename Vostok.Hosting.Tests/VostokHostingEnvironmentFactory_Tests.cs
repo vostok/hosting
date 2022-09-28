@@ -10,6 +10,7 @@ using Vostok.Commons.Testing;
 using Vostok.Hercules.Client;
 using Vostok.Hercules.Client.Abstractions;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ServiceDiscovery;
 using Vostok.Hosting.Components.Shutdown;
 using Vostok.Hosting.Components.ZooKeeper;
@@ -235,6 +236,22 @@ namespace Vostok.Hosting.Tests
         }
 
         [Test]
+        public void Should_enable_beacon_when_manually_disabled_and_then_enabled_with_extension()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(
+                builder =>
+                {
+                    SetupWithServiceDiscovery(builder);
+                    builder
+                        .DisableServiceBeacon()
+                        .SetupServiceBeacon();
+                },
+                new VostokHostingEnvironmentFactorySettings()
+            );
+            environment.ServiceBeacon.Should().BeOfType<ServiceBeacon>();
+        }
+
+        [Test]
         public void Should_not_auto_enable_hercules_sink_if_manually_disabled()
         {
             var environment = VostokHostingEnvironmentFactory.Create(
@@ -268,6 +285,50 @@ namespace Vostok.Hosting.Tests
             );
 
             environment.HerculesSink.Should().BeOfType<HerculesSink>();
+        }
+        
+        [Test]
+        public void Should_not_auto_enable_hercules_metrics_when_manually_disabled()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(
+                builder =>
+                {
+                    SetupWithServiceDiscovery(builder);
+                    builder.SetupHerculesSink(sk => sk.SetClusterProvider(
+                            new FixedClusterProvider(Array.Empty<string>())))
+                        .SetupMetrics(b =>
+                            b.SetupHerculesMetricEventSender(mb => mb.Disable())
+                                .SetupHerculesMetricEventSender(_ => {}));
+                },
+                new VostokHostingEnvironmentFactorySettings()
+                {
+                    DiagnosticMetricsEnabled = false
+                }
+            );
+            
+            ((VostokApplicationMetrics)environment.Metrics).Root.Should().BeOfType<DevNullMetricContext>();
+        }
+
+        [Test]
+        public void Should_enable_hercules_metrics_when_manually_disabled_and_then_enabled_with_extension()
+        {
+            var environment = VostokHostingEnvironmentFactory.Create(
+                builder =>
+                {
+                    SetupWithServiceDiscovery(builder);
+                    builder.SetupHerculesSink(sk => sk.SetClusterProvider(
+                            new FixedClusterProvider(Array.Empty<string>())))
+                        .SetupMetrics(b =>
+                            b.SetupHerculesMetricEventSender(mb => mb.Disable())
+                                .SetupHerculesMetricEventSender());
+                },
+                new VostokHostingEnvironmentFactorySettings()
+                {
+                    DiagnosticMetricsEnabled = false
+                }
+            );
+
+            ((VostokApplicationMetrics)environment.Metrics).Root.Should().BeOfType<MetricContext>();
         }
 
         [Test, Explicit]
