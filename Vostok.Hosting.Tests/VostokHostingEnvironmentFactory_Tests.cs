@@ -208,7 +208,7 @@ namespace Vostok.Hosting.Tests
             );
             environment.ServiceBeacon.Should().BeOfType<DevNullServiceBeacon>();
         }
-        
+
         [Test]
         public void Should_auto_enable_beacon_when_set_port()
         {
@@ -218,7 +218,7 @@ namespace Vostok.Hosting.Tests
             );
             environment.ServiceBeacon.Should().BeOfType<ServiceBeacon>();
         }
-        
+
         [Test]
         public void Should_enable_beacon_when_manually_disabled_and_then_manually_enabled()
         {
@@ -270,7 +270,7 @@ namespace Vostok.Hosting.Tests
 
             environment.HerculesSink.Should().BeOfType<DevNullHerculesSink>();
         }
-        
+
         [Test]
         public void Should_auto_enable_hercules_sink_when_setup_hercules()
         {
@@ -286,7 +286,7 @@ namespace Vostok.Hosting.Tests
 
             environment.HerculesSink.Should().BeOfType<HerculesSink>();
         }
-        
+
         [Test]
         public void Should_not_auto_enable_hercules_metrics_when_manually_disabled()
         {
@@ -305,7 +305,7 @@ namespace Vostok.Hosting.Tests
                     DiagnosticMetricsEnabled = false
                 }
             );
-            
+
             ((VostokApplicationMetrics)environment.Metrics).Root.Should().BeOfType<DevNullMetricContext>();
         }
 
