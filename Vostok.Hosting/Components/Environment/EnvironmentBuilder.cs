@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using JetBrains.Annotations;
 using Vostok.Clusterclient.Core;
 using Vostok.ClusterConfig.Client;
 using Vostok.ClusterConfig.Client.Abstractions;
@@ -43,7 +44,8 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Components.Environment
 {
-    internal class EnvironmentBuilder : IVostokHostingEnvironmentBuilder
+    [PublicAPI]
+    public class EnvironmentBuilder : IVostokHostingEnvironmentBuilder
     {
         private static readonly object FlowingContextSync = new object();
 

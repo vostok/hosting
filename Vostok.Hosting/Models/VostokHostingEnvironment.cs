@@ -15,7 +15,8 @@ using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Hosting.Models
 {
-    internal class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
+    [PublicAPI]
+    public class VostokHostingEnvironment : IVostokHostingEnvironment, IDisposable
     {
         private readonly HostingShutdown hostingShutdown;
         private readonly ApplicationShutdown applicationShutdown;

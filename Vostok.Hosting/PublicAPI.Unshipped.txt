@@ -1,3 +1,67 @@
+static Vostok.Hosting.Components.Environment.EnvironmentBuilder.Build(Vostok.Hosting.Setup.VostokHostingEnvironmentSetup setup, Vostok.Hosting.VostokHostingEnvironmentFactorySettings settings) -> Vostok.Hosting.Models.VostokHostingEnvironment
+Vostok.Hosting.Components.Environment.EnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationIdentity(System.Action<Vostok.Hosting.Setup.IVostokApplicationIdentityBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationIdentity(System.Action<Vostok.Hosting.Setup.IVostokApplicationIdentityBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationLimits(System.Action<Vostok.Hosting.Setup.IVostokApplicationLimitsBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationLimits(System.Action<Vostok.Hosting.Setup.IVostokApplicationLimitsBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationReplicationInfo(System.Action<Vostok.Hosting.Setup.IVostokApplicationReplicationInfoBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupApplicationReplicationInfo(System.Action<Vostok.Hosting.Setup.IVostokApplicationReplicationInfoBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupClusterConfigClient(System.Action<Vostok.Hosting.Setup.IVostokClusterConfigClientBuilder, Vostok.Hosting.Setup.IVostokConfigurationSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupClusterConfigClient(System.Action<Vostok.Hosting.Setup.IVostokClusterConfigClientBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupConfiguration(System.Action<Vostok.Hosting.Setup.IVostokConfigurationBuilder, Vostok.Hosting.Setup.IVostokConfigurationSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupConfiguration(System.Action<Vostok.Hosting.Setup.IVostokConfigurationBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupDatacenters(System.Action<Vostok.Hosting.Setup.IVostokDatacentersBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupDatacenters(System.Action<Vostok.Hosting.Setup.IVostokDatacentersBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupDiagnostics(System.Action<Vostok.Hosting.Setup.IVostokDiagnosticsBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupDiagnostics(System.Action<Vostok.Hosting.Setup.IVostokDiagnosticsBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupHerculesSink(System.Action<Vostok.Hosting.Setup.IVostokHerculesSinkBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupHerculesSink(System.Action<Vostok.Hosting.Setup.IVostokHerculesSinkBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupHostExtensions(System.Action<Vostok.Hosting.Setup.IVostokHostExtensionsBuilder, Vostok.Hosting.Abstractions.IVostokHostingEnvironment> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupHostExtensions(System.Action<Vostok.Hosting.Setup.IVostokHostExtensionsBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupLog(System.Action<Vostok.Hosting.Setup.IVostokCompositeLogBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupLog(System.Action<Vostok.Hosting.Setup.IVostokCompositeLogBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupMetrics(System.Action<Vostok.Hosting.Setup.IVostokMetricsBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupMetrics(System.Action<Vostok.Hosting.Setup.IVostokMetricsBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceBeacon(System.Action<Vostok.Hosting.Setup.IVostokServiceBeaconBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceBeacon(System.Action<Vostok.Hosting.Setup.IVostokServiceBeaconBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceDiscoveryEventsContext(System.Action<Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceDiscoveryEventsContext(System.Action<Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceLocator(System.Action<Vostok.Hosting.Setup.IVostokServiceLocatorBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupServiceLocator(System.Action<Vostok.Hosting.Setup.IVostokServiceLocatorBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupShutdownTimeout(System.TimeSpan shutdownTimeout) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupShutdownToken(System.Threading.CancellationToken shutdownToken) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupSystemMetrics(System.Action<Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings, Vostok.Hosting.Abstractions.IVostokHostingEnvironment> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupSystemMetrics(System.Action<Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupTracer(System.Action<Vostok.Hosting.Setup.IVostokTracerBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupTracer(System.Action<Vostok.Hosting.Setup.IVostokTracerBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupZooKeeperClient(System.Action<Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder, Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Components.Environment.EnvironmentBuilder.SetupZooKeeperClient(System.Action<Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder> setup) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+Vostok.Hosting.Models.VostokHostingEnvironment
+Vostok.Hosting.Models.VostokHostingEnvironment.ApplicationIdentity.get -> Vostok.Hosting.Abstractions.IVostokApplicationIdentity
+Vostok.Hosting.Models.VostokHostingEnvironment.ApplicationLimits.get -> Vostok.Hosting.Abstractions.IVostokApplicationLimits
+Vostok.Hosting.Models.VostokHostingEnvironment.ApplicationReplicationInfo.get -> Vostok.Hosting.Abstractions.IVostokApplicationReplicationInfo
+Vostok.Hosting.Models.VostokHostingEnvironment.ClusterConfigClient.get -> Vostok.ClusterConfig.Client.Abstractions.IClusterConfigClient
+Vostok.Hosting.Models.VostokHostingEnvironment.ConfigurationProvider.get -> Vostok.Configuration.Abstractions.IConfigurationProvider
+Vostok.Hosting.Models.VostokHostingEnvironment.ConfigurationSource.get -> Vostok.Configuration.Abstractions.IConfigurationSource
+Vostok.Hosting.Models.VostokHostingEnvironment.ContextConfiguration.get -> Vostok.Context.IContextConfiguration
+Vostok.Hosting.Models.VostokHostingEnvironment.ContextGlobals.get -> Vostok.Context.IContextGlobals
+Vostok.Hosting.Models.VostokHostingEnvironment.ContextProperties.get -> Vostok.Context.IContextProperties
+Vostok.Hosting.Models.VostokHostingEnvironment.Datacenters.get -> Vostok.Datacenters.IDatacenters
+Vostok.Hosting.Models.VostokHostingEnvironment.Diagnostics.get -> Vostok.Hosting.Abstractions.IVostokApplicationDiagnostics
+Vostok.Hosting.Models.VostokHostingEnvironment.Dispose() -> void
+Vostok.Hosting.Models.VostokHostingEnvironment.HerculesSink.get -> Vostok.Hercules.Client.Abstractions.IHerculesSink
+Vostok.Hosting.Models.VostokHostingEnvironment.HostExtensions.get -> Vostok.Hosting.Abstractions.IVostokHostExtensions
+Vostok.Hosting.Models.VostokHostingEnvironment.Log.get -> Vostok.Logging.Abstractions.ILog
+Vostok.Hosting.Models.VostokHostingEnvironment.Metrics.get -> Vostok.Hosting.Abstractions.IVostokApplicationMetrics
+Vostok.Hosting.Models.VostokHostingEnvironment.Port.get -> int?
+Vostok.Hosting.Models.VostokHostingEnvironment.SecretConfigurationProvider.get -> Vostok.Configuration.Abstractions.IConfigurationProvider
+Vostok.Hosting.Models.VostokHostingEnvironment.SecretConfigurationSource.get -> Vostok.Configuration.Abstractions.IConfigurationSource
+Vostok.Hosting.Models.VostokHostingEnvironment.ServiceBeacon.get -> Vostok.ServiceDiscovery.Abstractions.IServiceBeacon
+Vostok.Hosting.Models.VostokHostingEnvironment.ServiceLocator.get -> Vostok.ServiceDiscovery.Abstractions.IServiceLocator
+Vostok.Hosting.Models.VostokHostingEnvironment.ShutdownTask.get -> System.Threading.Tasks.Task
+Vostok.Hosting.Models.VostokHostingEnvironment.ShutdownTimeout.get -> System.TimeSpan
+Vostok.Hosting.Models.VostokHostingEnvironment.ShutdownToken.get -> System.Threading.CancellationToken
+Vostok.Hosting.Models.VostokHostingEnvironment.Tracer.get -> Vostok.Tracing.Abstractions.ITracer
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.IsEnabled.get -> bool
 Vostok.Hosting.Setup.IVostokFileLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokFileLogBuilder
