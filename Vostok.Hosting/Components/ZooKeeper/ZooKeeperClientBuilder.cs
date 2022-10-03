@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Components.ClusterProvider;
+using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
@@ -15,31 +16,18 @@ using Vostok.ZooKeeper.Client.Abstractions.Model.Authentication;
 
 namespace Vostok.Hosting.Components.ZooKeeper
 {
-    internal class ZooKeeperClientBuilder : IVostokZooKeeperClientBuilder, IBuilder<IZooKeeperClient>
+    internal class ZooKeeperClientBuilder : SwitchableComponent<IVostokZooKeeperClientBuilder>,
+        IVostokZooKeeperClientBuilder,
+        IBuilder<IZooKeeperClient>
     {
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
-        private volatile bool enabled;
         private volatile IZooKeeperClient instance;
         private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
             => settingsCustomization = new Customization<ZooKeeperClientSettings>();
-
-        public bool IsEnabled => enabled;
-
-        public IVostokZooKeeperClientBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokZooKeeperClientBuilder Disable()
-        {
-            enabled = false;
-            return this;
-        }
 
         public IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance)
         {
@@ -96,7 +84,7 @@ namespace Vostok.Hosting.Components.ZooKeeper
 
         public IZooKeeperClient Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("ZooKeeperClient");
                 return null;

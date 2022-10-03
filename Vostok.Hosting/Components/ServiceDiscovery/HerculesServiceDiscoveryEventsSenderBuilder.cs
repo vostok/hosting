@@ -8,30 +8,17 @@ using Vostok.ServiceDiscovery.Telemetry.Hercules;
 
 namespace Vostok.Hosting.Components.ServiceDiscovery
 {
-    internal class HerculesServiceDiscoveryEventsSenderBuilder : IVostokHerculesServiceDiscoveryEventsSenderBuilder, IBuilder<HerculesServiceDiscoveryEventsSender>
+    internal class HerculesServiceDiscoveryEventsSenderBuilder : SwitchableComponent<IVostokHerculesServiceDiscoveryEventsSenderBuilder>,
+        IVostokHerculesServiceDiscoveryEventsSenderBuilder,
+        IBuilder<HerculesServiceDiscoveryEventsSender>
     {
         private readonly Customization<HerculesServiceDiscoveryEventsSenderSettings> settingsCustomization;
         private string stream;
         private Func<string> apiKeyProvider;
-        private volatile bool enabled;
 
         public HerculesServiceDiscoveryEventsSenderBuilder()
         {
             settingsCustomization = new Customization<HerculesServiceDiscoveryEventsSenderSettings>();
-        }
-
-        public bool IsEnabled => enabled;
-
-        public IVostokHerculesServiceDiscoveryEventsSenderBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokHerculesServiceDiscoveryEventsSenderBuilder Disable()
-        {
-            enabled = false;
-            return this;
         }
 
         public IVostokHerculesServiceDiscoveryEventsSenderBuilder SetStream(string stream)
@@ -54,7 +41,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 
         public HerculesServiceDiscoveryEventsSender Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("HerculesServiceDiscoveryEventsSender");
                 return null;
