@@ -1,3 +1,7 @@
+## 0.3.52 (03-10-2022):
+
+Fixed [#88](https://github.com/vostok/hosting/issues/88) - Don't automatically enable a manually disabled components
+
 ## 0.3.51 (27-09-2022):
 
 Added `Enable` and `IsEnabled` method to `IVostokFileLogBuilder`, `IVostokConsoleLogBuilder`, `IVostokHerculesLogBuilder`. 
