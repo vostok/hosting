@@ -54,6 +54,19 @@ namespace Vostok.Hosting.Components.HostExtensions
 
         public IEnumerable<(string, Type, object)> GetAllKeyed() =>
             byKey.Select(p => (p.Key.Item1, p.Key.Item2, p.Value));
+        
+        public IEnumerable<(Type Type, object Extension, string Key)> GetAll(bool withoutKeys, bool withKeys)
+        {
+            var result = Enumerable.Empty<(Type, object, string)>();
+
+            if (withoutKeys)
+                result = result.Concat(GetAll().Select(p => (p.Item1, p.Item2, default(string))));
+
+            if (withKeys)
+                result = result.Concat(GetAllKeyed().Select(p => (p.Item2, p.Item3, p.Item1)));
+
+            return result;
+        }
 
         public void Add<TExtension>(TExtension extension) =>
             Add(typeof(TExtension), extension);
