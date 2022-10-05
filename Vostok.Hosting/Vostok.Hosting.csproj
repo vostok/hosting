@@ -208,6 +208,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.formatting\Vostok.Logging.Formatting\bin\Release\$(ReferencesFramework)\Vostok.Logging.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Tracing.Extensions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.extensions\Vostok.Tracing.Extensions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commons\" />
