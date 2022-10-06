@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Web;
+using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;
 using Vostok.Commons.Helpers;
@@ -8,18 +11,20 @@ using Vostok.Hosting.Components.ClusterProvider;
 using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
+using Vostok.Tracing.Extensions.Http;
 
 // ReSharper disable ParameterHidesMember
 
 namespace Vostok.Hosting.Components.Hercules
 {
-    internal class HerculesSinkBuilder : IVostokHerculesSinkBuilder, IBuilder<IHerculesSink>
+    internal class HerculesSinkBuilder : SwitchableComponent<IVostokHerculesSinkBuilder>,
+        IVostokHerculesSinkBuilder,
+        IBuilder<IHerculesSink>
     {
         private readonly Customization<HerculesSinkSettings> settingsCustomization;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile Func<string> apiKeyProvider;
         private volatile bool verboseLogging;
-        private volatile bool enabled;
         private volatile IHerculesSink instance;
 
         public HerculesSinkBuilder()
@@ -27,11 +32,9 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization = new Customization<HerculesSinkSettings>();
         }
 
-        public bool IsEnabled => enabled;
-
         public IHerculesSink Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("HerculesSink");
                 return null;
@@ -61,18 +64,6 @@ namespace Vostok.Hosting.Components.Hercules
             settingsCustomization.Customize(settings);
 
             return new HerculesSink(settings, log);
-        }
-
-        public IVostokHerculesSinkBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokHerculesSinkBuilder Disable()
-        {
-            enabled = false;
-            return this;
         }
 
         public IVostokHerculesSinkBuilder UseInstance(IHerculesSink instance)
@@ -168,9 +159,18 @@ namespace Vostok.Hosting.Components.Hercules
                 AdditionalSetup = setup =>
                 {
                     setup.ClientApplicationName = formattedServiceName;
-                    setup.SetupDistributedTracing(tracer);
+                    setup.SetupDistributedTracing(new TracingConfiguration(tracer)
+                    {
+                        SetAdditionalRequestDetails = SetStreamName
+                    });
                 }
             };
+        }
+
+        private static void SetStreamName(IHttpRequestSpanBuilder spanBuilder, Request request)
+        {
+            if (request.TryGetQueryParameter("stream", out var stream))
+                spanBuilder.SetAnnotation("http.request.stream", stream);
         }
     }
 }

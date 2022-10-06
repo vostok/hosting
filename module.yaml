@@ -23,6 +23,7 @@ notests *default:
     - module vostok.zookeeper.client
 
   deps:
+    - vostok.tracing.extensions
     - vostok.logging.formatting
     - vostok.servicediscovery.telemetry.hercules
     - vostok.servicediscovery.telemetry

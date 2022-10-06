@@ -1,6 +1,14 @@
-## 0.3.52 (04-10-2022):
+## 0.3.54 (06-10-2022):
 
-Added `.GetAll(bool, bool)` method to `HostExtensions`
+HostExtensions : IVostokHostExtensionsForKeyed
+
+## 0.3.53 (05-10-2022):
+
+Filled hercules client tracing annotations.
+
+## 0.3.52 (03-10-2022):
+
+Fixed [#88](https://github.com/vostok/hosting/issues/88) - Don't automatically enable a manually disabled components
 
 ## 0.3.51 (27-09-2022):
 

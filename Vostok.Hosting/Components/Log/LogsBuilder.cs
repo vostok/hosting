@@ -98,27 +98,27 @@ namespace Vostok.Hosting.Components.Log
 
         public IVostokCompositeLogBuilder SetupFileLog(Action<IVostokFileLogBuilder> fileLogSetup)
         {
-            fileLogBuilder.Enable();
+            fileLogBuilder.AutoEnable();
             fileLogSetup(fileLogBuilder ?? throw new ArgumentNullException(nameof(fileLogSetup)));
             return this;
         }
 
         public IVostokCompositeLogBuilder SetupConsoleLog()
         {
-            consoleLogBuilder.Enable();
+            consoleLogBuilder.AutoEnable();
             return this;
         }
 
         public IVostokCompositeLogBuilder SetupConsoleLog(Action<IVostokConsoleLogBuilder> consoleLogSetup)
         {
-            consoleLogBuilder.Enable();
+            consoleLogBuilder.AutoEnable();
             consoleLogSetup(consoleLogBuilder ?? throw new ArgumentNullException(nameof(consoleLogSetup)));
             return this;
         }
 
         public IVostokCompositeLogBuilder SetupHerculesLog(Action<IVostokHerculesLogBuilder> herculesLogSetup)
         {
-            herculesLogBuilder.Enable();
+            herculesLogBuilder.AutoEnable();
             herculesLogSetup(herculesLogBuilder ?? throw new ArgumentNullException(nameof(herculesLogSetup)));
             return this;
         }

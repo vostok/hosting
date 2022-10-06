@@ -21,8 +21,8 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IVostokServiceDiscoveryEventsContextBuilder SetupHerculesServiceDiscoveryEventsSender(Action<IVostokHerculesServiceDiscoveryEventsSenderBuilder> herculesEventsSenderSetup)
         {
             herculesEventsSenderSetup = herculesEventsSenderSetup ?? throw new ArgumentNullException(nameof(herculesEventsSenderSetup));
-            
-            herculesServiceDiscoveryEventsSenderBuilder.Enable();
+
+            herculesServiceDiscoveryEventsSenderBuilder.AutoEnable();
             herculesEventsSenderSetup(herculesServiceDiscoveryEventsSenderBuilder);
             return this;
         }
