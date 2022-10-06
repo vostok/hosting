@@ -1,4 +1,4 @@
-const Vostok.Hosting.Components.Diagnostics.WellKnownDiagnosticComponentsNames.Hosting = "hosting" -> string
+﻿const Vostok.Hosting.Components.Diagnostics.WellKnownDiagnosticComponentsNames.Hosting = "hosting" -> string
 const Vostok.Hosting.Components.Diagnostics.WellKnownDiagnosticInfoProvidersNames.ApplicationInfo = "application-info" -> string
 const Vostok.Hosting.Components.Diagnostics.WellKnownDiagnosticInfoProvidersNames.ApplicationMetrics = "application-metrics" -> string
 const Vostok.Hosting.Components.Diagnostics.WellKnownDiagnosticInfoProvidersNames.Configuration = "configuration" -> string
@@ -96,8 +96,6 @@ static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.SetupHerculesMetricE
 static Vostok.Hosting.Setup.IVostokServiceBeaconBuilderExtensions.UseFQDN(this Vostok.Hosting.Setup.IVostokServiceBeaconBuilder builder) -> Vostok.Hosting.Setup.IVostokServiceBeaconBuilder
 static Vostok.Hosting.Setup.IVostokServiceBeaconBuilderExtensions.UseHostname(this Vostok.Hosting.Setup.IVostokServiceBeaconBuilder builder) -> Vostok.Hosting.Setup.IVostokServiceBeaconBuilder
 static Vostok.Hosting.Setup.IVostokZooKeeperClientBuilderExtensions.AddAuthenticationInfo(this Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder builder, string login, string password) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
-static Vostok.Hosting.VostokHostingEnvironmentFactory.Create(Vostok.Hosting.Setup.VostokHostingEnvironmentSetup setup) -> Vostok.Hosting.Abstractions.IVostokHostingEnvironment
-static Vostok.Hosting.VostokHostingEnvironmentFactory.Create(Vostok.Hosting.Setup.VostokHostingEnvironmentSetup setup, Vostok.Hosting.VostokHostingEnvironmentFactorySettings settings) -> Vostok.Hosting.Abstractions.IVostokHostingEnvironment
 static Vostok.Hosting.VostokHost_Extensions.Run(this Vostok.Hosting.VostokHost vostokHost) -> Vostok.Hosting.Models.VostokApplicationRunResult
 static Vostok.Hosting.VostokHost_Extensions.Start(this Vostok.Hosting.VostokHost vostokHost) -> void
 static Vostok.Hosting.VostokHost_Extensions.Start(this Vostok.Hosting.VostokHost vostokHost, Vostok.Hosting.Models.VostokApplicationState stateToAwait) -> void
@@ -105,6 +103,8 @@ static Vostok.Hosting.VostokHost_Extensions.Stop(this Vostok.Hosting.VostokHost 
 static Vostok.Hosting.VostokHost_Extensions.Stop(this Vostok.Hosting.VostokHost vostokHost, bool ensureSuccess) -> Vostok.Hosting.Models.VostokApplicationRunResult
 static Vostok.Hosting.VostokHost_Extensions.WithConsoleCancellation(this Vostok.Hosting.VostokHost vostokHost) -> Vostok.Hosting.VostokHost
 static Vostok.Hosting.VostokHost_Extensions.WithSigtermCancellation(this Vostok.Hosting.VostokHost vostokHost) -> Vostok.Hosting.VostokHost
+static Vostok.Hosting.VostokHostingEnvironmentFactory.Create(Vostok.Hosting.Setup.VostokHostingEnvironmentSetup setup) -> Vostok.Hosting.Abstractions.IVostokHostingEnvironment
+static Vostok.Hosting.VostokHostingEnvironmentFactory.Create(Vostok.Hosting.Setup.VostokHostingEnvironmentSetup setup, Vostok.Hosting.VostokHostingEnvironmentFactorySettings settings) -> Vostok.Hosting.Abstractions.IVostokHostingEnvironment
 virtual Vostok.Hosting.VostokHost.ApplicationState.get -> Vostok.Hosting.Models.VostokApplicationState
 virtual Vostok.Hosting.VostokHost.OnApplicationStateChanged.get -> System.IObservable<Vostok.Hosting.Models.VostokApplicationState>
 virtual Vostok.Hosting.VostokHost.RunAsync() -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
@@ -394,6 +394,8 @@ Vostok.Hosting.Setup.IVostokConsoleLogBuilder.AddRule(Vostok.Logging.Configurati
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.CustomizeLog(System.Func<Vostok.Logging.Abstractions.ILog, Vostok.Logging.Abstractions.ILog> logCustomization) -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.CustomizeSettings(System.Action<Vostok.Logging.Console.ConsoleLogSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.Disable() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
+Vostok.Hosting.Setup.IVostokConsoleLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
+Vostok.Hosting.Setup.IVostokConsoleLogBuilder.IsEnabled.get -> bool
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.SetupMinimumLevelProvider(System.Func<Vostok.Logging.Abstractions.LogLevel> minLevelProvider) -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.UseAsynchronous() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
 Vostok.Hosting.Setup.IVostokConsoleLogBuilder.UseSynchronous() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
@@ -411,6 +413,8 @@ Vostok.Hosting.Setup.IVostokFileLogBuilder.CustomizeLog(System.Func<Vostok.Loggi
 Vostok.Hosting.Setup.IVostokFileLogBuilder.CustomizeSettings(System.Action<Vostok.Logging.File.Configuration.FileLogSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokFileLogBuilder
 Vostok.Hosting.Setup.IVostokFileLogBuilder.Disable() -> Vostok.Hosting.Setup.IVostokFileLogBuilder
 Vostok.Hosting.Setup.IVostokFileLogBuilder.DisposeWithEnvironment(bool value) -> Vostok.Hosting.Setup.IVostokFileLogBuilder
+Vostok.Hosting.Setup.IVostokFileLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokFileLogBuilder
+Vostok.Hosting.Setup.IVostokFileLogBuilder.IsEnabled.get -> bool
 Vostok.Hosting.Setup.IVostokFileLogBuilder.SetSettingsProvider(System.Func<Vostok.Logging.File.Configuration.FileLogSettings> settingsProvider) -> Vostok.Hosting.Setup.IVostokFileLogBuilder
 Vostok.Hosting.Setup.IVostokFileLogBuilder.SetupMinimumLevelProvider(System.Func<Vostok.Logging.Abstractions.LogLevel> minLevelProvider) -> Vostok.Hosting.Setup.IVostokFileLogBuilder
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder
@@ -418,6 +422,8 @@ Vostok.Hosting.Setup.IVostokHerculesLogBuilder.AddRule(Vostok.Logging.Configurat
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.CustomizeLog(System.Func<Vostok.Logging.Abstractions.ILog, Vostok.Logging.Abstractions.ILog> logCustomization) -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.CustomizeSettings(System.Action<Vostok.Logging.Hercules.Configuration.HerculesLogSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.Disable() -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
+Vostok.Hosting.Setup.IVostokHerculesLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
+Vostok.Hosting.Setup.IVostokHerculesLogBuilder.IsEnabled.get -> bool
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.SetApiKeyProvider(System.Func<string> apiKeyProvider) -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.SetStream(string stream) -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
 Vostok.Hosting.Setup.IVostokHerculesLogBuilder.SetupMinimumLevelProvider(System.Func<Vostok.Logging.Abstractions.LogLevel> minLevelProvider) -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
@@ -557,6 +563,7 @@ Vostok.Hosting.VostokHost
 Vostok.Hosting.VostokHost.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = 5) -> System.Threading.Tasks.Task
 Vostok.Hosting.VostokHost.StopAsync(bool ensureSuccess = true) -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
 Vostok.Hosting.VostokHost.VostokHost(Vostok.Hosting.VostokHostSettings settings) -> void
+Vostok.Hosting.VostokHost_Extensions
 Vostok.Hosting.VostokHostingEnvironmentFactory
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings.BeaconShutdownTimeout.get -> System.TimeSpan
@@ -617,4 +624,3 @@ Vostok.Hosting.VostokHostShutdown.Initiate() -> void
 Vostok.Hosting.VostokHostShutdown.IsInitiated.get -> bool
 Vostok.Hosting.VostokHostShutdown.Source.get -> System.Threading.CancellationTokenSource
 Vostok.Hosting.VostokHostShutdown.VostokHostShutdown(System.Threading.CancellationTokenSource source) -> void
-Vostok.Hosting.VostokHost_Extensions

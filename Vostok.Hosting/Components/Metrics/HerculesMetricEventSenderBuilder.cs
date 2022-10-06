@@ -10,30 +10,17 @@ using Vostok.Metrics.Hercules;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal class HerculesMetricEventSenderBuilder : IVostokHerculesMetricEventSenderBuilder, IBuilder<HerculesMetricSender>
+    internal class HerculesMetricEventSenderBuilder : SwitchableComponent<IVostokHerculesMetricEventSenderBuilder>,
+        IVostokHerculesMetricEventSenderBuilder,
+        IBuilder<HerculesMetricSender>
     {
         private readonly Customization<HerculesMetricSenderSettings> settingsCustomization;
         private readonly List<(string stream, Func<string> apiKeyProvider)> apiKeyProviderBuilders;
-        private volatile bool enabled;
 
         public HerculesMetricEventSenderBuilder()
         {
             apiKeyProviderBuilders = new List<(string stream, Func<string> apiKeyProvider)>();
             settingsCustomization = new Customization<HerculesMetricSenderSettings>();
-        }
-
-        public bool IsEnabled => enabled;
-
-        public IVostokHerculesMetricEventSenderBuilder Disable()
-        {
-            enabled = false;
-            return this;
-        }
-
-        public IVostokHerculesMetricEventSenderBuilder Enable()
-        {
-            enabled = true;
-            return this;
         }
 
         public IVostokHerculesMetricEventSenderBuilder SetApiKeyProvider(Func<string> apiKeyProvider, string stream = null)
@@ -50,7 +37,7 @@ namespace Vostok.Hosting.Components.Metrics
 
         public HerculesMetricSender Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("HerculesMetricSender");
                 return null;

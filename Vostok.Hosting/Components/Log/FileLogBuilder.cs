@@ -12,14 +12,15 @@ using Vostok.Logging.File.Configuration;
 
 namespace Vostok.Hosting.Components.Log
 {
-    internal class FileLogBuilder : IVostokFileLogBuilder, IBuilder<(ILog FileLog, Action Dispose)>
+    internal class FileLogBuilder : SwitchableComponent<IVostokFileLogBuilder>,
+        IVostokFileLogBuilder,
+        IBuilder<(ILog FileLog, Action Dispose)>
     {
         private readonly LogRulesBuilder rulesBuilder;
         private readonly Customization<FileLogSettings> settingsCustomization;
         private readonly Customization<ILog> logCustomization;
         private volatile Func<FileLogSettings> settingsProvider;
         private volatile Func<LogLevel> minLevelProvider;
-        private volatile bool enabled;
         private volatile bool disposeWithEnvironment;
 
         public FileLogBuilder(LogRulesBuilder rulesBuilder)
@@ -28,20 +29,6 @@ namespace Vostok.Hosting.Components.Log
             settingsCustomization = new Customization<FileLogSettings>();
             logCustomization = new Customization<ILog>();
             disposeWithEnvironment = true;
-        }
-
-        public bool IsEnabled => enabled;
-
-        public IVostokFileLogBuilder Enable()
-        {
-            enabled = true;
-            return this;
-        }
-
-        public IVostokFileLogBuilder Disable()
-        {
-            enabled = false;
-            return this;
         }
 
         public IVostokFileLogBuilder SetupMinimumLevelProvider(Func<LogLevel> minLevelProvider)
@@ -55,7 +42,7 @@ namespace Vostok.Hosting.Components.Log
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
             return this;
         }
-        
+
         public IVostokFileLogBuilder AddRule(LogConfigurationRule rule)
         {
             rule = rule.WithLog(Logs.FileLogName);
@@ -83,7 +70,7 @@ namespace Vostok.Hosting.Components.Log
 
         public (ILog FileLog, Action Dispose) Build(BuildContext context)
         {
-            if (!enabled)
+            if (!IsEnabled)
             {
                 context.LogDisabled("FileLog");
                 return (null, null);
