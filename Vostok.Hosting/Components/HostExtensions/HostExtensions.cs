@@ -6,7 +6,7 @@ using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Components.HostExtensions
 {
-    internal class HostExtensions : IVostokHostMutableExtensions, IVostokHostExtensionsForKeyed
+    internal class HostExtensions : IVostokHostMutableExtensions, IVostokHostKeyedExtensions
     {
         private readonly ConcurrentDictionary<Type, object> byType = new ConcurrentDictionary<Type, object>();
         private readonly ConcurrentDictionary<(string, Type), object> byKey = new ConcurrentDictionary<(string, Type), object>();
