@@ -255,21 +255,11 @@ namespace Vostok.Hosting
 
             try
             {
-                LogEnvironmentInfo();
-                LogDotnetEnvironmentVariables();
-                LogApplicationIdentity(environment.ApplicationIdentity);
-                LogPort(environment.Port);
-                LogLocalDatacenter(environment.Datacenters);
-                LogApplicationLimits(environment.ApplicationLimits);
-                LogApplicationReplication(environment.ApplicationReplicationInfo);
-                LogHostExtensions(environment.HostExtensions);
-
+                environment.WarmUp(log, settings);
+                
                 ConfigureHostBeforeRun();
                 LogThreadPoolSettings();
-
-                WarmupConfiguration();
-                WarmupZooKeeper();
-
+                
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
 
@@ -442,125 +432,7 @@ namespace Vostok.Hosting
             return dynamicThreadPoolTracker;
         }
 
-        private void WarmupConfiguration()
-        {
-            if (!settings.WarmupConfiguration)
-                return;
-
-            log.Info("Warming up application configuration..");
-
-            environment.ClusterConfigClient.Get(Guid.NewGuid().ToString());
-
-            var ordinarySettings = environment.ConfigurationSource.Get();
-
-            environment.SecretConfigurationSource.Get();
-
-            if (settings.LogApplicationConfiguration)
-                LogApplicationConfiguration(ordinarySettings);
-        }
-
-        private void WarmupZooKeeper()
-        {
-            if (settings.WarmupZooKeeper && environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
-            {
-                log.Info("Warming up ZooKeeper connection..");
-
-                zooKeeperClient.Exists("/");
-            }
-        }
-
         #region Logging
-
-        private void LogEnvironmentInfo()
-        {
-            log.Info("Application user = '{User}'.", Environment.UserName);
-            log.Info("Application host = '{Host}'.", EnvironmentInfo.Host);
-            log.Info("Application host FQDN = '{HostFQDN}'.", EnvironmentInfo.FQDN);
-            log.Info("Application process id = '{ProcessId}'.", EnvironmentInfo.ProcessId);
-            log.Info("Application process name = '{ProcessName}'.", EnvironmentInfo.ProcessName);
-            log.Info("Application base directory = '{BaseDirectory}'.", EnvironmentInfo.BaseDirectory);
-            log.Info("Application current directory = '{CurrentDirectory}'.", Environment.CurrentDirectory);
-            log.Info("Application OS = '{OperatingSystem}'.", RuntimeInformation.OSDescription);
-            log.Info("Application bitness = '{Bitness}'.", Environment.Is64BitProcess ? "x64" : "x86");
-            log.Info("Application framework = '{Framework}'.", RuntimeInformation.FrameworkDescription);
-            log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
-        }
-
-        private void LogDotnetEnvironmentVariables()
-        {
-            if (!settings.LogDotnetEnvironmentVariables)
-                return;
-            
-            try
-            {
-                var dotnetPrefixes = new[] {"DOTNET_", "COMPlus_", "ASPNETCORE_"};
-                var dotnetVariables = new Dictionary<string, string>();
-
-                foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
-                {
-                    if (entry.Key is string stringKey &&
-                        entry.Value is string stringValue &&
-                        dotnetPrefixes.Any(p => stringKey.StartsWith(p, StringComparison.InvariantCultureIgnoreCase)))
-                        dotnetVariables[stringKey] = stringValue;
-                }
-
-                log.Info("Application dotnet environment variables = '{EnvironmentVariables}'.", dotnetVariables);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
-        private void LogApplicationIdentity(IVostokApplicationIdentity applicationIdentity)
-        {
-            var messageTemplate = applicationIdentity.Subproject == null
-                ? "Application identity: project: '{Project}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'."
-                : "Application identity: project: '{Project}', subproject: '{Subproject}', environment: '{Environment}', application: '{Application}', instance: '{Instance}'.";
-
-            var messageParameters = applicationIdentity.Subproject == null
-                ? new object[] {applicationIdentity.Project, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance}
-                : new object[] {applicationIdentity.Project, applicationIdentity.Subproject, applicationIdentity.Environment, applicationIdentity.Application, applicationIdentity.Instance};
-
-            log.Info(messageTemplate, messageParameters);
-        }
-
-        private void LogPort(int? port)
-        {
-            if (port.HasValue)
-                log.Info("Application port: {Port}.", port);
-        }
-
-        private void LogLocalDatacenter(IDatacenters datacenters) =>
-            log.Info("Application datacenter: {DatacenterName}.", datacenters.GetLocalDatacenter() ?? "unknown");
-
-        private void LogApplicationLimits(IVostokApplicationLimits limits) =>
-            log.Info(
-                "Application limits: {CpuLimit} CPU, {MemoryLimit} memory.",
-                limits.CpuUnits?.ToString("F2") ?? "unlimited",
-                limits.MemoryBytes.HasValue ? new DataSize(limits.MemoryBytes.Value).ToString() : "unlimited");
-
-        private void LogApplicationReplication(IVostokApplicationReplicationInfo info) =>
-            log.Info("Application replication: instance {InstanceIndex} of {InstanceCount}.", info.InstanceIndex, info.InstancesCount);
-
-        private void LogApplicationConfiguration(ISettingsNode configuration)
-        {
-            try
-            {
-                log.Info($"Application configuration: {Environment.NewLine}{{ApplicationConfiguration}}.", configuration);
-            }
-            catch
-            {
-                log.Warn("Application configuration is unknown.");
-            }
-        }
-
-        private void LogHostExtensions(IVostokHostExtensions extensions)
-            => log.Info("Registered host extensions: {HostExtensions}.",
-                extensions.GetAll()
-                    .Select(pair => pair.Item1.Name)
-                    .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
-                    .ToArray());
 
         private void LogThreadPoolSettings()
         {
