@@ -1,2 +1,2 @@
-static Vostok.Hosting.Helpers.WarmUpEnvironmentExtensions.WarmUp(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Logging.Abstractions.ILog log, Vostok.Hosting.VostokHostSettings settings = null) -> void
-Vostok.Hosting.Helpers.WarmUpEnvironmentExtensions
+static Vostok.Hosting.Helpers.WarmupEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Logging.Abstractions.ILog log, Vostok.Hosting.VostokHostSettings settings = null) -> void
+Vostok.Hosting.Helpers.WarmupEnvironmentExtensions
