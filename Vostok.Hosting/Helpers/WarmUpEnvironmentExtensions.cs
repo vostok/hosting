@@ -17,6 +17,7 @@ using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Helpers;
 
+[PublicAPI]
 public static class WarmUpEnvironmentExtensions
 
 {

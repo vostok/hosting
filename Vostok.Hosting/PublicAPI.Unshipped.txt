@@ -1,8 +1,2 @@
 static Vostok.Hosting.Helpers.WarmUpEnvironmentExtensions.WarmUp(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Logging.Abstractions.ILog log, Vostok.Hosting.VostokHostSettings settings = null) -> void
 Vostok.Hosting.Helpers.WarmUpEnvironmentExtensions
-Vostok.Hosting.Setup.IVostokConsoleLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokConsoleLogBuilder
-Vostok.Hosting.Setup.IVostokConsoleLogBuilder.IsEnabled.get -> bool
-Vostok.Hosting.Setup.IVostokFileLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokFileLogBuilder
-Vostok.Hosting.Setup.IVostokFileLogBuilder.IsEnabled.get -> bool
-Vostok.Hosting.Setup.IVostokHerculesLogBuilder.Enable() -> Vostok.Hosting.Setup.IVostokHerculesLogBuilder
-Vostok.Hosting.Setup.IVostokHerculesLogBuilder.IsEnabled.get -> bool
