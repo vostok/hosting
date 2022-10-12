@@ -6,7 +6,7 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <PropertyGroup>
-    <VersionPrefix>0.3.53</VersionPrefix>
+    <VersionPrefix>0.3.54</VersionPrefix>
   </PropertyGroup>
   <PropertyGroup>
     <Title>Vostok.Hosting</Title>
@@ -207,6 +207,10 @@
     <Reference Include="Vostok.Logging.Formatting">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.formatting\Vostok.Logging.Formatting\bin\Release\$(ReferencesFramework)\Vostok.Logging.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Extensions">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\vostok.tracing.extensions\Vostok.Tracing.Extensions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Extensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
