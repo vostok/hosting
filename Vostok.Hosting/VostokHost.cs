@@ -255,7 +255,7 @@ namespace Vostok.Hosting
 
             try
             {
-                environment.WarmUp(log, settings);
+                environment.Warmup(log, settings);
                 
                 ConfigureHostBeforeRun();
                 LogThreadPoolSettings();

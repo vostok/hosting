@@ -18,10 +18,10 @@ using Vostok.ZooKeeper.Client.Abstractions;
 namespace Vostok.Hosting.Helpers;
 
 [PublicAPI]
-public static class WarmUpEnvironmentExtensions
+public static class WarmupEnvironmentExtensions
 
 {
-    public static void WarmUp(this IVostokHostingEnvironment environment, ILog log, [CanBeNull] VostokHostSettings settings = null)
+    public static void Warmup(this IVostokHostingEnvironment environment, ILog log, [CanBeNull] VostokHostSettings settings = null)
     {
         log.LogEnvironmentInfo();
         log.LogDotnetEnvironmentVariables(settings);
