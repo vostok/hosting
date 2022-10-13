@@ -250,10 +250,10 @@ namespace Vostok.Hosting
                     WarmupConfiguration = settings.WarmupConfiguration,
                     WarmupZooKeeper = settings.WarmupZooKeeper
                 });
-                
+
                 ConfigureHostBeforeRun();
                 LogThreadPoolSettings();
-                
+
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
 
