@@ -20,7 +20,7 @@ namespace Vostok.Hosting.Helpers;
 [PublicAPI]
 public static class IVostokHostingEnvironmentExtensions
 {
-    public static void Warmup(this IVostokHostingEnvironment environment, VostokEnvironmentWarmupSettings settings)
+    public static void Warmup(this IVostokHostingEnvironment environment, VostokHostingEnvironmentWarmupSettings settings)
     {
         var log = environment.Log.ForContext<VostokHost>();
         
@@ -52,7 +52,7 @@ public static class IVostokHostingEnvironmentExtensions
         log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
     }
 
-    private static void LogDotnetEnvironmentVariables(this ILog log, VostokEnvironmentWarmupSettings settings)
+    private static void LogDotnetEnvironmentVariables(this ILog log, VostokHostingEnvironmentWarmupSettings settings)
     {
         if (!settings.LogDotnetEnvironmentVariables)
             return;
@@ -128,7 +128,7 @@ public static class IVostokHostingEnvironmentExtensions
                 .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
                 .ToArray());
 
-    private static void WarmupConfiguration(this IVostokHostingEnvironment environment, ILog log, VostokEnvironmentWarmupSettings settings)
+    private static void WarmupConfiguration(this IVostokHostingEnvironment environment, ILog log, VostokHostingEnvironmentWarmupSettings settings)
     {
         if (!settings.WarmupConfiguration)
             return;
@@ -145,7 +145,7 @@ public static class IVostokHostingEnvironmentExtensions
             log.LogApplicationConfiguration(ordinarySettings);
     }
 
-    private static void WarmupZooKeeper(this IVostokHostingEnvironment environment, ILog log, VostokEnvironmentWarmupSettings settings)
+    private static void WarmupZooKeeper(this IVostokHostingEnvironment environment, ILog log, VostokHostingEnvironmentWarmupSettings settings)
     {
         if (!settings.WarmupZooKeeper || !environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
             return;

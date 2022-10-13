@@ -4,7 +4,7 @@ using Vostok.Hosting.Abstractions;
 namespace Vostok.Hosting;
 
 [PublicAPI]
-public class VostokEnvironmentWarmupSettings
+public class VostokHostingEnvironmentWarmupSettings
 {
     /// <summary>
     /// <para>If set to <c>true</c>, logs all settings from <see cref="IVostokHostingEnvironment.ConfigurationSource"/> after assembling <see cref="IVostokHostingEnvironment"/>.</para>
