@@ -18,11 +18,12 @@ using Vostok.ZooKeeper.Client.Abstractions;
 namespace Vostok.Hosting.Helpers;
 
 [PublicAPI]
-public static class WarmupEnvironmentExtensions
-
+public static class IVostokHostingEnvironmentExtensions
 {
-    public static void Warmup(this IVostokHostingEnvironment environment, ILog log, [CanBeNull] VostokHostSettings settings = null)
+    public static void Warmup(this IVostokHostingEnvironment environment, VostokEnvironmentWarmupSettings settings)
     {
+        var log = environment.Log.ForContext<VostokHost>();
+        
         log.LogEnvironmentInfo();
         log.LogDotnetEnvironmentVariables(settings);
         log.LogApplicationIdentity(environment.ApplicationIdentity);
@@ -31,7 +32,7 @@ public static class WarmupEnvironmentExtensions
         log.LogApplicationLimits(environment.ApplicationLimits);
         log.LogApplicationReplication(environment.ApplicationReplicationInfo);
         log.LogHostExtensions(environment.HostExtensions);
-        
+
         environment.WarmupConfiguration(log, settings);
         environment.WarmupZooKeeper(log, settings);
     }
@@ -51,9 +52,9 @@ public static class WarmupEnvironmentExtensions
         log.Info("Application GC type = '{GCType}'.", GCSettings.IsServerGC ? "Server" : "Workstation");
     }
 
-    private static void LogDotnetEnvironmentVariables(this ILog log, [CanBeNull] VostokHostSettings settings)
+    private static void LogDotnetEnvironmentVariables(this ILog log, VostokEnvironmentWarmupSettings settings)
     {
-        if (settings != null && !settings.LogDotnetEnvironmentVariables)
+        if (!settings.LogDotnetEnvironmentVariables)
             return;
 
         try
@@ -127,9 +128,9 @@ public static class WarmupEnvironmentExtensions
                 .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
                 .ToArray());
 
-    private static void WarmupConfiguration(this IVostokHostingEnvironment environment, ILog log, [CanBeNull] VostokHostSettings settings)
+    private static void WarmupConfiguration(this IVostokHostingEnvironment environment, ILog log, VostokEnvironmentWarmupSettings settings)
     {
-        if (settings != null && !settings.WarmupConfiguration)
+        if (!settings.WarmupConfiguration)
             return;
 
         log.Info("Warming up application configuration..");
@@ -140,15 +141,15 @@ public static class WarmupEnvironmentExtensions
 
         environment.SecretConfigurationSource.Get();
 
-        if (settings != null && settings.LogApplicationConfiguration)
+        if (settings.LogApplicationConfiguration)
             log.LogApplicationConfiguration(ordinarySettings);
     }
 
-    private static void WarmupZooKeeper(this IVostokHostingEnvironment environment, ILog log, [CanBeNull] VostokHostSettings settings)
+    private static void WarmupZooKeeper(this IVostokHostingEnvironment environment, ILog log, VostokEnvironmentWarmupSettings settings)
     {
-        if ((settings != null && !settings.WarmupZooKeeper) || !environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
+        if (!settings.WarmupZooKeeper || !environment.HostExtensions.TryGet<IZooKeeperClient>(out var zooKeeperClient))
             return;
-        
+
         log.Info("Warming up ZooKeeper connection..");
 
         zooKeeperClient.Exists("/");

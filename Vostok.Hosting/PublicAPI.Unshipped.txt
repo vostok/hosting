@@ -1,2 +1,12 @@
-static Vostok.Hosting.Helpers.WarmupEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Logging.Abstractions.ILog log, Vostok.Hosting.VostokHostSettings settings = null) -> void
-Vostok.Hosting.Helpers.WarmupEnvironmentExtensions
+static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokEnvironmentWarmupSettings settings) -> void
+Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
+Vostok.Hosting.VostokEnvironmentWarmupSettings
+Vostok.Hosting.VostokEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
+Vostok.Hosting.VostokEnvironmentWarmupSettings.LogApplicationConfiguration.set -> void
+Vostok.Hosting.VostokEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.get -> bool
+Vostok.Hosting.VostokEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.set -> void
+Vostok.Hosting.VostokEnvironmentWarmupSettings.VostokEnvironmentWarmupSettings() -> void
+Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupConfiguration.get -> bool
+Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupConfiguration.set -> void
+Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupZooKeeper.get -> bool
+Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupZooKeeper.set -> void
