@@ -6,6 +6,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using Vostok.Commons.Environment;
+using Vostok.Commons.Threading;
 using Vostok.Configuration.Abstractions.SettingsTree;
 using Vostok.Configuration.Extensions;
 using Vostok.Configuration.Primitives;
@@ -32,6 +33,7 @@ public static class IVostokHostingEnvironmentExtensions
         log.LogApplicationLimits(environment.ApplicationLimits);
         log.LogApplicationReplication(environment.ApplicationReplicationInfo);
         log.LogHostExtensions(environment.HostExtensions);
+        log.LogThreadPoolSettings();
 
         environment.WarmupConfiguration(log, settings);
         environment.WarmupZooKeeper(log, settings);
@@ -127,6 +129,13 @@ public static class IVostokHostingEnvironmentExtensions
                 .Select(pair => pair.Item1.Name)
                 .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
                 .ToArray());
+    
+    private static void LogThreadPoolSettings(this ILog log)
+    {
+        var state = ThreadPoolUtility.GetPoolState();
+
+        log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
+    }
 
     private static void WarmupConfiguration(this IVostokHostingEnvironment environment, ILog log, VostokHostingEnvironmentWarmupSettings settings)
     {

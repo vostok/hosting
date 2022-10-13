@@ -243,6 +243,8 @@ namespace Vostok.Hosting
 
             try
             {
+                ConfigureHostBeforeRun();
+
                 environment.Warmup(new VostokHostingEnvironmentWarmupSettings
                 {
                     LogApplicationConfiguration = settings.LogApplicationConfiguration,
@@ -250,9 +252,6 @@ namespace Vostok.Hosting
                     WarmupConfiguration = settings.WarmupConfiguration,
                     WarmupZooKeeper = settings.WarmupZooKeeper
                 });
-
-                ConfigureHostBeforeRun();
-                LogThreadPoolSettings();
 
                 foreach (var action in settings.BeforeInitializeApplication)
                     action(environment);
@@ -427,13 +426,6 @@ namespace Vostok.Hosting
         }
 
         #region Logging
-
-        private void LogThreadPoolSettings()
-        {
-            var state = ThreadPoolUtility.GetPoolState();
-
-            log.Info("Thread pool configuration: {MinWorkerThreads} min workers, {MinIOCPThreads} min IOCP.", state.MinWorkerThreads, state.MinIocpThreads);
-        }
 
         private void LogApplicationHasNotCompletedWithinTimeout() =>
             log.Warn("Application has not completed within remaining shutdown timeout.");
