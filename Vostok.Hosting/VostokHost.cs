@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers.Extensions;
 using Vostok.Commons.Helpers.Observable;
 using Vostok.Commons.Threading;
 using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
-using Vostok.Configuration.Abstractions.SettingsTree;
-using Vostok.Configuration.Extensions;
-using Vostok.Configuration.Primitives;
-using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Diagnostics;
 using Vostok.Hosting.Components.Environment;
-using Vostok.Hosting.Components.HostExtensions;
 using Vostok.Hosting.Components.Metrics;
 using Vostok.Hosting.Components.ThreadPool;
 using Vostok.Hosting.Helpers;
@@ -34,7 +23,6 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
-using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting
 {
@@ -255,7 +243,13 @@ namespace Vostok.Hosting
 
             try
             {
-                environment.Warmup(log, settings);
+                environment.Warmup(new VostokEnvironmentWarmupSettings
+                {
+                    LogApplicationConfiguration = settings.LogApplicationConfiguration,
+                    LogDotnetEnvironmentVariables = settings.LogDotnetEnvironmentVariables,
+                    WarmupConfiguration = settings.WarmupConfiguration,
+                    WarmupZooKeeper = settings.WarmupZooKeeper
+                });
                 
                 ConfigureHostBeforeRun();
                 LogThreadPoolSettings();
