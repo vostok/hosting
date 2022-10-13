@@ -243,7 +243,7 @@ namespace Vostok.Hosting
 
             try
             {
-                environment.Warmup(new VostokEnvironmentWarmupSettings
+                environment.Warmup(new VostokHostingEnvironmentWarmupSettings
                 {
                     LogApplicationConfiguration = settings.LogApplicationConfiguration,
                     LogDotnetEnvironmentVariables = settings.LogDotnetEnvironmentVariables,

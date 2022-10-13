@@ -48,16 +48,16 @@ namespace Vostok.Hosting
         /// </summary>
         public bool ConfigureThreadPool { get; set; } = true;
 
-        /// <inheritdoc cref="VostokEnvironmentWarmupSettings.LogApplicationConfiguration"/>
+        /// <inheritdoc cref="VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration"/>
         public bool LogApplicationConfiguration { get; set; }
 
-        /// <inheritdoc cref="VostokEnvironmentWarmupSettings.LogDotnetEnvironmentVariables"/>
+        /// <inheritdoc cref="VostokHostingEnvironmentWarmupSettings.LogDotnetEnvironmentVariables"/>
         public bool LogDotnetEnvironmentVariables { get; set; } = true;
 
-        /// <inheritdoc cref="VostokEnvironmentWarmupSettings.WarmupConfiguration"/>
+        /// <inheritdoc cref="VostokHostingEnvironmentWarmupSettings.WarmupConfiguration"/>
         public bool WarmupConfiguration { get; set; } = true;
 
-        /// <inheritdoc cref="VostokEnvironmentWarmupSettings.WarmupZooKeeper"/>
+        /// <inheritdoc cref="VostokHostingEnvironmentWarmupSettings.WarmupZooKeeper"/>
         public bool WarmupZooKeeper { get; set; } = true;
 
         /// <summary>

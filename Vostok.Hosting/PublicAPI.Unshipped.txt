@@ -1,12 +1,12 @@
-static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokEnvironmentWarmupSettings settings) -> void
+static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokHostingEnvironmentWarmupSettings settings) -> void
 Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
-Vostok.Hosting.VostokEnvironmentWarmupSettings
-Vostok.Hosting.VostokEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
-Vostok.Hosting.VostokEnvironmentWarmupSettings.LogApplicationConfiguration.set -> void
-Vostok.Hosting.VostokEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.get -> bool
-Vostok.Hosting.VostokEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.set -> void
-Vostok.Hosting.VostokEnvironmentWarmupSettings.VostokEnvironmentWarmupSettings() -> void
-Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupConfiguration.get -> bool
-Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupConfiguration.set -> void
-Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupZooKeeper.get -> bool
-Vostok.Hosting.VostokEnvironmentWarmupSettings.WarmupZooKeeper.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.VostokHostingEnvironmentWarmupSettings() -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupConfiguration.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupConfiguration.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupZooKeeper.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupZooKeeper.set -> void
