@@ -1,4 +1,12 @@
+const Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutMaximumRelativeValue = 0.1 -> double
+const Vostok.Hosting.Components.ThreadPool.ThreadPoolConstants.DefaultThreadPoolMultiplier = 32 -> int
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutAmountForBeaconTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutAmountForExternalTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.DefaultBeaconShutdownTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.DefaultShutdownTimeout -> System.TimeSpan
 static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokHostingEnvironmentWarmupSettings settings) -> void
+Vostok.Hosting.Components.Shutdown.ShutdownConstants
+Vostok.Hosting.Components.ThreadPool.ThreadPoolConstants
 Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
 Vostok.Hosting.VostokHostingEnvironmentWarmupSettings
 Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
