@@ -8,6 +8,8 @@ static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vo
 Vostok.Hosting.Components.Shutdown.ShutdownConstants
 Vostok.Hosting.Components.ThreadPool.ThreadPoolConstants
 Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
+Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SimpleShutdown.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SimpleShutdown.set -> void
 Vostok.Hosting.VostokHostingEnvironmentWarmupSettings
 Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
 Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.set -> void
