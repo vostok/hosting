@@ -284,12 +284,7 @@ namespace Vostok.Hosting
                     return ReturnResult(VostokApplicationState.CrashedDuringInitialization, new Exception($"Service beacon hasn't registered in '{settings.BeaconRegistrationTimeout}'."));
 
                 if (settings.DiagnosticMetricsEnabled)
-                {
-                    if (environment.Diagnostics.HealthTracker is HealthTracker healthTracker)
-                        healthTracker.LaunchPeriodicalChecks(environment.ShutdownToken);
-                    else
-                        log.Warn($"Provided {nameof(IHealthTracker)} instance is of unknown type {environment.Diagnostics.HealthTracker.GetType().Name}, unable to launch periodical health checks.");
-                }
+                    HealthTrackerHelper.LaunchPeriodicalChecks(environment.Diagnostics, environment.ShutdownToken);
 
                 return initializationResult;
             }
