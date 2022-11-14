@@ -28,20 +28,5 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.DiagnosticMetricsEnabled"/>
         public bool DiagnosticMetricsEnabled { get; set; } = true;
-
-        /// <summary>
-        /// <list type="bullet">
-        ///     <listheader>
-        ///         <term>If set to true:</term>
-        ///     </listheader>
-        ///     <item>
-        ///         <description>Shutdown timeout won't be cut</description>
-        ///     </item>
-        ///     <item>
-        ///         <description>Service beacon won't be stopped</description>
-        ///     </item>
-        /// </list>
-        /// </summary>
-        public bool SimpleShutdown { get; set; }
     }
 }
