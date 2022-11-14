@@ -1,3 +1,7 @@
+## 0.3.54 (06-10-2022):
+
+HostExtensions : IVostokHostExtensionsForKeyed
+
 ## 0.3.53 (05-10-2022):
 
 Filled hercules client tracing annotations.
