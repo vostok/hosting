@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using Vostok.Commons.Time;
 using Vostok.Hosting.Helpers;
+using Vostok.Hosting.Setup;
 
 namespace Vostok.Hosting
 {
@@ -28,5 +29,8 @@ namespace Vostok.Hosting
 
         /// <inheritdoc cref="VostokHostSettings.DiagnosticMetricsEnabled"/>
         public bool DiagnosticMetricsEnabled { get; set; } = true;
+
+        /// Specifies if <see cref="IVostokHostingEnvironmentBuilder.SetupShutdownToken"/> and <see cref="IVostokHostingEnvironmentBuilder.SetupShutdownTimeout"/> are supported.
+        public bool SetupShutdownSupported { get; set; } = true;
     }
 }
