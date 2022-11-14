@@ -417,8 +417,7 @@ namespace Vostok.Hosting
                 return null;
 
             var dynamicThreadPoolTracker = new DynamicThreadPoolTracker(
-                settings.ThreadPoolSettingsProvider,
-                environment.ConfigurationProvider,
+                () => settings.ThreadPoolSettingsProvider(environment.ConfigurationProvider),
                 environment.ApplicationLimits,
                 environment.Log);
 
