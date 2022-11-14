@@ -13,6 +13,7 @@ using Vostok.Configuration.Primitives;
 using Vostok.Datacenters;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Components.HostExtensions;
+using Vostok.Hosting.Models;
 using Vostok.Logging.Abstractions;
 using Vostok.ZooKeeper.Client.Abstractions;
 
@@ -23,7 +24,7 @@ public static class IVostokHostingEnvironmentExtensions
 {
     public static void Warmup(this IVostokHostingEnvironment environment, VostokHostingEnvironmentWarmupSettings settings)
     {
-        var log = environment.Log.ForContext<VostokHost>();
+        var log = environment.Log.ForContext<VostokHostingEnvironment>();
         
         log.LogEnvironmentInfo();
         log.LogDotnetEnvironmentVariables(settings);
