@@ -309,12 +309,9 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
-            if (!settings.SimpleShutdown)
-                shutdownTimeout = shutdownTimeout.Cut(
-                    ShutdownConstants.CutAmountForExternalTimeout,
-                    ShutdownConstants.CutMaximumRelativeValue);
-            
-            this.shutdownTimeout = shutdownTimeout;
+            this.shutdownTimeout = shutdownTimeout.Cut(
+                ShutdownConstants.CutAmountForExternalTimeout,
+                ShutdownConstants.CutMaximumRelativeValue);
 
             return this;
         }
