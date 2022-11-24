@@ -210,9 +210,6 @@ namespace Vostok.Hosting.Components.Environment
             if (settings.ConfigureStaticProviders)
                 MetricContextProvider.Configure(context.Metrics.Root, true);
 
-            if (settings.SendAnnotations)
-                AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance);
-
             if (settings.DiagnosticMetricsEnabled)
                 context.RegisterDisposable(HerculesSinkMetrics.Measure(context.HerculesSink, context.Metrics, context.Log));
 
@@ -241,6 +238,7 @@ namespace Vostok.Hosting.Components.Environment
                 context.ServiceLocator,
                 context.ApplicationIdentity,
                 context.Metrics.Instance,
+                hostExtensionsBuilder.HostExtensions,
                 context.Log,
                 url?.Port,
                 shutdownTokens,
@@ -276,6 +274,9 @@ namespace Vostok.Hosting.Components.Environment
                 context.Dispose);
 
             hostExtensionsBuilder.Build(context, vostokHostingEnvironment);
+
+            if (settings.SendAnnotations)
+                AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance, context.HostExtensions.GetLifecycleAnnotationsTags());
 
             if (settings.DiagnosticMetricsEnabled)
                 systemMetricsBuilder.Build(context, vostokHostingEnvironment);

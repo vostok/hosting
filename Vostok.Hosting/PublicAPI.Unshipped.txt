@@ -1,0 +1,1 @@
+static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.EnrichLifecycleAnnotationTags(this Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder builder, params (string key, string value)[] tags) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
