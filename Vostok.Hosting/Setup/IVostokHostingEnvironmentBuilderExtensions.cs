@@ -2,6 +2,7 @@
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Sources;
 using Vostok.Hosting.Abstractions;
+using Vostok.Hosting.Components.Metrics;
 using Vostok.Logging.Configuration;
 using Vostok.ServiceDiscovery.Abstractions;
 
@@ -123,5 +124,11 @@ namespace Vostok.Hosting.Setup
         /// </summary>
         public static IVostokHostingEnvironmentBuilder AddLoggingRulesFromSettings([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] params string[] scope) =>
             builder.SetupLog((log, context) => log.AddRules(context.ConfigurationSource.ScopeTo(scope)));
+
+        /// <summary>
+        /// Applies given <paramref name="tags"/> to annotations with application lifecycle events.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder EnrichLifecycleAnnotationTags([NotNull] this IVostokHostingEnvironmentBuilder builder, [NotNull] params (string key, string value)[] tags) =>
+            builder.SetupHostExtensions(extensions => extensions.Add(new LifecycleAnnotationsAdditionalTags(tags)));
     }
 }
