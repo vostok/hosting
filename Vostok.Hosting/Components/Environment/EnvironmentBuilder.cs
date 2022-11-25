@@ -209,7 +209,7 @@ namespace Vostok.Hosting.Components.Environment
             context.Metrics = metricsBuilder.Build(context);
             if (settings.ConfigureStaticProviders)
                 MetricContextProvider.Configure(context.Metrics.Root, true);
-            
+
             if (settings.SendAnnotations)
                 AnnotationsHelper.ReportLaunching(context.ApplicationIdentity, context.Metrics.Instance);
 
