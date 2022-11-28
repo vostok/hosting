@@ -19,8 +19,7 @@ namespace Vostok.Hosting.Setup
         public static IVostokMetricsBuilder EnrichInstanceAnnotationTags([NotNull] this IVostokMetricsBuilder builder, [NotNull] params (string key, string value)[] tags)
         {
             var metricTags = tags.Select(t => new MetricTag(t.key, t.value)).ToArray();
-            return builder.CustomizeAnnotationEventSender(sender =>
-                new TagsEnrichingInstanceAnnotationEventSender(sender, new MetricTags(metricTags)));
+            return builder.EnrichInstanceAnnotationTags(new MetricTags(metricTags));
         }
 
         /// <summary>
