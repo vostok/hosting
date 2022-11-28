@@ -21,7 +21,7 @@ internal sealed class TagsEnrichingAnnotationEventSender_Tests
         var initialTag = new MetricTag("initialTagKey", "initialTagValue");
         var newTag = new MetricTag("key", "value");
         
-        var sender = new TagsEnrichingAnnotationEventSender(baseSender, new MetricTags(newTag));
+        var sender = new TagsEnrichingInstanceAnnotationEventSender(baseSender, new MetricTags(newTag));
         sender.Send(new AnnotationEvent(DateTimeOffset.Now, new MetricTags(initialTag), "Annotation"));
 
         enrichedEvent.Tags.Should().BeEquivalentTo(initialTag, newTag);

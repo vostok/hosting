@@ -7,7 +7,6 @@ using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
-using Vostok.Metrics.Models;
 using Vostok.Metrics.Senders;
 
 // ReSharper disable ParameterHidesMember
@@ -19,7 +18,7 @@ namespace Vostok.Hosting.Components.Metrics
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
         private readonly Customization<MetricContextConfig> settingsCustomization;
-        private volatile MetricTags additionalAnnotationsTags;
+        private readonly Customization<IAnnotationEventSender> annotationEventSenderCustomization;
         private volatile bool addLoggingSender;
 
         public MetricsBuilder()
@@ -27,7 +26,7 @@ namespace Vostok.Hosting.Components.Metrics
             herculesMetricEventSenderBuilder = new HerculesMetricEventSenderBuilder();
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
             settingsCustomization = new Customization<MetricContextConfig>();
-            additionalAnnotationsTags = MetricTags.Empty;
+            annotationEventSenderCustomization = new Customization<IAnnotationEventSender>();
         }
 
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
@@ -57,9 +56,9 @@ namespace Vostok.Hosting.Components.Metrics
             return this;
         }
 
-        public IVostokMetricsBuilder EnrichAnnotationTags(MetricTags tags)
+        public IVostokMetricsBuilder CustomizeAnnotationEventSender(Func<IAnnotationEventSender, IAnnotationEventSender> senderCustomization)
         {
-            additionalAnnotationsTags = additionalAnnotationsTags.Append(tags);
+            annotationEventSenderCustomization.AddCustomization(senderCustomization);
             return this;
         }
 
@@ -114,8 +113,8 @@ namespace Vostok.Hosting.Components.Metrics
                 _ => new CompositeAnnotationEventSender(senders)
             };
 
-            if (annotationSender != null && additionalAnnotationsTags.Count != 0)
-                annotationSender = new TagsEnrichingAnnotationEventSender(annotationSender, additionalAnnotationsTags);
+            if (annotationSender != null)
+                annotationSender = annotationEventSenderCustomization.Customize(annotationSender);
 
             return annotationSender;
         }

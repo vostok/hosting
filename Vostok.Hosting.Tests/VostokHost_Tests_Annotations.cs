@@ -85,16 +85,16 @@ internal sealed class VostokHost_Tests_Annotations
     }
 
     [Test]
-    public void Should_enrich_all_annotations_with_provided_tags()
+    public void Should_enrich_all_annotations_with_provided_tags_when_has_instance_tag()
     {
-        var app = new Application(writeApplicationAnnotation: true);
+        var app = new Application(writeInstanceAnnotation: true);
 
         var (key, value) = ("key", "value");
         var host = new VostokHost(new TestHostSettings(app,
             builder =>
             {
                 SetupEnvironment(builder);
-                builder.SetupMetrics(m => m.EnrichAnnotationTags((key, value)));
+                builder.SetupMetrics(m => m.EnrichInstanceAnnotationTags((key, value)));
             })
         {
             SendAnnotations = true
@@ -108,6 +108,27 @@ internal sealed class VostokHost_Tests_Annotations
         CheckEventsContainTags(key, value);
     }
     
+    [Test]
+    public void Should_not_enrich_annotations_with_provided_tags_when_has_not_instance_tag()
+    {
+        var app = new Application(writeNonInstanceAnnotation: true);
+
+        var (key, value) = ("key", "value");
+        var host = new VostokHost(new TestHostSettings(app,
+            builder =>
+            {
+                SetupEnvironment(builder);
+                builder.SetupMetrics(m => m.EnrichInstanceAnnotationTags((key, value)));
+            }));
+
+        host.Start(VostokApplicationState.Running);
+        host.Stop();
+
+        receivedEvents.Should().NotBeEmpty();
+        var nonInstanceAnnotation = receivedEvents.Single(a => a.Description == Application.NonInstanceAnnotationDescription);
+        nonInstanceAnnotation.Tags.Contains(new MetricTag(key, value)).Should().BeFalse();
+    }
+
     [Test]
     public void Should_not_enrich_metrics_with_provided_annotations_tags()
     {
@@ -125,7 +146,7 @@ internal sealed class VostokHost_Tests_Annotations
                 SetupEnvironment(builder);
                 builder.SetupMetrics(m => m
                     .AddMetricEventSender(metricSender)
-                    .EnrichAnnotationTags((key, value)));
+                    .EnrichInstanceAnnotationTags((key, value)));
             }));
 
         host.Start(VostokApplicationState.Running);
@@ -158,12 +179,16 @@ internal sealed class VostokHost_Tests_Annotations
 
     private class Application : IVostokApplication
     {
-        private bool writeApplicationAnnotation;
+        public const string NonInstanceAnnotationDescription = "NonInstanceAnnotation";
+        
+        private readonly bool writeInstanceAnnotation;
+        private readonly bool writeNonInstanceAnnotation;
         private readonly bool writeApplicationMetric;
 
-        public Application(bool writeApplicationAnnotation = false, bool writeApplicationMetric = false)
+        public Application(bool writeInstanceAnnotation = false, bool writeNonInstanceAnnotation = false, bool writeApplicationMetric = false)
         {
-            this.writeApplicationAnnotation = writeApplicationAnnotation;
+            this.writeInstanceAnnotation = writeInstanceAnnotation;
+            this.writeNonInstanceAnnotation = writeNonInstanceAnnotation;
             this.writeApplicationMetric = writeApplicationMetric;
         }
 
@@ -172,8 +197,11 @@ internal sealed class VostokHost_Tests_Annotations
 
         public Task RunAsync(IVostokHostingEnvironment environment)
         {
-            if (writeApplicationAnnotation)
+            if (writeInstanceAnnotation)
                 environment.Metrics.Instance.SendAnnotation("Annotation");
+            
+            if (writeNonInstanceAnnotation)
+                environment.Metrics.Project.SendAnnotation(NonInstanceAnnotationDescription);
 
             if (writeApplicationMetric)
                 environment.Metrics.Instance.Send(new MetricDataPoint(42, ("metricKey", "metricValue")));
