@@ -1,4 +1,5 @@
-﻿using Vostok.Hosting.Abstractions;
+﻿using System.Linq;
+using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.Models;
 
@@ -17,23 +18,12 @@ internal sealed class TagsEnrichingInstanceAnnotationEventSender : IAnnotationEv
 
     public void Send(AnnotationEvent @event)
     {
-        if (ContainsTag(@event.Tags, WellKnownApplicationIdentityProperties.Instance))
+        if (@event.Tags.Any(metricTag => metricTag.Key == WellKnownApplicationIdentityProperties.Instance))
         {
             var enrichedTags = @event.Tags.Append(tagsToAppend);
             @event = new AnnotationEvent(@event.Timestamp, enrichedTags, @event.Description);
         }
 
         baseSender.Send(@event);
-    }
-
-    private static bool ContainsTag(MetricTags tags, string tag)
-    {
-        foreach (var metricTag in tags)
-        {
-            if (metricTag.Key == tag)
-                return true;
-        }
-
-        return false;
     }
 }
