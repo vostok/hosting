@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Vostok.Metrics;
-using Vostok.Metrics.Models;
 
 namespace Vostok.Hosting.Setup
 {
@@ -16,9 +15,6 @@ namespace Vostok.Hosting.Setup
 
         IVostokMetricsBuilder CustomizeSettings([NotNull] Action<MetricContextConfig> settingsCustomization);
 
-        /// <summary>
-        /// Applies given <paramref name="tags" /> to all annotations.
-        /// </summary>
-        IVostokMetricsBuilder EnrichAnnotationTags([NotNull] MetricTags tags);
+        IVostokMetricsBuilder CustomizeAnnotationEventSender([NotNull] Func<IAnnotationEventSender, IAnnotationEventSender> senderCustomization);
     }
 }
