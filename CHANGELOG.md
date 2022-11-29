@@ -1,3 +1,8 @@
+## 0.3.55 (29-11-2022):
+
+- Added `CustomizeAnnotationEventSender` method to `IVostokMetricsBuilder`
+- Added `EnrichInstanceAnnotationTags` extension method to `IVostokMetricsBuilderExtensions`. It allows to enrich tags for annotations written by `Instance` metrics context. 
+
 ## 0.3.54 (06-10-2022):
 
 HostExtensions : IVostokHostExtensionsForKeyed
