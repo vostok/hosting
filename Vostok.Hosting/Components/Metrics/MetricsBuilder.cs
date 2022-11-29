@@ -18,6 +18,7 @@ namespace Vostok.Hosting.Components.Metrics
         private readonly HerculesMetricEventSenderBuilder herculesMetricEventSenderBuilder;
         private readonly List<IBuilder<IMetricEventSender>> metricEventSenderBuilders;
         private readonly Customization<MetricContextConfig> settingsCustomization;
+        private readonly Customization<IAnnotationEventSender> annotationEventSenderCustomization;
         private volatile bool addLoggingSender;
 
         public MetricsBuilder()
@@ -25,6 +26,7 @@ namespace Vostok.Hosting.Components.Metrics
             herculesMetricEventSenderBuilder = new HerculesMetricEventSenderBuilder();
             metricEventSenderBuilders = new List<IBuilder<IMetricEventSender>> {herculesMetricEventSenderBuilder};
             settingsCustomization = new Customization<MetricContextConfig>();
+            annotationEventSenderCustomization = new Customization<IAnnotationEventSender>();
         }
 
         public IVostokMetricsBuilder SetupHerculesMetricEventSender(Action<IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup)
@@ -51,6 +53,12 @@ namespace Vostok.Hosting.Components.Metrics
         public IVostokMetricsBuilder CustomizeSettings(Action<MetricContextConfig> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            return this;
+        }
+
+        public IVostokMetricsBuilder CustomizeAnnotationEventSender(Func<IAnnotationEventSender, IAnnotationEventSender> senderCustomization)
+        {
+            annotationEventSenderCustomization.AddCustomization(senderCustomization);
             return this;
         }
 
@@ -86,30 +94,29 @@ namespace Vostok.Hosting.Components.Metrics
             if (addLoggingSender)
                 senders.Add(new LoggingMetricEventSender(context.Log));
 
-            switch (senders.Count)
+            return senders.Count switch
             {
-                case 0:
-                    return null;
-                case 1:
-                    return senders.Single();
-                default:
-                    return new CompositeMetricEventSender(senders.ToArray());
-            }
+                0 => null,
+                1 => senders.Single(),
+                _ => new CompositeMetricEventSender(senders.ToArray())
+            };
         }
 
         private IAnnotationEventSender BuildCompositeAnnotationEventSender(IEnumerable<IMetricEventSender> metricSenders)
         {
             var senders = metricSenders.OfType<IAnnotationEventSender>().ToArray();
 
-            switch (senders.Length)
+            var annotationSender = senders.Length switch
             {
-                case 0:
-                    return null;
-                case 1:
-                    return senders.Single();
-                default:
-                    return new CompositeAnnotationEventSender(senders);
-            }
+                0 => null,
+                1 => senders.Single(),
+                _ => new CompositeAnnotationEventSender(senders)
+            };
+
+            if (annotationSender != null)
+                annotationSender = annotationEventSenderCustomization.Customize(annotationSender);
+
+            return annotationSender;
         }
     }
 }
