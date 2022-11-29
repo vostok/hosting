@@ -92,6 +92,8 @@ static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.SetHttpsS
 static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.SetPort(this Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder builder, int port) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
 static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.SetupServiceBeacon(this Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder builder) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
 static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.SetUrlScheme(this Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder builder, string scheme) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder
+static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.EnrichInstanceAnnotationTags(this Vostok.Hosting.Setup.IVostokMetricsBuilder builder, params (string key, string value)[] tags) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
+static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.EnrichInstanceAnnotationTags(this Vostok.Hosting.Setup.IVostokMetricsBuilder builder, Vostok.Metrics.Models.MetricTags tags) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
 static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.SetupHerculesMetricEventSender(this Vostok.Hosting.Setup.IVostokMetricsBuilder builder) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
 static Vostok.Hosting.Setup.IVostokServiceBeaconBuilderExtensions.UseFQDN(this Vostok.Hosting.Setup.IVostokServiceBeaconBuilder builder) -> Vostok.Hosting.Setup.IVostokServiceBeaconBuilder
 static Vostok.Hosting.Setup.IVostokServiceBeaconBuilderExtensions.UseHostname(this Vostok.Hosting.Setup.IVostokServiceBeaconBuilder builder) -> Vostok.Hosting.Setup.IVostokServiceBeaconBuilder
@@ -519,6 +521,7 @@ Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext.SecretConfigurationPr
 Vostok.Hosting.Setup.IVostokHostingEnvironmentSetupContext.SecretConfigurationSource.get -> Vostok.Configuration.Abstractions.IConfigurationSource
 Vostok.Hosting.Setup.IVostokMetricsBuilder
 Vostok.Hosting.Setup.IVostokMetricsBuilder.AddMetricEventSender(Vostok.Metrics.IMetricEventSender metricEventSender) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
+Vostok.Hosting.Setup.IVostokMetricsBuilder.CustomizeAnnotationEventSender(System.Func<Vostok.Metrics.IAnnotationEventSender, Vostok.Metrics.IAnnotationEventSender> senderCustomization) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
 Vostok.Hosting.Setup.IVostokMetricsBuilder.CustomizeSettings(System.Action<Vostok.Metrics.MetricContextConfig> settingsCustomization) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
 Vostok.Hosting.Setup.IVostokMetricsBuilder.SetupHerculesMetricEventSender(System.Action<Vostok.Hosting.Setup.IVostokHerculesMetricEventSenderBuilder> herculesMetricEventSenderSetup) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
 Vostok.Hosting.Setup.IVostokMetricsBuilder.SetupLoggingMetricEventSender() -> Vostok.Hosting.Setup.IVostokMetricsBuilder
