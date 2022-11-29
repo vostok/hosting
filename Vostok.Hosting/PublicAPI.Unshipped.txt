@@ -1,3 +1,0 @@
-static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.EnrichInstanceAnnotationTags(this Vostok.Hosting.Setup.IVostokMetricsBuilder builder, params (string key, string value)[] tags) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
-static Vostok.Hosting.Setup.IVostokMetricsBuilderExtensions.EnrichInstanceAnnotationTags(this Vostok.Hosting.Setup.IVostokMetricsBuilder builder, Vostok.Metrics.Models.MetricTags tags) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
-Vostok.Hosting.Setup.IVostokMetricsBuilder.CustomizeAnnotationEventSender(System.Func<Vostok.Metrics.IAnnotationEventSender, Vostok.Metrics.IAnnotationEventSender> senderCustomization) -> Vostok.Hosting.Setup.IVostokMetricsBuilder
