@@ -10,10 +10,12 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
 {
     internal class ServiceLocatorBuilder : IVostokServiceLocatorBuilder, IBuilder<IServiceLocator>
     {
+        public readonly Customization<IServiceLocator> StaticProviderCustomization;
         private readonly Customization<ServiceLocatorSettings> settingsCustomization;
 
         public ServiceLocatorBuilder()
         {
+            StaticProviderCustomization = new Customization<IServiceLocator>();
             settingsCustomization = new Customization<ServiceLocatorSettings>();
         }
 
@@ -36,6 +38,13 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IVostokServiceLocatorBuilder CustomizeSettings(Action<ServiceLocatorSettings> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+            return this;
+        }
+
+        public IVostokServiceLocatorBuilder ConfigureStaticProvider(Action<IServiceLocator> configure)
+        {
+            StaticProviderCustomization.AddCustomization(configure ?? throw new ArgumentNullException(nameof(configure)));
+
             return this;
         }
     }

@@ -170,10 +170,14 @@ namespace Vostok.Hosting.Components.Environment
             context.ApplicationLimits = applicationLimitsBuilder.Build(context);
             context.ApplicationReplication = applicationReplicationInfoBuilder.Build(context);
 
-            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context);
+            context.ZooKeeperClient = zooKeeperClientBuilder.Build(context, out var finalZooKeeperClientBuilder);
+            if (settings.ConfigureStaticProviders)
+                finalZooKeeperClientBuilder.StaticProviderCustomization.Customize(context.ZooKeeperClient);
 
-            context.ServiceLocator = serviceLocatorBuilder.Build(context);
-
+            context.ServiceLocator = serviceLocatorBuilder.Build(context, out var finalServiceLocatorBuilder);
+            if (settings.ConfigureStaticProviders)
+                finalServiceLocatorBuilder.StaticProviderCustomization.Customize(context.ServiceLocator);
+            
             context.HerculesSink = herculesSinkBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.HerculesSink != null)

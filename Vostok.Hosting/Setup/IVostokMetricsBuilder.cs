@@ -14,5 +14,7 @@ namespace Vostok.Hosting.Setup
         IVostokMetricsBuilder AddMetricEventSender([NotNull] IMetricEventSender metricEventSender);
 
         IVostokMetricsBuilder CustomizeSettings([NotNull] Action<MetricContextConfig> settingsCustomization);
+
+        IVostokMetricsBuilder CustomizeAnnotationEventSender([NotNull] Func<IAnnotationEventSender, IAnnotationEventSender> senderCustomization);
     }
 }

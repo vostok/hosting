@@ -21,5 +21,7 @@ namespace Vostok.Hosting.Setup
         IVostokZooKeeperClientBuilder SetConnectionString([NotNull] string connectionString);
         IVostokZooKeeperClientBuilder AddAuthenticationInfo([NotNull] AuthenticationInfo authenticationInfo);
         IVostokZooKeeperClientBuilder CustomizeSettings([NotNull] Action<ZooKeeperClientSettings> settingsCustomization);
+
+        IVostokZooKeeperClientBuilder ConfigureStaticProvider([NotNull] Action<IZooKeeperClient> configure);
     }
 }

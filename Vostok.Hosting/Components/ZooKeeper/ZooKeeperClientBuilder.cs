@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Components.ClusterProvider;
-using Vostok.Hosting.Helpers;
 using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
@@ -20,14 +19,19 @@ namespace Vostok.Hosting.Components.ZooKeeper
         IVostokZooKeeperClientBuilder,
         IBuilder<IZooKeeperClient>
     {
+        public readonly Customization<IZooKeeperClient> StaticProviderCustomization;
         private readonly Customization<ZooKeeperClientSettings> settingsCustomization;
+        private readonly List<AuthenticationInfo> authenticationInfos;
         private volatile ClusterProviderBuilder clusterProviderBuilder;
         private volatile string connectionString;
         private volatile IZooKeeperClient instance;
-        private volatile List<AuthenticationInfo> authenticationInfos = new List<AuthenticationInfo>();
 
         public ZooKeeperClientBuilder()
-            => settingsCustomization = new Customization<ZooKeeperClientSettings>();
+        {
+            StaticProviderCustomization = new Customization<IZooKeeperClient>();
+            settingsCustomization = new Customization<ZooKeeperClientSettings>();
+            authenticationInfos = new List<AuthenticationInfo>();
+        }
 
         public IVostokZooKeeperClientBuilder UseInstance(IZooKeeperClient instance)
         {
@@ -78,6 +82,13 @@ namespace Vostok.Hosting.Components.ZooKeeper
             instance = null;
 
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
+
+            return this;
+        }
+
+        public IVostokZooKeeperClientBuilder ConfigureStaticProvider(Action<IZooKeeperClient> configure)
+        {
+            StaticProviderCustomization.AddCustomization(configure ?? throw new ArgumentNullException(nameof(configure)));
 
             return this;
         }

@@ -29,6 +29,13 @@ namespace Vostok.Hosting.Helpers
         public void AddCustomization(Action<TBuilder, IVostokConfigurationSetupContext> setup)
             => builderCustomization.AddCustomization(b => setup(b, configurationSetupContext));
 
+        public TResult Build(BuildContext context, out TBuilder finalBuilder)
+        {
+            var result = Build(context);
+            finalBuilder = builder;
+            return result;
+        }
+        
         public TResult Build(BuildContext context)
         {
             environmentSetupContext = context.EnvironmentSetupContext;
