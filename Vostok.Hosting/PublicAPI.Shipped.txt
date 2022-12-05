@@ -539,6 +539,7 @@ Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder
 Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder.CustomizeSettings(System.Action<Vostok.ServiceDiscovery.Telemetry.ServiceDiscoveryEventsContextConfig> settingsCustomization) -> Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder
 Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder.SetupHerculesServiceDiscoveryEventsSender(System.Action<Vostok.Hosting.Setup.IVostokHerculesServiceDiscoveryEventsSenderBuilder> herculesEventsSenderSetup) -> Vostok.Hosting.Setup.IVostokServiceDiscoveryEventsContextBuilder
 Vostok.Hosting.Setup.IVostokServiceLocatorBuilder
+Vostok.Hosting.Setup.IVostokServiceLocatorBuilder.ConfigureStaticProvider(System.Action<Vostok.ServiceDiscovery.Abstractions.IServiceLocator> configure) -> Vostok.Hosting.Setup.IVostokServiceLocatorBuilder
 Vostok.Hosting.Setup.IVostokServiceLocatorBuilder.CustomizeSettings(System.Action<Vostok.ServiceDiscovery.ServiceLocatorSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokServiceLocatorBuilder
 Vostok.Hosting.Setup.IVostokSystemMetricsBuilder
 Vostok.Hosting.Setup.IVostokSystemMetricsBuilder.Customize(System.Action<Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings> customization) -> Vostok.Hosting.Setup.IVostokSystemMetricsBuilder
@@ -550,6 +551,7 @@ Vostok.Hosting.Setup.IVostokTracerBuilder.SetTracerProvider(System.Func<Vostok.T
 Vostok.Hosting.Setup.IVostokTracerBuilder.SetupHerculesSpanSender(System.Action<Vostok.Hosting.Setup.IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup) -> Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.AddAuthenticationInfo(Vostok.ZooKeeper.Client.Abstractions.Model.Authentication.AuthenticationInfo authenticationInfo) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
+Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.ConfigureStaticProvider(System.Action<Vostok.ZooKeeper.Client.Abstractions.IZooKeeperClient> configure) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.CustomizeSettings(System.Action<Vostok.ZooKeeper.Client.ZooKeeperClientSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.Disable() -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.Enable() -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
