@@ -1,3 +1,7 @@
+## 0.3.56 (05-12-2022):
+
+Added `ConfigureStaticProvider` callbacks for `IServiceLocator` and `IZooKeeperClient`.
+
 ## 0.3.55 (29-11-2022):
 
 - Added `CustomizeAnnotationEventSender` method to `IVostokMetricsBuilder`
