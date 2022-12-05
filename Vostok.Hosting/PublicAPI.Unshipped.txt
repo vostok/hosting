@@ -1,2 +1,0 @@
-Vostok.Hosting.Setup.IVostokServiceLocatorBuilder.ConfigureStaticProvider(System.Action<Vostok.ServiceDiscovery.Abstractions.IServiceLocator> configure) -> Vostok.Hosting.Setup.IVostokServiceLocatorBuilder
-Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.ConfigureStaticProvider(System.Action<Vostok.ZooKeeper.Client.Abstractions.IZooKeeperClient> configure) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
