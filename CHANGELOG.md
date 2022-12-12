@@ -1,3 +1,7 @@
+## 0.3.57 (12-12-2022):
+
+Made some internals parts public for use in `hosting.aspnetcore`.
+
 ## 0.3.56 (05-12-2022):
 
 Added `ConfigureStaticProvider` callbacks for `IServiceLocator` and `IZooKeeperClient`.
