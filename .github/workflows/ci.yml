@@ -1,6 +1,6 @@
 name: Build & Test & Publish
 
-on: [push, pull_request, workflow_dispatch]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   build:
@@ -13,5 +13,5 @@ jobs:
   publish:
     needs: test
     uses: vostok/github.ci/.github/workflows/publish.yml@master
-    secrets: 
+    secrets:
       token: ${{ secrets.NUGET_TOKEN }}

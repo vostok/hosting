@@ -1,34 +1,30 @@
 ﻿using System;
 using Vostok.Commons.Threading;
 using Vostok.Commons.Time;
-using Vostok.Configuration.Abstractions;
 using Vostok.Hosting.Abstractions;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Hosting.Components.ThreadPool
 {
-    internal class DynamicThreadPoolTracker : IDisposable
+    public class DynamicThreadPoolTracker : IDisposable
     {
         private static readonly TimeSpan ChecksPeriod = 10.Seconds();
 
         private readonly PeriodicalAction threadPoolUpdate;
 
         private readonly ILog log;
-        private readonly IConfigurationProvider configProvider;
         private readonly IVostokApplicationLimits applicationLimits;
-        private readonly Func<IConfigurationProvider, ThreadPoolSettings> settingsProvider;
+        private readonly Func<ThreadPoolSettings> settingsProvider;
 
         private int? previousThreadPoolMultiplier;
         private float? previousCpuUnits;
 
         public DynamicThreadPoolTracker(
-            Func<IConfigurationProvider, ThreadPoolSettings> settingsProvider,
-            IConfigurationProvider configProvider,
+            Func<ThreadPoolSettings> settingsProvider,
             IVostokApplicationLimits limits,
             ILog log)
         {
             this.log = log.ForContext<DynamicThreadPoolTracker>();
-            this.configProvider = configProvider;
             applicationLimits = limits;
             this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
 
@@ -49,7 +45,7 @@ namespace Vostok.Hosting.Components.ThreadPool
 
         private void CheckAndUpdate()
         {
-            var newThreadPoolMultiplier = settingsProvider(configProvider).ThreadPoolMultiplier;
+            var newThreadPoolMultiplier = settingsProvider().ThreadPoolMultiplier;
             var newCpuUnits = applicationLimits.CpuUnits;
 
             if (WereSettingsUpdated(newThreadPoolMultiplier, newCpuUnits))

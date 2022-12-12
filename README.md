@@ -5,7 +5,6 @@
 
 The entry point to create and launch Vostok-compatible services.
 
-
 **Build guide**: https://github.com/vostok/devtools/blob/master/library-dev-conventions/how-to-build-a-library.md
 
 **User documentation**: not written yet.

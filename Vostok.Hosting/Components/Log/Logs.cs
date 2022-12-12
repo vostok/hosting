@@ -11,6 +11,10 @@ namespace Vostok.Hosting.Components.Log
 {
     internal class Logs
     {
+        public const string HerculesLogName = "Hercules";
+        public const string ConsoleLogName = "Console";
+        public const string FileLogName = "File";
+
         private readonly List<(string name, ILog log)> userLogs;
         private readonly Func<ILog, ILog> customization;
         private readonly IObservable<LogConfigurationRule[]> rules;
@@ -19,10 +23,6 @@ namespace Vostok.Hosting.Components.Log
         private volatile ILog fileLog;
         private volatile ILog consoleLog;
         private volatile ILog herculesLog;
-        
-        public const string HerculesLogName = "Hercules";
-        public const string ConsoleLogName = "Console";
-        public const string FileLogName = "File";
 
         public Logs(
             List<(string name, ILog log)> userLogs,

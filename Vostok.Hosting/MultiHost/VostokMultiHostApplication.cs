@@ -21,7 +21,7 @@ namespace Vostok.Hosting.MultiHost
         {
             this.settings = settings;
             this.isReadyToStart = isReadyToStart;
-            
+
             var vostokHostSettings = new VostokHostSettings(settings.Application, settings.EnvironmentSetup)
             {
                 ConfigureThreadPool = false,

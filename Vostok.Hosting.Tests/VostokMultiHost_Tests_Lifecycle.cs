@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Tests
 
             await vostokMultiHost.StartAsync();
 
-            Action secondLaunch = () => vostokMultiHost.StartAsync().GetAwaiter().GetResult();
+            var secondLaunch = () => vostokMultiHost.StartAsync().GetAwaiter().GetResult();
 
             secondLaunch.Should().NotThrow();
         }

@@ -15,7 +15,7 @@ namespace Vostok.Hosting.Components.Diagnostics
         public const string ZooKeeperConnection = "ZooKeeper connection";
 
         public const string DnsResolution = "DNS resolution";
-        
+
         public const string Configuration = "Configuration";
         public const string SecretConfiguration = "Secret configuration";
     }
