@@ -1,10 +1,12 @@
-﻿using Vostok.Commons.Environment;
+﻿using JetBrains.Annotations;
+using Vostok.Commons.Environment;
 using Vostok.Hosting.Abstractions;
 using Vostok.Metrics;
 
 namespace Vostok.Hosting.Components.Metrics
 {
-    internal static class AnnotationsHelper
+    [PublicAPI]
+    public static class AnnotationsHelper
     {
         private const string HostTag = "host";
         private const string EventTypeTag = "vostokEvent";

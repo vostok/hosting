@@ -300,7 +300,7 @@ namespace Vostok.Hosting.Tests
                             b.SetupHerculesMetricEventSender(mb => mb.Disable())
                                 .SetupHerculesMetricEventSender(_ => {}));
                 },
-                new VostokHostingEnvironmentFactorySettings()
+                new VostokHostingEnvironmentFactorySettings
                 {
                     DiagnosticMetricsEnabled = false
                 }
@@ -322,7 +322,7 @@ namespace Vostok.Hosting.Tests
                             b.SetupHerculesMetricEventSender(mb => mb.Disable())
                                 .SetupHerculesMetricEventSender());
                 },
-                new VostokHostingEnvironmentFactorySettings()
+                new VostokHostingEnvironmentFactorySettings
                 {
                     DiagnosticMetricsEnabled = false
                 }

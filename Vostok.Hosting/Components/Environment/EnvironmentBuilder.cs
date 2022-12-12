@@ -177,7 +177,7 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceLocator = serviceLocatorBuilder.Build(context, out var finalServiceLocatorBuilder);
             if (settings.ConfigureStaticProviders)
                 finalServiceLocatorBuilder.StaticProviderCustomization.Customize(context.ServiceLocator);
-            
+
             context.HerculesSink = herculesSinkBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.HerculesSink != null)
@@ -240,18 +240,19 @@ namespace Vostok.Hosting.Components.Environment
                 ? diagnosticsBuilder.Build(context)
                 : new DiagnosticsHub(new DiagnosticInfo(), new HealthTracker(TimeSpan.MaxValue, context.Log));
 
-            (context.HostingShutdown, context.ApplicationShutdown) = ShutdownFactory.Create(
-                context.ServiceBeacon,
-                context.ServiceLocator,
-                context.ApplicationIdentity,
-                context.Metrics.Instance,
-                context.Log,
-                url?.Port,
-                shutdownTokens,
-                shutdownTimeout,
-                settings.BeaconShutdownTimeout,
-                settings.BeaconShutdownWaitEnabled,
-                settings.SendAnnotations);
+            if (settings.SetupShutdownSupported)
+                (context.HostingShutdown, context.ApplicationShutdown) = ShutdownFactory.Create(
+                    context.ServiceBeacon,
+                    context.ServiceLocator,
+                    context.ApplicationIdentity,
+                    context.Metrics.Instance,
+                    context.Log,
+                    url?.Port,
+                    shutdownTokens,
+                    shutdownTimeout,
+                    settings.BeaconShutdownTimeout,
+                    settings.BeaconShutdownWaitEnabled,
+                    settings.SendAnnotations);
 
             var vostokHostingEnvironment = new VostokHostingEnvironment(
                 context.HostingShutdown,
@@ -307,12 +308,18 @@ namespace Vostok.Hosting.Components.Environment
 
         public IVostokHostingEnvironmentBuilder SetupShutdownToken(CancellationToken shutdownToken)
         {
+            if (!settings.SetupShutdownSupported)
+                throw new NotSupportedException("Setup shutdown token is not supported.");
+
             shutdownTokens.Add(shutdownToken);
             return this;
         }
 
         public IVostokHostingEnvironmentBuilder SetupShutdownTimeout(TimeSpan shutdownTimeout)
         {
+            if (!settings.SetupShutdownSupported)
+                throw new NotSupportedException("Setup shutdown token is not supported.");
+
             this.shutdownTimeout = shutdownTimeout.Cut(
                 ShutdownConstants.CutAmountForExternalTimeout,
                 ShutdownConstants.CutMaximumRelativeValue);

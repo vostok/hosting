@@ -11,10 +11,10 @@ namespace Vostok.Hosting.Helpers
     {
         public static ILog WithEnrichedProperties(this ILog log, BuildContext context) =>
             log
-               .WithApplicationIdentityProperties(context.ApplicationIdentity)
-               .WithTracingProperties(context.Tracer)
-               .WithOperationContext()
-               .WithProperty("hostName", EnvironmentInfo.Host);
+                .WithApplicationIdentityProperties(context.ApplicationIdentity)
+                .WithTracingProperties(context.Tracer)
+                .WithOperationContext()
+                .WithProperty("hostName", EnvironmentInfo.Host);
 
         private static ILog WithApplicationIdentityProperties(this ILog log, IVostokApplicationIdentity applicationIdentity)
         {

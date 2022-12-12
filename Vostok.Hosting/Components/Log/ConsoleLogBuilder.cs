@@ -48,7 +48,7 @@ namespace Vostok.Hosting.Components.Log
             this.logCustomization.AddCustomization(logCustomization ?? throw new ArgumentNullException(nameof(logCustomization)));
             return this;
         }
-        
+
         public IVostokConsoleLogBuilder AddRule(LogConfigurationRule rule)
         {
             rule = rule.WithLog(Logs.ConsoleLogName);

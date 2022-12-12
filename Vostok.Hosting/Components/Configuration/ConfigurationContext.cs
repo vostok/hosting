@@ -19,20 +19,20 @@ namespace Vostok.Hosting.Components.Configuration
             ConfigurationSource = configurationSource;
             SecretConfigurationSource = secretConfigurationSource;
             MergedConfigurationSource = mergedConfigurationSource;
-            
+
             ConfigurationProvider = configurationProvider;
             SecretConfigurationProvider = secretConfigurationProvider;
-            
+
             ClusterConfigClient = clusterConfigClient;
         }
 
         public IConfigurationSource ConfigurationSource { get; }
         public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationSource MergedConfigurationSource { get; }
-        
+
         public IConfigurationProvider ConfigurationProvider { get; }
         public IConfigurationProvider SecretConfigurationProvider { get; }
-        
+
         public IClusterConfigClient ClusterConfigClient { get; }
     }
 }

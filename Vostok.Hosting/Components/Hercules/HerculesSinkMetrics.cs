@@ -73,11 +73,12 @@ namespace Vostok.Hosting.Components.Hercules
                 details.Append(details.Length > 0 ? ", " : " (");
                 details.Append($"{count} {kvp.Key}");
             }
+
             if (details.Length > 0)
                 details.Append(')');
 
-            log.Info("Successfully sent {RecordsCount} record(s) of size {RecordsSize}{Details}.", 
-                delta.SentRecords.Count, 
+            log.Info("Successfully sent {RecordsCount} record(s) of size {RecordsSize}{Details}.",
+                delta.SentRecords.Count,
                 delta.SentRecords.Size,
                 details.ToString());
         }

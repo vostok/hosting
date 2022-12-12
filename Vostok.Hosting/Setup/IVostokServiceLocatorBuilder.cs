@@ -9,7 +9,7 @@ namespace Vostok.Hosting.Setup
     public interface IVostokServiceLocatorBuilder
     {
         IVostokServiceLocatorBuilder CustomizeSettings([NotNull] Action<ServiceLocatorSettings> settingsCustomization);
-    
+
         IVostokServiceLocatorBuilder ConfigureStaticProvider([NotNull] Action<IServiceLocator> configure);
     }
 }

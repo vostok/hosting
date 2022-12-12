@@ -23,8 +23,8 @@ namespace Vostok.Hosting.Models
         private readonly Action onDispose;
 
         internal VostokHostingEnvironment(
-            [NotNull] HostingShutdown hostingShutdown,
-            [NotNull] ApplicationShutdown applicationShutdown,
+            [CanBeNull] HostingShutdown hostingShutdown,
+            [CanBeNull] ApplicationShutdown applicationShutdown,
             [NotNull] IVostokApplicationIdentity applicationIdentity,
             [NotNull] IVostokApplicationLimits applicationLimits,
             [NotNull] Func<IVostokApplicationReplicationInfo> replicationInfoProvider,
@@ -48,8 +48,8 @@ namespace Vostok.Hosting.Models
             [NotNull] IVostokHostExtensions hostExtensions,
             [NotNull] Action onDispose)
         {
-            this.hostingShutdown = hostingShutdown ?? throw new ArgumentNullException(nameof(hostingShutdown));
-            this.applicationShutdown = applicationShutdown ?? throw new ArgumentNullException(nameof(applicationShutdown));
+            this.hostingShutdown = hostingShutdown;
+            this.applicationShutdown = applicationShutdown;
             this.replicationInfoProvider = replicationInfoProvider ?? throw new ArgumentNullException(nameof(replicationInfoProvider));
             this.onDispose = onDispose ?? throw new ArgumentNullException(nameof(onDispose));
 
@@ -75,9 +75,12 @@ namespace Vostok.Hosting.Models
             HostExtensions = hostExtensions ?? throw new ArgumentNullException(nameof(hostExtensions));
         }
 
-        public CancellationToken ShutdownToken => applicationShutdown.ShutdownToken;
-        public TimeSpan ShutdownTimeout => applicationShutdown.ShutdownTimeout;
-        public Task ShutdownTask => applicationShutdown.ShutdownTask;
+        public CancellationToken ShutdownToken => applicationShutdown?.ShutdownToken
+                                                  ?? throw new NotSupportedException("Shutdown token is not supported.");
+        public TimeSpan ShutdownTimeout => applicationShutdown?.ShutdownTimeout
+                                           ?? throw new NotSupportedException("Shutdown timeout is not supported.");
+        public Task ShutdownTask => applicationShutdown?.ShutdownTask
+                                    ?? throw new NotSupportedException("Shutdown task is not supported.");
         public IVostokApplicationIdentity ApplicationIdentity { get; }
         public IVostokApplicationLimits ApplicationLimits { get; }
         public IVostokApplicationReplicationInfo ApplicationReplicationInfo => replicationInfoProvider();
@@ -104,7 +107,7 @@ namespace Vostok.Hosting.Models
         {
             onDispose();
 
-            hostingShutdown.Dispose();
+            hostingShutdown?.Dispose();
         }
     }
 }
