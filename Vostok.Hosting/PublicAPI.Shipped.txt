@@ -13,6 +13,8 @@ const Vostok.Hosting.Components.Diagnostics.WellKnownHealthCheckNames.DnsResolut
 const Vostok.Hosting.Components.Diagnostics.WellKnownHealthCheckNames.SecretConfiguration = "Secret configuration" -> string
 const Vostok.Hosting.Components.Diagnostics.WellKnownHealthCheckNames.ThreadPoolStarvation = "Thread pool" -> string
 const Vostok.Hosting.Components.Diagnostics.WellKnownHealthCheckNames.ZooKeeperConnection = "ZooKeeper connection" -> string
+const Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutMaximumRelativeValue = 0.1 -> double
+const Vostok.Hosting.Components.ThreadPool.ThreadPoolConstants.DefaultThreadPoolMultiplier = 32 -> int
 const Vostok.Hosting.VostokConfigurationPlaceholders.ClusterConfigZone = "Vostok.ClusterConfig.Zone" -> string
 const Vostok.Hosting.VostokConfigurationPlaceholders.IdentityApplication = "Vostok.Identity.Application" -> string
 const Vostok.Hosting.VostokConfigurationPlaceholders.IdentityEnvironment = "Vostok.Identity.Environment" -> string
@@ -41,6 +43,15 @@ readonly Vostok.Hosting.MultiHost.VostokMultiHostRunResult.Error -> System.Excep
 readonly Vostok.Hosting.MultiHost.VostokMultiHostRunResult.State -> Vostok.Hosting.MultiHost.VostokMultiHostState
 readonly Vostok.Hosting.VostokHost.settings -> Vostok.Hosting.VostokHostSettings
 readonly Vostok.Hosting.VostokHost.ShutdownTokenSource -> System.Threading.CancellationTokenSource
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutAmountForBeaconTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.CutAmountForExternalTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.DefaultBeaconShutdownTimeout -> System.TimeSpan
+static readonly Vostok.Hosting.Components.Shutdown.ShutdownConstants.DefaultShutdownTimeout -> System.TimeSpan
+static Vostok.Hosting.Components.Diagnostics.HealthTrackerHelper.LaunchPeriodicalChecks(Vostok.Hosting.Abstractions.IVostokApplicationDiagnostics diagnostics, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> void
+static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportInitialized(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
+static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportLaunching(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
+static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportStopping(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
+static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokHostingEnvironmentWarmupSettings settings) -> void
 static Vostok.Hosting.Helpers.StaticProvidersHelper.Configure(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> void
 static Vostok.Hosting.Models.VostokApplicationStateExtensions.IsTerminal(this Vostok.Hosting.Models.VostokApplicationState state) -> bool
 static Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier.implicit operator Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier((string appName, string instanceName) appId) -> Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier
@@ -149,6 +160,7 @@ Vostok.Hosting.Components.Diagnostics.HealthChecks.ThreadPoolStarvationCheck.Thr
 Vostok.Hosting.Components.Diagnostics.HealthChecks.ZooKeeperConnectionCheck
 Vostok.Hosting.Components.Diagnostics.HealthChecks.ZooKeeperConnectionCheck.CheckAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vostok.Hosting.Abstractions.Diagnostics.HealthCheckResult>
 Vostok.Hosting.Components.Diagnostics.HealthChecks.ZooKeeperConnectionCheck.ZooKeeperConnectionCheck(Vostok.ZooKeeper.Client.ZooKeeperClient client) -> void
+Vostok.Hosting.Components.Diagnostics.HealthTrackerHelper
 Vostok.Hosting.Components.Diagnostics.HealthTrackerSettings
 Vostok.Hosting.Components.Diagnostics.HealthTrackerSettings.AddConfigurationCheck.get -> bool
 Vostok.Hosting.Components.Diagnostics.HealthTrackerSettings.AddConfigurationCheck.set -> void
@@ -186,6 +198,7 @@ Vostok.Hosting.Components.Log.SubstitutableLog.IsEnabledFor(Vostok.Logging.Abstr
 Vostok.Hosting.Components.Log.SubstitutableLog.Log(Vostok.Logging.Abstractions.LogEvent event) -> void
 Vostok.Hosting.Components.Log.SubstitutableLog.SubstitutableLog() -> void
 Vostok.Hosting.Components.Log.SubstitutableLog.SubstituteWith(Vostok.Logging.Abstractions.ILog newLog) -> void
+Vostok.Hosting.Components.Metrics.AnnotationsHelper
 Vostok.Hosting.Components.Metrics.VostokApplicationMetrics
 Vostok.Hosting.Components.Metrics.VostokApplicationMetrics.Application.get -> Vostok.Metrics.IMetricContext
 Vostok.Hosting.Components.Metrics.VostokApplicationMetrics.Environment.get -> Vostok.Metrics.IMetricContext
@@ -202,6 +215,7 @@ Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceBeacon.Stop() -> void
 Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceLocator
 Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceLocator.DevNullServiceLocator() -> void
 Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceLocator.Locate(string environment, string application) -> Vostok.ServiceDiscovery.Abstractions.IServiceTopology
+Vostok.Hosting.Components.Shutdown.ShutdownConstants
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsEventsMetrics.get -> bool
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsEventsMetrics.set -> void
@@ -230,6 +244,10 @@ Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsLogg
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsReportingPeriod.get -> System.TimeSpan?
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsReportingPeriod.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.SystemMetricsSettings() -> void
+Vostok.Hosting.Components.ThreadPool.DynamicThreadPoolTracker
+Vostok.Hosting.Components.ThreadPool.DynamicThreadPoolTracker.Dispose() -> void
+Vostok.Hosting.Components.ThreadPool.DynamicThreadPoolTracker.DynamicThreadPoolTracker(System.Func<Vostok.Hosting.Components.ThreadPool.ThreadPoolSettings> settingsProvider, Vostok.Hosting.Abstractions.IVostokApplicationLimits limits, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Hosting.Components.ThreadPool.ThreadPoolConstants
 Vostok.Hosting.Components.ThreadPool.ThreadPoolSettings
 Vostok.Hosting.Components.ThreadPool.ThreadPoolSettings.ThreadPoolMultiplier.get -> int
 Vostok.Hosting.Components.ThreadPool.ThreadPoolSettings.ThreadPoolMultiplier.set -> void
@@ -245,6 +263,7 @@ Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.GetDataAsync(Vostok.Z
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.OnConnectionStateChanged.get -> System.IObservable<Vostok.ZooKeeper.Client.Abstractions.Model.ConnectionState>
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.SessionId.get -> long
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.SetDataAsync(Vostok.ZooKeeper.Client.Abstractions.Model.Request.SetDataRequest request) -> System.Threading.Tasks.Task<Vostok.ZooKeeper.Client.Abstractions.Model.Result.SetDataResult>
+Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
 Vostok.Hosting.Helpers.StaticProvidersHelper
 Vostok.Hosting.Models.VostokApplicationReplicationInfo
 Vostok.Hosting.Models.VostokApplicationReplicationInfo.InstanceIndex.get -> int
@@ -583,7 +602,19 @@ Vostok.Hosting.VostokHostingEnvironmentFactorySettings.DisposeComponentTimeout.g
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings.DisposeComponentTimeout.set -> void
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SendAnnotations.get -> bool
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SendAnnotations.set -> void
+Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SetupShutdownSupported.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentFactorySettings.SetupShutdownSupported.set -> void
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings.VostokHostingEnvironmentFactorySettings() -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogApplicationConfiguration.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.LogDotnetEnvironmentVariables.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.VostokHostingEnvironmentWarmupSettings() -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupConfiguration.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupConfiguration.set -> void
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupZooKeeper.get -> bool
+Vostok.Hosting.VostokHostingEnvironmentWarmupSettings.WarmupZooKeeper.set -> void
 Vostok.Hosting.VostokHostSettings
 Vostok.Hosting.VostokHostSettings.Application.get -> Vostok.Hosting.Abstractions.IVostokApplication
 Vostok.Hosting.VostokHostSettings.Application.set -> void
