@@ -5,7 +5,8 @@ Added `ConfigureStaticProvider` callbacks for `IServiceLocator` and `IZooKeeperC
 ## 0.3.55 (29-11-2022):
 
 - Added `CustomizeAnnotationEventSender` method to `IVostokMetricsBuilder`
-- Added `EnrichInstanceAnnotationTags` extension method to `IVostokMetricsBuilderExtensions`. It allows to enrich tags for annotations are written by `Instance` metrics context. 
+- Added `EnrichInstanceAnnotationTags` extension method to `IVostokMetricsBuilderExtensions`. It allows to enrich tags
+  for annotations are written by `Instance` metrics context.
 
 ## 0.3.54 (06-10-2022):
 
@@ -21,7 +22,8 @@ Fixed [#88](https://github.com/vostok/hosting/issues/88) - Don't automatically e
 
 ## 0.3.51 (27-09-2022):
 
-Added `Enable` and `IsEnabled` method to `IVostokFileLogBuilder`, `IVostokConsoleLogBuilder`, `IVostokHerculesLogBuilder`. 
+Added `Enable` and `IsEnabled` method to `IVostokFileLogBuilder`, `IVostokConsoleLogBuilder`
+, `IVostokHerculesLogBuilder`.
 
 ## 0.3.50 (05-09-2022):
 
@@ -41,7 +43,8 @@ Added `ServiceDiscoveryEventsContextProvider` configure.
 
 ## 0.3.46 (07-04-2022):
 
-- Added `CustomizeOutputTemplate` extension that customizes file and console log templates. Use it with conduction of `WithPropertyAfter` extension for `OutputTemplate`.
+- Added `CustomizeOutputTemplate` extension that customizes file and console log templates. Use it with conduction
+  of `WithPropertyAfter` extension for `OutputTemplate`.
 - Log dotnet environment variables on host start.
 
 ## 0.3.45 (03-03-2022):
@@ -59,7 +62,8 @@ Bump ClusterConfig dependency version
 ## 0.3.42 (07-02-2022):
 
 - Combine configuration sources in correct order
-- Added `CustomizeMergedSettingsMerging` and `CustomizeMergedConfigurationSource` methods for setting up `МergedConfigurationSource`
+- Added `CustomizeMergedSettingsMerging` and `CustomizeMergedConfigurationSource` methods for setting
+  up `МergedConfigurationSource`
 - Added `МergedConfigurationSource` to `IVostokConfigurationContext`, `IVostokHostingEnvironmentSetupContext`
 - Added `МergedConfigurationSource` to host extensions (with `MergedConfigurationSource` key)
 
@@ -182,7 +186,8 @@ Added `Dynamic thread pool` feature.
 
 ## 0.3.11 (03-03-2021):
 
-IVostokConfigurationBuilder now allows to obtain intermediate configuration models between adding sources. See methods with `GetIntermediate` prefix.
+IVostokConfigurationBuilder now allows to obtain intermediate configuration models between adding sources. See methods
+with `GetIntermediate` prefix.
 
 ## 0.3.10 (02-03-2021):
 
@@ -275,7 +280,7 @@ IVostokHostingEnvironmentBuilder: added an overload of SetupSystemMetrics with I
 
 ## 0.2.2 (14-09-2020):
 
-- Do not call `Console.Flush()` when `ConsoleLog` hasn't actually been configured. 
+- Do not call `Console.Flush()` when `ConsoleLog` hasn't actually been configured.
 
 ## 0.2.1 (09-07-2020):
 
@@ -318,9 +323,11 @@ Fixed config placeholder substitutions.
 
 - Added extensions on `IVostokHostingEnvironmentBuilder` to quickly setup env/app for ServiceBeacon.
 - Added an option to provide custom external instances of IClusterConfigClient, IHerculesSink and IZooKeeperClient.
-- Added `IsEnabled` property to all builders that are capable of being disabled so that one can apply post-tuning only if respective components are enabled.
-- Added getters for identity components so that one can set missing values without risking to overwrite previous configuration.
-- Added default config placeholder substitutions (identity values, SD env and app, CC zone, local datacenter). 
+- Added `IsEnabled` property to all builders that are capable of being disabled so that one can apply post-tuning only
+  if respective components are enabled.
+- Added getters for identity components so that one can set missing values without risking to overwrite previous
+  configuration.
+- Added default config placeholder substitutions (identity values, SD env and app, CC zone, local datacenter).
 - It's now possible to customize config sources with arbitrary wrappers.
 
 ## 0.1.20 (27-04-2020):
@@ -339,7 +346,8 @@ VostokHost received two new methods for lifecycle management: Start and Stop. Th
 
 - VostokHost is now suitable to serve as a base class for other hosts.
 - VostokHostSettings: increased default shutdown timeout to 10 seconds.
-- VostokApplicationState received four new values: EnvironmentSetup, EnvironmentWarmup, CrashedDuringEnvironmentSetup, CrashedDuringEnvironmentWarmup.
+- VostokApplicationState received four new values: EnvironmentSetup, EnvironmentWarmup, CrashedDuringEnvironmentSetup,
+  CrashedDuringEnvironmentWarmup.
 
 ## 0.1.16 (12-04-2020)
 
@@ -417,6 +425,6 @@ Update ServiceDiscovery nuget dependencies.
 
 Fill `ClusterClientDefaults.ClientApplicationName` if `ConfigureStaticProviders` specified.
 
-## 0.1.0 (16-01-2020): 
+## 0.1.0 (16-01-2020):
 
 Initial prerelease.

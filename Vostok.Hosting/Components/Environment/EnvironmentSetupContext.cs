@@ -20,16 +20,16 @@ namespace Vostok.Hosting.Components.Environment
             IDatacenters datacenters)
         {
             Log = log.ForContext<VostokHostingEnvironment>();
-            
+
             ConfigurationSource = configurationSource;
             SecretConfigurationSource = secretConfigurationSource;
             MergedConfigurationSource = mergedConfigurationSource;
-            
+
             ConfigurationProvider = configurationProvider;
             SecretConfigurationProvider = secretConfigurationProvider;
-            
+
             ClusterConfigClient = clusterConfigClient;
-            
+
             Datacenters = datacenters;
         }
 
@@ -37,12 +37,12 @@ namespace Vostok.Hosting.Components.Environment
         public IConfigurationSource ConfigurationSource { get; }
         public IConfigurationSource SecretConfigurationSource { get; }
         public IConfigurationSource MergedConfigurationSource { get; }
-        
+
         public IConfigurationProvider ConfigurationProvider { get; }
         public IConfigurationProvider SecretConfigurationProvider { get; }
-        
+
         public IClusterConfigClient ClusterConfigClient { get; }
-        
+
         public IDatacenters Datacenters { get; }
     }
 }

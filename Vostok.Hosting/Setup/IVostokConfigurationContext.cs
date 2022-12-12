@@ -15,7 +15,7 @@ namespace Vostok.Hosting.Setup
         /// <inheritdoc cref="IVostokHostingEnvironment.SecretConfigurationSource"/>
         [NotNull]
         IConfigurationSource SecretConfigurationSource { get; }
-        
+
         /// <summary>
         /// <para>A source of raw secret configuration parameters provided by the host system.</para>
         /// <para>Consists of combined sources of <see cref="ConfigurationSource"/> and <see cref="SecretConfigurationSource"/>.</para>

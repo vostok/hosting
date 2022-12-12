@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Components.Log
             rulesBuilder.Add(rule);
             return this;
         }
-        
+
         public IVostokHerculesLogBuilder CustomizeSettings(Action<HerculesLogSettings> settingsCustomization)
         {
             this.settingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));

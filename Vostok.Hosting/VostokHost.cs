@@ -9,7 +9,6 @@ using Vostok.Commons.Threading;
 using Vostok.Commons.Time;
 using Vostok.Configuration.Abstractions.Extensions.Observable;
 using Vostok.Hosting.Abstractions;
-using Vostok.Hosting.Abstractions.Diagnostics;
 using Vostok.Hosting.Abstractions.Helpers;
 using Vostok.Hosting.Abstractions.Requirements;
 using Vostok.Hosting.Components.Diagnostics;

@@ -177,7 +177,7 @@ namespace Vostok.Hosting.Components.Environment
             context.ServiceLocator = serviceLocatorBuilder.Build(context, out var finalServiceLocatorBuilder);
             if (settings.ConfigureStaticProviders)
                 finalServiceLocatorBuilder.StaticProviderCustomization.Customize(context.ServiceLocator);
-            
+
             context.HerculesSink = herculesSinkBuilder.Build(context);
 
             if (settings.ConfigureStaticProviders && context.HerculesSink != null)
@@ -310,7 +310,7 @@ namespace Vostok.Hosting.Components.Environment
         {
             if (!settings.SetupShutdownSupported)
                 throw new NotSupportedException("Setup shutdown token is not supported.");
-            
+
             shutdownTokens.Add(shutdownToken);
             return this;
         }
@@ -319,7 +319,7 @@ namespace Vostok.Hosting.Components.Environment
         {
             if (!settings.SetupShutdownSupported)
                 throw new NotSupportedException("Setup shutdown token is not supported.");
-            
+
             this.shutdownTimeout = shutdownTimeout.Cut(
                 ShutdownConstants.CutAmountForExternalTimeout,
                 ShutdownConstants.CutMaximumRelativeValue);

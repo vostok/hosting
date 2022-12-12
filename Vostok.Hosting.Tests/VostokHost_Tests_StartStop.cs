@@ -44,7 +44,7 @@ namespace Vostok.Hosting.Tests
             application = new BadApplication(true);
             host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
 
-            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
+            var checkStart = () => host.Start(VostokApplicationState.Initialized);
             checkStart.Should().Throw<Exception>().WithMessage("initialize");
 
             Action checkStop = () => host.Stop();
@@ -57,7 +57,7 @@ namespace Vostok.Hosting.Tests
             application = new BadApplication(false);
             host = new VostokHost(new TestHostSettings(application, SetupEnvironment));
 
-            Action checkStart = () => host.Start(VostokApplicationState.Initialized);
+            var checkStart = () => host.Start(VostokApplicationState.Initialized);
             checkStart.Should().NotThrow();
 
             Action checkStop = () => host.Stop();
@@ -87,7 +87,7 @@ namespace Vostok.Hosting.Tests
                     BeaconRegistrationTimeout = 2.Seconds()
                 });
 
-            Action checkStart = () => host.Start();
+            var checkStart = () => host.Start();
             checkStart.Should().Throw<Exception>().Where(e => e.Message.Contains("beacon hasn't registered"));
 
             host.ApplicationState.Should().Be(VostokApplicationState.CrashedDuringInitialization);

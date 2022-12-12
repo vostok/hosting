@@ -58,7 +58,7 @@ namespace Vostok.Hosting.Tests.Components.Log
 
             builder.IsConsoleLogEnabled.Should().BeTrue();
         }
-        
+
         [Test]
         public void Should_enable_console_log_when_manually_disabled_and_then_enabled_with_extension()
         {
