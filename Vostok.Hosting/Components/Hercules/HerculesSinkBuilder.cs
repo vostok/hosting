@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Web;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Tracing;

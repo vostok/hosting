@@ -29,17 +29,16 @@ namespace Vostok.Hosting.Components.Configuration
         private readonly Customization<SettingsMergeOptions> mergeSettingsCustomization;
         private readonly Customization<SettingsMergeOptions> mergeSecretSettingsCustomization;
         private readonly Customization<SettingsMergeOptions> mergeMergedSettingsCustomization;
-        
+
         private readonly Customization<IConfigurationSource> sourceCustomization;
         private readonly Customization<IConfigurationSource> secretSourceCustomization;
         private readonly Customization<IConfigurationSource> mergedSourceCustomization;
-        
+
         private readonly Customization<ConfigurationProviderSettings> providerCustomization;
         private readonly Customization<ConfigurationProviderSettings> secretProviderCustomization;
-        
+
         private readonly Customization<PrintSettings> printSettingsCustomization;
         private readonly Customization<IVostokConfigurationContext> configurationContextCustomization;
-        
 
         public ConfigurationBuilder()
         {
@@ -91,7 +90,7 @@ namespace Vostok.Hosting.Components.Configuration
             secretSourceCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
             return this;
         }
-        
+
         public IVostokConfigurationBuilder CustomizeMergedConfigurationSource(Func<IConfigurationSource, IConfigurationSource> customization)
         {
             mergedSourceCustomization.AddCustomization(customization ?? throw new ArgumentNullException(nameof(customization)));
@@ -109,7 +108,7 @@ namespace Vostok.Hosting.Components.Configuration
             mergeSecretSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
             return this;
         }
-        
+
         public IVostokConfigurationBuilder CustomizeMergedSettingsMerging(Action<SettingsMergeOptions> settingsCustomization)
         {
             mergeMergedSettingsCustomization.AddCustomization(settingsCustomization ?? throw new ArgumentNullException(nameof(settingsCustomization)));
@@ -227,14 +226,14 @@ namespace Vostok.Hosting.Components.Configuration
             var sourcesList = sources.Where(s => !s.Secret).Select(s => s.Factory(clusterConfigClient)).ToArray();
             return new SwitchingSource(PrepareCombinedSource(mergeSettingsCustomization, sourceCustomization, sourcesList));
         }
-        
+
         private SwitchingSource BuildSecretSource(BuildContext context)
         {
             var clusterConfigClient = GetClusterConfigClient(context);
             var sourcesList = sources.Where(s => s.Secret).Select(s => s.Factory(clusterConfigClient)).ToArray();
             return new SwitchingSource(PrepareCombinedSource(mergeSecretSettingsCustomization, secretSourceCustomization, sourcesList));
         }
-        
+
         private SwitchingSource BuildMergedSource(BuildContext context)
         {
             var clusterConfigClient = GetClusterConfigClient(context);
@@ -256,7 +255,7 @@ namespace Vostok.Hosting.Components.Configuration
 
             return new ConstantSource(null);
         }
-        
+
         private static IClusterConfigClient GetClusterConfigClient(BuildContext context)
             => context.ClusterConfigClient ?? throw new ArgumentNullException(nameof(BuildContext.ClusterConfigClient), "ClusterConfig client hasn't been built. This is most likely a bug.");
 
@@ -264,17 +263,17 @@ namespace Vostok.Hosting.Components.Configuration
         {
             public BuildContext Value { get; set; }
         }
-        
+
         private class Source
         {
-            public bool Secret { get; }
-            public Func<IClusterConfigClient, IConfigurationSource> Factory { get; }
-
             public Source(bool secret, Func<IClusterConfigClient, IConfigurationSource> factory)
             {
                 Secret = secret;
                 Factory = factory;
             }
+
+            public bool Secret { get; }
+            public Func<IClusterConfigClient, IConfigurationSource> Factory { get; }
         }
     }
 }

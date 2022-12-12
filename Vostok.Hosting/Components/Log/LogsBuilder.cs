@@ -52,7 +52,7 @@ namespace Vostok.Hosting.Components.Log
                 rulesBuilder.Build(context),
                 finalLog => logCustomization.Customize(
                     (minLevelProvider != null ? finalLog.WithMinimumLevel(minLevelProvider) : finalLog)
-                   .WithEnrichedProperties(context)
+                    .WithEnrichedProperties(context)
                 )
             );
         }

@@ -6,7 +6,6 @@ namespace Vostok.Hosting.Helpers
 
         public bool IsEnabled() => flag == ComponentStateFlag.Enabled;
 
-
         public void AutoEnable()
         {
             if (flag == ComponentStateFlag.NotInitialized)
@@ -14,7 +13,7 @@ namespace Vostok.Hosting.Helpers
                 flag = ComponentStateFlag.Enabled;
             }
         }
-        
+
         public void Enable()
         {
             flag = ComponentStateFlag.Enabled;

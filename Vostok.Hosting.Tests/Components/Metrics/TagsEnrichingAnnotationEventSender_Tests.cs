@@ -20,7 +20,7 @@ internal sealed class TagsEnrichingAnnotationEventSender_Tests
         baseSender = Substitute.For<IAnnotationEventSender>();
         baseSender.When(s => s.Send(Arg.Any<AnnotationEvent>())).Do(info => enrichedEvent = info.Arg<AnnotationEvent>());
     }
-    
+
     [Test]
     public void Should_enrich_annotation_tags_when_has_instance_tag()
     {
@@ -34,7 +34,7 @@ internal sealed class TagsEnrichingAnnotationEventSender_Tests
 
         enrichedEvent.Tags.Should().BeEquivalentTo(instanceTag, additionalTag, newTag);
     }
-    
+
     [Test]
     public void Should_not_enrich_annotation_tags_when_has_not_instance_tag()
     {

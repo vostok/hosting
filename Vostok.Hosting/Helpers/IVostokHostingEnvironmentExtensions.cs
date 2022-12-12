@@ -25,7 +25,7 @@ public static class IVostokHostingEnvironmentExtensions
     public static void Warmup(this IVostokHostingEnvironment environment, VostokHostingEnvironmentWarmupSettings settings)
     {
         var log = environment.Log.ForContext<VostokHostingEnvironment>();
-        
+
         log.LogEnvironmentInfo();
         log.LogDotnetEnvironmentVariables(settings);
         log.LogApplicationIdentity(environment.ApplicationIdentity);
@@ -130,7 +130,7 @@ public static class IVostokHostingEnvironmentExtensions
                 .Select(pair => pair.Item1.Name)
                 .Concat(extensions is HostExtensions hostExtensions ? hostExtensions.GetAllKeyed().Select(pair => $"{pair.Item1}({pair.Item2.Name})") : Array.Empty<string>())
                 .ToArray());
-    
+
     private static void LogThreadPoolSettings(this ILog log)
     {
         var state = ThreadPoolUtility.GetPoolState();

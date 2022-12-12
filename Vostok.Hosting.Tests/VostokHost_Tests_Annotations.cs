@@ -29,7 +29,7 @@ internal sealed class VostokHost_Tests_Annotations
 
         receivedEvents = new List<AnnotationEvent>();
     }
-    
+
     [Test]
     public void Should_not_send_lifecycle_annotations_when_not_allowed()
     {
@@ -45,7 +45,7 @@ internal sealed class VostokHost_Tests_Annotations
 
         receivedEvents.Should().BeEmpty();
     }
-    
+
     [Test]
     public void Should_send_lifecycle_annotations_when_allowed()
     {
@@ -61,7 +61,7 @@ internal sealed class VostokHost_Tests_Annotations
 
         receivedEvents.Should().NotBeEmpty();
     }
-    
+
     [Test]
     public void Should_enrich_all_annotations_with_identity_tags()
     {
@@ -76,7 +76,7 @@ internal sealed class VostokHost_Tests_Annotations
         host.Stop();
 
         receivedEvents.Should().NotBeEmpty();
-        
+
         CheckEventsContainTags(WellKnownApplicationIdentityProperties.Project, "project");
         CheckEventsContainTags(WellKnownApplicationIdentityProperties.Subproject, "subproject");
         CheckEventsContainTags(WellKnownApplicationIdentityProperties.Application, "application");
@@ -107,7 +107,7 @@ internal sealed class VostokHost_Tests_Annotations
 
         CheckEventsContainTags(key, value);
     }
-    
+
     [Test]
     public void Should_not_enrich_annotations_with_provided_tags_when_has_not_instance_tag()
     {
@@ -164,7 +164,7 @@ internal sealed class VostokHost_Tests_Annotations
             .SetApplication("application")
             .SetEnvironment("environment")
             .SetInstance("instance"));
-        
+
         builder.SetupLog(log => log.SetupConsoleLog());
         builder.SetupShutdownTimeout(1.Seconds());
 
@@ -180,7 +180,7 @@ internal sealed class VostokHost_Tests_Annotations
     private class Application : IVostokApplication
     {
         public const string NonInstanceAnnotationDescription = "NonInstanceAnnotation";
-        
+
         private readonly bool writeInstanceAnnotation;
         private readonly bool writeNonInstanceAnnotation;
         private readonly bool writeApplicationMetric;
@@ -199,7 +199,7 @@ internal sealed class VostokHost_Tests_Annotations
         {
             if (writeInstanceAnnotation)
                 environment.Metrics.Instance.SendAnnotation("Annotation");
-            
+
             if (writeNonInstanceAnnotation)
                 environment.Metrics.Project.SendAnnotation(NonInstanceAnnotationDescription);
 

@@ -9,11 +9,11 @@ namespace Vostok.Hosting.Setup
     [PublicAPI]
     public interface IVostokConsoleLogBuilder
     {
+        bool IsEnabled { get; }
+
         IVostokConsoleLogBuilder UseSynchronous();
 
         IVostokConsoleLogBuilder UseAsynchronous();
-
-        bool IsEnabled { get; }
 
         IVostokConsoleLogBuilder Enable();
 

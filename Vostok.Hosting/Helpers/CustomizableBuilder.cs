@@ -35,7 +35,7 @@ namespace Vostok.Hosting.Helpers
             finalBuilder = builder;
             return result;
         }
-        
+
         public TResult Build(BuildContext context)
         {
             environmentSetupContext = context.EnvironmentSetupContext;

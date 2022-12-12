@@ -76,7 +76,7 @@ full-build > notests:
     - -vostok.devtools
     - vostok.devtools@with-net6.0
     - vostok.commons.testing/src
-    
+  
   build:
     target: Vostok.Hosting.sln
     configuration: Release
