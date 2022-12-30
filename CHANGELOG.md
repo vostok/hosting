@@ -1,3 +1,7 @@
+## 0.3.58 (30-12-2022):
+
+Added `SetupSourceFor` configuration builder extensions
+
 ## 0.3.57 (12-12-2022):
 
 Made some internals parts public for use in `hosting.aspnetcore`.
