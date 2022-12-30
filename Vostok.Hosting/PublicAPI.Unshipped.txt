@@ -1,0 +1,3 @@
+static Vostok.Hosting.Setup.IVostokConfigurationBuilderExtensions.SetupMergedSourceFor<TSettings>(this Vostok.Hosting.Setup.IVostokConfigurationBuilder builder, params string[] scope) -> Vostok.Hosting.Setup.IVostokConfigurationBuilder
+static Vostok.Hosting.Setup.IVostokConfigurationBuilderExtensions.SetupSecretSourceFor<TSettings>(this Vostok.Hosting.Setup.IVostokConfigurationBuilder builder, params string[] scope) -> Vostok.Hosting.Setup.IVostokConfigurationBuilder
+static Vostok.Hosting.Setup.IVostokConfigurationBuilderExtensions.SetupSourceFor<TSettings>(this Vostok.Hosting.Setup.IVostokConfigurationBuilder builder, params string[] scope) -> Vostok.Hosting.Setup.IVostokConfigurationBuilder
