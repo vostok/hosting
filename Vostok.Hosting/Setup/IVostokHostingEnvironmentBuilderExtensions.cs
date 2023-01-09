@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Commons.Helpers.Network;
 using Vostok.Configuration.Abstractions;
 using Vostok.Configuration.Sources;
 using Vostok.Hosting.Abstractions;
@@ -87,6 +88,13 @@ namespace Vostok.Hosting.Setup
         /// </summary>
         public static IVostokHostingEnvironmentBuilder SetPort([NotNull] this IVostokHostingEnvironmentBuilder builder, int port) =>
             builder.SetupServiceBeacon(beacon => beacon.SetupReplicaInfo(replica => replica.SetPort(port)));
+        
+        
+        /// <summary>
+        /// Applies random free port to <see cref="IServiceBeacon"/> configuration.
+        /// </summary>
+        public static IVostokHostingEnvironmentBuilder SetRandomFreePort([NotNull] this IVostokHostingEnvironmentBuilder builder) =>
+            builder.SetPort(FreeTcpPortFinder.GetFreePort());
 
         /// <summary>
         /// Applies given base url <paramref name="path"/> to <see cref="IServiceBeacon"/> configuration.
