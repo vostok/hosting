@@ -1,0 +1,1 @@
+static Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilderExtensions.SetRandomFreePort(this Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder builder) -> Vostok.Hosting.Setup.IVostokHostingEnvironmentBuilder

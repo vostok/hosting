@@ -1,6 +1,10 @@
+## 0.3.59 (09-01-2023):
+
+Added `SetRandomFreePort` environment builder extensions.
+
 ## 0.3.58 (30-12-2022):
 
-Added `SetupSourceFor` configuration builder extensions
+Added `SetupSourceFor` configuration builder extensions.
 
 ## 0.3.57 (12-12-2022):
 
