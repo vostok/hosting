@@ -1,0 +1,2 @@
+static Vostok.Hosting.Helpers.IVostokApplicationIdentityExtensions.FormatServiceName(this Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity) -> string
+Vostok.Hosting.Helpers.IVostokApplicationIdentityExtensions

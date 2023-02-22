@@ -1,3 +1,7 @@
+## 0.3.60 (22-02-2023):
+
+Made `IVostokApplicationIdentityExtensions.FormatServiceName` public.
+
 ## 0.3.59 (09-01-2023):
 
 Added `SetRandomFreePort` environment builder extensions.
