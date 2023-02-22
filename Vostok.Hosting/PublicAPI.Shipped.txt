@@ -51,6 +51,7 @@ static Vostok.Hosting.Components.Diagnostics.HealthTrackerHelper.LaunchPeriodica
 static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportInitialized(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
 static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportLaunching(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
 static Vostok.Hosting.Components.Metrics.AnnotationsHelper.ReportStopping(Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity, Vostok.Metrics.IMetricContext context) -> void
+static Vostok.Hosting.Helpers.IVostokApplicationIdentityExtensions.FormatServiceName(this Vostok.Hosting.Abstractions.IVostokApplicationIdentity identity) -> string
 static Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions.Warmup(this Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment, Vostok.Hosting.VostokHostingEnvironmentWarmupSettings settings) -> void
 static Vostok.Hosting.Helpers.StaticProvidersHelper.Configure(Vostok.Hosting.Abstractions.IVostokHostingEnvironment environment) -> void
 static Vostok.Hosting.Models.VostokApplicationStateExtensions.IsTerminal(this Vostok.Hosting.Models.VostokApplicationState state) -> bool
@@ -267,6 +268,7 @@ Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.GetDataAsync(Vostok.Z
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.OnConnectionStateChanged.get -> System.IObservable<Vostok.ZooKeeper.Client.Abstractions.Model.ConnectionState>
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.SessionId.get -> long
 Vostok.Hosting.Components.ZooKeeper.DevNullZooKeeperClient.SetDataAsync(Vostok.ZooKeeper.Client.Abstractions.Model.Request.SetDataRequest request) -> System.Threading.Tasks.Task<Vostok.ZooKeeper.Client.Abstractions.Model.Result.SetDataResult>
+Vostok.Hosting.Helpers.IVostokApplicationIdentityExtensions
 Vostok.Hosting.Helpers.IVostokHostingEnvironmentExtensions
 Vostok.Hosting.Helpers.StaticProvidersHelper
 Vostok.Hosting.Models.VostokApplicationReplicationInfo
