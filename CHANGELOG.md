@@ -1,3 +1,7 @@
+## 0.3.61 (22-02-2023):
+
+Reverted made `IVostokApplicationIdentityExtensions.FormatServiceName` public.
+
 ## 0.3.60 (22-02-2023):
 
 Made `IVostokApplicationIdentityExtensions.FormatServiceName` public.
