@@ -23,7 +23,10 @@ namespace Vostok.Hosting.Components.Tracing
         public void SubstituteWith(ITracer newTracer, TracerSettings tracerSettings)
         {
             baseTracer = newTracer;
-            baseSender.SubstituteWith(tracerSettings);
+            if (tracerSettings != null)
+                baseSender.SubstituteWith(tracerSettings);
+            else
+                baseSender = null;
         }
 
         public ISpanBuilder BeginSpan() =>
