@@ -83,6 +83,9 @@ namespace Vostok.Hosting.Components.Tracing
 
         public (ITracer, TracerSettings) Build(BuildContext context)
         {
+            // note (kungurtsev, 02.03.2023): needed even for ActivitySourceTracer because configures Api key
+            var spanSender = BuildCompositeSpanSender(context);
+
 #if NET6_0_OR_GREATER
             if (UseActivitySourceTracer)
             {
@@ -94,8 +97,6 @@ namespace Vostok.Hosting.Components.Tracing
             }
 #endif
             
-            var spanSender = BuildCompositeSpanSender(context);
-
             var settings = new TracerSettings(spanSender)
             {
                 Application = context.ApplicationIdentity.FormatServiceName(),
