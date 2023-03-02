@@ -4,8 +4,7 @@ using Vostok.Hosting.Abstractions;
 
 namespace Vostok.Hosting.Helpers
 {
-    [PublicAPI]
-    public static class IVostokApplicationIdentityExtensions
+    internal static class IVostokApplicationIdentityExtensions
     {
         public static string FormatServiceName([CanBeNull] this IVostokApplicationIdentity identity)
         {
