@@ -90,7 +90,7 @@ namespace Vostok.Hosting.Components.Tracing
                 activitySourceTracerSettingsCustomization.Customize(activitySourceTracerSettings);
                 ITracer activitySourceTracer = new ActivitySourceTracer(activitySourceTracerSettings);
                 activitySourceTracer = tracerCustomization.Customize(activitySourceTracer);
-                return (activitySourceTracer, null);
+                return (activitySourceTracer, new TracerSettings(new DevNullSpanSender()));
             }
 #endif
             
