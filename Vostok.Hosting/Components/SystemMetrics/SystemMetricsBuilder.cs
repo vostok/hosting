@@ -66,7 +66,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
         private void RegisterProcessMonitor(SystemMetricsSettings settings, BuildContext context, IMetricContext metricContext)
         {
-            var processMonitor = new CurrentProcessMonitor();
+            var processMonitor = new CurrentProcessMonitor();//do nothing here, no need to disable
 
             context.HostExtensions.AsMutable().Add(processMonitor);
 
@@ -81,7 +81,7 @@ namespace Vostok.Hosting.Components.SystemMetrics
                     MemoryBytesLimitProvider = () => context.ApplicationLimits.MemoryBytes
                 };
 
-                var collector = new CurrentProcessMetricsCollector(collectorSettings);
+                var collector = new CurrentProcessMetricsCollector(collectorSettings); //here created
                 context.RegisterDisposable(collector.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
                 context.RegisterDisposable(collector);
             }
