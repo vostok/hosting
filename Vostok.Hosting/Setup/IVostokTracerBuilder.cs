@@ -14,7 +14,7 @@ namespace Vostok.Hosting.Setup
     {
 #if NET6_0_OR_GREATER
         /// <summary>
-        /// <para>If set to <c>true</c> creates <see cref="UseActivitySourceTracer"/> instead of <see cref="Tracer"/>.</para>
+        /// <para>If set to <c>true</c> creates <see cref="ActivitySourceTracer"/> instead of <see cref="Tracer"/>.</para>
         /// <para>This allows using <see cref="Activity"/> together with <see cref="ITracer"/>.</para>
         /// <para>Do not forget to setup of <c>OpenTelemetry.Trace.TracerProvider</c> and exporter yourself.</para>
          /// </summary>
