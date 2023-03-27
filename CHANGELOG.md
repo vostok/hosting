@@ -1,3 +1,7 @@
+## 0.3.62 (27-03-2023):
+
+Added `UseActivitySourceTracer` setting and `ActivitySourceTracer` setup.
+
 ## 0.3.61 (22-02-2023):
 
 Reverted made `IVostokApplicationIdentityExtensions.FormatServiceName` public.
