@@ -1,4 +1,4 @@
-## 0.3.62 (27-03-2023):
+## 0.3.62 (28-03-2023):
 
 Added `UseActivitySourceTracer` setting and `ActivitySourceTracer` setup.
 
