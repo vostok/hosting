@@ -67,6 +67,7 @@ notests *default:
     - vostok.servicediscovery.abstractions
     - vostok.tracing
     - vostok.tracing.abstractions
+    - vostok.tracing.diagnostics
     - vostok.tracing.hercules
     - vostok.zookeeper.client
     - vostok.zookeeper.client.abstractions
