@@ -568,10 +568,13 @@ Vostok.Hosting.Setup.IVostokSystemMetricsBuilder
 Vostok.Hosting.Setup.IVostokSystemMetricsBuilder.Customize(System.Action<Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings> customization) -> Vostok.Hosting.Setup.IVostokSystemMetricsBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder.AddSpanSender(Vostok.Tracing.Abstractions.ISpanSender spanSender) -> Vostok.Hosting.Setup.IVostokTracerBuilder
+Vostok.Hosting.Setup.IVostokTracerBuilder.CustomizeActivitySourceTracerSettings(System.Action<Vostok.Tracing.Diagnostics.ActivitySourceTracerSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder.CustomizeSettings(System.Action<Vostok.Tracing.TracerSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder.CustomizeTracer(System.Func<Vostok.Tracing.Abstractions.ITracer, Vostok.Tracing.Abstractions.ITracer> tracerCustomization) -> Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder.SetTracerProvider(System.Func<Vostok.Tracing.TracerSettings, Vostok.Tracing.Abstractions.ITracer> tracerProvider) -> Vostok.Hosting.Setup.IVostokTracerBuilder
 Vostok.Hosting.Setup.IVostokTracerBuilder.SetupHerculesSpanSender(System.Action<Vostok.Hosting.Setup.IVostokHerculesSpanSenderBuilder> herculesSpanSenderSetup) -> Vostok.Hosting.Setup.IVostokTracerBuilder
+Vostok.Hosting.Setup.IVostokTracerBuilder.UseActivitySourceTracer.get -> bool
+Vostok.Hosting.Setup.IVostokTracerBuilder.UseActivitySourceTracer.set -> void
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.AddAuthenticationInfo(Vostok.ZooKeeper.Client.Abstractions.Model.Authentication.AuthenticationInfo authenticationInfo) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
 Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder.ConfigureStaticProvider(System.Action<Vostok.ZooKeeper.Client.Abstractions.IZooKeeperClient> configure) -> Vostok.Hosting.Setup.IVostokZooKeeperClientBuilder
