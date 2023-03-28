@@ -1,3 +1,0 @@
-Vostok.Hosting.Setup.IVostokTracerBuilder.CustomizeActivitySourceTracerSettings(System.Action<Vostok.Tracing.Diagnostics.ActivitySourceTracerSettings> settingsCustomization) -> Vostok.Hosting.Setup.IVostokTracerBuilder
-Vostok.Hosting.Setup.IVostokTracerBuilder.UseActivitySourceTracer.get -> bool
-Vostok.Hosting.Setup.IVostokTracerBuilder.UseActivitySourceTracer.set -> void
