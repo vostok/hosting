@@ -81,5 +81,3 @@ full-build > notests:
   build:
     target: Vostok.Hosting.sln
     configuration: Release
-    tool:
-      name: dotnet
