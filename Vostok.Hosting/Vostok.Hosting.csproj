@@ -6,7 +6,7 @@
         <Configurations>Debug;Release</Configurations>
     </PropertyGroup>
     <PropertyGroup>
-        <VersionPrefix>0.3.62</VersionPrefix>
+        <VersionPrefix>0.3.63</VersionPrefix>
     </PropertyGroup>
     <PropertyGroup>
         <Title>Vostok.Hosting</Title>
@@ -19,6 +19,10 @@
         <PackageReleaseNotes>https://github.com/vostok/hosting/blob/master/CHANGELOG.md</PackageReleaseNotes>
         <RepositoryUrl>https://github.com/vostok/hosting</RepositoryUrl>
     </PropertyGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+        <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+    </ItemGroup>
     <ItemGroup>
         <Compile Include="..\..\vostok.commons.collections\Vostok.Commons.Collections\ByReferenceEqualityComparer.cs" Link="Commons\ByReferenceEqualityComparer.cs" />
         <Compile Include="..\..\vostok.commons.collections\Vostok.Commons.Collections\CachingTransform.cs" Link="Commons\CachingTransform.cs" />
@@ -42,6 +46,12 @@
         <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanConversions.cs" Link="Commons\TimeSpanConversions.cs" />
         <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanFormatting.cs" Link="Commons\TimeSpanFormatting.cs" />
         <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\PeriodicalAction.cs" Link="Commons\PeriodicalAction.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <Reference Include="Vostok.Tracing.Diagnostics">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>..\..\vostok.tracing.diagnostics\Vostok.Tracing.Diagnostics\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Diagnostics.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Reference Include="Vostok.Hosting.Abstractions">

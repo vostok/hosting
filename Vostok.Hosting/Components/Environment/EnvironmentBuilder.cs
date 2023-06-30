@@ -202,6 +202,7 @@ namespace Vostok.Hosting.Components.Environment
                     ? beacon.ReplicaInfo.Application
                     : context.ApplicationIdentity.FormatServiceName();
 
+            // todo (kungurtsev, 02.03.2023): if we use ActivitySourceTracer build it earlier
             context.SubstituteTracer(tracerBuilder.Build(context));
 
             if (settings.DiagnosticMetricsEnabled && diagnosticsBuilder.GetIntermediateBuilder(context).NeedsApplicationMetricsProvider)
