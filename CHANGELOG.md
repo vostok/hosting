@@ -1,3 +1,7 @@
+## 0.3.63 (19-11-2023):
+
+Added default value for `HostMetricsReportingPeriod` setting.
+
 ## 0.3.62 (28-03-2023):
 
 Added `UseActivitySourceTracer` setting and `ActivitySourceTracer` setup.
