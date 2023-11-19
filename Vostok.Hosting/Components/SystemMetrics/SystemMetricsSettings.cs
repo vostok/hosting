@@ -32,6 +32,6 @@ namespace Vostok.Hosting.Components.SystemMetrics
 
         public TimeSpan HostMetricsLoggingPeriod { get; set; } = 10.Seconds();
 
-        public TimeSpan? HostMetricsReportingPeriod { get; set; }
+        public TimeSpan? HostMetricsReportingPeriod { get; set; } = 10.Seconds();
     }
 }
