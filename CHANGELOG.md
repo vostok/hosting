@@ -1,3 +1,7 @@
+## 0.3.64 (05-12-2023):
+
+Fixed `IZooKeeperClient` null reference error during `VostokHostingEnvironment` building.
+
 ## 0.3.63 (19-11-2023):
 
 Added default value for `HostMetricsReportingPeriod` setting.
