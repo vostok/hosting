@@ -1,3 +1,7 @@
+## 0.3.65 (06-12-2023):
+
+Fixed tests with `DevNullZooKeeperClient`.
+
 ## 0.3.64 (05-12-2023):
 
 Fixed `IZooKeeperClient` null reference error during `VostokHostingEnvironment` building.
