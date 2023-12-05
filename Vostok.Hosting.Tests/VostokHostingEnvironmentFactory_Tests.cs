@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using FluentAssertions;
 using FluentAssertions.Extensions;
+using NSubstitute;
 using NUnit.Framework;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Commons.Environment;
@@ -19,6 +20,7 @@ using Vostok.Metrics;
 using Vostok.Metrics.System.Gc;
 using Vostok.Metrics.System.Process;
 using Vostok.ServiceDiscovery;
+using Vostok.ZooKeeper.Client.Abstractions;
 
 namespace Vostok.Hosting.Tests
 {
@@ -358,7 +360,8 @@ namespace Vostok.Hosting.Tests
         {
             builder.SetPort(1234);
 
-            builder.SetupZooKeeperClient(zk => zk.UseInstance(new DevNullZooKeeperClient()));
+            var zooKeeperClient = Substitute.For<IZooKeeperClient>();
+            builder.SetupZooKeeperClient(zk => zk.UseInstance(zooKeeperClient));
 
             SetupCommons(builder);
         }
