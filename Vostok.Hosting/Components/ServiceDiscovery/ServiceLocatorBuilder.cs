@@ -1,5 +1,6 @@
 ﻿using System;
 using Vostok.Commons.Helpers;
+using Vostok.Hosting.Components.ZooKeeper;
 using Vostok.Hosting.Setup;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
@@ -22,7 +23,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
         public IServiceLocator Build(BuildContext context)
         {
             var zooKeeperClient = context.ZooKeeperClient;
-            if (zooKeeperClient == null)
+            if (zooKeeperClient == null || zooKeeperClient is DevNullZooKeeperClient)
             {
                 context.LogDisabled("ServiceLocator", "disabled ZooKeeperClient");
                 return new DevNullServiceLocator();
