@@ -45,7 +45,7 @@ namespace Vostok.Hosting.Components.ServiceDiscovery
             }
 
             var zooKeeperClient = context.ZooKeeperClient;
-            if (zooKeeperClient == null)
+            if (zooKeeperClient == null || zooKeeperClient is DevNullZooKeeperClient)
             {
                 context.LogDisabled("ServiceBeacon", "disabled ZooKeeperClient");
                 return new DevNullServiceBeacon(CreateReplicaInfo(context));
