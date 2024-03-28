@@ -1,3 +1,7 @@
+## 0.3.66 (28-03-2024):
+
+Updated depenedencies.
+
 ## 0.3.65 (06-12-2023):
 
 Fixed tests with `DevNullZooKeeperClient`.
