@@ -78,7 +78,8 @@ namespace Vostok.Hosting.Components.SystemMetrics
                 var collectorSettings = new CurrentProcessMetricsSettings
                 {
                     CpuCoresLimitProvider = () => context.ApplicationLimits.CpuUnits,
-                    MemoryBytesLimitProvider = () => context.ApplicationLimits.MemoryBytes
+                    MemoryBytesLimitProvider = () => context.ApplicationLimits.MemoryBytes,
+                    LinuxSettings = settings.LinuxProcessMetricsSettings
                 };
 
                 var collector = new CurrentProcessMetricsCollector(collectorSettings);
