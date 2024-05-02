@@ -1,3 +1,7 @@
+## 0.3.68 (02-05-2024):
+
+Updated depenedencies.
+
 ## 0.3.66 (28-03-2024):
 
 Updated depenedencies.
