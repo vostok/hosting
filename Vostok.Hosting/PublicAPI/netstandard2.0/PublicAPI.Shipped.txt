@@ -243,6 +243,8 @@ Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.HostMetricsReporti
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.HostMetricsReportingPeriod.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.HostMetricsSettings.get -> Vostok.Metrics.System.Host.HostMetricsSettings
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.HostMetricsSettings.set -> void
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.LinuxProcessMetricsSettings.get -> Vostok.Metrics.System.Process.LinuxProcessMetricsSettings
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.LinuxProcessMetricsSettings.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsLoggingPeriod.get -> System.TimeSpan
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsLoggingPeriod.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.ProcessMetricsReportingPeriod.get -> System.TimeSpan?

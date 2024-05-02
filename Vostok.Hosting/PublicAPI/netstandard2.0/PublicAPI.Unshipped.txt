@@ -1,2 +1,0 @@
-Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.LinuxProcessMetricsSettings.get -> Vostok.Metrics.System.Process.LinuxProcessMetricsSettings
-Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.LinuxProcessMetricsSettings.set -> void
