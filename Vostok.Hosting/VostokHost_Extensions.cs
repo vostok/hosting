@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using Vostok.Hosting.Models;
 
@@ -49,27 +48,8 @@ namespace Vostok.Hosting
             return vostokHost;
         }
 
-#if NET6_0_OR_GREATER
-        /// <summary>
-        /// Listen <see cref="PosixSignal.SIGTERM"/> and shutdown VostokHost if received.
-        /// </summary>
-#else
-        /// <summary>
-        /// Listen <see cref="AppDomain.ProcessExit"/> and shutdown VostokHost if SIGTERM received.
-        /// </summary>
-#endif
-        public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost)
-        {
-#if NET6_0_OR_GREATER
-            PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
-            {
-                ctx.Cancel = true;
-                vostokHost.Stop(false);
-            });
-#else
-            AppDomain.CurrentDomain.ProcessExit += (_, _) => vostokHost.Stop(false);
-#endif
-            return vostokHost;
-        }
+        [Obsolete("Use VostokHost.RegisterSigtermCancellation instead of this")]
+        public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost) =>
+            vostokHost.RegisterSigtermCancellation();
     }
 }
