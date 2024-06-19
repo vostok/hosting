@@ -48,7 +48,9 @@ namespace Vostok.Hosting
             return vostokHost;
         }
 
-        [Obsolete("Use VostokHost.RegisterSigtermCancellation instead of this")]
+        /// <summary>
+        /// Makes same as <see cref="VostokHost.RegisterSigtermCancellation"/>
+        /// </summary>
         public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost) =>
             vostokHost.RegisterSigtermCancellation();
     }

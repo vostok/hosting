@@ -55,7 +55,7 @@ namespace Vostok.Hosting
         private volatile VostokHostingEnvironment environment;
         private volatile ILog log;
 #if NET6_0_OR_GREATER
-        private volatile PosixSignalRegistration? sigtermRegistration;
+        private volatile PosixSignalRegistration sigtermRegistration;
 #endif
 
         public VostokHost([NotNull] VostokHostSettings settings)
@@ -177,13 +177,16 @@ namespace Vostok.Hosting
         public VostokHost RegisterSigtermCancellation()
         {
 #if NET6_0_OR_GREATER
-            // Saving PosixSignalRegistration to variable, because of IDisposable inheritance,
+            // Saving PosixSignalRegistration reference to nameof(VostokHost) field, because of IDisposable inheritance,
             // and GC will collect if not assigned. On Dispose and finalize handler will unregister.
-            sigtermRegistration = PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
+            if (sigtermRegistration == null)
             {
-                ctx.Cancel = true;
-                this.Stop(false);
-            });
+                sigtermRegistration = PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
+                {
+                    ctx.Cancel = true;
+                    this.Stop(false);
+                });
+            }
 #else
             AppDomain.CurrentDomain.ProcessExit += (_, _) => this.Stop(false);
 #endif
