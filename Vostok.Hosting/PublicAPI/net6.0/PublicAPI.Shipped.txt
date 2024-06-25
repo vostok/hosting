@@ -596,6 +596,7 @@ Vostok.Hosting.VostokHost
 Vostok.Hosting.VostokHost.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = 5) -> System.Threading.Tasks.Task
 Vostok.Hosting.VostokHost.StopAsync(bool ensureSuccess = true) -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
 Vostok.Hosting.VostokHost.VostokHost(Vostok.Hosting.VostokHostSettings settings) -> void
+Vostok.Hosting.VostokHost.RegisterSigtermCancellation() -> Vostok.Hosting.VostokHost
 Vostok.Hosting.VostokHost_Extensions
 Vostok.Hosting.VostokHostingEnvironmentFactory
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings

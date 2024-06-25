@@ -49,13 +49,9 @@ namespace Vostok.Hosting
         }
 
         /// <summary>
-        /// Listen <see cref="AppDomain.ProcessExit"/> and shutdown VostokHost if SIGTERM received.
+        /// Makes same as <see cref="VostokHost.RegisterSigtermCancellation"/>
         /// </summary>
-        public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost)
-        {
-            AppDomain.CurrentDomain.ProcessExit += (_, _) => vostokHost.Stop(false);
-
-            return vostokHost;
-        }
+        public static VostokHost WithSigtermCancellation([NotNull] this VostokHost vostokHost) =>
+            vostokHost.RegisterSigtermCancellation();
     }
 }
