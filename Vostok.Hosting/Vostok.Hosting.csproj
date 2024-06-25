@@ -6,7 +6,7 @@
         <Configurations>Debug;Release</Configurations>
     </PropertyGroup>
     <PropertyGroup>
-        <VersionPrefix>0.3.69</VersionPrefix>
+        <VersionPrefix>0.3.70</VersionPrefix>
     </PropertyGroup>
     <PropertyGroup>
         <Title>Vostok.Hosting</Title>
