@@ -1,3 +1,7 @@
+## 0.3.70 (02-05-2024):
+
+Fixed `WithSigtermCancellation` to use `PosixSignalRegistration` for properly stop application on `SIGTERM` with .net 6.
+
 ## 0.3.68 (02-05-2024):
 
 Updated depenedencies.
