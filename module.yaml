@@ -35,7 +35,7 @@ notests *default:
     - vostok.clusterclient.tracing
     - vostok.clusterconfig.client
     - vostok.clusterconfig.client.abstractions
-    - vostok.commons.environment/src
+    - vostok.commons.environment/src@INFRA-9686_add_obtaining_IPv4
     - vostok.commons.helpers/src
     - vostok.commons.threading/src
     - vostok.commons.time/src

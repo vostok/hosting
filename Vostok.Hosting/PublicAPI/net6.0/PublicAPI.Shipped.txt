@@ -33,6 +33,7 @@ const Vostok.Hosting.VostokEnvironmentVariables.IdentitySubproject = "VOSTOK_IDE
 const Vostok.Hosting.VostokEnvironmentVariables.LocalDatacenter = "VOSTOK_LOCAL_DATACENTER" -> string
 const Vostok.Hosting.VostokEnvironmentVariables.LocalFQDN = "VOSTOK_LOCAL_FQDN" -> string
 const Vostok.Hosting.VostokEnvironmentVariables.LocalHostname = "VOSTOK_LOCAL_HOSTNAME" -> string
+const Vostok.Hosting.VostokEnvironmentVariables.LocalServiceDiscoveryIPv4 = "VOSTOK_LOCAL_SERVICE_DISCOVERY_IPV4" -> string
 override Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier.Equals(object obj) -> bool
 override Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier.GetHashCode() -> int
 override Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier.ToString() -> string
@@ -301,7 +302,7 @@ Vostok.Hosting.MultiHost.IVostokMultiHostApplication.ApplicationState.get -> Vos
 Vostok.Hosting.MultiHost.IVostokMultiHostApplication.Identifier.get -> Vostok.Hosting.MultiHost.VostokMultiHostApplicationIdentifier
 Vostok.Hosting.MultiHost.IVostokMultiHostApplication.OnApplicationStateChanged.get -> System.IObservable<Vostok.Hosting.Models.VostokApplicationState>
 Vostok.Hosting.MultiHost.IVostokMultiHostApplication.RunAsync() -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
-Vostok.Hosting.MultiHost.IVostokMultiHostApplication.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = 5) -> System.Threading.Tasks.Task
+Vostok.Hosting.MultiHost.IVostokMultiHostApplication.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = Vostok.Hosting.Models.VostokApplicationState.Running) -> System.Threading.Tasks.Task
 Vostok.Hosting.MultiHost.IVostokMultiHostApplication.StopAsync(bool ensureSuccess = true) -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
 Vostok.Hosting.MultiHost.VostokMultiHost
 Vostok.Hosting.MultiHost.VostokMultiHost.AddApplication(Vostok.Hosting.MultiHost.VostokMultiHostApplicationSettings applicationSettings) -> Vostok.Hosting.MultiHost.IVostokMultiHostApplication
@@ -593,7 +594,7 @@ Vostok.Hosting.Setup.VostokHostingEnvironmentSetup
 Vostok.Hosting.VostokConfigurationPlaceholders
 Vostok.Hosting.VostokEnvironmentVariables
 Vostok.Hosting.VostokHost
-Vostok.Hosting.VostokHost.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = 5) -> System.Threading.Tasks.Task
+Vostok.Hosting.VostokHost.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = Vostok.Hosting.Models.VostokApplicationState.Running) -> System.Threading.Tasks.Task
 Vostok.Hosting.VostokHost.StopAsync(bool ensureSuccess = true) -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
 Vostok.Hosting.VostokHost.VostokHost(Vostok.Hosting.VostokHostSettings settings) -> void
 Vostok.Hosting.VostokHost.RegisterSigtermCancellation() -> Vostok.Hosting.VostokHost

@@ -15,6 +15,7 @@ namespace Vostok.Hosting
         public const string LocalDatacenter = Datacenters.Datacenters.LocalDatacenterVariable;
         public const string LocalHostname = EnvironmentInfo.LocalHostnameVariable;
         public const string LocalFQDN = EnvironmentInfo.LocalFQDNVariable;
+        public const string LocalServiceDiscoveryIPv4 = EnvironmentInfo.LocalServiceDiscoveryIPv4;
 
         public const string HostingType = "VOSTOK_HOSTING_TYPE";
     }
