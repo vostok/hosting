@@ -1,3 +1,7 @@
+## 0.3.71 (03-09-2024):
+
+Added `LocalServiceDiscoveryIPv4` to `VostokEnvironmentVariables`
+
 ## 0.3.70 (25-06-2024):
 
 Fixed `WithSigtermCancellation` to use `PosixSignalRegistration` for properly stop application on `SIGTERM` with .net 6.
