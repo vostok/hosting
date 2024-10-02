@@ -49,7 +49,7 @@ notests *default:
     - vostok.configuration.sources.yaml
     - vostok.context
     - vostok.datacenters
-    - vostok.devtools
+    - vostok.devtools@net8.0
     - vostok.hercules.client
     - vostok.hercules.client.abstractions
     - vostok.hosting.abstractions
@@ -69,13 +69,11 @@ notests *default:
     - vostok.tracing.abstractions
     - vostok.tracing.diagnostics
     - vostok.tracing.hercules
-    - vostok.zookeeper.client
+    - vostok.zookeeper.client@zookeeper-from-cement
     - vostok.zookeeper.client.abstractions
 
 full-build > notests:
   deps:
-    - -vostok.devtools
-    - vostok.devtools@with-net6.0
     - vostok.commons.testing/src
   
   build:
