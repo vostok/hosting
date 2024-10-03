@@ -47,7 +47,7 @@
         <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\TimeSpanFormatting.cs" Link="Commons\TimeSpanFormatting.cs" />
         <Compile Include="..\..\vostok.commons.time\Vostok.Commons.Time\PeriodicalAction.cs" Link="Commons\PeriodicalAction.cs" />
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0'">
         <Reference Include="Vostok.Tracing.Diagnostics">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>..\..\vostok.tracing.diagnostics\Vostok.Tracing.Diagnostics\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Diagnostics.dll</HintPath>
