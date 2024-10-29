@@ -1,3 +1,7 @@
+## 0.3.72 (29-10-2024):
+
+Rebuild nuget package to use new version of Hercules.Client.Abstractions.
+
 ## 0.3.71 (03-09-2024):
 
 Added `LocalServiceDiscoveryIPv4` to `VostokEnvironmentVariables`
