@@ -1,3 +1,7 @@
+## 0.3.75 (23-12-2024):
+
+Addded `ForceBeaconRegistrationWait` option.
+
 ## 0.3.74 (16-12-2024): 
 
 Bump NuGet deps versions
