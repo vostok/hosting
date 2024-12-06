@@ -81,6 +81,11 @@ namespace Vostok.Hosting
         public bool BeaconRegistrationWaitEnabled { get; set; }
 
         /// <summary>
+        /// If enabled, <see cref="VostokHost"/> will wait for <see cref="IServiceBeacon"/> start even if the application does not require a port.
+        /// </summary>
+        public bool ForceBeaconRegistrationWait { get; set; }
+
+        /// <summary>
         /// <para>Maximum timeout for <see cref="IServiceBeacon"/> start.</para>
         /// </summary>
         public TimeSpan BeaconRegistrationTimeout { get; set; } = 10.Seconds();

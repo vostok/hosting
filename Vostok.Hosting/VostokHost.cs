@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-#if NET6_0_OR_GREATER
-using System.Runtime.InteropServices;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -25,6 +22,9 @@ using Vostok.Hosting.Setup;
 using Vostok.Logging.Abstractions;
 using Vostok.ServiceDiscovery;
 using Vostok.ServiceDiscovery.Abstractions;
+#if NET6_0_OR_GREATER
+using System.Runtime.InteropServices;
+#endif
 
 namespace Vostok.Hosting
 {
@@ -164,7 +164,7 @@ namespace Vostok.Hosting
 
             return resultTask;
         }
-        
+
 #if NET6_0_OR_GREATER
         /// <summary>
         /// Listen <see cref="PosixSignal.SIGTERM"/> and shutdown VostokHost if received.
@@ -181,11 +181,13 @@ namespace Vostok.Hosting
             // and GC will collect if not assigned. On Dispose and finalize handler will unregister.
             if (sigtermRegistration == null)
             {
-                sigtermRegistration = PosixSignalRegistration.Create(PosixSignal.SIGTERM, ctx =>
-                {
-                    ctx.Cancel = true;
-                    this.Stop(false);
-                });
+                sigtermRegistration = PosixSignalRegistration.Create(
+                    PosixSignal.SIGTERM,
+                    ctx =>
+                    {
+                        ctx.Cancel = true;
+                        this.Stop(false);
+                    });
             }
 #else
             AppDomain.CurrentDomain.ProcessExit += (_, _) => this.Stop(false);
@@ -409,7 +411,9 @@ namespace Vostok.Hosting
 
         private async Task<bool> WaitForServiceBeaconRegistrationIfNeededAsync(IServiceBeacon beacon)
         {
-            if (!RequirementDetector.RequiresPort(settings.Application) || !settings.BeaconRegistrationWaitEnabled || !(beacon is ServiceBeacon convertedBeacon))
+            if (!settings.BeaconRegistrationWaitEnabled
+                || beacon is not ServiceBeacon convertedBeacon
+                || (!RequirementDetector.RequiresPort(settings.Application) && !settings.ForceBeaconRegistrationWait))
                 return true;
 
             return await convertedBeacon.WaitForInitialRegistrationAsync()
