@@ -1,3 +1,7 @@
+## 0.3.74 (16-12-2024): 
+
+Bump NuGet deps versions
+
 ## 0.3.73 (20-11-2024):
 
 Update ClusterClient library.
