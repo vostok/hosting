@@ -1,2 +1,0 @@
-Vostok.Hosting.VostokHostSettings.ForceBeaconRegistrationWait.get -> bool
-Vostok.Hosting.VostokHostSettings.ForceBeaconRegistrationWait.set -> void

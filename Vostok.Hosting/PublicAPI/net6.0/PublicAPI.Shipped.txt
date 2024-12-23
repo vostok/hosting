@@ -594,10 +594,10 @@ Vostok.Hosting.Setup.VostokHostingEnvironmentSetup
 Vostok.Hosting.VostokConfigurationPlaceholders
 Vostok.Hosting.VostokEnvironmentVariables
 Vostok.Hosting.VostokHost
+Vostok.Hosting.VostokHost.RegisterSigtermCancellation() -> Vostok.Hosting.VostokHost
 Vostok.Hosting.VostokHost.StartAsync(Vostok.Hosting.Models.VostokApplicationState? stateToAwait = Vostok.Hosting.Models.VostokApplicationState.Running) -> System.Threading.Tasks.Task
 Vostok.Hosting.VostokHost.StopAsync(bool ensureSuccess = true) -> System.Threading.Tasks.Task<Vostok.Hosting.Models.VostokApplicationRunResult>
 Vostok.Hosting.VostokHost.VostokHost(Vostok.Hosting.VostokHostSettings settings) -> void
-Vostok.Hosting.VostokHost.RegisterSigtermCancellation() -> Vostok.Hosting.VostokHost
 Vostok.Hosting.VostokHost_Extensions
 Vostok.Hosting.VostokHostingEnvironmentFactory
 Vostok.Hosting.VostokHostingEnvironmentFactorySettings
@@ -649,6 +649,8 @@ Vostok.Hosting.VostokHostSettings.DisposeComponentTimeout.get -> System.TimeSpan
 Vostok.Hosting.VostokHostSettings.DisposeComponentTimeout.set -> void
 Vostok.Hosting.VostokHostSettings.EnvironmentSetup.get -> Vostok.Hosting.Setup.VostokHostingEnvironmentSetup
 Vostok.Hosting.VostokHostSettings.EnvironmentSetup.set -> void
+Vostok.Hosting.VostokHostSettings.ForceBeaconRegistrationWait.get -> bool
+Vostok.Hosting.VostokHostSettings.ForceBeaconRegistrationWait.set -> void
 Vostok.Hosting.VostokHostSettings.LogApplicationConfiguration.get -> bool
 Vostok.Hosting.VostokHostSettings.LogApplicationConfiguration.set -> void
 Vostok.Hosting.VostokHostSettings.LogDotnetEnvironmentVariables.get -> bool
