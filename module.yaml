@@ -21,6 +21,61 @@ notests *default:
     - module vostok.tracing
     - module vostok.tracing.hercules
     - module vostok.zookeeper.client
+    - groups:
+        - target-framework: "netstandard2.0"
+          libraries:
+            - Vostok.Hosting/bin/Release/netstandard2.0/Vostok.Hosting.dll
+          modules:
+            - name: vostok.clusterconfig.client
+            - name: vostok.configuration
+            - name: vostok.configuration.sources
+            - name: vostok.hercules.client
+            - name: vostok.hosting.abstractions
+            - name: vostok.logging.configuration
+            - name: vostok.logging.console
+            - name: vostok.logging.file
+            - name: vostok.logging.hercules
+            - name: vostok.metrics.hercules
+            - name: vostok.servicediscovery
+            - name: vostok.tracing
+            - name: vostok.tracing.hercules
+            - name: vostok.zookeeper.client
+        - target-framework: "net6.0"
+          libraries:
+            - Vostok.Hosting/bin/Release/net6.0/Vostok.Hosting.dll
+          modules:
+            - name: vostok.clusterconfig.client
+            - name: vostok.configuration
+            - name: vostok.configuration.sources
+            - name: vostok.hercules.client
+            - name: vostok.hosting.abstractions
+            - name: vostok.logging.configuration
+            - name: vostok.logging.console
+            - name: vostok.logging.file
+            - name: vostok.logging.hercules
+            - name: vostok.metrics.hercules
+            - name: vostok.servicediscovery
+            - name: vostok.tracing
+            - name: vostok.tracing.hercules
+            - name: vostok.zookeeper.client
+        - target-framework: "net8.0"
+          libraries:
+            - Vostok.Hosting/bin/Release/net8.0/Vostok.Hosting.dll
+          modules:
+            - name: vostok.clusterconfig.client
+            - name: vostok.configuration
+            - name: vostok.configuration.sources
+            - name: vostok.hercules.client
+            - name: vostok.hosting.abstractions
+            - name: vostok.logging.configuration
+            - name: vostok.logging.console
+            - name: vostok.logging.file
+            - name: vostok.logging.hercules
+            - name: vostok.metrics.hercules
+            - name: vostok.servicediscovery
+            - name: vostok.tracing
+            - name: vostok.tracing.hercules
+            - name: vostok.zookeeper.client
 
   deps:
     - vostok.tracing.extensions
