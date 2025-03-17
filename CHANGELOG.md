@@ -1,3 +1,7 @@
+## 0.3.76 (17-03-2025):
+
+Update ClusterConfig.Client library.
+
 ## 0.3.75 (23-12-2024):
 
 Addded `ForceBeaconRegistrationWait` option.
