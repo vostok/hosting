@@ -57,6 +57,8 @@ namespace Vostok.Hosting.Components.Hercules
             yield return CreateMetricEvent(timestamp, "SentRecordsCount", delta.SentRecords.Count);
             yield return CreateMetricEvent(timestamp, "StoredRecordsSize", statistic.Total.StoredRecords.Size);
             yield return CreateMetricEvent(timestamp, "StoredRecordsCount", statistic.Total.StoredRecords.Count);
+            //note: Vostok Application Universal Grafana dashboard relies on this tag (micro-optimisation)
+            //note: Consider dashboard performance before changing this tag
             yield return CreateMetricEvent(timestamp, "Capacity", statistic.Total.Capacity);
         }
 
