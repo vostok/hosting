@@ -1,3 +1,7 @@
+## 0.3.77 (17-06-2025):
+
+Update ClusterConfig.Client library (again).
+
 ## 0.3.76 (17-03-2025):
 
 Update ClusterConfig.Client library.
