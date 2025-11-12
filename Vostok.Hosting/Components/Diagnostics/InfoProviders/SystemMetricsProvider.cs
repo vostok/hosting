@@ -10,7 +10,6 @@ namespace Vostok.Hosting.Components.Diagnostics.InfoProviders
     {
         private static readonly TimeSpan ObservationPeriod = 5.Seconds();
 
-        // BUG отключил
         private readonly CurrentProcessMonitor monitor = new CurrentProcessMonitor();
         private readonly IDisposable subscription;
         private volatile CurrentProcessMetrics metrics = new CurrentProcessMetrics();

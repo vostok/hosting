@@ -1,3 +1,7 @@
+## 0.3.79 (12-11-2025):
+
+Clean code.
+
 ## 0.3.78 (12-11-2025):
 
 Added `EnableDnsMonitor` and `EnableGcMonitor` to `SystemMetricsSettings`.

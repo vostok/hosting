@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Threading;
 using Vostok.ClusterConfig.Client.Abstractions;
 using Vostok.Commons.Collections;
@@ -178,12 +177,6 @@ namespace Vostok.Hosting.Components
             foreach (var disposable in Disposables)
             {
                 var registered = registeredExtensions.TryGetValue(disposable, out var name);
-
-                if (disposable is EventListener)
-                {
-                    Log.Info("DISPOSING EventListener!!!" + $"{name ?? disposable.GetType().Name} extension.\n" + $"{new System.Diagnostics.StackTrace()}");
-                    //return;
-                }
 
                 TryDispose(disposable, $"{name ?? disposable.GetType().Name} extension", registered);
             }

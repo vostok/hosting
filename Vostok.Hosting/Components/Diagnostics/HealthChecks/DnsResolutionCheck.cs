@@ -14,7 +14,6 @@ namespace Vostok.Hosting.Components.Diagnostics.HealthChecks
 
         private static readonly TimeSpan Period = TimeSpan.FromMinutes(5);
 
-        // BUG отключил
         private readonly CurrentProcessMonitor monitor = new CurrentProcessMonitor();
         private readonly IDisposable subscription;
 
