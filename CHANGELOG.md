@@ -1,3 +1,7 @@
+## 0.3.78 (12-11-2025):
+
+Added `EnableDnsMonitor` and `EnableGcMonitor` to `SystemMetricsSettings`.
+
 ## 0.3.77 (17-06-2025):
 
 Update ClusterConfig.Client library (again).

@@ -1,0 +1,4 @@
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsMonitor.get -> bool
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsMonitor.set -> void
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcMonitor.get -> bool
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcMonitor.set -> void
