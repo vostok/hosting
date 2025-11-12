@@ -222,8 +222,12 @@ Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceLocator.DevNullServiceL
 Vostok.Hosting.Components.ServiceDiscovery.DevNullServiceLocator.Locate(string environment, string application) -> Vostok.ServiceDiscovery.Abstractions.IServiceTopology
 Vostok.Hosting.Components.Shutdown.ShutdownConstants
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsMonitor.get -> bool
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsMonitor.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsEventsMetrics.get -> bool
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableDnsEventsMetrics.set -> void
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcMonitor.get -> bool
+Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcMonitor.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcEventsLogging.get -> bool
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcEventsLogging.set -> void
 Vostok.Hosting.Components.SystemMetrics.SystemMetricsSettings.EnableGcEventsMetrics.get -> bool
