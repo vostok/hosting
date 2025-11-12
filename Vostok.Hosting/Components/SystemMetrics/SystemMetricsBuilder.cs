@@ -3,6 +3,7 @@ using Vostok.Commons.Environment;
 using Vostok.Commons.Helpers;
 using Vostok.Hosting.Abstractions;
 using Vostok.Hosting.Setup;
+using Vostok.Logging.Abstractions;
 using Vostok.Metrics;
 using Vostok.Metrics.System.Dns;
 using Vostok.Metrics.System.Gc;
@@ -56,11 +57,18 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(gcMonitor);
 
             if (settings.EnableGcEventsLogging)
+            {
+                context.Log.Warn("==== RegisterDisposable in GcMonitor LogCollections");
                 context.RegisterDisposable(gcMonitor.LogCollections(context.Log, gc => gc.Duration >= settings.GcMinimumDurationForLogging));
+            }
 
             if (settings.EnableGcEventsMetrics)
+            {
+                context.Log.Warn("==== RegisterDisposable in GcMonitor ReportMetrics");
                 context.RegisterDisposable(gcMonitor.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
+            }
 
+            context.Log.Warn("==== RegisterDisposable in GcMonitor");
             context.RegisterDisposable(gcMonitor);
         }
 
@@ -117,8 +125,12 @@ namespace Vostok.Hosting.Components.SystemMetrics
             context.HostExtensions.AsMutable().Add(dnsMonitor);
 
             if (settings.EnableDnsEventsMetrics)
+            {
+                context.Log.Warn("==== RegisterDisposable in DnsMonitor ReportMetrics");
                 context.RegisterDisposable(dnsMonitor.ReportMetrics(metricContext, settings.ProcessMetricsReportingPeriod));
+            }
 
+            context.Log.Warn("==== RegisterDisposable in DnsMonitor");
             context.RegisterDisposable(dnsMonitor);
         }
     }
