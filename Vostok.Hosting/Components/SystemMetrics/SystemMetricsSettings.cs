@@ -9,9 +9,13 @@ namespace Vostok.Hosting.Components.SystemMetrics
     [PublicAPI]
     public class SystemMetricsSettings
     {
+        public bool EnableGcMonitor { get; set; } = true;
+
         public bool EnableGcEventsLogging { get; set; } = true;
 
         public bool EnableGcEventsMetrics { get; set; } = true;
+
+        public bool EnableDnsMonitor { get; set; } = true;
 
         public bool EnableDnsEventsMetrics { get; set; } = true;
 

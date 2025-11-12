@@ -38,10 +38,10 @@ namespace Vostok.Hosting.Components.SystemMetrics
             var processMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Process");
             var hostMetricsContext = context.Metrics.Instance.WithTag("SystemMetricsType", "Host");
 
-            if (RuntimeDetector.IsDotNetCore30AndNewer)
+            if (RuntimeDetector.IsDotNetCore30AndNewer && settings.EnableGcMonitor)
                 RegisterGcMonitor(settings, context, processMetricsContext);
 
-            if (RuntimeDetector.IsDotNet50AndNewer)
+            if (RuntimeDetector.IsDotNet50AndNewer && settings.EnableDnsMonitor)
                 RegisterDnsMonitor(settings, context, processMetricsContext);
 
             RegisterProcessMonitor(settings, context, processMetricsContext);
