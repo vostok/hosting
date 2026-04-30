@@ -1,3 +1,7 @@
+## 0.3.80 (30-04-2026)
+
+Fix serialization issues with Vostok.Hosting.Houston.Communication.Models.ZooKeeperAuthSettings
+
 ## 0.3.79 (12-11-2025):
 
 Clean code.
