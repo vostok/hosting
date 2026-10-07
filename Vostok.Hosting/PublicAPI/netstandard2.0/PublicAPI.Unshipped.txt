@@ -1,0 +1,12 @@
+Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.ApiKey.get -> string
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.ApiKey.set -> void
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomLoggingApiKey.get -> string
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomLoggingApiKey.set -> void
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomMetricsApiKey.get -> string
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomMetricsApiKey.set -> void
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomServiceDiscoveryEventsApiKey.get -> string
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomServiceDiscoveryEventsApiKey.set -> void
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomTracingApiKey.get -> string
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.CustomTracingApiKey.set -> void
+static Vostok.Hosting.Components.Hercules.HerculesSinkAuthProvider.NeedConfigureCustomKeys() -> bool
