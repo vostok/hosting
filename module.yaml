@@ -10,6 +10,7 @@ notests *default:
     - module vostok.clusterconfig.client
     - module vostok.configuration
     - module vostok.configuration.sources
+    - module vostok.configuration.sources.cc
     - module vostok.hercules.client
     - module vostok.hosting.abstractions
     - module vostok.logging.configuration
@@ -29,6 +30,7 @@ notests *default:
             - name: vostok.clusterconfig.client
             - name: vostok.configuration
             - name: vostok.configuration.sources
+            - name: vostok.configuration.sources.cc
             - name: vostok.hercules.client
             - name: vostok.hosting.abstractions
             - name: vostok.logging.configuration
@@ -47,6 +49,7 @@ notests *default:
             - name: vostok.clusterconfig.client
             - name: vostok.configuration
             - name: vostok.configuration.sources
+            - name: vostok.configuration.sources.cc
             - name: vostok.hercules.client
             - name: vostok.hosting.abstractions
             - name: vostok.logging.configuration
@@ -65,6 +68,7 @@ notests *default:
             - name: vostok.clusterconfig.client
             - name: vostok.configuration
             - name: vostok.configuration.sources
+            - name: vostok.configuration.sources.cc
             - name: vostok.hercules.client
             - name: vostok.hosting.abstractions
             - name: vostok.logging.configuration
